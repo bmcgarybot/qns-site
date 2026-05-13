@@ -3,336 +3,458 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quantum Neuroshift™. Brett Coon</title>
-<meta name="description" content="Your nervous system learned to protect you. Now it's time to teach it something new. Trauma-informed nervous system regulation by Brett Coon.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦁</text></svg>">
+<title>Brett Coon — Quantum Neuroshift</title>
+<meta name="description" content="Trauma-informed nervous system regulation. Assistive technology for autism families. Founded by Brett Coon.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230a2e24' width='100' height='100' rx='20'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='%23c9a54e' font-family='serif'>Q</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root {
-  --teal: #0a2e24;
-  --teal-mid: #0f3d31;
-  --gold: #c9a54e;
-  --gold-light: #dbbe6e;
-  --gold-dim: rgba(201,165,78,0.12);
-  --cream: #f7f3ec;
-  --white: #fff;
-  --text: #1a1a1a;
-  --muted: #7a7a7a;
-  --serif: 'Playfair Display', Georgia, serif;
-  --sans: 'Inter', -apple-system, sans-serif;
+  --dark: #0c0c0c;
+  --charcoal: #1a1a1a;
+  --mid: #2a2a2a;
+  --light: #f8f7f4;
+  --white: #ffffff;
+  --accent: #c9a54e;
+  --accent-hover: #ddb85e;
+  --muted: #888888;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'DM Sans', -apple-system, system-ui, sans-serif;
 }
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; }
-body { font-family:var(--sans); color:var(--text); background:var(--white); overflow-x:hidden; }
-a { text-decoration:none; color:inherit; }
-img { display:block; max-width:100%; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--sans); color: var(--dark); background: var(--white); }
+a { text-decoration: none; color: inherit; }
+img { display: block; max-width: 100%; }
 
-/* ===== NAV ===== */
-.nav { position:fixed; top:0; width:100%; z-index:100; padding:20px 0; transition:all .4s; }
-.nav.scrolled { background:rgba(10,46,36,.97); backdrop-filter:blur(16px); padding:12px 0; box-shadow:0 2px 40px rgba(0,0,0,.3); }
-.nav-inner { max-width:1200px; margin:0 auto; padding:0 32px; display:flex; align-items:center; justify-content:space-between; }
-.nav-brand { font-family:var(--serif); font-size:16px; font-weight:600; color:var(--gold); letter-spacing:3px; text-transform:uppercase; }
-.nav-links { display:flex; gap:36px; align-items:center; }
-.nav-links a { font-size:12px; font-weight:500; color:rgba(255,255,255,.6); letter-spacing:2px; text-transform:uppercase; transition:color .3s; }
-.nav-links a:hover { color:var(--gold); }
-.nav-links .nav-cta { border:1px solid var(--gold); color:var(--gold); padding:10px 24px; transition:all .3s; }
-.nav-links .nav-cta:hover { background:var(--gold); color:var(--teal); }
-.hamburger { display:none; background:none; border:none; width:28px; height:20px; cursor:pointer; position:relative; }
-.hamburger span { display:block; width:100%; height:2px; background:var(--gold); position:absolute; left:0; transition:all .3s; }
-.hamburger span:nth-child(1){top:0}.hamburger span:nth-child(2){top:9px}.hamburger span:nth-child(3){top:18px}
-.mobile-nav { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:var(--teal); z-index:99; flex-direction:column; align-items:center; justify-content:center; gap:24px; }
-.mobile-nav.open { display:flex; }
-.mobile-nav a { font-family:var(--serif); font-size:24px; color:var(--gold); letter-spacing:2px; }
-.mobile-close { position:absolute; top:24px; right:32px; font-size:32px; color:var(--gold); background:none; border:none; cursor:pointer; }
-
-/* ===== HERO ===== */
-.hero { position:relative; height:100vh; min-height:700px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:var(--teal); }
-.hero-bg { position:absolute; inset:0; }
-.hero-bg img { width:100%; height:100%; object-fit:cover; opacity:.15; filter:blur(1px); }
-.hero-gradient { position:absolute; inset:0; background:radial-gradient(ellipse at center, rgba(10,46,36,.3) 0%, rgba(10,46,36,.95) 70%); }
-.hero-content { position:relative; z-index:2; text-align:center; padding:0 32px; }
-.hero-logo { width:120px; height:120px; border-radius:50%; object-fit:cover; margin:0 auto 40px; border:2px solid rgba(201,165,78,.25); box-shadow:0 0 80px rgba(201,165,78,.08); animation:glow 4s ease-in-out infinite alternate; }
-@keyframes glow { from{box-shadow:0 0 60px rgba(201,165,78,.06)} to{box-shadow:0 0 100px rgba(201,165,78,.15)} }
-.hero h1 { font-family:var(--serif); font-size:clamp(36px,6vw,72px); font-weight:400; color:var(--white); letter-spacing:4px; line-height:1.15; margin-bottom:24px; }
-.hero h1 em { font-style:italic; color:var(--gold); }
-.hero-line { width:40px; height:1px; background:var(--gold); margin:0 auto 24px; }
-.hero-sub { font-size:clamp(14px,1.6vw,17px); color:rgba(255,255,255,.5); font-weight:300; letter-spacing:1px; max-width:500px; margin:0 auto; line-height:1.9; }
-.hero-scroll { position:absolute; bottom:40px; left:50%; transform:translateX(-50%); }
-.hero-scroll span { display:block; width:1px; height:48px; background:linear-gradient(to bottom,transparent,var(--gold)); margin:0 auto; animation:scrollDown 2s ease-in-out infinite; }
-@keyframes scrollDown { 0%{opacity:0;transform:translateY(-10px)} 50%{opacity:1} 100%{opacity:0;transform:translateY(10px)} }
-
-/* ===== SECTIONS ===== */
-.s { padding:clamp(80px,12vw,140px) 32px; }
-.s-inner { max-width:1000px; margin:0 auto; }
-.s-dark { background:var(--teal); color:var(--white); }
-.s-cream { background:var(--cream); }
-
-/* ===== STATEMENT (big cinematic text) ===== */
-.statement { text-align:center; }
-.statement h2 { font-family:var(--serif); font-size:clamp(28px,4.5vw,52px); font-weight:400; line-height:1.4; letter-spacing:1px; }
-.statement h2 em { font-style:italic; color:var(--gold); }
-.statement p { font-size:clamp(14px,1.4vw,16px); color:var(--muted); max-width:600px; margin:32px auto 0; line-height:2; }
-.s-dark .statement p { color:rgba(255,255,255,.45); }
-.gold-line { width:40px; height:1px; background:var(--gold); margin:24px auto; }
-
-/* ===== SPLIT (image + text) ===== */
-.split { display:grid; grid-template-columns:1fr 1fr; gap:clamp(40px,6vw,80px); align-items:center; }
-.split.reverse { direction:rtl; }
-.split.reverse > * { direction:ltr; }
-.split-img { position:relative; overflow:hidden; border-radius:4px; }
-.split-img img { width:100%; aspect-ratio:3/4; object-fit:cover; filter:saturate(.9); }
-.split-img::after { content:''; position:absolute; inset:0; border:1px solid rgba(201,165,78,.15); border-radius:4px; pointer-events:none; }
-.split-text h3 { font-family:var(--serif); font-size:clamp(24px,3vw,38px); font-weight:400; margin-bottom:20px; line-height:1.35; letter-spacing:.5px; }
-.split-text h3 em { font-style:italic; color:var(--gold); }
-.split-text p { font-size:15px; line-height:2; margin-bottom:16px; }
-.s-dark .split-text p { color:rgba(255,255,255,.5); }
-.s-cream .split-text p { color:var(--muted); }
-
-/* ===== CARDS ===== */
-.cards { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-top:64px; }
-.card { padding:clamp(28px,4vw,48px); background:rgba(255,255,255,.02); border:1px solid rgba(201,165,78,.08); transition:all .4s; }
-.card:hover { background:rgba(201,165,78,.04); border-color:rgba(201,165,78,.2); }
-.card-icon { font-size:28px; margin-bottom:16px; display:block; }
-.card h4 { font-family:var(--serif); font-size:20px; font-weight:500; margin-bottom:10px; }
-.card p { font-size:14px; color:rgba(255,255,255,.4); line-height:1.9; }
-
-/* ===== FULL IMAGE BREAK ===== */
-.img-break { height:clamp(300px,50vw,500px); position:relative; overflow:hidden; }
-.img-break img { width:100%; height:100%; object-fit:cover; }
-.img-break .wash { position:absolute; inset:0; background:linear-gradient(to right, var(--teal) 0%, transparent 30%, transparent 70%, var(--teal) 100%); }
-.img-break .wash-v { position:absolute; inset:0; background:linear-gradient(to bottom, var(--white) 0%, transparent 10%, transparent 90%, var(--cream) 100%); }
-
-/* ===== APPS STRIP ===== */
-.apps-strip { display:grid; grid-template-columns:repeat(6,1fr); gap:16px; margin-top:48px; }
-.app-pill { text-align:center; padding:24px 8px; border:1px solid rgba(0,0,0,.06); border-radius:8px; background:var(--white); transition:all .3s; }
-.app-pill:hover { border-color:var(--gold); transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,0,0,.06); }
-.app-pill .emoji { font-size:28px; margin-bottom:8px; display:block; }
-.app-pill h5 { font-size:11px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; color:var(--text); }
-.app-pill .sub { font-size:10px; color:var(--muted); margin-top:3px; }
-
-/* ===== CTA ===== */
-.cta-section { text-align:center; }
-.cta-section h2 { font-family:var(--serif); font-size:clamp(28px,4vw,48px); font-weight:400; margin-bottom:16px; color:var(--white); letter-spacing:1px; }
-.cta-section p { font-size:15px; color:rgba(255,255,255,.45); margin-bottom:40px; }
-.cta-btn { display:inline-block; border:1px solid var(--gold); color:var(--gold); padding:16px 48px; font-size:13px; font-weight:600; letter-spacing:3px; text-transform:uppercase; transition:all .3s; }
-.cta-btn:hover { background:var(--gold); color:var(--teal); }
-
-/* ===== FOOTER ===== */
-footer { background:var(--teal); border-top:1px solid rgba(201,165,78,.08); padding:48px 32px; text-align:center; }
-footer .f-brand { font-family:var(--serif); font-size:14px; color:var(--gold); letter-spacing:3px; margin-bottom:12px; }
-footer p { font-size:12px; color:rgba(255,255,255,.2); line-height:1.8; max-width:500px; margin:0 auto; }
-footer a { color:var(--gold); }
-
-/* ===== RESPONSIVE ===== */
-@media(max-width:768px){
-  .split{grid-template-columns:1fr;gap:32px}
-  .split.reverse{direction:ltr}
-  .cards{grid-template-columns:1fr}
-  .apps-strip{grid-template-columns:repeat(3,1fr)}
-  .nav-links{display:none}.hamburger{display:block}
-  .hero{min-height:100svh}
+/* ─── NAV ─── */
+.nav {
+  position: fixed; top: 0; width: 100%; z-index: 100;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  transition: all 0.3s;
 }
-@media(max-width:480px){
-  .apps-strip{grid-template-columns:repeat(2,1fr)}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 16px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand {
+  font-family: var(--sans); font-size: 14px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase; color: var(--dark);
+}
+.nav-links { display: flex; gap: 32px; align-items: center; }
+.nav-links a {
+  font-size: 13px; font-weight: 500; color: var(--muted);
+  letter-spacing: 0.5px; transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--dark); }
+.nav-cta {
+  background: var(--dark) !important; color: var(--white) !important;
+  padding: 10px 28px !important; border-radius: 6px; font-weight: 600 !important;
+  transition: background 0.3s !important;
+}
+.nav-cta:hover { background: var(--charcoal) !important; }
+.hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+.hamburger svg { width: 24px; height: 24px; }
+.mobile-nav {
+  display: none; position: fixed; inset: 0; background: var(--white); z-index: 200;
+  flex-direction: column; align-items: center; justify-content: center; gap: 28px;
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a { font-size: 20px; font-weight: 600; color: var(--dark); }
+.mobile-close {
+  position: absolute; top: 20px; right: 28px; font-size: 28px;
+  background: none; border: none; cursor: pointer; color: var(--dark);
+}
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  background: var(--light); padding: 120px 40px 80px;
+}
+.hero-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+}
+.hero-text h1 {
+  font-family: var(--serif); font-size: clamp(40px, 5.5vw, 68px);
+  line-height: 1.12; color: var(--dark); margin-bottom: 24px;
+}
+.hero-text h1 span { color: var(--accent); }
+.hero-text p {
+  font-size: 18px; line-height: 1.7; color: var(--muted);
+  max-width: 480px; margin-bottom: 36px;
+}
+.hero-btn {
+  display: inline-block; background: var(--dark); color: var(--white);
+  padding: 16px 40px; border-radius: 8px; font-size: 15px; font-weight: 600;
+  letter-spacing: 0.5px; transition: all 0.3s;
+}
+.hero-btn:hover { background: var(--accent); color: var(--dark); }
+.hero-photo {
+  position: relative; display: flex; justify-content: center; align-items: center;
+}
+.hero-photo img {
+  width: 100%; max-width: 480px; aspect-ratio: 3/4;
+  object-fit: cover; object-position: center top;
+  border-radius: 12px;
+}
+
+/* ─── SECTIONS ─── */
+.section { padding: clamp(80px, 10vw, 140px) 40px; }
+.section-inner { max-width: 1000px; margin: 0 auto; }
+.section-dark { background: var(--dark); color: var(--white); }
+.section-light { background: var(--white); }
+.section-warm { background: var(--light); }
+
+/* ─── SECTION HEADERS ─── */
+.section-header {
+  text-align: center; margin-bottom: clamp(48px, 6vw, 72px);
+}
+.section-label {
+  font-size: 12px; font-weight: 700; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
+}
+.section-header h2 {
+  font-family: var(--serif); font-size: clamp(32px, 4vw, 52px);
+  line-height: 1.2; margin-bottom: 20px;
+}
+.section-header p {
+  font-size: 17px; line-height: 1.8; max-width: 600px; margin: 0 auto;
+}
+.section-dark .section-header p { color: rgba(255,255,255,0.5); }
+.section-light .section-header p { color: var(--muted); }
+
+/* ─── "THE WORK" FEATURE BLOCKS ─── */
+.features {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+}
+.feature {
+  padding: 40px 32px; border-radius: 12px; transition: all 0.3s;
+}
+.section-dark .feature { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); }
+.section-dark .feature:hover { background: rgba(255,255,255,0.08); border-color: rgba(201,165,78,0.2); }
+.feature-number {
+  font-size: 13px; font-weight: 700; color: var(--accent);
+  letter-spacing: 2px; margin-bottom: 16px;
+}
+.feature h3 {
+  font-family: var(--serif); font-size: 22px; margin-bottom: 12px; line-height: 1.3;
+}
+.feature p {
+  font-size: 15px; line-height: 1.8; color: rgba(255,255,255,0.45);
+}
+
+/* ─── FULL-WIDTH QUOTE ─── */
+.quote-section {
+  padding: clamp(60px, 8vw, 100px) 40px; text-align: center;
+  background: var(--dark); border-top: 1px solid rgba(201,165,78,0.1);
+  border-bottom: 1px solid rgba(201,165,78,0.1);
+}
+.quote-section blockquote {
+  font-family: var(--serif); font-style: italic;
+  font-size: clamp(24px, 3.5vw, 42px); line-height: 1.45;
+  color: var(--white); max-width: 900px; margin: 0 auto;
+}
+.quote-section blockquote span { color: var(--accent); }
+
+/* ─── ABOUT / SPLIT ─── */
+.split {
+  display: grid; grid-template-columns: 1fr 1fr; gap: clamp(48px, 6vw, 80px);
+  align-items: center;
+}
+.split-photo img {
+  width: 100%; aspect-ratio: 4/5; object-fit: cover;
+  object-position: center top; border-radius: 12px;
+}
+.split-content h2 {
+  font-family: var(--serif); font-size: clamp(28px, 3.5vw, 44px);
+  line-height: 1.2; margin-bottom: 24px;
+}
+.split-content h2 span { color: var(--accent); }
+.split-content p {
+  font-size: 16px; line-height: 1.9; color: var(--muted); margin-bottom: 16px;
+}
+
+/* ─── THIS IS FOR YOU ─── */
+.audience-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+}
+.audience-card {
+  padding: 32px; border: 1px solid rgba(0,0,0,0.08); border-radius: 12px;
+  transition: all 0.3s;
+}
+.audience-card:hover { border-color: var(--accent); box-shadow: 0 8px 40px rgba(0,0,0,0.04); }
+.audience-card h3 {
+  font-family: var(--serif); font-size: 20px; margin-bottom: 10px;
+}
+.audience-card p {
+  font-size: 15px; line-height: 1.8; color: var(--muted);
+}
+
+/* ─── TECHNOLOGY / APPS ─── */
+.apps-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+}
+.app-card {
+  padding: 32px 24px; background: var(--white); border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 12px; text-align: center; transition: all 0.3s;
+}
+.app-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.06); }
+.app-icon {
+  width: 48px; height: 48px; border-radius: 12px; margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: var(--white);
+}
+.app-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.app-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ─── CTA BANNER ─── */
+.cta-banner {
+  padding: clamp(80px, 10vw, 120px) 40px; text-align: center;
+  background: var(--dark);
+}
+.cta-banner h2 {
+  font-family: var(--serif); font-size: clamp(32px, 4.5vw, 56px);
+  line-height: 1.2; color: var(--white); margin-bottom: 20px;
+}
+.cta-banner p {
+  font-size: 17px; color: rgba(255,255,255,0.45); margin-bottom: 40px;
+  max-width: 500px; margin-left: auto; margin-right: auto;
+}
+.cta-btn-light {
+  display: inline-block; background: var(--accent); color: var(--dark);
+  padding: 16px 48px; border-radius: 8px; font-size: 15px; font-weight: 700;
+  letter-spacing: 0.5px; transition: all 0.3s;
+}
+.cta-btn-light:hover { background: var(--accent-hover); }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--dark); border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 48px 40px; text-align: center;
+}
+footer .footer-brand {
+  font-size: 12px; font-weight: 700; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+}
+footer p { font-size: 13px; color: rgba(255,255,255,0.25); line-height: 1.8; }
+footer a { color: var(--accent); }
+footer .legal {
+  max-width: 600px; margin: 20px auto 0; font-size: 11px;
+  color: rgba(255,255,255,0.15); line-height: 1.7;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 48px; text-align: center; }
+  .hero-text p { margin-left: auto; margin-right: auto; }
+  .hero-photo { order: -1; }
+  .hero-photo img { max-width: 360px; }
+  .split { grid-template-columns: 1fr; gap: 40px; }
+  .split-photo { order: -1; max-width: 400px; margin: 0 auto; }
+  .features { grid-template-columns: 1fr; }
+  .audience-grid { grid-template-columns: 1fr; }
+  .apps-grid { grid-template-columns: repeat(2, 1fr); }
+  .nav-links { display: none; }
+  .hamburger { display: block; }
+}
+@media (max-width: 480px) {
+  .apps-grid { grid-template-columns: 1fr; }
+  .hero { padding: 100px 24px 60px; }
+  .section { padding: 60px 24px; }
+  .nav-inner { padding: 14px 24px; }
 }
 </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav class="nav" id="nav">
-<div class="nav-inner">
-  <a href="#" class="nav-brand">Quantum Neuroshift</a>
-  <button class="hamburger" onclick="document.getElementById('mobileNav').classList.add('open')" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-  <div class="nav-links">
-    <a href="#work">The Work</a>
-    <a href="#about">About</a>
-    <a href="#technology">Technology</a>
-    <a href="#connect" class="nav-cta">Connect</a>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">Quantum Neuroshift</a>
+    <button class="hamburger" onclick="document.getElementById('mobileNav').classList.add('open')" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+    <div class="nav-links">
+      <a href="#work">The Work</a>
+      <a href="#about">About</a>
+      <a href="#technology">Technology</a>
+      <a href="#connect" class="nav-cta">Work With Me</a>
+    </div>
   </div>
-</div>
 </nav>
+
+<!-- Mobile Nav -->
 <div class="mobile-nav" id="mobileNav">
-  <button class="mobile-close" onclick="this.parentElement.classList.remove('open')">×</button>
+  <button class="mobile-close" onclick="this.parentElement.classList.remove('open')">&times;</button>
   <a href="#work" onclick="this.parentElement.classList.remove('open')">The Work</a>
   <a href="#about" onclick="this.parentElement.classList.remove('open')">About</a>
   <a href="#technology" onclick="this.parentElement.classList.remove('open')">Technology</a>
-  <a href="#connect" onclick="this.parentElement.classList.remove('open')">Connect</a>
+  <a href="#connect" onclick="this.parentElement.classList.remove('open')">Work With Me</a>
 </div>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-bg"><img src="./img/lounge-mockup.jpg" alt=""></div>
-  <div class="hero-gradient"></div>
-  <div class="hero-content">
-    <img src="./img/logo-clean.jpg" alt="Quantum Neuroshift" class="hero-logo">
-    <h1>Quantum<br><em>Neuroshift</em>™</h1>
-    <div class="hero-line"></div>
-    <p class="hero-sub">Nervous system work for people stuck in stress loops, anxiety, shutdown, and pain. We find the pattern. We interrupt it. We teach your body a steadier response.</p>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <h1>Your nervous system learned to protect you. <span>Now it's time to teach it something new.</span></h1>
+      <p>Trauma-informed nervous system regulation for people who function on the outside and feel wrecked on the inside.</p>
+      <a href="#connect" class="hero-btn">Start Here</a>
+    </div>
+    <div class="hero-photo">
+      <img src="./img/brett-headshot.jpg" alt="Brett Coon — Quantum Neuroshift">
+    </div>
   </div>
-  <div class="hero-scroll"><span></span></div>
 </section>
 
-<!-- STATEMENT 1 -->
-<section class="s s-dark" id="work">
-<div class="s-inner statement">
-  <h2>Your nervous system learned<br>to <em>protect</em> you.</h2>
-  <div class="gold-line"></div>
-  <h2 style="margin-top:24px">Now it's time to teach it<br>something <em>new.</em></h2>
-  <p>Quantum Neuroshift™ is nervous system work for people stuck in repeating stress reactions. anxiety loops, shutdown, depression dips, and pain flare-ups that don't respond to willpower or positive thinking.</p>
-</div>
+<!-- THE WORK -->
+<section class="section section-dark" id="work">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-label">The Work</div>
+      <h2>We find the pattern. We interrupt it. We lock in something steadier.</h2>
+      <p>Not in a therapy office. Not with homework sheets. In the middle of your real life — where the triggers actually live.</p>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-number">01</div>
+        <h3>Pattern Recognition</h3>
+        <p>Your nervous system runs the same stress reactions on repeat. We identify the loop — the trigger, the escalation, the crash.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-number">02</div>
+        <h3>Real-Time Interruption</h3>
+        <p>Not after the fact. Not in hindsight. We intervene in the moment your body fires the old alarm — and redirect it.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-number">03</div>
+        <h3>Nervous System Update</h3>
+        <p>Your body learned danger. We teach it safety. Not with words — with repeated, embodied experiences that rewire the response.</p>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- SPLIT: What we do -->
-<section class="s s-cream">
-<div class="s-inner split">
-  <div class="split-img">
-    <img src="./img/logo-wall-frame.jpg" alt="Quantum Neuroshift">
-  </div>
-  <div class="split-text">
-    <h3>How it <em>works</em></h3>
-    <p>Not in a therapy office. Not with homework sheets. In the middle of your real life. where the triggers actually live.</p>
-    <p>Your nervous system did exactly what it was supposed to do. It kept you safe. But the danger passed and the alarm system is still running.</p>
-    <p>We retrain the response.</p>
-  </div>
+<!-- QUOTE -->
+<div class="quote-section">
+  <blockquote>This isn't about fixing what's broken. Your nervous system did exactly what it was supposed to do. The danger passed. <span>The alarm system didn't.</span></blockquote>
 </div>
-</section>
 
-<!-- WHO IT'S FOR -->
-<section class="s s-dark">
-<div class="s-inner">
-  <div class="statement">
-    <h2>This is for <em>you</em> if.</h2>
-    <div class="gold-line"></div>
-  </div>
-  <div class="cards">
-    <div class="card">
-      <span class="card-icon">⚡</span>
-      <h4>Always on</h4>
-      <p>Overthinking. Tired but wired. Sleep is a fight. The anxiety isn't about one thing. It's everything, all the time.</p>
+<!-- THIS IS FOR YOU -->
+<section class="section section-light">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-label">Is This You?</div>
+      <h2>This work is for people who are tired of managing symptoms.</h2>
+      <p>If any of these sound familiar, your nervous system is asking for an upgrade — not another coping strategy.</p>
     </div>
-    <div class="card">
-      <span class="card-icon">🧊</span>
-      <h4>Shutdown</h4>
-      <p>Emotional numbness. Going through the motions. Flatline isn't peace. it's protection. And it's exhausting.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🔥</span>
-      <h4>Irritability</h4>
-      <p>Irritability that comes from nowhere. Moods that drop without cause. You're not an angry person. your system is on high alert.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">💫</span>
-      <h4>Chronic pain</h4>
-      <p>Chronic tension. Pain that gets worse under stress. The pain is real. The nervous system can amplify it when it stays in protection mode.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🌊</span>
-      <h4>Survival mode</h4>
-      <p>You made it through something. You're fine now. But your body still braces for impact in moments that should be safe.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🎭</span>
-      <h4>The performance</h4>
-      <p>High-functioning on the outside. Falling apart on the inside. Nobody sees what it costs to hold it together every day.</p>
+    <div class="audience-grid">
+      <div class="audience-card">
+        <h3>You can't stop thinking</h3>
+        <p>Your mind runs scenarios on repeat. You're tired but wired. Sleep is a negotiation you keep losing.</p>
+      </div>
+      <div class="audience-card">
+        <h3>You feel nothing</h3>
+        <p>Emotional numbness. Going through the motions. Flatline isn't peace — it's protection. And it's exhausting.</p>
+      </div>
+      <div class="audience-card">
+        <h3>You snap without warning</h3>
+        <p>Irritability that comes from nowhere. You're not an angry person — your system is on high alert.</p>
+      </div>
+      <div class="audience-card">
+        <h3>Your body keeps score</h3>
+        <p>Chronic tension. Pain that tracks your emotional state. The pain is real. The nervous system is amplifying it.</p>
+      </div>
+      <div class="audience-card">
+        <h3>You survived something heavy</h3>
+        <p>You're "fine" now. But your body still braces for impact in moments that should be safe.</p>
+      </div>
+      <div class="audience-card">
+        <h3>Nobody knows how hard it is</h3>
+        <p>High-functioning on the outside. Falling apart on the inside. The performance is flawless. The cost is everything.</p>
+      </div>
     </div>
   </div>
-</div>
 </section>
-
-<!-- IMAGE BREAK -->
-<div class="img-break">
-  <img src="./img/logo-wall-panel.jpg" alt="">
-  <div class="wash"></div>
-</div>
 
 <!-- ABOUT -->
-<section class="s s-dark" id="about">
-<div class="s-inner split reverse">
-  <div class="split-img">
-    <img src="./img/brett-headshot.jpg" alt="Brett Coon" style="aspect-ratio:1/1;object-position:center top;">
+<section class="section section-warm" id="about">
+  <div class="section-inner">
+    <div class="split">
+      <div class="split-photo">
+        <img src="./img/brett-speaking.jpg" alt="Brett Coon">
+      </div>
+      <div class="split-content">
+        <h2>Meet <span>Brett Coon</span></h2>
+        <p>I didn't learn this from a textbook. I learned it from years inside my own nervous system chaos — the kind of anxiety that looks fine from the outside but eats you alive quietly.</p>
+        <p>I studied it. I lived it. I found what actually shifts — not the theory, but the real-time moments where your body learns a new response under real pressure.</p>
+        <p>I'm also a father raising a child with autism. That path led me to build an entire suite of assistive technology — because when the system doesn't have what your kid needs, you build it yourself.</p>
+        <p>Quantum Neuroshift is where both roads meet.</p>
+      </div>
+    </div>
   </div>
-  <div class="split-text">
-    <h3>Meet <em>Brett Coon</em></h3>
-    <p>I didn't learn this from a textbook. I learned it from years inside my own nervous system chaos. the kind of anxiety that looks fine from the outside but eats you alive quietly.</p>
-    <p>I studied it. I lived it. I found what actually shifts. not the theory, but the real-time moments where your body learns a new response under real pressure.</p>
-    <p>I'm also a father raising a child with autism. That path led me to build an entire suite of assistive technology. because when the system doesn't have what your kid needs, you build it yourself.</p>
-    <p>Quantum Neuroshift is where both paths come together.</p>
-  </div>
-</div>
 </section>
 
 <!-- TECHNOLOGY -->
-<section class="s s-cream" id="technology">
-<div class="s-inner">
-  <div class="statement">
-    <h2>QNS <em>Technology</em></h2>
-    <div class="gold-line"></div>
-    <p>Assistive technology for autism families. built because a father needed it and couldn't find it. Six apps. Privacy-first. Free where it matters.</p>
+<section class="section section-light" id="technology">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-label">QNS Technology</div>
+      <h2>Assistive technology built because a father needed it.</h2>
+      <p>Six apps for autism families. Privacy-first. No cloud. No accounts. No tracking. Free where it matters.</p>
+    </div>
+    <div class="apps-grid">
+      <div class="app-card">
+        <div class="app-icon" style="background: #4A90D9;">AAC</div>
+        <h4>My Buddy AAC</h4>
+        <p>Symbol-based communication boards with text-to-speech for non-verbal and pre-verbal children.</p>
+      </div>
+      <div class="app-card">
+        <div class="app-icon" style="background: #E8835C;">SM</div>
+        <h4>Story Maker</h4>
+        <p>Create personalized social stories with real photos to prepare kids for new experiences.</p>
+      </div>
+      <div class="app-card">
+        <div class="app-icon" style="background: #4ECDC4;">VT</div>
+        <h4>Visual Timer</h4>
+        <p>Visual schedules and task timers designed for kids who need structure and predictability.</p>
+      </div>
+      <div class="app-card">
+        <div class="app-icon" style="background: #E94560;">LP</div>
+        <h4>Life Preserver</h4>
+        <p>Safety check-in monitoring with automated escalation for vulnerable individuals.</p>
+      </div>
+      <div class="app-card">
+        <div class="app-icon" style="background: #9B59B6;">EM</div>
+        <h4>EMI-Tech</h4>
+        <p>Bilateral stimulation and eye-tracking therapy tools for emotional regulation sessions.</p>
+      </div>
+      <div class="app-card">
+        <div class="app-icon" style="background: #2ECC71;">ST</div>
+        <h4>SafeTube</h4>
+        <p>Filtered video browsing with ad-blocking and parental controls. Safe screens for kids.</p>
+      </div>
+    </div>
+    <p style="text-align: center; margin-top: 40px; font-size: 14px; color: var(--muted);">All data stays on your device. Coming to the App Store and Google Play.</p>
   </div>
-  <div class="apps-strip">
-    <div class="app-pill">
-      <span class="emoji">💬</span>
-      <h5>My Buddy AAC</h5>
-      <div class="sub">Communication</div>
-    </div>
-    <div class="app-pill">
-      <span class="emoji">📖</span>
-      <h5>Story Maker</h5>
-      <div class="sub">Social Stories</div>
-    </div>
-    <div class="app-pill">
-      <span class="emoji">⏱️</span>
-      <h5>Task Timer</h5>
-      <div class="sub">Visual Schedules</div>
-    </div>
-    <div class="app-pill">
-      <span class="emoji">🛡️</span>
-      <h5>Life Preserver</h5>
-      <div class="sub">Safety Monitoring</div>
-    </div>
-    <div class="app-pill">
-      <span class="emoji">👁️</span>
-      <h5>EMI-Tech</h5>
-      <div class="sub">Eye Tracking Therapy</div>
-    </div>
-    <div class="app-pill">
-      <span class="emoji">🔒</span>
-      <h5>SafeTube</h5>
-      <div class="sub">Filtered Browsing</div>
-    </div>
-  </div>
-  <p style="text-align:center;margin-top:32px;font-size:13px;color:var(--muted);">All data stays on your device. No cloud. No accounts. No tracking. Coming to the App Store.</p>
-</div>
 </section>
 
 <!-- CTA -->
-<section class="s s-dark" id="connect">
-<div class="s-inner cta-section">
-  <h2>Let's <em>talk</em></h2>
-  <p>No pitch. No pressure. If something on this page spoke to you, reach out.</p>
-  <a href="mailto:brett.coon2@gmail.com?subject=Quantum%20Neuroshift" class="cta-btn">Get in touch</a>
-</div>
+<section class="cta-banner" id="connect">
+  <h2>Ready to start something?</h2>
+  <p>No pitch. No pressure. Just a conversation about where you are and what might help.</p>
+  <a href="mailto:brett.coon2@gmail.com?subject=Quantum%20Neuroshift" class="cta-btn-light">Get In Touch</a>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="f-brand">QUANTUM NEUROSHIFT™</div>
-  <p>BMC Luminary Ventures LLC. Arizona</p>
-  <p style="margin-top:8px;"><a href="mailto:brett.coon2@gmail.com">brett.coon2@gmail.com</a></p>
-  <p style="margin-top:20px;font-size:11px;max-width:500px;">Quantum Neuroshift™ provides educational and skills-based nervous system regulation. This is not therapy, medical treatment, or a substitute for licensed professional care. If you are in crisis, contact emergency services or a licensed provider. © 2026 BMC Luminary Ventures LLC.</p>
+  <div class="footer-brand">Quantum Neuroshift</div>
+  <p>BMC Luminary Ventures LLC &mdash; Arizona</p>
+  <p style="margin-top: 8px;"><a href="mailto:brett.coon2@gmail.com">brett.coon2@gmail.com</a></p>
+  <p class="legal">Quantum Neuroshift provides educational and skills-based nervous system regulation. This is not therapy, medical treatment, or a substitute for licensed professional care. If you are in crisis, contact emergency services or a licensed provider. &copy; 2026 BMC Luminary Ventures LLC.</p>
 </footer>
-
-<script>
-// Nav scroll effect
-window.addEventListener('scroll',()=>{
-  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>60);
-});
-</script>
 
 </body>
 </html>
