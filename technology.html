@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QNS Technology - Assistive Apps for Autism Families</title>
+<meta name="description" content="Privacy-first assistive technology for autism families. Six apps built by a support-needs parent because existing tools didn't fit.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--dark:#0c0c0c;--charcoal:#1a1a1a;--light:#f8f7f4;--white:#fff;--accent:#c9a54e;--muted:#666;--serif:'DM Serif Display',Georgia,serif;--sans:'DM Sans',-apple-system,system-ui,sans-serif}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);color:var(--dark);background:var(--white)}
+a{text-decoration:none;color:inherit}img{display:block;max-width:100%}
+
+.nav{position:fixed;top:0;width:100%;z-index:100;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,.05)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:16px 40px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-size:14px;font-weight:700;letter-spacing:3px;text-transform:uppercase}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{font-size:13px;font-weight:500;color:var(--muted);transition:color .3s}
+.nav-links a:hover{color:var(--dark)}
+.nav-back{background:var(--dark)!important;color:var(--white)!important;padding:10px 28px!important;border-radius:6px;font-weight:600!important}
+.hamburger{display:none;background:none;border:none;cursor:pointer}
+.hamburger svg{width:24px;height:24px}
+
+.hero{padding:140px 40px 80px;text-align:center;background:var(--light)}
+.hero h1{font-family:var(--serif);font-size:clamp(36px,5vw,60px);line-height:1.15;margin-bottom:20px}
+.hero h1 span{color:var(--accent)}
+.hero p{font-size:18px;line-height:1.75;color:var(--muted);max-width:600px;margin:0 auto 16px}
+.hero .badge{display:inline-block;margin-top:20px;padding:10px 24px;background:var(--dark);color:var(--white);border-radius:8px;font-size:13px;font-weight:600;letter-spacing:1px}
+
+.section{padding:clamp(60px,8vw,100px) 40px}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-dark{background:var(--dark);color:var(--white)}
+.section-light{background:var(--white)}
+.section-warm{background:var(--light)}
+
+/* App Cards */
+.app-showcase{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.app-card{display:grid;grid-template-columns:100px 1fr;gap:24px;align-items:start;padding:32px;border:1px solid rgba(0,0,0,.06);border-radius:16px;background:var(--white);transition:all .3s}
+.app-card:hover{border-color:var(--accent);box-shadow:0 12px 40px rgba(0,0,0,.06);transform:translateY(-2px)}
+
+.app-icon-box{width:100px;height:100px;border-radius:24px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.app-icon-box svg{width:48px;height:48px}
+
+.app-info h3{font-family:var(--serif);font-size:22px;margin-bottom:6px}
+.app-info .tagline{font-size:13px;color:var(--accent);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.app-info p{font-size:15px;line-height:1.7;color:var(--muted);margin-bottom:12px}
+.app-info .features{list-style:none}
+.app-info .features li{font-size:13px;color:var(--muted);line-height:1.8;padding-left:18px;position:relative}
+.app-info .features li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;border:1.5px solid var(--accent)}
+
+.app-demo-link{display:inline-block;margin-top:12px;font-size:13px;font-weight:600;color:var(--accent);border-bottom:1px solid transparent;transition:border-color .3s}
+.app-demo-link:hover{border-color:var(--accent)}
+
+/* Privacy Banner */
+.privacy-banner{text-align:center;padding:48px 40px;background:var(--dark)}
+.privacy-banner h2{font-family:var(--serif);font-size:clamp(24px,3vw,36px);color:var(--white);margin-bottom:12px}
+.privacy-banner p{font-size:15px;color:rgba(255,255,255,.45);max-width:500px;margin:0 auto}
+
+/* Platform Pills */
+.platforms{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:32px}
+.platform-pill{padding:10px 20px;border:1px solid rgba(255,255,255,.1);border-radius:8px;font-size:13px;color:rgba(255,255,255,.5);font-weight:500}
+
+footer{background:var(--dark);border-top:1px solid rgba(255,255,255,.06);padding:48px 40px;text-align:center}
+footer .footer-brand{font-size:12px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+footer p{font-size:13px;color:rgba(255,255,255,.25);line-height:1.8}
+footer a{color:var(--accent)}
+
+@media(max-width:900px){
+  .app-showcase{grid-template-columns:1fr}
+  .nav-links{display:none}.hamburger{display:block}
+}
+@media(max-width:600px){
+  .app-card{grid-template-columns:80px 1fr;gap:16px;padding:24px}
+  .app-icon-box{width:80px;height:80px;border-radius:20px}
+  .app-icon-box svg{width:36px;height:36px}
+  .hero,.section{padding-left:24px;padding-right:24px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav"><div class="nav-inner">
+  <a href="./index.html" class="nav-brand">QNS Technology</a>
+  <button class="hamburger" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
+  <div class="nav-links">
+    <a href="#apps">Our Apps</a>
+    <a href="./index.html" class="nav-back">Quantum Neuroshift</a>
+  </div>
+</div></nav>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Assistive Technology for <span>Autism Families</span></h1>
+  <p>Built by a support-needs parent because existing tools didn't fit. Privacy-first. No cloud. No accounts. No tracking.</p>
+  <p style="font-size:15px;color:var(--muted)">All data stays on your device. Period.</p>
+  <div class="badge">COMING TO APP STORE + GOOGLE PLAY</div>
+</section>
+
+<!-- APPS -->
+<section class="section section-light" id="apps">
+  <div class="section-inner">
+    <div class="app-showcase">
+
+      <!-- My Buddy AAC -->
+      <div class="app-card">
+        <div class="app-icon-box" style="background:linear-gradient(135deg,#4A90D9,#357ABD)">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="10" width="36" height="28" rx="4" stroke="white" stroke-width="2.5" fill="none"/>
+            <circle cx="16" cy="22" r="3" fill="white"/>
+            <circle cx="32" cy="22" r="3" fill="white"/>
+            <rect x="14" y="30" width="20" height="4" rx="2" fill="white"/>
+          </svg>
+        </div>
+        <div class="app-info">
+          <h3>My Buddy AAC</h3>
+          <div class="tagline">Communication</div>
+          <p>Symbol-based communication boards with text-to-speech for non-verbal and pre-verbal children.</p>
+          <ul class="features">
+            <li>5 customizable boards</li>
+            <li>Built-in text-to-speech</li>
+            <li>Works offline</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Story Maker -->
+      <div class="app-card">
+        <div class="app-icon-box" style="background:linear-gradient(135deg,#E8835C,#D4714A)">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 12C8 10.9 8.9 10 10 10H22V38H10C8.9 38 8 37.1 8 36V12Z" stroke="white" stroke-width="2.5" fill="none"/>
+            <path d="M22 10H38C39.1 10 40 10.9 40 12V36C40 37.1 39.1 38 38 38H22V10Z" stroke="white" stroke-width="2.5" fill="none"/>
+            <circle cx="31" cy="20" r="4" fill="white"/>
+            <path d="M26 32L30 27L34 32" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="app-info">
+          <h3>Story Maker</h3>
+          <div class="tagline">Social Stories</div>
+          <p>Create personalized social stories using real photos from your child's world to prepare them for new experiences.</p>
+          <ul class="features">
+            <li>22 guided templates</li>
+            <li>Add your own photos</li>
+            <li>Preview, print, or slideshow</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Visual Timer -->
+      <div class="app-card">
+        <div class="app-icon-box" style="background:linear-gradient(135deg,#4ECDC4,#3DBDB4)">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="26" r="14" stroke="white" stroke-width="2.5" fill="none"/>
+            <path d="M24 18V26L30 30" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20 10H28" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="app-info">
+          <h3>Visual Timer</h3>
+          <div class="tagline">Schedules + Routines</div>
+          <p>Visual schedules and task timers designed for kids who need structure, predictability, and positive reinforcement.</p>
+          <ul class="features">
+            <li>Color-coded timers</li>
+            <li>Photo reveals on completion</li>
+            <li>Custom task sequences</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Life Preserver -->
+      <div class="app-card">
+        <div class="app-icon-box" style="background:linear-gradient(135deg,#E94560,#D63B54)">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="14" stroke="white" stroke-width="2.5" fill="none"/>
+            <circle cx="24" cy="24" r="6" stroke="white" stroke-width="2.5" fill="none"/>
+            <path d="M24 10V18" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M24 30V38" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M10 24H18" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M30 24H38" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="app-info">
+          <h3>Life Preserver</h3>
+          <div class="tagline">Safety Monitoring</div>
+          <p>Automated check-in system with escalation for vulnerable individuals. Missed check-ins trigger alerts to emergency contacts.</p>
+          <ul class="features">
+            <li>PIN-based check-in</li>
+            <li>Automated escalation chain</li>
+            <li>Customizable schedules</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- EMI-Tech -->
+      <div class="app-card">
+        <div class="app-icon-box" style="background:linear-gradient(135deg,#9B59B6,#8844A0)">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="24" cy="24" rx="16" ry="10" stroke="white" stroke-width="2.5" fill="none"/>
+            <circle cx="24" cy="24" r="4" fill="white"/>
+            <path d="M12 14C14 12 18 10 24 10S34 12 36 14" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M12 34C14 36 18 38 24 38S34 36 36 34" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="app-info">
+          <h3>EMI-Tech</h3>
+          <div class="tagline">Eye Tracking Therapy</div>
+          <p>Bilateral stimulation and eye-tracking therapy tools for emotional regulation and processing sessions.</p>
+          <ul class="features">
+            <li>Multiple stimulation modes</li>
+            <li>Session tracking</li>
+            <li>Customizable speed and patterns</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- SafeTube -->
+      <div class="app-card">
+        <div class="app-icon-box" style="background:linear-gradient(135deg,#2ECC71,#27AE60)">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="12" width="32" height="20" rx="3" stroke="white" stroke-width="2.5" fill="none"/>
+            <path d="M20 19V29L30 24Z" fill="white"/>
+            <circle cx="36" cy="38" r="4" stroke="white" stroke-width="2.5" fill="none"/>
+            <path d="M34 36L38 40" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="app-info">
+          <h3>SafeTube</h3>
+          <div class="tagline">Filtered Browsing</div>
+          <p>Filtered video browsing with built-in ad blocking and parental controls. Safe screens for kids.</p>
+          <ul class="features">
+            <li>Ad and tracker blocking</li>
+            <li>PIN-protected settings</li>
+            <li>URL whitelist</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Bonus apps -->
+<section class="section section-warm">
+  <div class="section-inner" style="text-align:center">
+    <h2 style="font-family:var(--serif);font-size:clamp(24px,3vw,36px);margin-bottom:12px">Plus: Tap Along EFT + Calm Journey</h2>
+    <p style="font-size:16px;color:var(--muted);max-width:600px;margin:0 auto 8px">Guided EFT tapping for kids with built-in SUDS tracking, and a multi-environment calming app with breathing exercises, guided stories, and sleep mode.</p>
+    <p style="font-size:14px;color:var(--muted)">Both included in the QNS app suite.</p>
+  </div>
+</section>
+
+<!-- Privacy -->
+<div class="privacy-banner">
+  <h2>Your child's data is sacred</h2>
+  <p>Nothing leaves your device. No server. No account. No uploads. No tracking. Your child's photos stay on YOUR phone. We will never see them.</p>
+  <div class="platforms">
+    <div class="platform-pill">iOS (iPhone + iPad)</div>
+    <div class="platform-pill">Android</div>
+    <div class="platform-pill">Windows + Mac (Desktop)</div>
+    <div class="platform-pill">Web Browser</div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-brand">Quantum Neuroshift</div>
+  <p>BMC Luminary Ventures LLC &mdash; Arizona</p>
+  <p style="margin-top:8px"><a href="./index.html">quantumneuroshift.com</a> &middot; <a href="mailto:brett.coon2@gmail.com">brett.coon2@gmail.com</a></p>
+  <p style="max-width:600px;margin:20px auto 0;font-size:11px;color:rgba(255,255,255,.15);">&copy; 2026 BMC Luminary Ventures LLC. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
