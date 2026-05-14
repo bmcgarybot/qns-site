@@ -52,6 +52,7 @@ Search for: `Quantum Neuroshift - Brett Coon`
 ### 🔹 About Brett Section
 - **Title:** Search for `Meet Brett Coon` (inside `Meet <span`)
 - **Bio paragraphs:** Search for `I didn't learn this from a textbook` — there are 4 paragraphs in a row
+- **Credentials box:** Search for `Credentials` — lists all certifications (Solution Based Hypnotherapy, Master Hypnotherapist, NLP, EFT/TFT, CTAA)
 
 ### 🔹 Services Section (3 cards on dark background)
 - **Section title:** Search for `Structured, online, and built around your real life`
