@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>TaskBuddy — Visual Task Timer</title>
+<meta name="description" content="Visual task timer designed for autism & special needs. Colorful timers, photo reveals, rewards, and accessibility features.">
+<meta name="theme-color" content="#1a1a2e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1a1a2e;
+    --surface: #16213e;
+    --surface2: #0f3460;
+    --text: #f0f0f0;
+    --text-dim: #a0a0c0;
+    --accent: #e94560;
+    --success: #4ecca3;
+    --warning: #f0c040;
+    --info: #7b68ee;
+    --font-main: 'Nunito', system-ui, sans-serif;
+    --radius: 18px;
+  }
+  :root.light {
+    --bg: #f0f2f5;
+    --surface: #ffffff;
+    --surface2: #e0e0e8;
+    --text: #000000;
+    --text-dim: #444444;
+  }
+  :root.dyslexic { --font-main: 'OpenDyslexic', sans-serif; }
+
+  /* Theme presets */
+  :root.theme-ocean { --bg: #0a1628; --surface: #0d2137; --surface2: #163a5c; --accent: #00b4d8; --success: #06d6a0; --info: #48cae4; }
+  :root.theme-jungle { --bg: #0b1a0b; --surface: #142814; --surface2: #1e3d1e; --accent: #ff6b35; --success: #8ac926; --info: #06d6a0; }
+  :root.theme-space { --bg: #0b0025; --surface: #150040; --surface2: #250066; --accent: #ff006e; --success: #8338ec; --info: #3a86ff; }
+  :root.theme-candy { --bg: #2d1b33; --surface: #3d2645; --surface2: #5c3d6e; --accent: #ff6b9d; --success: #c0eb75; --info: #ffd166; --warning: #ff9a76; }
+  :root.theme-ocean.light { --bg: #e8f4f8; --surface: #fff; --surface2: #c5e4ed; }
+  :root.theme-jungle.light { --bg: #edf5ed; --surface: #fff; --surface2: #c5dcc5; }
+  :root.theme-space.light { --bg: #f0ecf5; --surface: #fff; --surface2: #d5c8e8; }
+  :root.theme-candy.light { --bg: #fce8ef; --surface: #fff; --surface2: #f0c5d4; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--font-main);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ===== TOP BAR ===== */
+  .top-bar {
+    display: flex; align-items: center; flex-wrap: wrap;
+    padding: 10px 12px; background: var(--surface);
+    border-bottom: 2px solid var(--surface2); gap: 8px;
+  }
+  .top-bar h1 {
+    font-size: 1.3rem; font-weight: 800;
+    background: linear-gradient(135deg, #e94560, #f0c040, #4ecca3, #7b68ee);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .top-bar-controls { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; flex: 1; justify-content: flex-end; }
+  .top-bar-right { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
+
+  /* ===== BUTTONS ===== */
+  button {
+    border: none; border-radius: 12px; padding: 10px 18px;
+    font-size: 0.95rem; font-weight: 700; cursor: pointer;
+    font-family: var(--font-main);
+    transition: transform 0.12s, box-shadow 0.2s, opacity 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:hover { transform: scale(1.03); }
+  button:active { transform: scale(0.96); }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-success { background: var(--success); color: #1a1a2e; }
+  .btn-warning { background: var(--warning); color: #1a1a2e; }
+  .btn-info { background: var(--info); color: #fff; }
+  .btn-small { padding: 8px 14px; font-size: 0.85rem; border-radius: 10px; }
+  .btn-icon { padding: 8px 12px; font-size: 1.1rem; border-radius: 12px; background: var(--surface2); color: var(--text); }
+
+  /* ===== VIEW / LAYOUT TABS ===== */
+  .view-tabs { display: flex; gap: 3px; background: var(--surface2); border-radius: 12px; padding: 3px; }
+  .view-tab { padding: 8px 14px; border-radius: 9px; background: transparent; color: var(--text-dim); font-size: 0.88rem; }
+  .view-tab.active { background: var(--accent); color: #fff; }
+  .layout-toggles { display: flex; gap: 3px; background: var(--surface2); border-radius: 10px; padding: 3px; }
+  .layout-btn { padding: 6px 10px; border-radius: 8px; background: transparent; color: var(--text-dim); font-size: 1rem; }
+  .layout-btn.active { background: var(--info); color: #fff; }
+
+  /* ===== CLASSROOM VIEW ===== */
+  .classroom-container { display: flex; gap: 16px; padding: 16px; overflow-x: auto; min-height: 60vh; }
+  .classroom-column {
+    flex: 0 0 280px; background: var(--surface); border-radius: var(--radius);
+    border: 2px solid var(--surface2); overflow: hidden; display: flex; flex-direction: column;
+  }
+  .classroom-header {
+    padding: 14px 16px; background: var(--surface2); text-align: center;
+    font-weight: 800; font-size: 1.1rem; border-bottom: 2px solid var(--surface2);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .classroom-header .student-emoji { font-size: 1.6rem; }
+  .classroom-tasks { padding: 10px; display: flex; flex-direction: column; gap: 10px; flex: 1; overflow-y: auto; }
+  .classroom-task {
+    background: var(--bg); border-radius: 12px; padding: 12px;
+    border: 2px solid var(--surface2); transition: border-color 0.3s;
+  }
+  .classroom-task.active { border-color: var(--accent); }
+  .classroom-task.completed { border-color: var(--success); opacity: 0.7; }
+  .classroom-task .ct-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
+  .classroom-task .ct-time { font-size: 1.8rem; font-weight: 800; text-align: center; font-variant-numeric: tabular-nums; padding: 6px 0; }
+  .classroom-task .ct-progress { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
+  .classroom-task .ct-progress-fill { height: 100%; border-radius: 4px; transition: width 0.5s linear; }
+  .classroom-task .ct-controls { display: flex; gap: 6px; justify-content: center; }
+  .classroom-task .ct-controls button { font-size: 0.8rem; padding: 6px 10px; min-height: 36px; }
+  .classroom-view-tab { display: none; }
+  @media (min-width: 768px) { .classroom-view-tab { display: block; } }
+
+  /* ===== PROFILE BAR (SLIDER) ===== */
+  .profile-bar {
+    display: flex; align-items: center; background: var(--surface); border-bottom: 1px solid var(--surface2);
+    padding: 0; position: relative;
+  }
+  .profile-slider-wrap {
+    flex: 1; overflow: hidden; position: relative;
+  }
+  .profile-slider-track {
+    display: flex; gap: 8px; padding: 10px 8px; align-items: center;
+    overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .profile-slider-track::-webkit-scrollbar { display: none; }
+  .profile-slider-arrow {
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; min-width: 40px; height: 100%; 
+    background: var(--accent); color: #fff; font-size: 1.5rem; font-weight: 900;
+    cursor: pointer; border: none; font-family: var(--font-main); z-index: 2;
+    transition: opacity 0.2s, background 0.2s;
+    opacity: 1;
+  }
+  .profile-slider-arrow:hover { background: var(--info); }
+  .profile-slider-arrow:active { background: var(--info); transform: scale(0.95); }
+  .profile-slider-arrow.disabled { opacity: 0.2; cursor: default; pointer-events: none; }
+  .profile-chip {
+    padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 700;
+    background: var(--surface2); color: var(--text-dim); white-space: nowrap; cursor: pointer;
+    font-family: var(--font-main); border: 2px solid transparent; flex-shrink: 0;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .profile-chip:active { transform: scale(0.95); }
+  .profile-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .profile-chip.add { background: transparent; border: 2px dashed var(--text-dim); color: var(--text-dim); }
+
+  /* Classroom profile slider — horizontal scroll carousel */
+  .classroom-profile-slider {
+    display: flex; align-items: center; gap: 0; padding: 0 0 10px 0;
+  }
+  .classroom-profile-slider .cps-track {
+    display: flex; gap: 10px; overflow-x: auto; padding: 4px 8px;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; flex: 1;
+  }
+  .classroom-profile-slider .cps-track::-webkit-scrollbar { display: none; }
+  .classroom-profile-slider .cps-arrow {
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; min-width: 40px; height: 70px;
+    background: var(--accent); color: #fff; font-size: 1.5rem; font-weight: 900;
+    cursor: pointer; border: none; border-radius: 10px; margin: 0 2px;
+    transition: opacity 0.2s, background 0.2s;
+  }
+  .classroom-profile-slider .cps-arrow:hover { background: var(--info); }
+  .classroom-profile-slider .cps-arrow:active { transform: scale(0.95); }
+  .classroom-profile-card {
+    flex: 0 0 auto; scroll-snap-align: start;
+    min-width: 100px; padding: 10px 14px; border-radius: 14px;
+    background: var(--surface2); text-align: center; cursor: pointer;
+    border: 2px solid transparent; transition: border-color 0.15s, transform 0.15s;
+  }
+  .classroom-profile-card.active { border-color: var(--accent); }
+  .classroom-profile-card:active { transform: scale(0.96); }
+  .classroom-profile-card .cp-emoji { font-size: 2rem; }
+  .classroom-profile-card .cp-name { font-size: 0.85rem; font-weight: 700; margin-top: 4px; }
+  .classroom-profile-card .cp-meta { font-size: 0.7rem; color: var(--text-dim); margin-top: 2px; }
+  .classroom-profile-card img.cp-photo { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; }
+
+  /* Classroom columns slider */
+  .classroom-columns-slider {
+    display: flex; align-items: stretch; gap: 0; position: relative;
+  }
+  .classroom-columns-slider .cols-track {
+    display: flex; gap: 16px; overflow-x: auto; padding: 0 4px 8px 4px;
+    scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; flex: 1;
+  }
+  .classroom-columns-slider .cols-track::-webkit-scrollbar { display: none; }
+  .classroom-columns-slider .cols-arrow {
+    display: flex; align-items: center; justify-content: center;
+    width: 44px; min-width: 44px;
+    background: var(--accent); color: #fff; font-size: 1.8rem; font-weight: 900;
+    cursor: pointer; border: none; border-radius: 12px; margin: 0 4px;
+    transition: background 0.2s; align-self: stretch;
+  }
+  .classroom-columns-slider .cols-arrow:hover { background: var(--info); }
+  .classroom-columns-slider .cols-arrow:active { transform: scale(0.96); }
+
+  /* ===== REWARD/STREAK BAR ===== */
+  .reward-bar {
+    display: flex; gap: 16px; padding: 12px 20px; align-items: center;
+    background: var(--surface); border-bottom: 1px solid var(--surface2);
+    font-size: 0.9rem; flex-wrap: wrap;
+  }
+  .reward-stars { font-size: 1.2rem; }
+  .streak-badge {
+    background: linear-gradient(135deg, var(--warning), var(--accent));
+    color: #fff; padding: 4px 12px; border-radius: 20px; font-weight: 800; font-size: 0.85rem;
+  }
+  .reward-progress {
+    flex: 1; min-width: 120px; display: flex; align-items: center; gap: 8px;
+  }
+  .reward-progress-bar {
+    flex: 1; height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden;
+  }
+  .reward-progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--warning), var(--accent));
+    border-radius: 5px; transition: width 0.5s;
+  }
+
+  /* ===== TASK GRID ===== */
+  .task-container { padding: 20px; }
+  .task-grid { display: grid; gap: 18px; }
+  .task-grid.layout-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .task-grid.layout-vertical { grid-template-columns: 1fr; max-width: 600px; margin: 0 auto; }
+  .task-grid.layout-horizontal { grid-auto-flow: column; grid-auto-columns: 300px; overflow-x: auto; padding-bottom: 12px; scroll-snap-type: x mandatory; }
+  .task-grid.layout-horizontal .task-card { scroll-snap-align: center; }
+
+  /* ===== TASK CARD ===== */
+  .task-card {
+    position: relative; border-radius: var(--radius); overflow: hidden;
+    background: var(--surface); border: 2px solid var(--surface2);
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+    min-height: 200px;
+  }
+  .task-card.active { border-color: var(--accent); box-shadow: 0 0 24px rgba(233,69,96,0.3); transform: scale(1.01); }
+  .task-card.completed { border-color: var(--success); }
+  .task-card.completed .task-content { opacity: 0.7; }
+
+  .task-fill {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 0%;
+    transition: height 0.5s linear; opacity: 0.18; z-index: 0;
+  }
+
+  /* Photo reveal overlay */
+  .task-photo-reveal {
+    position: absolute; inset: 0; z-index: 0; overflow: hidden;
+    background-size: cover; background-position: center;
+  }
+  .task-photo-mask {
+    position: absolute; inset: 0;
+    background: var(--surface);
+    transition: clip-path 0.5s linear;
+    clip-path: inset(0 0 0 0);
+  }
+
+  .task-content {
+    position: relative; z-index: 1; padding: 18px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .task-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .task-emoji { font-size: 2rem; line-height: 1; }
+  .task-photo-icon { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; border: 2px solid var(--surface2); }
+  .task-title { font-size: 1.2rem; font-weight: 800; flex: 1; line-height: 1.3; }
+  .task-order { font-size: 0.72rem; color: var(--text-dim); background: var(--surface2); border-radius: 6px; padding: 2px 8px; }
+
+  .task-time-display {
+    font-size: 3rem; font-weight: 800; text-align: center;
+    font-variant-numeric: tabular-nums; letter-spacing: 2px; padding: 8px 0;
+  }
+
+  .task-progress-bar { height: 12px; background: var(--surface2); border-radius: 6px; overflow: hidden; }
+  .task-progress-fill { height: 100%; border-radius: 6px; transition: width 0.5s linear; width: 0%; }
+
+  .task-controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .task-status { text-align: center; font-size: 0.85rem; color: var(--text-dim); font-weight: 600; }
+
+  .task-card.active .task-title { color: var(--accent); }
+  :root.light .task-time-display { color: #000 !important; }
+  :root.light .task-title { color: #000 !important; }
+  :root.light .task-card.active .task-title { color: var(--accent) !important; }
+
+  /* Transition warning */
+  .transition-warning {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: linear-gradient(135deg, var(--warning), var(--accent));
+    color: #fff; text-align: center; padding: 14px;
+    font-size: 1.1rem; font-weight: 800; z-index: 50;
+    transform: translateY(-100%); transition: transform 0.3s;
+  }
+  .transition-warning.show { transform: translateY(0); }
+
+  @keyframes pulse-warning {
+    0%,100% { box-shadow: 0 0 20px rgba(240,192,64,0.3); }
+    50% { box-shadow: 0 0 40px rgba(240,192,64,0.6); }
+  }
+  .task-card.warning { animation: pulse-warning 1s infinite; border-color: var(--warning); }
+
+  @keyframes celebrate {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  .task-card.just-completed { animation: celebrate 0.5s ease; }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7); z-index: 100;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  body.modal-active { overflow: hidden; position: fixed; width: 100%; }
+  .modal {
+    background: var(--surface); border-radius: 20px;
+    max-width: 500px; width: 100%; max-height: 90vh;
+    border: 2px solid var(--surface2);
+    display: flex; flex-direction: column;
+  }
+  .modal-body { padding: 28px; padding-bottom: 0; overflow-y: auto; flex: 1; }
+  .modal h2 { font-size: 1.3rem; margin-bottom: 18px; color: var(--accent); }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-dim); margin-bottom: 5px; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 10px 14px; border-radius: 10px;
+    border: 2px solid var(--surface2); background: var(--bg);
+    color: var(--text); font-size: 1rem; font-family: var(--font-main);
+  }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--info); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .color-picker-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .color-swatch {
+    width: 38px; height: 38px; border-radius: 10px; cursor: pointer;
+    border: 3px solid transparent; transition: border-color 0.2s, transform 0.12s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .color-swatch:hover { transform: scale(1.1); }
+  .color-swatch.selected { border-color: var(--accent); transform: scale(1.15); box-shadow: 0 0 0 3px var(--accent); }
+  .modal-actions { display: flex; gap: 10px; padding: 14px 28px; justify-content: flex-end; border-top: 1px solid var(--surface2); flex-shrink: 0; }
+  .photo-upload-area {
+    border: 2px dashed var(--text-dim); border-radius: 12px; padding: 20px;
+    text-align: center; cursor: pointer; color: var(--text-dim);
+    transition: border-color 0.2s;
+  }
+  .photo-upload-area:hover { border-color: var(--accent); }
+  .photo-upload-area img { max-width: 100%; max-height: 120px; border-radius: 8px; margin-top: 8px; }
+
+  /* ===== WEEK BAR ===== */
+  .week-bar {
+    display: flex; gap: 4px; padding: 10px 20px; overflow-x: auto;
+    background: var(--surface); border-bottom: 1px solid var(--surface2);
+  }
+  .day-btn {
+    padding: 8px 14px; border-radius: 10px; background: var(--surface2);
+    color: var(--text-dim); font-weight: 700; font-size: 0.85rem;
+  }
+  .day-btn.active { background: var(--info); color: #fff; }
+  .day-btn.today { border: 2px solid var(--warning); }
+
+  /* ===== GLOBAL CONTROLS ===== */
+  .global-controls {
+    display: flex; flex-direction: column; gap: 8px; padding: 12px 16px;
+    background: var(--surface); border-top: 2px solid var(--surface2);
+    position: sticky; bottom: 0;
+  }
+
+  /* ===== SETTINGS PANEL ===== */
+  .settings-panel {
+    display: none; position: fixed; right: 0; top: 0; bottom: 0;
+    width: 320px; max-width: 90vw; background: var(--surface);
+    border-left: 2px solid var(--surface2); z-index: 90;
+    padding: 24px; overflow-y: auto; box-shadow: -4px 0 20px rgba(0,0,0,0.3);
+    transition: transform 0.3s;
+  }
+  .settings-panel.open { display: block; }
+  .settings-panel h3 { color: var(--accent); margin-bottom: 16px; font-size: 1.2rem; }
+  .setting-row { margin-bottom: 16px; }
+  .setting-row label { font-size: 0.85rem; font-weight: 700; color: var(--text-dim); display: block; margin-bottom: 6px; }
+  .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .theme-card {
+    padding: 12px 8px; border-radius: 12px; text-align: center; cursor: pointer;
+    border: 2px solid var(--surface2); font-size: 0.8rem; font-weight: 700;
+    color: var(--text-dim); transition: border-color 0.2s;
+    font-family: var(--font-main);
+    background: var(--surface2);
+  }
+  .theme-card.active { border-color: var(--accent); color: var(--accent); }
+  .theme-card .theme-preview {
+    width: 100%; height: 24px; border-radius: 6px; margin-bottom: 6px;
+  }
+  .toggle-switch {
+    position: relative; width: 52px; height: 28px; display: inline-block;
+  }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute; inset: 0; background: var(--surface2); border-radius: 14px;
+    cursor: pointer; transition: background 0.3s;
+  }
+  .toggle-slider::before {
+    content: ''; position: absolute; width: 22px; height: 22px;
+    left: 3px; top: 3px; background: #fff; border-radius: 50%;
+    transition: transform 0.3s;
+  }
+  .toggle-switch input:checked + .toggle-slider { background: var(--success); }
+  .toggle-switch input:checked + .toggle-slider::before { transform: translateX(24px); }
+
+  /* ===== KID LOCK ===== */
+  .lock-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    z-index: 200; align-items: center; justify-content: center;
+  }
+  .lock-overlay.open { display: flex; }
+  .lock-box {
+    background: var(--surface); border-radius: 20px; padding: 30px;
+    text-align: center; max-width: 300px; width: 90%;
+  }
+  .lock-box h3 { margin-bottom: 16px; }
+  .pin-dots { display: flex; gap: 12px; justify-content: center; margin-bottom: 20px; }
+  .pin-dot {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--surface2); transition: background 0.2s;
+  }
+  .pin-dot.filled { background: var(--accent); }
+  .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .pin-key {
+    padding: 16px; font-size: 1.4rem; font-weight: 800;
+    border-radius: 14px; background: var(--surface2); color: var(--text);
+    border: none; cursor: pointer; font-family: var(--font-main);
+    min-height: 56px;
+  }
+  .pin-key:active { background: var(--accent); color: #fff; }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state { text-align: center; padding: 60px 24px; color: var(--text-dim); }
+  .empty-state .emoji { font-size: 3.5rem; margin-bottom: 12px; }
+  .empty-state p { font-size: 1.05rem; margin-bottom: 20px; }
+
+  .save-indicator { font-size: 0.8rem; color: var(--success); opacity: 0; transition: opacity 0.3s; }
+  .save-indicator.show { opacity: 1; }
+
+  /* ===== RESPONSIVE — MOBILE ===== */
+  @media (max-width: 600px) {
+    .top-bar { padding: 6px 8px; gap: 4px; flex-wrap: wrap; }
+    .top-bar h1 { font-size: 1rem; width: 100%; text-align: center; margin: 0; }
+    .top-bar-controls { width: 100%; justify-content: center; gap: 3px; flex-wrap: wrap; }
+    .top-bar-right { justify-content: center; }
+    .btn-primary.add-btn { padding: 6px 10px; font-size: 0.8rem; }
+    .btn-icon { padding: 4px 6px; font-size: 0.9rem; min-height: 36px; min-width: 36px; }
+    .top-bar-right .btn-icon { padding: 3px 6px; min-height: 32px; min-width: 32px; font-size: 0.85rem; }
+    .view-tab { padding: 5px 8px; font-size: 0.75rem; }
+    .layout-toggles { display: none; }
+    .task-container { padding: 8px; }
+    .task-grid.layout-grid { grid-template-columns: 1fr; }
+    .task-grid.layout-horizontal { grid-auto-columns: 85vw; }
+    .task-card { min-height: 140px; }
+    .task-time-display { font-size: 2.2rem; }
+    button { min-height: 38px; }
+    .btn-small { min-height: 38px; padding: 8px 10px; font-size: 0.78rem; }
+    /* Compact profile bar */
+    .profile-bar { padding: 0; }
+    .profile-slider-track { padding: 4px 4px; gap: 4px; }
+    .profile-slider-arrow { width: 22px; min-width: 22px; font-size: 0.85rem; }
+    .profile-chip { padding: 4px 10px; font-size: 0.75rem; border-radius: 14px; }
+    /* Compact classroom profiles */
+    .classroom-profile-card { flex: 0 0 auto; min-width: 64px; padding: 5px 8px; border-radius: 10px; }
+    .classroom-profile-card .cp-emoji { font-size: 1.1rem; }
+    .classroom-profile-card .cp-name { font-size: 0.65rem; margin-top: 2px; }
+    .classroom-profile-card .cp-meta { font-size: 0.55rem; }
+    .classroom-profile-card img.cp-photo { width: 32px; height: 32px; }
+    .classroom-profile-slider .cps-arrow { width: 22px; min-width: 22px; font-size: 0.85rem; height: 40px; }
+    /* Classroom column header — compact */
+    .classroom-header { padding: 8px 10px; font-size: 0.9rem; }
+    .classroom-header .student-emoji { font-size: 1.2rem; }
+    .classroom-task .ct-time { font-size: 1.5rem; padding: 4px 0; }
+    .classroom-task .ct-controls button { font-size: 0.7rem; padding: 4px 8px; min-height: 30px; }
+    .classroom-task { padding: 8px; }
+    .classroom-columns-slider .cols-arrow { display: none; }
+    .classroom-columns-slider .cols-track { scroll-snap-type: x mandatory; gap: 10px; }
+    .classroom-column { flex: 0 0 82vw; min-width: 82vw; scroll-snap-align: start; }
+    /* Compact global controls */
+    .global-controls { padding: 6px 8px; gap: 4px; flex-wrap: wrap; justify-content: center; }
+    .global-controls > div { gap: 4px !important; }
+    .global-controls button { font-size: 0.72rem; padding: 7px 8px; min-width: 0; min-height: 34px; white-space: nowrap; }
+    .modal { border-radius: 16px 16px 0 0; max-height: 85vh; }
+    .modal-overlay { align-items: flex-end; padding: 0; }
+    .modal-actions button { flex: 1; min-height: 40px; }
+    .reward-bar { padding: 6px 10px; font-size: 0.75rem; }
+    .settings-panel { width: 100%; max-width: 100%; }
+  }
+  @media (max-width: 380px) {
+    .top-bar h1 { font-size: 1.1rem; }
+    .task-time-display { font-size: 2.1rem; }
+  }
+  /* Landscape on phones — compact everything */
+  @media (max-height: 500px) and (orientation: landscape) {
+    .top-bar { padding: 4px 10px; gap: 4px; }
+    .top-bar h1 { font-size: 1rem; width: auto; }
+    .top-bar-controls { width: auto; }
+    button { min-height: 32px !important; padding: 4px 10px !important; font-size: 0.8rem !important; }
+    .btn-icon { min-height: 32px !important; min-width: 32px !important; padding: 3px 6px !important; font-size: 0.9rem !important; }
+    .view-tab { padding: 4px 8px !important; font-size: 0.75rem !important; }
+    .profile-bar { padding: 0; }
+    .profile-slider-track { padding: 4px 4px; gap: 4px; }
+    .profile-slider-arrow { width: 24px; min-width: 24px; font-size: 1rem; }
+    .profile-chip { font-size: 0.75rem; padding: 4px 10px; }
+    .classroom-profile-card { flex: 0 0 auto; min-width: 70px; padding: 6px 8px; }
+    .classroom-profile-card .cp-emoji { font-size: 1.2rem; }
+    .classroom-profile-slider .cps-arrow { width: 24px; min-width: 24px; font-size: 0.9rem; height: 40px; }
+    .classroom-columns-slider .cols-arrow { display: none; }
+    .classroom-column { flex: 0 0 90vw; min-width: 90vw; }
+    .profile-chip { padding: 3px 10px; font-size: 0.78rem; }
+    .reward-bar { padding: 4px 10px; font-size: 0.75rem; }
+    .global-controls { padding: 4px 8px; gap: 4px; }
+    .global-controls > div { gap: 4px !important; }
+    .task-container { padding: 6px; }
+    .task-card { min-height: 120px; }
+    .task-time-display { font-size: 1.8rem; }
+    .task-content { padding: 10px; gap: 6px; }
+  }
+  @media (min-width: 601px) and (max-width: 1024px) {
+    .task-grid.layout-grid { grid-template-columns: repeat(2, 1fr); }
+    button { min-height: 48px; }
+  }
+  @media (min-width: 1025px) {
+    .task-grid.layout-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+    .task-container { padding: 30px 40px; }
+  }
+
+  /* ===== GUIDED TOUR / WHAT'S NEW ===== */
+  .tour-overlay {
+    position: fixed; inset: 0; z-index: 9998;
+    background: transparent;
+    pointer-events: auto;
+    transition: opacity 0.3s;
+  }
+  .tour-spotlight {
+    position: fixed; z-index: 9999;
+    border-radius: 12px;
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.6), 0 0 30px 8px rgba(233,69,96,0.6);
+    border: 2px solid rgba(233,69,96,0.8);
+    transition: all 0.4s ease;
+    pointer-events: none;
+  }
+  .tour-tooltip {
+    position: fixed; z-index: 10000;
+    background: var(--surface); border: 2px solid var(--accent);
+    border-radius: 16px; padding: 20px 22px;
+    max-width: 320px; width: calc(100vw - 40px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    animation: tourPop 0.3s ease;
+    /* Always center on mobile for reliability */
+    left: 50% !important; transform: translateX(-50%);
+  }
+  @keyframes tourPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+  .tour-tooltip h3 { font-size: 1.1rem; color: var(--accent); margin-bottom: 8px; }
+  .tour-tooltip p { font-size: 0.92rem; color: var(--text); line-height: 1.5; margin-bottom: 16px; }
+  .tour-tooltip .tour-step-info { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 12px; }
+  .tour-actions { display: flex; gap: 8px; }
+  .tour-actions button { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: var(--font-main); }
+  .tour-btn-next { background: var(--accent); color: #fff; }
+  .tour-btn-next:active { transform: scale(0.97); }
+  .tour-btn-skip { background: var(--surface2); color: var(--text-dim); }
+  .tour-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 12px; }
+  .tour-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--surface2); }
+  .tour-dot.active { background: var(--accent); }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+</head>
+<body>
+
+<!-- TOUR SYSTEM (spotlight + tooltip injected by JS) -->
+<div id="tourOverlay" class="tour-overlay" style="display:none;"></div>
+<div id="tourSpotlight" class="tour-spotlight" style="display:none;"></div>
+<div id="tourTooltip" class="tour-tooltip" style="display:none;"></div>
+
+<!-- TRANSITION WARNING BANNER -->
+<div class="transition-warning" id="transitionWarning"></div>
+
+<!-- KID LOCK OVERLAY -->
+<div class="lock-overlay" id="lockOverlay">
+  <div class="lock-box">
+    <h3>🔒 Enter PIN to Unlock</h3>
+    <div class="pin-dots" id="pinDots"></div>
+    <div class="pin-pad" id="pinPad"></div>
+    <p id="pinError" style="color:var(--accent);margin-top:12px;font-size:0.85rem;opacity:0;">Wrong PIN</p>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<div class="top-bar" id="topBar">
+  <h1>🌟 TaskBuddy</h1>
+  <div class="top-bar-controls">
+    <div class="view-tabs" id="viewTabs">
+      <button class="view-tab active" data-view="daily" onclick="switchView('daily')">📋 Daily</button>
+      <button class="view-tab" data-view="weekly" onclick="switchView('weekly')">📅 Weekly</button>
+      <button class="view-tab classroom-view-tab" data-view="classroom" onclick="switchView('classroom')">🏫 Classroom</button>
+    </div>
+    <div class="layout-toggles" id="layoutToggles">
+      <button class="layout-btn active" data-layout="grid" onclick="switchLayout('grid')">⊞</button>
+      <button class="layout-btn" data-layout="vertical" onclick="switchLayout('vertical')">☰</button>
+      <button class="layout-btn" data-layout="horizontal" onclick="switchLayout('horizontal')">⫼</button>
+    </div>
+    <button class="btn-primary add-btn" id="addBtn" onclick="openAddModal()">＋ Add</button>
+    <div class="top-bar-right">
+      <button class="btn-icon" id="themeToggle" onclick="toggleTheme()">🌙</button>
+      <button class="btn-icon" id="settingsBtn" onclick="openSettings()">⚙️</button>
+      <button class="btn-icon" id="lockBtn" onclick="toggleLock()">🔓</button>
+      <button class="btn-icon" id="helpBtn" onclick="startOnboarding()" title="How to use">❓</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE BAR -->
+<div class="profile-bar" id="profileBar">
+  <button class="profile-slider-arrow" id="profileArrowLeft" onclick="scrollProfiles(-1)">‹</button>
+  <div class="profile-slider-wrap"><div class="profile-slider-track" id="profileTrack"></div></div>
+  <button class="profile-slider-arrow" id="profileArrowRight" onclick="scrollProfiles(1)">›</button>
+</div>
+
+<!-- REWARD BAR -->
+<div class="reward-bar" id="rewardBar"></div>
+
+<!-- WEEK BAR -->
+<div class="week-bar" id="weekBar" style="display:none;"></div>
+
+<!-- TASK AREA -->
+<div class="task-container" id="taskContainer">
+  <div class="task-grid layout-grid" id="taskGrid"></div>
+</div>
+
+<!-- CLASSROOM VIEW -->
+<div class="classroom-container" id="classroomContainer" style="display:none;"></div>
+
+<!-- GLOBAL CONTROLS -->
+<div class="global-controls" id="globalControls">
+  <div style="display:flex;gap:8px;width:100%;justify-content:center;">
+    <button class="btn-success" onclick="startAll()" style="flex:1;">▶ Start All</button>
+    <button class="btn-warning" onclick="pauseAll()" style="flex:1;">⏸ Pause</button>
+    <button class="btn-info" onclick="resetAll()" style="flex:1;">↺ Reset</button>
+  </div>
+  <div style="display:flex;gap:8px;width:100%;justify-content:center;align-items:center;">
+    <button class="btn-icon" onclick="exportSchedule()" title="Save your setup to a file" style="flex:1;">💾 Save</button>
+    <button class="btn-icon" onclick="document.getElementById('importInput').click()" title="Load a saved setup file" style="flex:1;">📂 Open</button>
+    <input type="file" id="importInput" accept=".json" style="display:none" onchange="importSchedule(event)">
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfoVeJdePHQUAPQONdMAyuZIoKEvv4u2k5eXg6DOoDmM1otdQ/viewform" target="_blank" style="text-decoration:none;flex:1;"><button class="btn-warning" style="background:linear-gradient(135deg,var(--warning),var(--accent));color:#fff;font-size:0.85rem;padding:10px 12px;width:100%;">💬 Feedback</button></a>
+    <span class="save-indicator" id="saveIndicator">💾</span>
+  </div>
+</div>
+
+<!-- SETTINGS PANEL -->
+<div class="settings-panel" id="settingsPanel">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <h3>⚙️ Settings</h3>
+    <button class="btn-icon" onclick="closeSettings()">✕</button>
+  </div>
+
+  <div class="setting-row">
+    <label>Color Theme</label>
+    <div class="theme-grid" id="themeGrid">
+      <div class="theme-card active" data-theme="default" onclick="setTheme('default')">
+        <div class="theme-preview" style="background:linear-gradient(135deg,#1a1a2e,#e94560)"></div>Default
+      </div>
+      <div class="theme-card" data-theme="ocean" onclick="setTheme('ocean')">
+        <div class="theme-preview" style="background:linear-gradient(135deg,#0a1628,#00b4d8)"></div>Ocean
+      </div>
+      <div class="theme-card" data-theme="jungle" onclick="setTheme('jungle')">
+        <div class="theme-preview" style="background:linear-gradient(135deg,#0b1a0b,#8ac926)"></div>Jungle
+      </div>
+      <div class="theme-card" data-theme="space" onclick="setTheme('space')">
+        <div class="theme-preview" style="background:linear-gradient(135deg,#0b0025,#3a86ff)"></div>Space
+      </div>
+      <div class="theme-card" data-theme="candy" onclick="setTheme('candy')">
+        <div class="theme-preview" style="background:linear-gradient(135deg,#2d1b33,#ff6b9d)"></div>Candy
+      </div>
+    </div>
+  </div>
+
+  <div class="setting-row">
+    <label>Dyslexia-Friendly Font</label>
+    <label class="toggle-switch">
+      <input type="checkbox" id="dyslexicToggle" onchange="toggleDyslexic(this.checked)">
+      <span class="toggle-slider"></span>
+    </label>  </div>
+
+  <div class="setting-row">
+    <label>Transition Warning (seconds before end)</label>
+    <input type="number" id="transitionWarnSec" value="10" min="0" max="60" style="width:80px;padding:8px;border-radius:8px;border:2px solid var(--surface2);background:var(--bg);color:var(--text);font-family:var(--font-main);" onchange="saveSettings()">
+  </div>
+
+  <div class="setting-row">
+    <label>Kid Lock PIN (4 digits)</label>
+    <input type="password" id="pinInput" maxlength="4" placeholder="Set PIN" style="width:120px;padding:8px;border-radius:8px;border:2px solid var(--surface2);background:var(--bg);color:var(--text);font-family:var(--font-main);letter-spacing:6px;text-align:center;" onchange="saveSettings()">
+  </div>
+
+  <div class="setting-row">
+    <label>Stars Needed for Reward</label>
+    <input type="number" id="rewardGoal" value="10" min="1" max="100" style="width:80px;padding:8px;border-radius:8px;border:2px solid var(--surface2);background:var(--bg);color:var(--text);font-family:var(--font-main);" onchange="saveSettings()">
+  </div>
+
+  <div class="setting-row">
+    <label>Reward Message</label>
+    <input type="text" id="rewardMessage" value="🎉 Amazing! Time for your reward!" placeholder="Custom reward message" style="padding:8px;border-radius:8px;border:2px solid var(--surface2);background:var(--bg);color:var(--text);font-family:var(--font-main);width:100%;" onchange="saveSettings()">
+  </div>
+
+  <div class="setting-row">
+    <label>🏫 Classroom View</label>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <label class="toggle-switch">
+        <input type="checkbox" id="classroomToggle" onchange="toggleClassroomMode(this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+      <span style="font-size:0.78rem;color:var(--text-dim);">Best on tablets & desktops</span>
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT TASK MODAL -->
+<div class="modal-overlay" id="taskModal">
+  <div class="modal">
+    <div class="modal-body">
+    <h2 id="modalTitle">Add New Task</h2>
+    <div class="form-group">
+      <label>Task Name</label>
+      <input type="text" id="taskName" placeholder="e.g., Brush Teeth" maxlength="50">
+    </div>
+    <div class="form-group">
+      <label>Icon</label>
+      <div class="color-picker-row" id="emojiPicker">
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="⏰" onclick="pickEmoji(this)">⏰</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="📚" onclick="pickEmoji(this)">📚</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🍳" onclick="pickEmoji(this)">🍳</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🧹" onclick="pickEmoji(this)">🧹</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🎮" onclick="pickEmoji(this)">🎮</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🛁" onclick="pickEmoji(this)">🛁</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🏃" onclick="pickEmoji(this)">🏃</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="💊" onclick="pickEmoji(this)">💊</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🎨" onclick="pickEmoji(this)">🎨</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="😴" onclick="pickEmoji(this)">😴</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🎵" onclick="pickEmoji(this)">🎵</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="✏️" onclick="pickEmoji(this)">✏️</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🦷" onclick="pickEmoji(this)">🦷</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="👕" onclick="pickEmoji(this)">👕</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🍎" onclick="pickEmoji(this)">🍎</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🐕" onclick="pickEmoji(this)">🐕</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🚽" onclick="pickEmoji(this)">🚽</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="💻" onclick="pickEmoji(this)">💻</span>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Minutes</label>
+        <input type="number" id="taskMinutes" value="5" min="0" max="180">
+      </div>
+      <div class="form-group">
+        <label>Seconds</label>
+        <input type="number" id="taskSeconds" value="0" min="0" max="59">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Color</label>
+      <div class="color-picker-row" id="colorPicker">
+        <div class="color-swatch selected" style="background:#e94560" data-color="#e94560" onclick="pickColor(this)"></div>
+        <div class="color-swatch" style="background:#f0c040" data-color="#f0c040" onclick="pickColor(this)"></div>
+        <div class="color-swatch" style="background:#4ecca3" data-color="#4ecca3" onclick="pickColor(this)"></div>
+        <div class="color-swatch" style="background:#7b68ee" data-color="#7b68ee" onclick="pickColor(this)"></div>
+        <div class="color-swatch" style="background:#ff6b6b" data-color="#ff6b6b" onclick="pickColor(this)"></div>
+        <div class="color-swatch" style="background:#48dbfb" data-color="#48dbfb" onclick="pickColor(this)"></div>
+        <div class="color-swatch" style="background:#ff9ff3" data-color="#ff9ff3" onclick="pickColor(this)"></div>
+        <div class="color-swatch" style="background:#f368e0" data-color="#f368e0" onclick="pickColor(this)"></div>
+        <div class="color-swatch" style="background:#0abde3" data-color="#0abde3" onclick="pickColor(this)"></div>
+        <div class="color-swatch" style="background:#10ac84" data-color="#10ac84" onclick="pickColor(this)"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Sound</label>
+      <select id="taskSound">
+        <option value="chime">🔔 Gentle Chime</option>
+        <option value="ding">✨ Ding</option>
+        <option value="bell">🎵 Bell</option>
+        <option value="success">🎉 Fanfare</option>
+        <option value="applause">👏 Applause</option>
+      </select>
+      <button class="btn-small btn-info" style="margin-top:6px;" onclick="playSound(document.getElementById('taskSound').value)">▶ Preview</button>
+    </div>
+    <div class="form-group">
+      <label>Reward Photo (reveals as timer completes)</label>
+      <div class="photo-upload-area" id="photoUploadArea" onclick="document.getElementById('photoInput').click()">
+        📷 Tap to add a reward photo
+        <img id="photoPreview" style="display:none;">
+        <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Task Photo (shows what to do)</label>
+      <div class="photo-upload-area" id="taskPhotoUploadArea" onclick="document.getElementById('taskPhotoInput').click()">
+        🖼️ Tap to add a task instruction photo
+        <img id="taskPhotoPreview" style="display:none;">
+        <input type="file" id="taskPhotoInput" accept="image/*" style="display:none" onchange="handleTaskPhotoUpload(event)">
+      </div>
+    </div>
+    <div class="form-group" id="daySelectGroup" style="display:none;">
+      <label>Day(s)</label>
+      <div class="color-picker-row">
+        <button class="btn-small btn-info day-check" data-day="0" onclick="toggleDay(this)">Sun</button>
+        <button class="btn-small btn-info day-check" data-day="1" onclick="toggleDay(this)">Mon</button>
+        <button class="btn-small btn-info day-check" data-day="2" onclick="toggleDay(this)">Tue</button>
+        <button class="btn-small btn-info day-check" data-day="3" onclick="toggleDay(this)">Wed</button>
+        <button class="btn-small btn-info day-check" data-day="4" onclick="toggleDay(this)">Thu</button>
+        <button class="btn-small btn-info day-check" data-day="5" onclick="toggleDay(this)">Fri</button>
+        <button class="btn-small btn-info day-check" data-day="6" onclick="toggleDay(this)">Sat</button>
+        <button class="btn-small btn-warning" onclick="selectAllDays()">All</button>
+      </div>
+    </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-icon" onclick="closeModal()">Cancel</button>
+      <button class="btn-success" id="modalSaveBtn" onclick="saveTask()">Add Task</button>
+      <button class="btn-primary" id="modalDeleteBtn" style="display:none;background:#c0392b;" onclick="deleteTask()">🗑</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal">
+    <div class="modal-body">
+    <h2 id="profileModalTitle">Add Profile</h2>
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" id="profileName" placeholder="e.g., Alex" maxlength="20">
+    </div>
+    <div class="form-group">
+      <label>Emoji</label>
+      <div class="color-picker-row">
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="👦" onclick="pickProfileEmoji(this)">👦</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="👧" onclick="pickProfileEmoji(this)">👧</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🧒" onclick="pickProfileEmoji(this)">🧒</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="👶" onclick="pickProfileEmoji(this)">👶</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="👨" onclick="pickProfileEmoji(this)">👨</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="👩" onclick="pickProfileEmoji(this)">👩</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🧑" onclick="pickProfileEmoji(this)">🧑</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="👴" onclick="pickProfileEmoji(this)">👴</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="👵" onclick="pickProfileEmoji(this)">👵</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🦸" onclick="pickProfileEmoji(this)">🦸</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🧑‍🎓" onclick="pickProfileEmoji(this)">🧑‍🎓</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🐱" onclick="pickProfileEmoji(this)">🐱</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🐶" onclick="pickProfileEmoji(this)">🐶</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🦊" onclick="pickProfileEmoji(this)">🦊</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🐻" onclick="pickProfileEmoji(this)">🐻</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🦁" onclick="pickProfileEmoji(this)">🦁</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🐸" onclick="pickProfileEmoji(this)">🐸</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🦋" onclick="pickProfileEmoji(this)">🦋</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🌟" onclick="pickProfileEmoji(this)">🌟</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🚀" onclick="pickProfileEmoji(this)">🚀</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🎯" onclick="pickProfileEmoji(this)">🎯</span>
+        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="💜" onclick="pickProfileEmoji(this)">💜</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Profile Photo (optional)</label>
+      <div class="photo-upload-area" id="profilePhotoArea" onclick="document.getElementById('profilePhotoInput').click()">
+        📷 Tap to add a photo
+        <img id="profilePhotoPreview" style="display:none;max-width:80px;max-height:80px;border-radius:50%;">
+        <input type="file" id="profilePhotoInput" accept="image/*" style="display:none" onchange="handleProfilePhotoUpload(event)">
+      </div>
+      <button class="btn-small" id="profilePhotoRemoveBtn" onclick="event.stopPropagation();removeProfilePhoto()" style="display:none;margin-top:6px;background:#c0392b;color:white;font-size:0.8rem;">✕ Remove Photo</button>
+    </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-icon" onclick="closeProfileModal()">Cancel</button>
+      <button class="btn-success" onclick="saveProfile()">Save</button>
+      <button class="btn-primary" id="profileDeleteBtn" style="display:none;background:#c0392b;" onclick="deleteProfile()">🗑</button>
+    </div>
+  </div>
+</div>
+
+<!-- REWARD CELEBRATION MODAL -->
+<div class="modal-overlay" id="rewardModal">
+  <div class="modal" style="text-align:center;">
+    <div style="font-size:4rem;margin-bottom:12px;">🎉🌟🎉</div>
+    <h2 id="rewardModalMsg">Amazing! Time for your reward!</h2>
+    <p style="color:var(--text-dim);margin:12px 0;">You earned all your stars!</p>
+    <button class="btn-success" style="margin-top:12px;" onclick="claimReward()">🌟 Claim Reward!</button>
+  </div>
+</div>
+
+<script>
+// ===== VERSION & GUIDED TOUR SYSTEM =====
+const APP_VERSION = '1.7.0';
+
+// ---- Onboarding tour (first-time users) ----
+// Desktop/tablet gets classroom view mention, mobile doesn't
+const ONBOARDING_STEPS = window.innerWidth >= 768 ? [
+  { title: 'Welcome to TaskBuddy! 🌟', body: 'A visual task timer for classrooms, families, and individuals. Let\'s take a quick tour!', target: null, action: () => { currentView = 'daily'; render(); } },
+  { title: 'Add a Task', body: 'Click + Add to create a task. Set a name, timer duration, color, sound, and even a reward photo!', target: '#addBtn' },
+  { title: 'Profiles', body: 'Create a profile for each student or family member. Each gets their own tasks, stars, and streak.', target: '#profileBar' },
+  { title: 'Daily & Weekly Views', body: 'Daily shows all tasks. Weekly lets you assign tasks to specific days of the week. Use the tabs here to switch.', target: '#viewTabs' },
+  { title: 'Timer Controls', body: 'Start All runs timers in sequence. Each task also has its own play/pause/reset buttons.', target: '#globalControls' },
+  { title: 'Stars & Rewards ⭐', body: 'Every completed timer earns a star. Set a goal in Settings — when they hit it, the reward celebration fires!', target: '#rewardBar' },
+  { title: '🏫 Classroom View', body: 'Now let\'s look at Classroom View — see ALL students side-by-side with their own timers!', target: '#classroomContainer', action: () => { currentView = 'classroom'; render(); } },
+  { title: '🏫 Student Columns', body: 'Each student gets a column with their tasks, timers, and controls. Use the Show bar to toggle who\'s visible. Tap ＋ Add Student to create new profiles right here.', target: '#classroomContainer' },
+  { title: 'Save & Sync', body: 'Use 💾 Save to download your setup. Open it on any device with 📂 Open to keep everything in sync!', target: '#globalControls', action: () => { currentView = 'daily'; render(); } },
+  { title: 'Settings & Kid Lock', body: 'Pick themes, enable dyslexia-friendly font, set a PIN lock to prevent kids from changing things.', target: '#settingsBtn' },
+  { title: 'Need Help Later?', body: 'Click ❓ anytime to see this tour again. Happy timing!', target: '#helpBtn' },
+] : [
+  { title: 'Welcome to TaskBuddy! 🌟', body: 'A visual task timer designed for everyone — especially kids and families. Let\'s take a quick look at how it works!', target: null, action: () => { currentView = 'daily'; render(); } },
+  { title: 'Add a Task', body: 'Tap the + Add button to create your first task. Pick a name, set a timer, choose a color and sound!', target: '#addBtn' },
+  { title: 'Profiles', body: 'Create separate profiles for each person. Each profile gets its own tasks, stars, and streaks.', target: '#profileBar' },
+  { title: 'Daily & Weekly Views', body: 'Switch between Daily view (all tasks) and Weekly view (tasks scheduled for each day).', target: '#viewTabs' },
+  { title: 'Start Timers', body: 'Tap ▶ Start on any task — or Start All to run them in sequence! Watch the color fill as time passes.', target: '#globalControls' },
+  { title: 'Earn Stars ⭐', body: 'Each completed timer earns a star. Set a star goal in Settings to unlock rewards!', target: '#rewardBar' },
+  { title: 'Settings & Kid Lock', body: 'Customize themes, set a PIN lock (so little hands can\'t change things), and adjust sounds.', target: '#settingsBtn' },
+  { title: '🏫 Classroom View', body: 'Got a tablet or desktop? Enable Classroom View in Settings to see all students side-by-side. Best on bigger screens!', target: '#settingsBtn' },
+  { title: 'Save & Sync', body: 'Use 💾 Save to download your setup as a file. Open it on another phone, tablet, or computer with 📂 Open to keep everything in sync!', target: '#globalControls' },
+  { title: 'Need Help Later?', body: 'Tap the ❓ button anytime to see this guide again. Now go add your first task!', target: '#helpBtn' },
+];
+
+// ---- What's New tour (version updates) ----
+const WHATS_NEW_STEPS = window.innerWidth >= 768 ? [
+  { title: '✨ What\'s New in v1.6.0', body: 'Big update! Tap through to see what\'s new and what we\'re still working on.', target: null, action: () => { currentView = 'daily'; render(); } },
+  { title: '👥 Multi-Profile Timers', body: 'Switching profiles no longer pauses timers. Multiple students can have timers running at the same time!', target: '#profileBar' },
+  { title: '🏫 Classroom View', body: 'NEW! See all students side-by-side with their timers. Add tasks, rename students, start/pause/reset — all from one screen.', target: '#classroomContainer', action: () => { currentView = 'classroom'; render(); } },
+  { title: '🔊 Sound Improvements', body: 'Timer completion sounds are more reliable now. Known limitation: if the browser tab is minimized or another app is open, sounds may not play until you return. A native app is in development to solve this!', target: '#globalControls', action: () => { currentView = 'daily'; render(); } },
+  { title: '💡 Screen Stay-On', body: 'The screen will try to stay on while timers run. On some devices, the browser may still auto-lock — we\'re working on it. For now, keep the tab visible for best results.', target: null },
+  { title: '💬 Your Feedback Matters', body: 'This is a web-based app and some features work differently across devices. Found something that doesn\'t work? Hit the Feedback button below — it helps us build the native iOS app right!', target: '#globalControls' },
+  { title: '❓ Help Anytime', body: 'Click the ❓ button to replay this tour whenever you need it. Thanks for testing!', target: '#helpBtn' },
+] : [
+  { title: '✨ What\'s New in v1.6.0', body: 'Updates + honesty about what\'s working! Tap through.', target: null, action: () => { currentView = 'daily'; render(); } },
+  { title: '👥 Multi-Profile Timers', body: 'Switching profiles no longer pauses timers. Multiple people can have timers running at the same time!', target: '#profileBar' },
+  { title: '🔊 Sound — What Works & What Doesn\'t', body: 'Timer sounds work when the app is on screen. BUT — if you lock your phone or switch apps, sounds won\'t play until you come back. When you return, tap the screen and you\'ll hear the alert. This is an iPhone/browser limitation we can\'t fix — a native iOS app is coming!', target: '#globalControls' },
+  { title: '💡 Screen Stay-On', body: 'We try to keep your screen on while timers run. If your phone still auto-locks, try keeping the timer page open and visible. The native app will handle this properly.', target: null },
+  { title: '📱 Heads Up', body: 'TaskBuddy runs in your browser — not as an installed app. Some things (background alerts, vibration, lock-screen notifications) need a native app to work fully. We\'re building it based on YOUR feedback!', target: null },
+  { title: '💬 Help Us Improve', body: 'Found a bug? Something confusing? Tap the 💬 Feedback button at the bottom — every response helps us build the real app. You\'re shaping what this becomes!', target: '#globalControls' },
+  { title: '❓ Help Anytime', body: 'Tap ❓ to replay this tour. Thanks for being an early tester! 🙏', target: '#helpBtn' },
+];
+
+let tourSteps = [];
+let tourIndex = 0;
+let tourActive = false;
+
+function startTour(steps) {
+  tourSteps = steps;
+  tourIndex = 0;
+  tourActive = true;
+  showTourStep();
+}
+
+function showTourStep() {
+  if (tourIndex >= tourSteps.length) { endTour(); return; }
+  const step = tourSteps[tourIndex];
+  const overlay = document.getElementById('tourOverlay');
+  const spotlight = document.getElementById('tourSpotlight');
+  const tooltip = document.getElementById('tourTooltip');
+
+  overlay.style.display = 'block';
+
+  // Execute pre-step action (e.g., switch to a tab, close settings)
+  if (step.action) {
+    step.action();
+  }
+
+  // Brief delay to let DOM update after action
+  setTimeout(() => {
+  // Spotlight the target element
+  if (step.target) {
+    const el = document.querySelector(step.target);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const rect = el.getBoundingClientRect();
+      const pad = 6;
+      spotlight.style.display = 'block';
+      spotlight.style.left = (rect.left - pad) + 'px';
+      spotlight.style.top = (rect.top - pad) + 'px';
+      spotlight.style.width = (rect.width + pad * 2) + 'px';
+      spotlight.style.height = (rect.height + pad * 2) + 'px';
+      overlay.style.background = 'transparent';
+    } else {
+      spotlight.style.display = 'none';
+      overlay.style.background = 'rgba(0,0,0,0.6)';
+    }
+  } else {
+    spotlight.style.display = 'none';
+    overlay.style.background = 'rgba(0,0,0,0.6)';
+  }
+
+  // Progress dots
+  const dots = tourSteps.map((_, i) => `<div class="tour-dot ${i === tourIndex ? 'active' : ''}"></div>`).join('');
+
+  // Build tooltip
+  const isLast = tourIndex === tourSteps.length - 1;
+  const isFirst = tourIndex === 0;
+  tooltip.innerHTML = `
+    <div class="tour-step-info">Step ${tourIndex + 1} of ${tourSteps.length}</div>
+    <div class="tour-dots">${dots}</div>
+    <h3>${step.title}</h3>
+    <p>${step.body}</p>
+    <div class="tour-actions">
+      ${isFirst ? `<button class="tour-btn-skip" onclick="endTour()">Skip</button>` : `<button class="tour-btn-skip" onclick="prevTourStep()">← Back</button>`}
+      <button class="tour-btn-next" onclick="nextTourStep()">${isLast ? 'Done! ✓' : 'Next →'}</button>
+    </div>
+  `;
+  tooltip.style.display = 'block';
+
+  // Position tooltip — center horizontally, place below or above spotlight
+  requestAnimationFrame(() => {
+    const ttRect = tooltip.getBoundingClientRect();
+    const isMobile = window.innerWidth <= 600;
+
+    if (step.target) {
+      const el = document.querySelector(step.target);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const below = rect.bottom + 16;
+        const above = rect.top - ttRect.height - 16;
+
+        if (below + ttRect.height < window.innerHeight) {
+          tooltip.style.top = below + 'px';
+        } else if (above > 10) {
+          tooltip.style.top = above + 'px';
+        } else {
+          // Neither fits — place in center
+          tooltip.style.top = Math.max(10, (window.innerHeight - ttRect.height) / 2) + 'px';
+        }
+        // Horizontal centering handled by CSS (left:50% + translateX)
+        return;
+      }
+    }
+    // No target — center vertically too
+    tooltip.style.top = Math.max(10, (window.innerHeight - ttRect.height) / 2) + 'px';
+  });
+  }, step.action ? 150 : 0);
+}
+
+function nextTourStep() { tourIndex++; showTourStep(); }
+function prevTourStep() { if (tourIndex > 0) { tourIndex--; showTourStep(); } }
+
+function endTour() {
+  tourActive = false;
+  document.getElementById('tourOverlay').style.display = 'none';
+  document.getElementById('tourSpotlight').style.display = 'none';
+  document.getElementById('tourTooltip').style.display = 'none';
+}
+
+function startOnboarding() { startTour(ONBOARDING_STEPS); }
+
+// ---- Classroom Tour (triggered when classroom is first enabled) ----
+const CLASSROOM_TOUR_STEPS = [
+  { title: '🏫 Classroom View Activated!', body: 'This mode lets you see ALL students at once with their own timers. Let\'s walk through it — we\'ll actually go there and show you.', target: null },
+  { title: 'Switch to Classroom', body: 'Tap the 🏫 Classroom tab to enter Classroom View. Let\'s go there now!', target: '#viewTabs',
+    action: () => { closeSettings(); currentView = 'classroom'; render(); }
+  },
+  { title: 'Your Student Columns', body: 'Each student gets their own column with their tasks, timers, stars, and streak. Everything runs independently — start one student\'s timer without affecting others.', target: '#classroomContainer' },
+  { title: 'Show / Hide Students', body: 'This bar lets you toggle which students appear. Tap a name to hide them temporarily — their data stays safe. Useful when only some students are present.', target: '#classroomContainer',
+    action: () => { const bar = document.querySelector('#classroomContainer > div > div:first-child'); if(bar) bar.scrollIntoView({behavior:'smooth',block:'start'}); }
+  },
+  { title: '＋ Add Student', body: 'Tap "＋ Add Student" here to create a new profile right from the classroom. Pick a name, emoji, or upload their photo.', target: '#classroomContainer' },
+  { title: 'Task Controls', body: 'Each task card has ▶ play, ⏸ pause, and ↺ reset. At the bottom of each column, you can start, pause, or reset ALL tasks for that student at once.', target: '#classroomContainer' },
+  { title: '✏️ Edit Tasks', body: 'See the ✏️ on each task? Tap it to change the timer, name, color, or sound for that student\'s task. You can also add new tasks with the "＋ Add Task" button at the bottom of each column.', target: '#classroomContainer' },
+  { title: '✏️ Rename Students', body: 'Tap the ✏️ next to a student\'s name in the column header to rename them, change their emoji, or update their photo.', target: '#classroomContainer' },
+  { title: 'Switch Back Anytime', body: 'Tap 📋 Daily or 📅 Weekly to go back to single-student view. Classroom is always here when you need it. Enjoy!', target: '#viewTabs' },
+];
+
+function checkFirstVisit() {
+  if (!localStorage.getItem('taskbuddy_onboarded')) {
+    localStorage.setItem('taskbuddy_onboarded', '1');
+    startTour(ONBOARDING_STEPS);
+    return true;
+  }
+  return false;
+}
+
+function checkWhatsNew() {
+  const seen = localStorage.getItem('taskbuddy_seen_version');
+  if (seen === APP_VERSION) return false;
+  localStorage.setItem('taskbuddy_seen_version', APP_VERSION);
+  startTour(WHATS_NEW_STEPS);
+  return true;
+}
+
+// ===== STATE =====
+let profiles = [{id:'default',name:'Default',emoji:'🧒',stars:0,streak:0,lastCompleteDate:null}];
+let activeProfileId = 'default';
+let tasks = [];
+let settings = { theme:'default', light:false, dyslexic:false, transitionWarn:10, pin:'', rewardGoal:10, rewardMsg:'🎉 Amazing! Time for your reward!', locked:false };
+let currentView = 'daily';
+let currentLayout = 'grid';
+let currentDay = new Date().getDay();
+let editingId = null;
+let selectedColor = '#e94560';
+let selectedEmoji = '⏰';
+let selectedProfileEmoji = '🧒';
+let selectedDays = [];
+let timerIntervals = {};
+let profileTimerState = {};  // stores running timer state per profile
+let rewardPhotoData = null;
+let taskPhotoData = null;
+
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function activeProfile() { return profiles.find(p=>p.id===activeProfileId)||profiles[0]; }
+
+// ===== WAKE LOCK (keeps screen on while timers run — critical for iOS) =====
+let wakeLock = null;
+async function requestWakeLock() {
+  if(!('wakeLock' in navigator)) return;
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release', () => { wakeLock = null; });
+  } catch(e) { /* user denied or not supported */ }
+}
+function releaseWakeLock() {
+  if(wakeLock) { wakeLock.release(); wakeLock = null; }
+}
+// Re-acquire wake lock when page becomes visible again (iOS releases it on tab switch)
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible') {
+    // Re-unlock audio context on return (iOS suspends it when backgrounded)
+    if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    // Re-acquire wake lock if timers still running
+    if(tasks.some(t => t.running)) requestWakeLock();
+    // Check if any timers completed while we were away
+    checkMissedCompletions();
+  }
+});
+
+// Track timers that completed while backgrounded
+let pendingSounds = [];
+
+function checkMissedCompletions() {
+  tasks.forEach(task => {
+    if(task._startedAt && task._remainingAtStart !== undefined && !task._completionHandled) {
+      const elapsed = Math.floor((Date.now() - task._startedAt) / 1000);
+      const remaining = Math.max(0, task._remainingAtStart - elapsed);
+      if(remaining <= 0 && task.running) {
+        // Timer finished while we were away — handle completion now
+        task.remaining = 0;
+        task.running = false;
+        clearInterval(timerIntervals[task.id]);
+        task._completionHandled = true;
+        // Play sound on next user tap (iOS won't allow auto-play after background)
+        pendingSounds.push(task.sound || 'chime');
+        sendNotification('⏰ Timer Done!', task.name + ' is complete!');
+        if(navigator.vibrate) navigator.vibrate([200,100,200,100,400]);
+        awardStar();
+        const card = document.getElementById('card-' + task.id);
+        if(card) card.classList.add('just-completed');
+      }
+    }
+  });
+  if(pendingSounds.length > 0) {
+    // Show a banner prompting them to tap — iOS needs a gesture to play audio after background
+    showTransition('⏰ Timer finished! Tap anywhere to hear the alert.');
+    render(); save();
+  }
+  if(!tasks.some(t => t.running)) releaseWakeLock();
+}
+
+// Play any pending sounds on the next user interaction (iOS audio unlock after background)
+function playPendingSounds() {
+  if(pendingSounds.length > 0) {
+    if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    pendingSounds.forEach(s => playSound(s));
+    pendingSounds = [];
+  }
+}
+document.addEventListener('touchstart', playPendingSounds, { passive: true });
+document.addEventListener('click', playPendingSounds);
+
+// ===== NOTIFICATIONS =====
+let notifPermission = (typeof Notification !== 'undefined') ? Notification.permission : 'denied';
+function requestNotifPermission() {
+  if(!('Notification' in window)) return;
+  if(Notification.permission === 'default') {
+    Notification.requestPermission().then(p => { notifPermission = p; });
+  }
+}
+function sendNotification(title, body) {
+  if(notifPermission === 'granted') {
+    try { new Notification(title, { body, icon: '⏰', tag: 'timer-done', requireInteraction: true }); } catch(e) {}
+  }
+}
+
+// ===== AUDIO =====
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function getAudioCtx() {
+  if(!audioCtx) audioCtx=new AudioCtx();
+  // iOS keeps AudioContext suspended until a user gesture resumes it
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// Unlock AudioContext on first user interaction (required for iOS Safari)
+function unlockAudio(){
+  const ctx=getAudioCtx();
+  if(ctx.state==='suspended') ctx.resume();
+  // Play a silent buffer to fully unlock on iOS
+  const buf=ctx.createBuffer(1,1,22050);
+  const src=ctx.createBufferSource();
+  src.buffer=buf;src.connect(ctx.destination);src.start(0);
+  document.removeEventListener('touchstart',unlockAudio);
+  document.removeEventListener('click',unlockAudio);
+}
+document.addEventListener('touchstart',unlockAudio,{once:true});
+document.addEventListener('click',unlockAudio,{once:true});
+
+function playSound(type) {
+  const ctx=getAudioCtx(), now=ctx.currentTime;
+  // Ensure context is running (iOS may re-suspend after backgrounding)
+  if(ctx.state==='suspended') ctx.resume();
+  if(type==='chime'){[523.25,659.25,783.99].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.3,now+i*0.15);g.gain.exponentialRampToValueAtTime(0.001,now+i*0.15+0.8);o.connect(g).connect(ctx.destination);o.start(now+i*0.15);o.stop(now+i*0.15+0.8);});}
+  else if(type==='ding'){const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(0.4,now);g.gain.exponentialRampToValueAtTime(0.001,now+1);o.connect(g).connect(ctx.destination);o.start(now);o.stop(now+1);}
+  else if(type==='bell'){[660,880,1100].forEach(f=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(0.25,now);g.gain.exponentialRampToValueAtTime(0.001,now+1.2);o.connect(g).connect(ctx.destination);o.start(now);o.stop(now+1.2);});}
+  else if(type==='success'){[523.25,587.33,659.25,783.99,1046.5].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.value=f;g.gain.setValueAtTime(0.15,now+i*0.1);g.gain.exponentialRampToValueAtTime(0.001,now+i*0.1+0.3);o.connect(g).connect(ctx.destination);o.start(now+i*0.1);o.stop(now+i*0.1+0.3);});}
+  else if(type==='applause'){for(let i=0;i<20;i++){const o=ctx.createOscillator(),g=ctx.createGain();o.type='sawtooth';o.frequency.value=200+Math.random()*600;const t=now+Math.random()*1.5;g.gain.setValueAtTime(0.04,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.15);o.connect(g).connect(ctx.destination);o.start(t);o.stop(t+0.15);}}
+}
+
+// ===== HELPERS =====
+let savedScrollY = 0;
+function lockScroll() { savedScrollY = window.scrollY; document.body.classList.add('modal-active'); document.body.style.top = -savedScrollY + 'px'; }
+function unlockScroll() { document.body.classList.remove('modal-active'); document.body.style.top = ''; window.scrollTo(0, savedScrollY); }
+function genId(){return'_'+Math.random().toString(36).substr(2,9);}
+function getVisibleTasks(){if(currentView==='weekly')return tasks.filter(t=>t.days&&t.days.includes(currentDay));return tasks;}
+function formatTime(s){const m=Math.floor(s/60),sec=s%60;return`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;}
+
+// ===== PROFILES =====
+function renderProfiles(){
+  const track=document.getElementById('profileTrack');
+  if(!track) return;
+  track.innerHTML=profiles.map(p=>{
+    const icon=p.photo?`<img src="${p.photo}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:middle;">`:p.emoji;
+    return `<button class="profile-chip ${p.id===activeProfileId?'active':''}" onclick="switchProfile('${p.id}')">${icon} ${p.name}${p.id===activeProfileId?' <span onclick="event.stopPropagation();editProfile(\''+p.id+'\')" style="font-size:0.7rem;opacity:0.7;margin-left:4px;">✏️</span>':''}</button>`;
+  }).join('')+`<button class="profile-chip add" onclick="openProfileModal()">＋</button>`;
+  // Scroll active chip into view
+  setTimeout(()=>{
+    const active=track.querySelector('.profile-chip.active');
+    if(active) active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    updateProfileArrows();
+  },50);
+}
+function scrollProfiles(dir){
+  const track=document.getElementById('profileTrack');
+  if(!track)return;
+  track.scrollBy({left:dir*160,behavior:'smooth'});
+  setTimeout(updateProfileArrows,350);
+}
+function scrollClassroomProfiles(dir){
+  const track=document.getElementById('cpsTrack');
+  if(!track)return;
+  track.scrollBy({left:dir*200,behavior:'smooth'});
+}
+function scrollClassroomColumns(dir){
+  const track=document.getElementById('classroomColsTrack');
+  if(!track)return;
+  track.scrollBy({left:dir*280,behavior:'smooth'});
+}
+function updateProfileArrows(){
+  const track=document.getElementById('profileTrack');
+  if(!track)return;
+  const left=document.getElementById('profileArrowLeft');
+  const right=document.getElementById('profileArrowRight');
+  if(!left||!right)return;
+  const canScrollLeft=track.scrollLeft>4;
+  const canScrollRight=track.scrollLeft<track.scrollWidth-track.clientWidth-4;
+  left.classList.toggle('disabled',!canScrollLeft);
+  right.classList.toggle('disabled',!canScrollRight);
+}
+function updateClassroomArrows(){
+  // no-op — classroom arrows always enabled
+}
+function switchProfile(id){
+  // Save current profile's tasks with their running state + interval references
+  profileTimerState[activeProfileId] = { tasks: tasks.map(t => ({...t})), intervals: {...timerIntervals} };
+  activeProfileId = id;
+  // Restore previous state for this profile (if any)
+  if (profileTimerState[id]) {
+    tasks = profileTimerState[id].tasks;
+    // Re-attach intervals for running tasks
+    Object.keys(timerIntervals).forEach(k => clearInterval(timerIntervals[k]));
+    timerIntervals = {};
+    tasks.forEach(t => {
+      if (t.running && t._startedAt) {
+        // Restart the interval from where it was
+        timerIntervals[t.id] = setInterval(() => timerTick(t.id), 1000);
+      }
+    });
+  } else {
+    loadProfileTasks();
+  }
+  render(); renderProfiles(); renderRewardBar(); save();
+}
+let editingProfileId = null;
+function openProfileModal(){editingProfileId=null;selectedProfileEmoji='🧒';profilePhotoData=null;document.getElementById('profileName').value='';document.getElementById('profileModalTitle').textContent='Add Profile';document.getElementById('profileDeleteBtn').style.display='none';document.getElementById('profilePhotoPreview').style.display='none';document.getElementById('profilePhotoRemoveBtn').style.display='none';document.getElementById('profileModal').classList.add('open');lockScroll();}
+function editProfile(id){
+  const p=profiles.find(pr=>pr.id===id);if(!p)return;
+  editingProfileId=id;
+  selectedProfileEmoji=p.emoji;
+  profilePhotoData=p.photo||null;
+  document.getElementById('profileName').value=p.name;
+  document.getElementById('profileModalTitle').textContent='Edit Profile';
+  document.getElementById('profileDeleteBtn').style.display=profiles.length>1?'inline-block':'none';
+  const pp=document.getElementById('profilePhotoPreview');
+  const rb=document.getElementById('profilePhotoRemoveBtn');
+  if(profilePhotoData){pp.src=profilePhotoData;pp.style.display='block';rb.style.display='inline-block';}else{pp.style.display='none';rb.style.display='none';}
+  document.querySelectorAll('#profileModal .color-swatch').forEach(s=>s.classList.toggle('selected',s.dataset.pemoji===p.emoji));
+  document.getElementById('profileModal').classList.add('open');lockScroll();
+}
+function closeProfileModal(){document.getElementById('profileModal').classList.remove('open');editingProfileId=null;unlockScroll();if(currentView==='classroom')renderClassroom();}
+function pickProfileEmoji(el){selectedProfileEmoji=el.dataset.pemoji;el.parentElement.querySelectorAll('.color-swatch').forEach(s=>s.classList.toggle('selected',s.dataset.pemoji===selectedProfileEmoji));}
+
+let profilePhotoData = null;
+function handleProfilePhotoUpload(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{
+    profilePhotoData=ev.target.result;
+    const img=document.getElementById('profilePhotoPreview');
+    img.src=profilePhotoData;img.style.display='block';
+    document.getElementById('profilePhotoRemoveBtn').style.display='inline-block';
+  };r.readAsDataURL(f);
+}
+function removeProfilePhoto(){
+  profilePhotoData=null;
+  document.getElementById('profilePhotoPreview').style.display='none';
+  document.getElementById('profilePhotoInput').value='';
+  document.getElementById('profilePhotoRemoveBtn').style.display='none';
+}
+function saveProfile(){
+  const name=document.getElementById('profileName').value.trim()||'Profile';
+  if(editingProfileId){
+    const p=profiles.find(pr=>pr.id===editingProfileId);
+    if(p){p.name=name;p.emoji=selectedProfileEmoji;p.photo=profilePhotoData||null;}
+  } else {
+    const p={id:genId(),name,emoji:selectedProfileEmoji,stars:0,streak:0,lastCompleteDate:null,tasks:[],photo:profilePhotoData||null};
+    profiles.push(p);
+  }
+  closeProfileModal();renderProfiles();save();
+}
+function deleteProfile(){
+  if(!editingProfileId||profiles.length<=1)return;
+  profiles=profiles.filter(p=>p.id!==editingProfileId);
+  if(activeProfileId===editingProfileId){activeProfileId=profiles[0].id;loadProfileTasks();}
+  closeProfileModal();renderProfiles();renderRewardBar();render();save();
+}
+
+// ===== REWARDS =====
+function renderRewardBar(){
+  const p=activeProfile();
+  const goal=settings.rewardGoal||10;
+  const pct=Math.min((p.stars/goal)*100,100);
+  const streakText=p.streak>0?`<span class="streak-badge">🔥 ${p.streak} day streak</span>`:'';
+  document.getElementById('rewardBar').innerHTML=`
+    <span class="reward-stars">⭐ ${p.stars} stars</span>
+    ${streakText}
+    <div class="reward-progress">
+      <span style="font-size:0.8rem;color:var(--text-dim)">${p.stars}/${goal}</span>
+      <div class="reward-progress-bar"><div class="reward-progress-fill" style="width:${pct}%"></div></div>
+      <span>🏆</span>
+    </div>`;
+}
+function awardStar(){
+  const p=activeProfile(); p.stars++;
+  const today=new Date().toDateString();
+  if(p.lastCompleteDate===today){/* already counted */}
+  else if(p.lastCompleteDate===new Date(Date.now()-86400000).toDateString()){p.streak++;p.lastCompleteDate=today;}
+  else{p.streak=1;p.lastCompleteDate=today;}
+  renderRewardBar();save();
+  if(p.stars>=(settings.rewardGoal||10)){
+    document.getElementById('rewardModalMsg').textContent=settings.rewardMsg||'🎉 Amazing!';
+    document.getElementById('rewardModal').classList.add('open');
+  }
+}
+function claimReward(){activeProfile().stars=0;document.getElementById('rewardModal').classList.remove('open');renderRewardBar();save();}
+
+// ===== RENDER =====
+function render(){
+  if(currentView === 'classroom') { renderClassroom(); return; }
+  const grid=document.getElementById('taskGrid');
+  const visible=getVisibleTasks();
+  if(!visible.length){
+    grid.innerHTML=`<div class="empty-state"><div class="emoji">🌈</div><p>No tasks yet! Add your first task to get started.</p><button class="btn-primary" onclick="openAddModal()">＋ Add First Task</button></div>`;
+    return;
+  }
+  grid.innerHTML=visible.map((task,index)=>{
+    const elapsed=task.totalSeconds-task.remaining;
+    const pct=task.totalSeconds>0?(elapsed/task.totalSeconds)*100:0;
+    const isWarning=task.running&&task.remaining<=settings.transitionWarn&&task.remaining>0;
+    const isDone=task.remaining<=0&&task.totalSeconds>0;
+    const cls=['task-card',task.running?'active':'',isDone?'completed':'',isWarning?'warning':''].filter(Boolean).join(' ');
+    const photoReveal=task.rewardPhoto?`<div class="task-photo-reveal" style="background-image:url(${task.rewardPhoto})"><div class="task-photo-mask" style="clip-path:inset(0 0 ${pct}% 0);background:var(--surface)"></div></div>`:'';
+    const taskImg=task.taskPhoto?`<img src="${task.taskPhoto}" class="task-photo-icon">`:`<span class="task-emoji">${task.emoji}</span>`;
+    return`<div class="${cls}" id="card-${task.id}" draggable="true" ondragstart="dragStart(event,'${task.id}')" ondragover="dragOver(event)" ondrop="drop(event,'${task.id}')">
+      ${photoReveal}
+      <div class="task-fill" style="background:${task.color};height:${pct}%"></div>
+      <div class="task-content">
+        <div class="task-header">${taskImg}<span class="task-title">${task.name}</span>${settings.locked?'':`<button class="btn-small" onclick="event.stopPropagation();deleteTaskDirect('${task.id}')" style="background:#c0392b;color:#fff;padding:4px 8px;font-size:0.75rem;min-height:auto;">✕</button>`}<span class="task-order">#${index+1}</span></div>
+        <div class="task-time-display" style="color:${isDone?'var(--success)':task.running?'#fff':'var(--text-dim)'}">${isDone?'✓ Done!':formatTime(task.remaining)}</div>
+        <div class="task-progress-bar"><div class="task-progress-fill" style="width:${pct}%;background:${task.color}"></div></div>
+        <div class="task-controls">
+          ${settings.locked?'':(isDone?`<button class="btn-small btn-success" onclick="resetTask('${task.id}')">↺ Restart</button>`:
+          `${task.running?`<button class="btn-small btn-warning" onclick="pauseTask('${task.id}')">⏸ Pause</button>`:`<button class="btn-small btn-success" onclick="startTask('${task.id}')">▶ Start</button>`}
+          <button class="btn-small btn-info" onclick="resetTask('${task.id}')">↺</button>`)}
+          ${settings.locked?'':`<button class="btn-small btn-icon" onclick="editTask('${task.id}')">✏️</button>`}
+        </div>
+        <div class="task-status">${isDone?'Completed! ⭐':task.running?'In progress...':task.remaining<task.totalSeconds?'Paused':'Ready'}</div>
+      </div></div>`;
+  }).join('');
+}
+
+// ===== TIMERS =====
+function timerTick(id) {
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
+  const elapsed = Math.floor((Date.now() - task._startedAt) / 1000);
+  task.remaining = Math.max(0, task._remainingAtStart - elapsed);
+  if (task.remaining <= settings.transitionWarn && task.remaining > 0 && (task._remainingAtStart - elapsed + 1) > settings.transitionWarn) {
+    showTransition(`⏰ ${task.name} — ${settings.transitionWarn} seconds left!`);
+  }
+  if (task.remaining <= 0) {
+    task.remaining = 0; task.running = false; task._completionHandled = true;
+    clearInterval(timerIntervals[id]);
+    playSound(task.sound || 'chime');
+    sendNotification('⏰ Timer Done!', task.name + ' is complete!');
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
+    if (!tasks.some(t => t.running)) releaseWakeLock();
+    awardStar();
+    const card = document.getElementById('card-' + task.id);
+    if (card) card.classList.add('just-completed');
+    const visible = getVisibleTasks(); const idx = visible.findIndex(t => t.id === id);
+    if (idx >= 0 && idx < visible.length - 1) { setTimeout(() => startTask(visible[idx + 1].id), 2000); }
+  }
+  render(); save();
+}
+
+function startTask(id){
+  const task=tasks.find(t=>t.id===id);if(!task||task.remaining<=0)return;
+  task.running=true;
+  task._completionHandled=false;
+  requestNotifPermission();
+  requestWakeLock();
+  task._startedAt=Date.now();
+  task._remainingAtStart=task.remaining;
+  clearInterval(timerIntervals[id]);
+  timerIntervals[id]=setInterval(()=>timerTick(id),1000);
+  render();
+}
+function pauseTask(id){const t=tasks.find(t=>t.id===id);if(t){t.running=false;clearInterval(timerIntervals[id]);if(!tasks.some(t=>t.running))releaseWakeLock();render();save();}}
+function resetTask(id){const t=tasks.find(t=>t.id===id);if(t){t.running=false;t.remaining=t.totalSeconds;clearInterval(timerIntervals[id]);if(!tasks.some(t=>t.running))releaseWakeLock();render();save();}}
+function startAll(){const v=getVisibleTasks(),f=v.find(t=>t.remaining>0);if(f)startTask(f.id);}
+function pauseAll(){tasks.forEach(t=>{t.running=false;clearInterval(timerIntervals[t.id]);});releaseWakeLock();render();save();}
+function resetAll(){tasks.forEach(t=>{t.running=false;t.remaining=t.totalSeconds;clearInterval(timerIntervals[t.id]);});releaseWakeLock();render();save();}
+
+function showTransition(msg){const el=document.getElementById('transitionWarning');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
+
+// ===== DRAG & DROP =====
+let dragId=null;
+function dragStart(e,id){dragId=id;e.dataTransfer.effectAllowed='move';}
+function dragOver(e){e.preventDefault();}
+function drop(e,tid){e.preventDefault();if(!dragId||dragId===tid)return;const fi=tasks.findIndex(t=>t.id===dragId),ti=tasks.findIndex(t=>t.id===tid);if(fi<0||ti<0)return;const[m]=tasks.splice(fi,1);tasks.splice(ti,0,m);dragId=null;render();save();}
+
+// ===== TOUCH DRAG-AND-DROP (mobile + desktop) =====
+(function(){
+  let touchDrag={el:null,clone:null,startY:0,startX:0,mode:null,data:null,scrollEl:null};
+  const HOLD_MS=300, MOVE_THRESH=8;
+  let holdTimer=null, moved=false;
+
+  // Attach to task cards for reorder
+  document.addEventListener('touchstart',function(e){
+    // Task card drag
+    let card=e.target.closest('.task-card');
+    if(card && !e.target.closest('button') && !settings.locked){
+      let id=card.id?.replace('card-','');
+      if(!id)return;
+      moved=false;
+      let t=e.touches[0];
+      touchDrag.startX=t.clientX;touchDrag.startY=t.clientY;
+      holdTimer=setTimeout(()=>{
+        if(!moved) startTouchDrag(e,card,'task',id);
+      },HOLD_MS);
+      return;
+    }
+    // Profile chip drag
+    let chip=e.target.closest('.profile-chip:not(.add)');
+    if(chip && !e.target.closest('button') && !e.target.closest('span')){
+      let idx=Array.from(chip.parentElement.children).indexOf(chip);
+      if(idx<0||idx>=profiles.length)return;
+      moved=false;
+      let t=e.touches[0];
+      touchDrag.startX=t.clientX;touchDrag.startY=t.clientY;
+      holdTimer=setTimeout(()=>{
+        if(!moved) startTouchDrag(e,chip,'profile',idx);
+      },HOLD_MS);
+      return;
+    }
+    // Classroom column drag
+    let col=e.target.closest('.classroom-column');
+    if(col && (e.target.closest('.classroom-header') || e.target.closest('.student-emoji'))){
+      let idx=Array.from(col.parentElement.children).indexOf(col);
+      moved=false;
+      let t=e.touches[0];
+      touchDrag.startX=t.clientX;touchDrag.startY=t.clientY;
+      holdTimer=setTimeout(()=>{
+        if(!moved) startTouchDrag(e,col,'classroom',idx);
+      },HOLD_MS);
+    }
+  },{passive:false});
+
+  document.addEventListener('touchmove',function(e){
+    if(holdTimer){
+      let t=e.touches[0];
+      if(Math.abs(t.clientX-touchDrag.startX)>MOVE_THRESH||Math.abs(t.clientY-touchDrag.startY)>MOVE_THRESH){
+        moved=true;clearTimeout(holdTimer);holdTimer=null;
+      }
+    }
+    if(!touchDrag.el)return;
+    e.preventDefault();
+    let t=e.touches[0];
+    let dy=t.clientY-touchDrag.startY;
+    let dx=t.clientX-touchDrag.startX;
+    if(touchDrag.mode==='classroom'){
+      touchDrag.clone.style.transform=`translate(${dx}px,${dy}px)`;
+    } else {
+      touchDrag.clone.style.transform=`translateY(${dy}px)`;
+    }
+    // Find swap target
+    doSwap(t.clientX,t.clientY);
+  },{passive:false});
+
+  document.addEventListener('touchend',function(){
+    clearTimeout(holdTimer);holdTimer=null;
+    if(!touchDrag.el){return}
+    endTouchDrag();
+  });
+
+  function startTouchDrag(e,el,mode,data){
+    e.preventDefault();
+    touchDrag.el=el;touchDrag.mode=mode;touchDrag.data=data;
+    el.style.zIndex='100';
+    el.style.opacity='0.85';
+    el.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)';
+    el.style.transition='none';
+    touchDrag.clone=el;
+    if(navigator.vibrate)navigator.vibrate(30);
+  }
+
+  function doSwap(cx,cy){
+    let siblings;
+    if(touchDrag.mode==='task'){
+      siblings=Array.from(document.querySelectorAll('.task-card'));
+    } else if(touchDrag.mode==='profile'){
+      siblings=Array.from(document.querySelectorAll('.profile-chip:not(.add)'));
+    } else if(touchDrag.mode==='classroom'){
+      siblings=Array.from(document.querySelectorAll('.classroom-column'));
+    } else return;
+
+    for(let i=0;i<siblings.length;i++){
+      if(siblings[i]===touchDrag.el)continue;
+      let r=siblings[i].getBoundingClientRect();
+      let midY=r.top+r.height/2;
+      let midX=r.left+r.width/2;
+      let isOver=touchDrag.mode==='classroom'?(cx>r.left&&cx<r.right):(cy>r.top&&cy<r.bottom);
+      if(isOver){
+        let targetIdx=i;
+        let sourceIdx;
+        if(touchDrag.mode==='task'){
+          let sid=touchDrag.el.id?.replace('card-','');
+          sourceIdx=tasks.findIndex(t=>t.id===sid);
+          let tid=siblings[i].id?.replace('card-','');
+          targetIdx=tasks.findIndex(t=>t.id===tid);
+          if(sourceIdx>=0&&targetIdx>=0&&sourceIdx!==targetIdx){
+            let[m]=tasks.splice(sourceIdx,1);
+            tasks.splice(targetIdx,0,m);
+            render();save();
+            touchDrag.el=document.getElementById('card-'+sid);
+            if(touchDrag.el){touchDrag.el.style.zIndex='100';touchDrag.el.style.opacity='0.85';touchDrag.el.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)';touchDrag.el.style.transition='none';}
+            touchDrag.clone=touchDrag.el;
+          }
+        } else if(touchDrag.mode==='profile'){
+          sourceIdx=touchDrag.data;
+          if(sourceIdx!==targetIdx&&targetIdx<profiles.length){
+            let[m]=profiles.splice(sourceIdx,1);
+            profiles.splice(targetIdx,0,m);
+            touchDrag.data=targetIdx;
+            renderProfiles();save();
+            let chips=Array.from(document.querySelectorAll('.profile-chip:not(.add)'));
+            touchDrag.el=chips[targetIdx];touchDrag.clone=touchDrag.el;
+            if(touchDrag.el){touchDrag.el.style.zIndex='100';touchDrag.el.style.opacity='0.85';touchDrag.el.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)';touchDrag.el.style.transition='none';}
+          }
+        } else if(touchDrag.mode==='classroom'){
+          sourceIdx=touchDrag.data;
+          let hidden=settings.classroomHidden||[];
+          let vis=profiles.filter(p=>!hidden.includes(p.id));
+          if(sourceIdx!==targetIdx&&targetIdx<vis.length){
+            // Swap in the main profiles array
+            let si=profiles.indexOf(vis[sourceIdx]);
+            let ti=profiles.indexOf(vis[targetIdx]);
+            if(si>=0&&ti>=0){
+              let[m]=profiles.splice(si,1);
+              profiles.splice(ti,0,m);
+              touchDrag.data=targetIdx;
+              renderClassroom();save();
+              let cols=Array.from(document.querySelectorAll('.classroom-column'));
+              touchDrag.el=cols[targetIdx];touchDrag.clone=touchDrag.el;
+              if(touchDrag.el){touchDrag.el.style.zIndex='100';touchDrag.el.style.opacity='0.85';touchDrag.el.style.boxShadow='0 8px 24px rgba(0,0,0,0.2)';touchDrag.el.style.transition='none';}
+            }
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  function endTouchDrag(){
+    if(touchDrag.el){
+      touchDrag.el.style.zIndex='';touchDrag.el.style.opacity='';touchDrag.el.style.boxShadow='';touchDrag.el.style.transition='';touchDrag.el.style.transform='';
+    }
+    touchDrag={el:null,clone:null,startY:0,startX:0,mode:null,data:null};
+  }
+})();
+
+// ===== PHOTO UPLOADS =====
+function handlePhotoUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{rewardPhotoData=ev.target.result;const img=document.getElementById('photoPreview');img.src=rewardPhotoData;img.style.display='block';};r.readAsDataURL(f);}
+function handleTaskPhotoUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{taskPhotoData=ev.target.result;const img=document.getElementById('taskPhotoPreview');img.src=taskPhotoData;img.style.display='block';};r.readAsDataURL(f);}
+
+// ===== TASK MODAL =====
+function openAddModal(){
+  if(settings.locked)return;
+  editingId=null;rewardPhotoData=null;taskPhotoData=null;
+  document.getElementById('modalTitle').textContent='Add New Task';
+  document.getElementById('modalSaveBtn').textContent='Add Task';
+  document.getElementById('modalDeleteBtn').style.display='none';
+  document.getElementById('taskName').value='';
+  document.getElementById('taskMinutes').value=5;
+  document.getElementById('taskSeconds').value=0;
+  document.getElementById('taskSound').value='chime';
+  document.getElementById('photoPreview').style.display='none';
+  document.getElementById('taskPhotoPreview').style.display='none';
+  selectedColor='#e94560';selectedEmoji='⏰';selectedDays=[];
+  updateColorUI();updateEmojiUI();updateDayUI();
+  document.getElementById('daySelectGroup').style.display=currentView==='weekly'?'block':'none';
+  document.getElementById('taskModal').classList.add('open');
+  document.getElementById('taskName').focus();
+  lockScroll();
+}
+function editTask(id){
+  if(settings.locked)return;
+  const t=tasks.find(t=>t.id===id);if(!t)return;editingId=id;
+  document.getElementById('modalTitle').textContent='Edit Task';
+  document.getElementById('modalSaveBtn').textContent='Save';
+  document.getElementById('modalDeleteBtn').style.display='inline-block';
+  document.getElementById('taskName').value=t.name;
+  document.getElementById('taskMinutes').value=Math.floor(t.totalSeconds/60);
+  document.getElementById('taskSeconds').value=t.totalSeconds%60;
+  document.getElementById('taskSound').value=t.sound||'chime';
+  selectedColor=t.color;selectedEmoji=t.emoji;selectedDays=t.days?[...t.days]:[];
+  rewardPhotoData=t.rewardPhoto||null;taskPhotoData=t.taskPhoto||null;
+  const pp=document.getElementById('photoPreview'),tp=document.getElementById('taskPhotoPreview');
+  if(rewardPhotoData){pp.src=rewardPhotoData;pp.style.display='block';}else{pp.style.display='none';}
+  if(taskPhotoData){tp.src=taskPhotoData;tp.style.display='block';}else{tp.style.display='none';}
+  updateColorUI();updateEmojiUI();updateDayUI();
+  document.getElementById('daySelectGroup').style.display=currentView==='weekly'?'block':'none';
+  document.getElementById('taskModal').classList.add('open');
+  lockScroll();
+}
+function closeModal(){document.getElementById('taskModal').classList.remove('open');editingId=null;unlockScroll();if(currentView==='classroom')renderClassroom();}
+function saveTask(){
+  const name=document.getElementById('taskName').value.trim()||'Task';
+  const mins=parseInt(document.getElementById('taskMinutes').value)||0;
+  const secs=parseInt(document.getElementById('taskSeconds').value)||0;
+  const totalSeconds=mins*60+secs;const sound=document.getElementById('taskSound').value;
+  if(totalSeconds<=0){alert('Please set a time!');return;}
+  if(editingId){const t=tasks.find(t=>t.id===editingId);if(t){if(t.running)pauseTask(t.id);t.name=name;t.totalSeconds=totalSeconds;t.remaining=totalSeconds;t.color=selectedColor;t.emoji=selectedEmoji;t.sound=sound;t.days=[...selectedDays];if(rewardPhotoData)t.rewardPhoto=rewardPhotoData;if(taskPhotoData)t.taskPhoto=taskPhotoData;}}
+  else{tasks.push({id:genId(),name,totalSeconds,remaining:totalSeconds,color:selectedColor,emoji:selectedEmoji,sound,running:false,days:[...selectedDays],rewardPhoto:rewardPhotoData,taskPhoto:taskPhotoData});}
+  closeModal();render();save();
+}
+function deleteTask(){if(!editingId)return;clearInterval(timerIntervals[editingId]);tasks=tasks.filter(t=>t.id!==editingId);closeModal();render();save();}
+function deleteTaskDirect(id){clearInterval(timerIntervals[id]);tasks=tasks.filter(t=>t.id!==id);render();save();}
+
+// ===== UI HELPERS =====
+function pickColor(el){selectedColor=el.dataset.color;updateColorUI();}
+function updateColorUI(){document.querySelectorAll('#colorPicker .color-swatch').forEach(s=>s.classList.toggle('selected',s.dataset.color===selectedColor));}
+function pickEmoji(el){selectedEmoji=el.dataset.emoji;updateEmojiUI();}
+function updateEmojiUI(){document.querySelectorAll('#emojiPicker .color-swatch').forEach(s=>s.classList.toggle('selected',s.dataset.emoji===selectedEmoji));}
+function toggleDay(b){const d=parseInt(b.dataset.day),i=selectedDays.indexOf(d);if(i>=0)selectedDays.splice(i,1);else selectedDays.push(d);updateDayUI();}
+function selectAllDays(){selectedDays=[0,1,2,3,4,5,6];updateDayUI();}
+function updateDayUI(){document.querySelectorAll('.day-check').forEach(b=>{const active=selectedDays.includes(parseInt(b.dataset.day));b.style.opacity=active?'1':'0.35';b.style.background=active?'var(--info)':'transparent';b.style.border=active?'2px solid var(--info)':'2px solid var(--info)';b.style.color=active?'#fff':'var(--text-dim)';});}
+
+// ===== VIEWS =====
+function switchView(v){
+  currentView=v;
+  document.querySelectorAll('.view-tab').forEach(t=>t.classList.toggle('active',t.dataset.view===v));
+  document.getElementById('weekBar').style.display=v==='weekly'?'flex':'none';
+  document.getElementById('taskContainer').style.display=v==='classroom'?'none':'block';
+  document.getElementById('classroomContainer').style.display=v==='classroom'?'flex':'none';
+  document.getElementById('profileBar').style.display=v==='classroom'?'none':'';
+  if(v==='weekly')renderWeekBar();
+  if(v==='classroom'){renderClassroom();setTimeout(updateClassroomArrows,100);}
+  else render();
+  save();
+}
+function switchLayout(l){currentLayout=l;const g=document.getElementById('taskGrid');g.classList.remove('layout-grid','layout-vertical','layout-horizontal');g.classList.add('layout-'+l);document.querySelectorAll('.layout-btn').forEach(b=>b.classList.toggle('active',b.dataset.layout===l));save();}
+
+// ===== CLASSROOM VIEW =====
+function renderClassroom() {
+  const container = document.getElementById('classroomContainer');
+  const allTasks = JSON.parse(localStorage.getItem('tb_allTasks') || '{}');
+  const hidden = settings.classroomHidden || [];
+
+  // Profile selector bar at top of classroom
+  const profileToggles = profiles.map(p => {
+    const isHidden = hidden.includes(p.id);
+    const icon = p.photo ? `<img src="${p.photo}" style="width:18px;height:18px;border-radius:50%;object-fit:cover;vertical-align:middle;">` : p.emoji;
+    return `<button class="btn-small ${isHidden ? '' : 'btn-info'}" onclick="toggleClassroomProfile('${p.id}')" style="opacity:${isHidden ? '0.4' : '1'};font-size:0.8rem;">${icon} ${p.name}</button>`;
+  }).join('');
+
+  const visibleProfiles = profiles.filter(p => !hidden.includes(p.id));
+
+  const columnsHtml = visibleProfiles.map(profile => {
+    let pTasks;
+    if (profile.id === activeProfileId) {
+      pTasks = tasks;
+    } else if (profileTimerState[profile.id]) {
+      pTasks = profileTimerState[profile.id].tasks;
+    } else {
+      pTasks = (allTasks[profile.id] || []);
+    }
+
+    const tasksHtml = pTasks.map(task => {
+      const elapsed = task.totalSeconds - task.remaining;
+      const pct = task.totalSeconds > 0 ? (elapsed / task.totalSeconds) * 100 : 0;
+      const isDone = task.remaining <= 0 && task.totalSeconds > 0;
+      const cls = ['classroom-task', task.running ? 'active' : '', isDone ? 'completed' : ''].filter(Boolean).join(' ');
+      return `<div class="${cls}">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div class="ct-name">${task.emoji} ${task.name}</div>
+          <button class="btn-small" onclick="classroomEditTask('${profile.id}','${task.id}')" style="padding:2px 6px;min-height:auto;font-size:0.7rem;background:var(--surface2);">✏️</button>
+        </div>
+        <div class="ct-time" style="color:${isDone ? 'var(--success)' : task.running ? 'var(--accent)' : 'var(--text-dim)'}">
+          ${isDone ? '✓ Done!' : formatTime(task.remaining)}
+        </div>
+        <div class="ct-progress"><div class="ct-progress-fill" style="width:${pct}%;background:${task.color}"></div></div>
+        <div class="ct-controls">
+          ${isDone ? `<button class="btn-small btn-success" onclick="classroomAction('${profile.id}','${task.id}','reset')">↺</button>` :
+          task.running ? `<button class="btn-small btn-warning" onclick="classroomAction('${profile.id}','${task.id}','pause')">⏸</button>` :
+          `<button class="btn-small btn-success" onclick="classroomAction('${profile.id}','${task.id}','start')">▶</button>`}
+        </div>
+      </div>`;
+    }).join('');
+
+    const starCount = profile.stars || 0;
+    const streak = profile.streak || 0;
+
+    return `<div class="classroom-column">
+      <div class="classroom-header">
+        ${profile.photo ? `<img src="${profile.photo}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">` : `<span class="student-emoji">${profile.emoji}</span>`} ${profile.name}
+        <button class="btn-small" onclick="editProfile('${profile.id}')" style="padding:2px 6px;min-height:auto;font-size:0.7rem;background:transparent;color:var(--text-dim);">✏️</button>
+        <span style="font-size:0.75rem;color:var(--text-dim);">⭐${starCount} ${streak > 0 ? '🔥' + streak : ''}</span>
+      </div>
+      <div class="classroom-tasks">
+        ${tasksHtml || '<div style="text-align:center;color:var(--text-dim);padding:20px;">No tasks</div>'}
+        <button class="btn-small btn-primary" onclick="classroomAddTask('${profile.id}')" style="width:100%;font-size:0.85rem;margin-top:4px;">＋ Add Task</button>
+      </div>
+      <div style="padding:8px;text-align:center;border-top:1px solid var(--surface2);">
+        <button class="btn-small btn-success" onclick="classroomStartAll('${profile.id}')" style="font-size:0.8rem;">▶ All</button>
+        <button class="btn-small btn-warning" onclick="classroomPauseAll('${profile.id}')" style="font-size:0.8rem;">⏸ All</button>
+        <button class="btn-small btn-info" onclick="classroomResetAll('${profile.id}')" style="font-size:0.8rem;">↺ All</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Build profile slider cards for classroom
+  const profileCards = profiles.map(p => {
+    const isHidden = hidden.includes(p.id);
+    const icon = p.photo ? `<img class="cp-photo" src="${p.photo}">` : `<div class="cp-emoji">${p.emoji}</div>`;
+    const stars = p.stars || 0;
+    const streak = p.streak || 0;
+    return `<div class="classroom-profile-card ${isHidden ? '' : 'active'}" onclick="toggleClassroomProfile('${p.id}')">
+      ${icon}
+      <div class="cp-name">${p.name}</div>
+      <div class="cp-meta">⭐${stars}${streak > 0 ? ' 🔥' + streak : ''}${isHidden ? ' (hidden)' : ''}</div>
+    </div>`;
+  }).join('');
+
+  container.innerHTML = `<div style="width:100%;">
+    <div style="display:flex;align-items:center;gap:8px;padding:0 0 6px 0;">
+      <span style="font-size:0.8rem;color:var(--text-dim);font-weight:700;white-space:nowrap;">👥 Students:</span>
+      <button class="btn-small btn-primary" onclick="openProfileModal()" style="font-size:0.8rem;flex-shrink:0;">＋ Add</button>
+    </div>
+    <div class="classroom-profile-slider" id="classroomProfileSlider">
+      <button class="cps-arrow" onclick="scrollClassroomProfiles(-1)" id="cpsArrowLeft">‹</button>
+      <div class="cps-track" id="cpsTrack">${profileCards}</div>
+      <button class="cps-arrow" onclick="scrollClassroomProfiles(1)" id="cpsArrowRight">›</button>
+    </div>
+    <div class="classroom-columns-slider">
+      <button class="cols-arrow" onclick="scrollClassroomColumns(-1)">‹</button>
+      <div class="cols-track" id="classroomColsTrack">${columnsHtml}</div>
+      <button class="cols-arrow" onclick="scrollClassroomColumns(1)">›</button>
+    </div>
+  </div>`;
+}
+
+function toggleClassroomProfile(profileId) {
+  if (!settings.classroomHidden) settings.classroomHidden = [];
+  const idx = settings.classroomHidden.indexOf(profileId);
+  if (idx >= 0) settings.classroomHidden.splice(idx, 1);
+  else settings.classroomHidden.push(profileId);
+  save(); renderClassroom(); setTimeout(updateClassroomArrows,100);
+}
+
+function classroomAddTask(profileId) {
+  // Switch to that profile and open the add modal
+  if (profileId !== activeProfileId) {
+    profileTimerState[activeProfileId] = { tasks: tasks.map(t => ({...t})), intervals: {...timerIntervals} };
+    activeProfileId = profileId;
+    if (profileTimerState[profileId]) {
+      tasks = profileTimerState[profileId].tasks;
+    } else {
+      const allTasks = JSON.parse(localStorage.getItem('tb_allTasks') || '{}');
+      tasks = (allTasks[profileId] || []).map(t => ({...t, running: false}));
+    }
+  }
+  openAddModal();
+}
+
+function classroomEditTask(profileId, taskId) {
+  if (profileId !== activeProfileId) {
+    profileTimerState[activeProfileId] = { tasks: tasks.map(t => ({...t})), intervals: {...timerIntervals} };
+    activeProfileId = profileId;
+    if (profileTimerState[profileId]) {
+      tasks = profileTimerState[profileId].tasks;
+    } else {
+      const allTasks = JSON.parse(localStorage.getItem('tb_allTasks') || '{}');
+      tasks = (allTasks[profileId] || []).map(t => ({...t, running: false}));
+    }
+  }
+  editTask(taskId);
+}
+
+function classroomAction(profileId, taskId, action) {
+  // Get the task list for this profile
+  let pTasks;
+  if (profileId === activeProfileId) {
+    pTasks = tasks;
+  } else if (profileTimerState[profileId]) {
+    pTasks = profileTimerState[profileId].tasks;
+  } else {
+    // Load from storage
+    const allTasks = JSON.parse(localStorage.getItem('tb_allTasks') || '{}');
+    pTasks = allTasks[profileId] || [];
+    profileTimerState[profileId] = { tasks: pTasks, intervals: {} };
+  }
+
+  const task = pTasks.find(t => t.id === taskId);
+  if (!task) return;
+
+  if (action === 'start' && task.remaining > 0) {
+    task.running = true;
+    task._completionHandled = false;
+    task._startedAt = Date.now();
+    task._remainingAtStart = task.remaining;
+    requestNotifPermission();
+    requestWakeLock();
+    if (!profileTimerState[profileId]) profileTimerState[profileId] = { tasks: pTasks, intervals: {} };
+    clearInterval((profileTimerState[profileId].intervals || {})[taskId]);
+    const intv = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - task._startedAt) / 1000);
+      task.remaining = Math.max(0, task._remainingAtStart - elapsed);
+      if (task.remaining <= 0) {
+        task.remaining = 0; task.running = false; task._completionHandled = true;
+        clearInterval(intv);
+        playSound(task.sound || 'chime');
+        sendNotification('⏰ Timer Done!', task.name + ' is complete!');
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
+        // Award star to profile
+        const p = profiles.find(pr => pr.id === profileId);
+        if (p) { p.stars = (p.stars || 0) + 1; }
+        if (!pTasks.some(t => t.running)) releaseWakeLock();
+      }
+      if (currentView === 'classroom') renderClassroom();
+      // Save the profile tasks
+      const allT = JSON.parse(localStorage.getItem('tb_allTasks') || '{}');
+      allT[profileId] = pTasks;
+      localStorage.setItem('tb_allTasks', JSON.stringify(allT));
+    }, 1000);
+    if (!profileTimerState[profileId].intervals) profileTimerState[profileId].intervals = {};
+    profileTimerState[profileId].intervals[taskId] = intv;
+  } else if (action === 'pause') {
+    task.running = false;
+    if (profileTimerState[profileId] && profileTimerState[profileId].intervals) {
+      clearInterval(profileTimerState[profileId].intervals[taskId]);
+    }
+  } else if (action === 'reset') {
+    task.running = false; task.remaining = task.totalSeconds;
+    if (profileTimerState[profileId] && profileTimerState[profileId].intervals) {
+      clearInterval(profileTimerState[profileId].intervals[taskId]);
+    }
+  }
+  if (currentView === 'classroom') renderClassroom();
+}
+
+function classroomStartAll(profileId) {
+  let pTasks;
+  if (profileId === activeProfileId) pTasks = tasks;
+  else if (profileTimerState[profileId]) pTasks = profileTimerState[profileId].tasks;
+  else return;
+  const first = pTasks.find(t => t.remaining > 0 && !t.running);
+  if (first) classroomAction(profileId, first.id, 'start');
+}
+
+function classroomPauseAll(profileId) {
+  let pTasks;
+  if (profileId === activeProfileId) pTasks = tasks;
+  else if (profileTimerState[profileId]) pTasks = profileTimerState[profileId].tasks;
+  else return;
+  pTasks.forEach(t => { if (t.running) classroomAction(profileId, t.id, 'pause'); });
+}
+
+function classroomResetAll(profileId) {
+  let pTasks;
+  if (profileId === activeProfileId) pTasks = tasks;
+  else if (profileTimerState[profileId]) pTasks = profileTimerState[profileId].tasks;
+  else return;
+  pTasks.forEach(t => classroomAction(profileId, t.id, 'reset'));
+}
+function renderWeekBar(){const bar=document.getElementById('weekBar'),today=new Date().getDay();bar.innerHTML=DAYS_SHORT.map((d,i)=>`<button class="day-btn ${i===currentDay?'active':''} ${i===today?'today':''}" onclick="switchDay(${i})">${d}</button>`).join('');}
+function switchDay(d){currentDay=d;renderWeekBar();render();}
+
+// ===== SETTINGS =====
+function openSettings(){document.getElementById('settingsPanel').classList.add('open');}
+function closeSettings(){document.getElementById('settingsPanel').classList.remove('open');}
+function saveSettings(){
+  settings.transitionWarn=parseInt(document.getElementById('transitionWarnSec').value)||10;
+  settings.pin=document.getElementById('pinInput').value;
+  settings.rewardGoal=parseInt(document.getElementById('rewardGoal').value)||10;
+  settings.rewardMsg=document.getElementById('rewardMessage').value;
+  renderRewardBar();save();
+}
+function setTheme(t){
+  const root=document.documentElement;
+  root.classList.remove('theme-ocean','theme-jungle','theme-space','theme-candy');
+  if(t!=='default')root.classList.add('theme-'+t);
+  settings.theme=t;
+  document.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('active',c.dataset.theme===t));
+  save();
+}
+function toggleTheme(){
+  const root=document.documentElement,isLight=root.classList.contains('light');
+  if(isLight){root.classList.remove('light');document.getElementById('themeToggle').textContent='🌙';settings.light=false;}
+  else{root.classList.add('light');document.getElementById('themeToggle').textContent='☀️';settings.light=true;}
+  save();
+}
+function toggleDyslexic(on){
+  document.documentElement.classList.toggle('dyslexic',on);settings.dyslexic=on;save();
+}
+function toggleClassroomMode(on){
+  settings.classroomForced=on;
+  document.querySelectorAll('.classroom-view-tab').forEach(el=>el.style.display=on?'block':'');
+  save();
+  if(on && !localStorage.getItem('taskbuddy_classroom_toured')){
+    localStorage.setItem('taskbuddy_classroom_toured','1');
+    startTour(CLASSROOM_TOUR_STEPS);
+  }
+}
+
+// ===== KID LOCK =====
+function toggleLock(){
+  if(settings.locked){showPinPad();}
+  else{if(!settings.pin){alert('Set a PIN in Settings first!');return;}settings.locked=true;document.getElementById('lockBtn').textContent='🔒';render();save();updateLockUI();}
+}
+function showPinPad(){
+  let entered='';const overlay=document.getElementById('lockOverlay');overlay.classList.add('open');
+  const dots=document.getElementById('pinDots');dots.innerHTML='<div class="pin-dot"></div>'.repeat(4);
+  const pad=document.getElementById('pinPad');
+  pad.innerHTML=[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>k===''?'<div></div>':`<button class="pin-key" data-key="${k}" onclick="pinPress('${k}')">${k}</button>`).join('');
+  document.getElementById('pinError').style.opacity='0';
+  window._pinEntered='';
+}
+function pinPress(k){
+  const err=document.getElementById('pinError');err.style.opacity='0';
+  if(k==='⌫'){window._pinEntered=window._pinEntered.slice(0,-1);}
+  else if(window._pinEntered.length<4){window._pinEntered+=k;}
+  const dots=document.querySelectorAll('.pin-dot');dots.forEach((d,i)=>d.classList.toggle('filled',i<window._pinEntered.length));
+  if(window._pinEntered.length===4){
+    if(window._pinEntered===settings.pin){settings.locked=false;document.getElementById('lockOverlay').classList.remove('open');document.getElementById('lockBtn').textContent='🔓';render();save();updateLockUI();}
+    else{err.style.opacity='1';window._pinEntered='';setTimeout(()=>dots.forEach(d=>d.classList.remove('filled')),300);}
+  }
+}
+function updateLockUI(){
+  const locked=settings.locked;
+  document.querySelectorAll('.btn-primary').forEach(b=>{if(b.textContent.includes('Add'))b.style.display=locked?'none':'';});
+  const gc=document.getElementById('globalControls');if(locked){gc.style.display='none';}else{gc.style.display='';}
+}
+
+// ===== PERSISTENCE =====
+function save(){
+  const profileTasks={};profileTasks[activeProfileId]=tasks;
+  const allTasks=JSON.parse(localStorage.getItem('tb_allTasks')||'{}');
+  Object.assign(allTasks,profileTasks);
+  localStorage.setItem('tb_allTasks',JSON.stringify(allTasks));
+  localStorage.setItem('tb_profiles',JSON.stringify(profiles));
+  localStorage.setItem('tb_activeProfile',activeProfileId);
+  localStorage.setItem('tb_settings',JSON.stringify(settings));
+  localStorage.setItem('tb_view',JSON.stringify({currentView,currentLayout,currentDay}));
+  const ind=document.getElementById('saveIndicator');ind.classList.add('show');setTimeout(()=>ind.classList.remove('show'),1200);
+}
+function loadProfileTasks(){
+  const allTasks=JSON.parse(localStorage.getItem('tb_allTasks')||'{}');
+  // Don't force running:false — let profileTimerState handle active timers
+  tasks=(allTasks[activeProfileId]||[]).map(t=>({...t,running:false,_completionHandled:false}));
+}
+function load(){
+  try{
+    profiles=JSON.parse(localStorage.getItem('tb_profiles')||'null')||[{id:'default',name:'Default',emoji:'🧒',stars:0,streak:0,lastCompleteDate:null}];
+    activeProfileId=localStorage.getItem('tb_activeProfile')||'default';
+    settings=Object.assign(settings,JSON.parse(localStorage.getItem('tb_settings')||'{}'));
+    const v=JSON.parse(localStorage.getItem('tb_view')||'{}');
+    if(v.currentView)currentView=v.currentView;if(v.currentLayout)currentLayout=v.currentLayout;if(v.currentDay!==undefined)currentDay=v.currentDay;
+    loadProfileTasks();
+  }catch(e){console.warn('Load failed:',e);}
+}
+
+// ===== EXPORT/IMPORT =====
+function exportSchedule(){
+  const blob=new Blob([JSON.stringify({tasks,profiles,settings,version:2},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='taskbuddy-schedule.json';a.click();
+  showTransition('💾 Saved! Open this file on another device or browser to sync your setup.');
+}
+function importSchedule(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();reader.onload=e=>{
+    try{const d=JSON.parse(e.target.result);
+    if(d.tasks){tasks=d.tasks.map(t=>({...t,running:false,remaining:t.totalSeconds}));render();save();}
+    if(d.profiles){profiles=d.profiles;renderProfiles();save();}
+    if(d.settings){Object.assign(settings,d.settings);applySettings();save();}
+    showTransition('📂 Loaded! Your tasks, profiles, and settings have been restored.');
+    }catch(err){alert('Couldn\'t read that file. Make sure it\'s a TaskBuddy save file (.json)');}
+  };reader.readAsText(file);event.target.value='';
+}
+
+// ===== KEYBOARD =====
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeSettings();closeProfileModal();}
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+  if(e.key==='n'&&!document.querySelector('.modal-overlay.open'))openAddModal();
+  if(e.key===' '){e.preventDefault();const r=tasks.find(t=>t.running);if(r)pauseAll();else startAll();}
+});
+
+// ===== APPLY SETTINGS =====
+function applySettings(){
+  if(settings.light)document.documentElement.classList.add('light');
+  if(settings.theme&&settings.theme!=='default')document.documentElement.classList.add('theme-'+settings.theme);
+  if(settings.dyslexic)document.documentElement.classList.add('dyslexic');
+  document.getElementById('themeToggle').textContent=settings.light?'☀️':'🌙';
+  document.getElementById('dyslexicToggle').checked=settings.dyslexic;
+  document.getElementById('classroomToggle').checked=!!settings.classroomForced;
+  if(settings.classroomForced) document.querySelectorAll('.classroom-view-tab').forEach(el=>el.style.display='block');
+  document.getElementById('transitionWarnSec').value=settings.transitionWarn||10;
+  document.getElementById('pinInput').value=settings.pin||'';
+  document.getElementById('rewardGoal').value=settings.rewardGoal||10;
+  document.getElementById('rewardMessage').value=settings.rewardMsg||'';
+  document.getElementById('lockBtn').textContent=settings.locked?'🔒':'🔓';
+  document.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('active',c.dataset.theme===settings.theme));
+}
+
+// ===== INIT =====
+load();
+applySettings();
+renderProfiles();
+renderRewardBar();
+switchView(currentView);
+switchLayout(currentLayout);
+render();
+if(settings.locked)updateLockUI();
+if(currentView==='weekly')renderWeekBar();
+// Profile slider: update arrows on scroll & resize
+(function(){
+  const track=document.getElementById('profileTrack');
+  if(track){
+    track.addEventListener('scroll',updateProfileArrows);
+    new ResizeObserver(updateProfileArrows).observe(track);
+  }
+})();
+// Tour: first visit → onboarding; returning user → what's new (if version changed)
+if(!checkFirstVisit()) checkWhatsNew();
+</script>
+</body>
+</html>

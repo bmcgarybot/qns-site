@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Story Maker - Social Stories for Kids</title>
+<style>
+:root {
+  --pri: #6C63FF;
+  --pri-dk: #5A52D5;
+  --acc: #FF6B6B;
+  --grn: #51CF66;
+  --bg: #F8F9FF;
+  --card: #FFF;
+  --txt: #2D3436;
+  --txtL: #636E72;
+  --rad: 16px;
+  --shd: 0 4px 20px rgba(108,99,255,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+
+.hdr{background:linear-gradient(135deg,var(--pri),#8B83FF);color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(108,99,255,0.3)}
+.hdr h1{font-size:20px}.hdr .sub{font-size:12px;opacity:.85}
+.bbtn{background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center}
+.bbtn.vis{display:flex}
+
+.scr{display:none;padding:20px;max-width:800px;margin:0 auto}.scr.act{display:block}
+
+.wcard{background:var(--card);border-radius:var(--rad);padding:30px 24px;text-align:center;box-shadow:var(--shd);margin-bottom:24px}
+.wcard .emo{font-size:48px;margin-bottom:12px}.wcard h2{font-size:22px;margin-bottom:8px}.wcard p{color:var(--txtL);font-size:14px;line-height:1.5}
+
+.agrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.acard{background:var(--card);border-radius:var(--rad);padding:20px 16px;text-align:center;box-shadow:var(--shd);cursor:pointer;transition:transform .2s}
+.acard:hover{transform:translateY(-2px)}.acard .ico{font-size:36px;margin-bottom:8px}.acard h3{font-size:14px;font-weight:600;margin-bottom:4px}.acard p{font-size:11px;color:var(--txtL)}
+
+.stitle{font-size:18px;font-weight:700;margin-bottom:16px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;margin-bottom:16px}
+.tab{background:var(--card);border:2px solid #E9ECEF;border-radius:24px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s}
+.tab.act{background:var(--pri);color:#fff;border-color:var(--pri)}
+
+.tcard{background:var(--card);border-radius:var(--rad);box-shadow:var(--shd);cursor:pointer;display:flex;align-items:center;gap:16px;padding:16px;margin-bottom:12px;transition:transform .2s}
+.tcard:hover{transform:translateY(-2px)}
+.tico{width:64px;height:64px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.tinf h3{font-size:15px;margin-bottom:4px}.tinf p{font-size:12px;color:var(--txtL)}.tinf .cnt{font-size:11px;color:var(--pri);font-weight:600;margin-top:4px}
+
+.tbar{background:var(--card);border-radius:var(--rad);padding:10px;display:flex;gap:6px;margin-bottom:12px;box-shadow:var(--shd);overflow-x:auto;flex-wrap:wrap}
+.tb{background:#F1F3F5;border:none;border-radius:10px;padding:8px 12px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.tb:hover{background:#E9ECEF}
+
+/* CANVAS - photo-based */
+.cvs{border-radius:var(--rad);box-shadow:var(--shd);aspect-ratio:4/3;position:relative;overflow:hidden;margin-bottom:12px;background:#E9ECEF}
+.cvs .scene-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cvs .scene-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#E9ECEF;cursor:pointer}
+.cvs .scene-placeholder .big-icon{font-size:48px;margin-bottom:8px;opacity:.5}
+.cvs .scene-placeholder p{font-size:13px;color:var(--txtL);font-weight:600}
+
+.cvs .face-overlay{position:absolute;width:100px;height:100px;border-radius:50%;border:4px solid #fff;box-shadow:0 4px 16px rgba(0,0,0,.3);overflow:hidden;cursor:grab;touch-action:none;z-index:10;background:#DDD}
+.cvs .face-overlay img{width:100%;height:100%;object-fit:cover}
+.cvs .face-overlay .face-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:var(--txtL);background:#F1F3F5;cursor:pointer}
+.cvs .face-overlay .face-placeholder span{font-size:28px}
+
+.cvs .text-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.7));padding:16px 20px 20px;z-index:5}
+.cvs .text-overlay .stxt{color:#fff;font-size:20px;font-weight:700;line-height:1.3;text-shadow:0 2px 8px rgba(0,0,0,.5);outline:none;min-height:28px}
+.cvs .text-overlay .stxt:empty:before{content:attr(data-ph);opacity:.6}
+
+/* face size slider */
+/* face-controls removed — now in toolsPanel */
+
+.pnav{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px}
+.pbtn{background:var(--pri);color:#fff;border:none;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pbtn:disabled{background:#DEE2E6;cursor:not-allowed}
+.plbl{font-size:13px;font-weight:600;color:var(--txtL);min-width:80px;text-align:center}
+
+.bact{display:flex;gap:8px;padding:12px 0}
+.btn{flex:1;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s}
+.bp{background:var(--pri);color:#fff}.bg{background:var(--grn);color:#fff}.ba{background:var(--acc);color:#fff}.bo{background:#fff;color:var(--pri);border:2px solid var(--pri)}
+
+/* photo prompt */
+/* prompt-card removed — prompt now inline on canvas */
+
+/* saved */
+.sitem{background:var(--card);border-radius:var(--rad);padding:14px;box-shadow:var(--shd);margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.sitem .sthumb{width:56px;height:42px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#E9ECEF;display:flex;align-items:center;justify-content:center;font-size:24px}
+.sitem .sthumb img{width:100%;height:100%;object-fit:cover}
+.sitem h3{font-size:14px;margin-bottom:2px}.sitem p{font-size:12px;color:var(--txtL)}
+.dbtn{margin-left:auto;background:#F1F3F5;border:none;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:14px}
+
+/* modal */
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.mov.vis{display:flex}
+.mod{background:#fff;border-radius:var(--rad);padding:24px;max-width:400px;width:100%}
+.mod h2{font-size:20px;margin-bottom:16px;text-align:center}
+.eopt{background:#F8F9FA;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s}
+.eopt:hover{background:#E9ECEF}.eopt .ei{font-size:28px}.eopt h3{font-size:14px}.eopt p{font-size:11px;color:var(--txtL)}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--txt);color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;z-index:300;transition:transform .3s;white-space:nowrap}
+.toast.vis{transform:translateX(-50%) translateY(0)}
+
+.hidden{display:none}
+
+/* preview */
+.prev-page{width:100%;height:calc(100vh - 60px);position:relative;display:flex;align-items:center;justify-content:center}
+.prev-page .prev-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.prev-page .prev-face{width:160px;height:160px;border-radius:50%;border:5px solid #fff;box-shadow:0 4px 20px rgba(0,0,0,.4);overflow:hidden;position:relative;z-index:2}
+.prev-page .prev-face img{width:100%;height:100%;object-fit:cover}
+.prev-page .prev-txt-box{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.75));padding:24px 24px 80px;z-index:3}
+.prev-page .prev-txt{color:#fff;font-size:28px;font-weight:700;text-align:center;text-shadow:0 2px 12px rgba(0,0,0,.6);line-height:1.3}
+.prev-nav{position:absolute;bottom:20px;display:flex;gap:16px;z-index:5}
+.prev-prog{position:absolute;bottom:76px;font-size:13px;color:rgba(255,255,255,.8);font-weight:600;z-index:5}
+
+/* photo grid in manager */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pgrid .pitem{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden}
+.pgrid .pitem img{width:100%;height:100%;object-fit:cover}
+.pgrid .pitem .pdel{position:absolute;top:4px;right:4px;background:rgba(255,0,0,.8);color:#fff;border:none;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:12px}
+.pgrid .pitem .plabel{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);color:#fff;font-size:10px;padding:3px;text-align:center;font-weight:600}
+
+@media(max-width:480px){
+  .cvs .text-overlay .stxt{font-size:16px}
+  .cvs .face-overlay{width:80px;height:80px}
+}
+
+/* Tutorial overlay */
+.tut-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .3s}
+.tut-overlay.vis{opacity:1;display:flex}
+.tut-card{background:white;border-radius:20px;padding:32px 24px;max-width:380px;width:100%;text-align:center;position:relative;transform:scale(0.9);transition:transform .3s}
+.tut-overlay.vis .tut-card{transform:scale(1)}
+.tut-card .tut-emoji{font-size:56px;margin-bottom:12px}
+.tut-card h2{font-size:20px;margin-bottom:8px;color:var(--txt)}
+.tut-card p{font-size:14px;color:var(--txtL);line-height:1.5;margin-bottom:20px}
+.tut-card .tut-highlight{background:linear-gradient(135deg,var(--pri),#8B83FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700}
+.tut-dots{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.tut-dot{width:10px;height:10px;border-radius:50%;background:#DEE2E6;transition:all .2s}
+.tut-dot.act{background:var(--pri);width:24px;border-radius:5px}
+.tut-btns{display:flex;gap:10px}
+.tut-skip{background:none;border:none;color:var(--txtL);font-size:13px;cursor:pointer;padding:8px}
+.tut-next{flex:1;background:var(--pri);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer}
+.tut-next:hover{background:var(--pri-dk,#5A52D5)}
+
+/* Privacy badge */
+.priv-badge{display:flex;align-items:center;gap:8px;background:#F1FFF4;border:1px solid #B7EBC4;border-radius:12px;padding:10px 14px;margin-bottom:20px;font-size:12px;color:#2B8A3E;line-height:1.4}
+.priv-badge .priv-icon{font-size:20px;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <button class="bbtn" id="backBtn" onclick="goBack()">&#8592;</button>
+  <div><h1>&#128214; Story Maker</h1><div class="sub">Social Stories for Kids</div></div>
+  <div style="width:36px"></div>
+</div>
+
+<!-- HOME -->
+<div class="scr act" id="homeScreen">
+  <div class="wcard">
+    <div class="emo">&#128247;&#10024;</div>
+    <h2>Social Story Maker</h2>
+    <p>Create personalized visual stories using <strong>real photos</strong> of your child's world. Upload pictures of their bathroom, bedroom, school — then add their face right into the story!</p>
+  </div>
+  <div class="priv-badge">
+    <span class="priv-icon">&#128274;</span>
+    <span><strong>100% Private.</strong> Your photos and stories are stored only on YOUR device. Nothing is uploaded to any server. No accounts, no tracking, no data collection. Ever.</span>
+  </div>
+  <div class="agrid">
+    <div class="acard" onclick="goTo('tmplScreen')"><div class="ico">&#127912;</div><h3>New Story</h3><p>Guided templates</p></div>
+    <div class="acard" onclick="startBlank()"><div class="ico">&#128221;</div><h3>Blank Story</h3><p>Build from scratch</p></div>
+    <div class="acard" onclick="goTo('savedScreen')"><div class="ico">&#128218;</div><h3>My Stories</h3><p id="sCnt">0 saved</p></div>
+    <div class="acard" onclick="goTo('photoScreen')"><div class="ico">&#128247;</div><h3>My Photos</h3><p>Faces &amp; scenes</p></div>
+  </div>
+  <div style="text-align:center;margin-bottom:16px">
+    <button onclick="startTut()" style="background:none;border:2px solid var(--pri);border-radius:20px;padding:8px 20px;color:var(--pri);font-size:13px;font-weight:600;cursor:pointer">&#128218; How It Works</button>
+  </div>
+</div>
+
+<!-- TEMPLATES -->
+<div class="scr" id="tmplScreen">
+  <h2 class="stitle">Choose a Template</h2>
+  <div class="tabs" id="catTabs"></div>
+  <div id="tmplGrid"></div>
+</div>
+
+<!-- PHOTO MANAGER -->
+<div class="scr" id="photoScreen">
+  <h2 class="stitle">My Photos</h2>
+  <p style="color:var(--txtL);margin-bottom:16px;font-size:14px">Upload photos of your child and their environment. Everything stays on your device.</p>
+  <div style="display:flex;gap:8px;margin-bottom:16px">
+    <button class="btn bp" onclick="addFacePhoto()" style="flex:1">&#128103; Add Face</button>
+    <button class="btn bg" onclick="addScenePhoto()" style="flex:1">&#127968; Add Scene</button>
+  </div>
+  <h3 style="font-size:14px;margin-bottom:8px;color:var(--txtL)">&#128103; Faces</h3>
+  <div class="pgrid" id="faceGrid" style="margin-bottom:16px"></div>
+  <h3 style="font-size:14px;margin-bottom:8px;color:var(--txtL)">&#127968; Scenes</h3>
+  <div class="pgrid" id="sceneGrid"></div>
+</div>
+
+<!-- SAVED -->
+<div class="scr" id="savedScreen">
+  <h2 class="stitle">My Stories</h2>
+  <div id="savedList"></div>
+  <div id="emptyState" style="text-align:center;padding:40px 0;color:var(--txtL)"><div style="font-size:48px;margin-bottom:12px">&#128218;</div><p>No stories yet!</p></div>
+</div>
+
+<!-- EDITOR -->
+<div class="scr" id="editorScreen">
+  <div class="tbar">
+    <button class="tb" onclick="addPage()">&#10133; Page</button>
+    <button class="tb" onclick="showTools()">&#9881; More</button>
+    <button class="tb" onclick="showArrange()">&#8645; Arrange</button>
+  </div>
+
+  <!-- Collapsible tools panel (hidden by default) -->
+  <div id="toolsPanel" style="display:none;background:var(--card);border-radius:var(--rad);padding:10px;margin-bottom:10px;box-shadow:var(--shd)">
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="tb" onclick="addPage()">&#10133; Add Page</button>
+      <button class="tb" onclick="pickFaceForPage()">&#128103; Face Photo</button>
+      <button class="tb" onclick="toggleFace()">&#128064; Show/Hide Face</button>
+      <button class="tb" onclick="toggleFaceSize()">&#128207; Face Size</button>
+    </div>
+    <div id="faceSizeRow" style="display:none;margin-top:8px;display:none;align-items:center;gap:8px;padding:0 4px">
+      <label style="font-size:12px;font-weight:600;color:var(--txtL);white-space:nowrap">Size:</label>
+      <input type="range" id="faceSize" min="50" max="200" value="100" oninput="resizeFace(this.value)" style="flex:1;accent-color:var(--pri)">
+    </div>
+  </div>
+
+  <div class="cvs" id="canvas">
+    <!-- Scene: tap anywhere on canvas to add/change scene photo -->
+    <div class="scene-placeholder" id="scenePH" onclick="pickSceneForPage()">
+      <div class="big-icon">&#128247;</div>
+      <p id="scenePromptText">Tap to add scene photo</p>
+    </div>
+    <img class="scene-photo hidden" id="sceneImg" onclick="pickSceneForPage()">
+    <!-- Face overlay -->
+    <div class="face-overlay" id="faceOvl" style="top:20%;left:50%;transform:translateX(-50%)">
+      <div class="face-placeholder" id="facePH" onclick="pickFaceForPage()">
+        <span>&#128103;</span>
+      </div>
+      <img class="hidden" id="faceImg">
+    </div>
+    <!-- Text at bottom -->
+    <div class="text-overlay">
+      <div class="stxt" id="sText" contenteditable="true" data-ph="Tap to write story text..."></div>
+    </div>
+  </div>
+
+  <!-- Clean page nav with skip integrated -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px">
+    <button onclick="delPage()" style="background:none;border:none;color:var(--acc);font-size:13px;font-weight:700;cursor:pointer;padding:8px 0">&#10005; Skip step</button>
+    <span class="plbl" id="pgLbl" style="min-width:auto"></span>
+    <button onclick="pickSceneForPage()" style="background:none;border:none;color:var(--pri);font-size:13px;font-weight:700;cursor:pointer;padding:8px 0">&#128247; Photo</button>
+  </div>
+
+  <div class="pnav" style="margin-bottom:8px">
+    <button class="pbtn" onclick="prevPg()">&#8249;</button>
+    <button class="pbtn" onclick="nextPg()">&#8250;</button>
+  </div>
+
+  <div class="bact">
+    <button class="btn bo" onclick="saveStory()">&#128190; Save</button>
+    <button class="btn bp" onclick="preview()">&#9654; Preview</button>
+    <button class="btn bg" onclick="showExport()">&#128228; Export</button>
+  </div>
+</div>
+
+<!-- PREVIEW -->
+<div class="scr" id="prevScreen" style="padding:0;max-width:100%">
+  <div class="prev-page" id="prevBox">
+    <img class="prev-bg hidden" id="prevBg" style="z-index:1">
+    <div style="position:absolute;inset:0;background:#E9ECEF;z-index:0" id="prevBgFallback"></div>
+    <div class="prev-face hidden" id="prevFace" style="z-index:2"><img id="prevFaceImg"></div>
+    <div class="prev-txt-box"><div class="prev-txt" id="prevTxt"></div></div>
+    <div class="prev-prog" id="prevProg"></div>
+    <div class="prev-nav">
+      <button class="pbtn" onclick="prevPrev()" style="width:50px;height:50px;font-size:24px">&#8249;</button>
+      <button class="btn ba" onclick="goTo('editorScreen')" style="flex:none;padding:14px 28px">&#9998; Edit</button>
+      <button class="pbtn" onclick="nextPrev()" style="width:50px;height:50px;font-size:24px">&#8250;</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="mov" id="exportModal">
+  <div class="mod">
+    <h2>&#128228; Export Story</h2>
+    <div class="eopt" onclick="exportPrint()"><span class="ei">&#128424;</span><div><h3>Print Story Book</h3><p>Print all pages — great for binders!</p></div></div>
+    <div class="eopt" onclick="exportSlideshow()"><span class="ei">&#9654;&#65039;</span><div><h3>Auto Slideshow</h3><p>Plays automatically (5s per page)</p></div></div>
+    <div class="eopt" onclick="shareData()"><span class="ei">&#128279;</span><div><h3>Share Story</h3><p>Copy story data to clipboard</p></div></div>
+    <button class="btn bo" onclick="closeModal()" style="margin-top:12px;width:100%">Cancel</button>
+  </div>
+</div>
+
+<!-- REVIEW STEPS MODAL (shows all template steps, lets parent uncheck ones to skip) -->
+<div class="mov" id="reviewModal">
+  <div class="mod" id="reviewContent" style="max-height:80vh;overflow-y:auto"></div>
+</div>
+
+<!-- PHOTO PICKER MODAL -->
+<div class="mov" id="pickerModal">
+  <div class="mod" id="pickerContent"></div>
+</div>
+
+<!-- ARRANGE MODAL -->
+<div class="mov" id="arrangeModal">
+  <div class="mod" id="arrangeContent" style="max-height:85vh;overflow-y:auto"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- TUTORIAL OVERLAY -->
+<div class="tut-overlay" id="tutOverlay">
+  <div class="tut-card">
+    <div class="tut-emoji" id="tutEmoji"></div>
+    <h2 id="tutTitle"></h2>
+    <p id="tutBody"></p>
+    <div class="tut-dots" id="tutDots"></div>
+    <div class="tut-btns">
+      <button class="tut-skip" onclick="closeTut()">Skip</button>
+      <button class="tut-next" id="tutNextBtn" onclick="nextTut()">Next</button>
+    </div>
+  </div>
+</div>
+<input type="file" id="fInput" class="hidden" accept="image/*" capture="environment">
+<input type="file" id="fInput2" class="hidden" accept="image/*" capture="user">
+
+<script>
+// ===== TEMPLATES (with photo prompts — OT-level granular steps) =====
+const T={
+"Daily Routines":[
+  {name:"Going to the Bathroom",icon:"\u{1F6BD}",pages:[
+    {scene_prompt:"Photo of child playing or doing an activity",text:"I am playing. I feel like I need to go to the bathroom."},
+    {scene_prompt:"Photo of child stopping activity",text:"I stop what I am doing."},
+    {scene_prompt:"Photo of hallway or path to bathroom",text:"I walk to the bathroom."},
+    {scene_prompt:"Photo of bathroom door (closed)",text:"I open the bathroom door."},
+    {scene_prompt:"Photo of bathroom door from inside",text:"I go inside and close the door behind me."},
+    {scene_prompt:"Photo of light switch",text:"I turn on the light."},
+    {scene_prompt:"Photo of toilet with lid down",text:"I walk to the toilet."},
+    {scene_prompt:"Photo of toilet lid being lifted",text:"I lift the lid."},
+    {scene_prompt:"Photo of pants/shorts",text:"I pull down my pants and underwear."},
+    {scene_prompt:"Photo of child sitting on toilet (from side, clothed for demo)",text:"I sit down on the toilet."},
+    {scene_prompt:"Photo of toilet paper roll",text:"When I am done, I get some toilet paper."},
+    {scene_prompt:"Photo of hand pulling toilet paper",text:"I wipe myself clean."},
+    {scene_prompt:"Photo of toilet paper in toilet",text:"I put the toilet paper in the toilet."},
+    {scene_prompt:"Photo of child standing up",text:"I stand up."},
+    {scene_prompt:"Photo of pulling up pants",text:"I pull up my underwear and pants."},
+    {scene_prompt:"Photo of toilet handle",text:"I press the handle to flush the toilet."},
+    {scene_prompt:"Photo of toilet flushing (or handle pressed)",text:"The toilet makes a loud sound. That is okay! It is just water."},
+    {scene_prompt:"Photo of sink faucet",text:"I walk to the sink and turn on the water."},
+    {scene_prompt:"Photo of soap dispenser",text:"I get soap on my hands."},
+    {scene_prompt:"Photo of hands being washed",text:"I rub my hands together while I count to 20."},
+    {scene_prompt:"Photo of hands under water",text:"I rinse all the soap off my hands."},
+    {scene_prompt:"Photo of turning off faucet",text:"I turn off the water."},
+    {scene_prompt:"Photo of towel or paper towels",text:"I dry my hands with a towel."},
+    {scene_prompt:"Photo of bathroom door from inside",text:"I open the door."},
+    {scene_prompt:"Photo of walking back to activity",text:"I go back to what I was doing. Great job!"}
+  ]},
+  {name:"Morning Routine",icon:"\u{1F305}",pages:[
+    {scene_prompt:"Photo of alarm clock or morning light through window",text:"I hear my alarm or someone says it is time to wake up."},
+    {scene_prompt:"Photo of child in bed",text:"I open my eyes."},
+    {scene_prompt:"Photo of child sitting up in bed",text:"I sit up in my bed."},
+    {scene_prompt:"Photo of feet touching floor",text:"I put my feet on the floor."},
+    {scene_prompt:"Photo of child standing by bed",text:"I stand up."},
+    {scene_prompt:"Photo of bed (unmade)",text:"I pull up my blanket to make my bed."},
+    {scene_prompt:"Photo of bedroom door",text:"I walk out of my bedroom."},
+    {scene_prompt:"Photo of bathroom door",text:"I go to the bathroom."},
+    {scene_prompt:"Photo of toilet",text:"I use the toilet and flush."},
+    {scene_prompt:"Photo of sink and toothbrush",text:"I wash my hands."},
+    {scene_prompt:"Photo of toothbrush with toothpaste",text:"I put toothpaste on my toothbrush."},
+    {scene_prompt:"Photo of brushing teeth",text:"I brush my teeth. I brush the front, back, and top."},
+    {scene_prompt:"Photo of spitting in sink",text:"I spit and rinse my mouth."},
+    {scene_prompt:"Photo of face and washcloth",text:"I wash my face."},
+    {scene_prompt:"Photo of clothes laid out on bed",text:"I go to my room. My clothes are ready."},
+    {scene_prompt:"Photo of pajamas being taken off",text:"I take off my pajamas."},
+    {scene_prompt:"Photo of underwear",text:"I put on clean underwear."},
+    {scene_prompt:"Photo of pants/shorts",text:"I put on my pants."},
+    {scene_prompt:"Photo of shirt",text:"I put on my shirt."},
+    {scene_prompt:"Photo of socks",text:"I put on my socks."},
+    {scene_prompt:"Photo of kitchen table",text:"I walk to the kitchen."},
+    {scene_prompt:"Photo of chair at table",text:"I sit down at the table."},
+    {scene_prompt:"Photo of breakfast food",text:"I eat my breakfast."},
+    {scene_prompt:"Photo of dishes by sink",text:"When I am done, I put my dish in the sink."},
+    {scene_prompt:"Photo of shoes by door",text:"I put on my shoes."},
+    {scene_prompt:"Photo of backpack",text:"I grab my backpack."},
+    {scene_prompt:"Photo of front door",text:"I am ready! Time to go!"}
+  ]},
+  {name:"Bedtime Routine",icon:"\u{1F319}",pages:[
+    {scene_prompt:"Photo of clock showing bedtime",text:"It is almost bedtime."},
+    {scene_prompt:"Photo of TV or tablet being turned off",text:"I turn off the TV or tablet."},
+    {scene_prompt:"Photo of toys on floor",text:"I pick up my toys and put them away."},
+    {scene_prompt:"Photo of bathroom",text:"I go to the bathroom."},
+    {scene_prompt:"Photo of bathtub with water",text:"It is time for my bath."},
+    {scene_prompt:"Photo of undressing",text:"I take off my clothes and put them in the hamper."},
+    {scene_prompt:"Photo of getting in tub",text:"I step into the tub carefully."},
+    {scene_prompt:"Photo of soap and washcloth",text:"I wash my body with soap."},
+    {scene_prompt:"Photo of shampoo",text:"I wash my hair with shampoo."},
+    {scene_prompt:"Photo of rinsing",text:"I rinse off all the soap."},
+    {scene_prompt:"Photo of stepping out of tub",text:"I step out of the tub carefully."},
+    {scene_prompt:"Photo of towel",text:"I dry off with my towel."},
+    {scene_prompt:"Photo of pajamas laid out",text:"I put on my pajamas."},
+    {scene_prompt:"Photo of toothbrush and toothpaste",text:"I brush my teeth."},
+    {scene_prompt:"Photo of spitting in sink",text:"I spit and rinse."},
+    {scene_prompt:"Photo of child's bedroom",text:"I walk to my bedroom."},
+    {scene_prompt:"Photo of bed with covers pulled back",text:"I climb into my bed."},
+    {scene_prompt:"Photo of book on bed",text:"We read a story together."},
+    {scene_prompt:"Photo of lamp or light switch",text:"We turn off the light."},
+    {scene_prompt:"Photo of pillow and blanket",text:"I lay my head on my pillow and pull up my blanket."},
+    {scene_prompt:"Photo of stuffed animal or comfort item",text:"I hold my favorite thing."},
+    {scene_prompt:"Photo of dark room (nightlight on)",text:"I close my eyes. Goodnight! I did a great job today."}
+  ]},
+  {name:"Getting Dressed",icon:"\u{1F455}",pages:[
+    {scene_prompt:"Photo of closet or dresser",text:"It is time to get dressed."},
+    {scene_prompt:"Photo of pajamas being worn",text:"First, I take off my pajamas."},
+    {scene_prompt:"Photo of pajamas in hamper",text:"I put my pajamas in the hamper."},
+    {scene_prompt:"Photo of clean underwear",text:"I get clean underwear from my drawer."},
+    {scene_prompt:"Photo of putting on underwear",text:"I step into my underwear and pull them up."},
+    {scene_prompt:"Photo of undershirt (if worn)",text:"I put on my undershirt."},
+    {scene_prompt:"Photo of pants or shorts",text:"I pick up my pants."},
+    {scene_prompt:"Photo of stepping into pants",text:"I step one foot in, then the other foot."},
+    {scene_prompt:"Photo of pulling up pants",text:"I pull my pants up and button or zip them."},
+    {scene_prompt:"Photo of shirt",text:"I pick up my shirt."},
+    {scene_prompt:"Photo of head going through shirt",text:"I put my head through the hole."},
+    {scene_prompt:"Photo of arms through sleeves",text:"I put my arms through the sleeves."},
+    {scene_prompt:"Photo of pulling shirt down",text:"I pull my shirt down."},
+    {scene_prompt:"Photo of socks",text:"I get my socks."},
+    {scene_prompt:"Photo of putting on sock",text:"I put one sock on, then the other."},
+    {scene_prompt:"Photo of shoes",text:"I find my shoes."},
+    {scene_prompt:"Photo of putting on shoes",text:"I slide my feet into my shoes."},
+    {scene_prompt:"Photo of tying shoes or velcro",text:"I tie my shoes or close the velcro."},
+    {scene_prompt:"Photo of child dressed and smiling in mirror",text:"I look in the mirror. I am dressed! I did it!"}
+  ]},
+  {name:"Washing Hands",icon:"\u{1F9FC}",pages:[
+    {scene_prompt:"Photo of hands (dirty or before eating)",text:"It is time to wash my hands."},
+    {scene_prompt:"Photo of walking to sink",text:"I walk to the sink."},
+    {scene_prompt:"Photo of faucet handle",text:"I turn on the water."},
+    {scene_prompt:"Photo of hands under water",text:"I put my hands under the water to get them wet."},
+    {scene_prompt:"Photo of soap dispenser",text:"I push the soap to get some on my hands."},
+    {scene_prompt:"Photo of rubbing palms together",text:"I rub my hands together."},
+    {scene_prompt:"Photo of scrubbing between fingers",text:"I scrub between my fingers."},
+    {scene_prompt:"Photo of scrubbing backs of hands",text:"I scrub the backs of my hands."},
+    {scene_prompt:"Photo of scrubbing thumbs",text:"I scrub my thumbs."},
+    {scene_prompt:"Photo of hands under running water",text:"I count to 20, then rinse off all the soap."},
+    {scene_prompt:"Photo of turning off faucet",text:"I turn off the water."},
+    {scene_prompt:"Photo of paper towel dispenser or towel",text:"I dry my hands with a towel."},
+    {scene_prompt:"Photo of clean hands",text:"My hands are clean!"}
+  ]}
+],
+"Going Places":[
+  {name:"Going to the Store",icon:"\u{1F6D2}",pages:[
+    {scene_prompt:"Photo of parent telling child about the trip",text:"Mom or Dad says we are going to the store today."},
+    {scene_prompt:"Photo of shoes by the door",text:"I put on my shoes."},
+    {scene_prompt:"Photo of jacket or coat (if needed)",text:"I put on my jacket if it is cold outside."},
+    {scene_prompt:"Photo of front door",text:"We walk out the front door."},
+    {scene_prompt:"Photo of car in driveway",text:"We walk to the car."},
+    {scene_prompt:"Photo of car door",text:"I open the car door."},
+    {scene_prompt:"Photo of car seat or booster",text:"I climb into my seat."},
+    {scene_prompt:"Photo of seatbelt",text:"I put on my seatbelt. Click!"},
+    {scene_prompt:"Photo of driving (from back seat)",text:"We drive to the store. I can look out the window."},
+    {scene_prompt:"Photo of parking lot",text:"We park the car."},
+    {scene_prompt:"Photo of unbuckling seatbelt",text:"I unbuckle my seatbelt."},
+    {scene_prompt:"Photo of getting out of car",text:"I get out of the car carefully."},
+    {scene_prompt:"Photo of holding hands in parking lot",text:"I hold a grown-up's hand in the parking lot. Cars are moving."},
+    {scene_prompt:"Photo of store entrance / automatic doors",text:"We walk to the store. The doors might open by themselves. That is okay!"},
+    {scene_prompt:"Photo of inside of store (bright lights, sounds)",text:"The store has bright lights and lots of sounds. That is normal."},
+    {scene_prompt:"Photo of shopping cart",text:"We get a cart. I can ride in it or walk beside it."},
+    {scene_prompt:"Photo of grocery list or phone list",text:"We have a list of things to buy."},
+    {scene_prompt:"Photo of aisle with items",text:"We walk down the aisles to find what we need."},
+    {scene_prompt:"Photo of putting item in cart",text:"We put things in the cart."},
+    {scene_prompt:"Photo of hands at sides",text:"I keep my hands to myself. I do not touch things on the shelves."},
+    {scene_prompt:"Photo of child looking at something they want",text:"If I see something I want, I can ask nicely."},
+    {scene_prompt:"Photo of parent saying no (gentle)",text:"Sometimes the answer is no. That is okay. Maybe next time."},
+    {scene_prompt:"Photo of checkout lane",text:"We are done shopping. We go to the checkout."},
+    {scene_prompt:"Photo of waiting in line",text:"Sometimes we wait in line. I can be patient."},
+    {scene_prompt:"Photo of items on conveyor belt",text:"We put our things on the belt."},
+    {scene_prompt:"Photo of scanner beeping",text:"The machine beeps when it scans our food. That is just how it counts."},
+    {scene_prompt:"Photo of paying (card or cash)",text:"We pay for our things."},
+    {scene_prompt:"Photo of bags",text:"Our things go in bags."},
+    {scene_prompt:"Photo of walking to car with bags",text:"We carry the bags to the car."},
+    {scene_prompt:"Photo of putting bags in trunk/back",text:"We put the bags in the car."},
+    {scene_prompt:"Photo of getting back in car seat",text:"I get back in my seat and buckle up."},
+    {scene_prompt:"Photo of driving home",text:"We drive home."},
+    {scene_prompt:"Photo of pulling into driveway",text:"We are home!"},
+    {scene_prompt:"Photo of carrying bags inside",text:"We carry the bags inside."},
+    {scene_prompt:"Photo of putting groceries away",text:"We put the food away. I can help!"},
+    {scene_prompt:"Photo of child smiling",text:"I did a great job at the store today!"}
+  ]},
+  {name:"Going to the Doctor",icon:"\u{1F3E5}",pages:[
+    {scene_prompt:"Photo of calendar or parent explaining",text:"Today I have a doctor appointment."},
+    {scene_prompt:"Photo of getting ready (shoes, jacket)",text:"I get ready to go."},
+    {scene_prompt:"Photo of car",text:"We get in the car and drive to the doctor."},
+    {scene_prompt:"Photo of doctor office building",text:"We park and walk to the building."},
+    {scene_prompt:"Photo of front door of office",text:"We go inside."},
+    {scene_prompt:"Photo of reception desk",text:"A person at the desk says hello. Mom or Dad talks to them."},
+    {scene_prompt:"Photo of waiting room chairs",text:"We sit in the waiting room."},
+    {scene_prompt:"Photo of toys or books in waiting room",text:"I can read a book or play while I wait."},
+    {scene_prompt:"Photo of nurse or door to exam area",text:"Someone calls my name. It is my turn."},
+    {scene_prompt:"Photo of hallway to exam room",text:"I walk down the hall."},
+    {scene_prompt:"Photo of scale",text:"They might weigh me. I stand on a scale."},
+    {scene_prompt:"Photo of height chart on wall",text:"They might measure how tall I am."},
+    {scene_prompt:"Photo of exam room",text:"I go into a room and sit on the table."},
+    {scene_prompt:"Photo of blood pressure cuff",text:"They might squeeze my arm. It feels tight but it is okay. It goes away fast."},
+    {scene_prompt:"Photo of stethoscope",text:"The doctor listens to my heart. The tool might feel cold."},
+    {scene_prompt:"Photo of otoscope (ear looker)",text:"The doctor looks in my ears. It does not hurt."},
+    {scene_prompt:"Photo of tongue depressor",text:"The doctor might look in my mouth. I say ahh."},
+    {scene_prompt:"Photo of doctor talking to parent",text:"The doctor talks to Mom or Dad. I can sit quietly."},
+    {scene_prompt:"Photo of band-aid or sticker (reward)",text:"I might get a sticker or prize for being brave."},
+    {scene_prompt:"Photo of walking out of office",text:"We are done! We walk back to the car."},
+    {scene_prompt:"Photo of driving home",text:"We drive home. The doctor helps me stay healthy."},
+    {scene_prompt:"Photo of child at home smiling",text:"I was brave at the doctor! Great job!"}
+  ]},
+  {name:"Getting a Haircut",icon:"\u{2702}\u{FE0F}",pages:[
+    {scene_prompt:"Photo of parent explaining haircut day",text:"Today I am getting a haircut."},
+    {scene_prompt:"Photo of getting in car",text:"We get in the car."},
+    {scene_prompt:"Photo of barber shop or salon (outside)",text:"We drive to the barber shop."},
+    {scene_prompt:"Photo of front door of shop",text:"We go inside."},
+    {scene_prompt:"Photo of waiting area",text:"There might be other people waiting. We sit and wait our turn."},
+    {scene_prompt:"Photo of the barber or stylist",text:"The person who cuts hair says hello."},
+    {scene_prompt:"Photo of the big chair",text:"I sit in a special big chair. It might go up high!"},
+    {scene_prompt:"Photo of cape or smock",text:"They put a cape on me. It keeps hair off my clothes."},
+    {scene_prompt:"Photo of spray bottle",text:"They might spray water on my hair. It feels wet and cool."},
+    {scene_prompt:"Photo of comb",text:"They comb my hair."},
+    {scene_prompt:"Photo of scissors",text:"They use scissors to cut my hair. Snip snip! I sit still."},
+    {scene_prompt:"Photo of clippers (if used)",text:"They might use clippers. They buzz and vibrate. It does not hurt."},
+    {scene_prompt:"Photo of hair falling",text:"Little pieces of hair fall down. The cape catches them."},
+    {scene_prompt:"Photo of brush sweeping neck",text:"They brush off my neck. It might tickle!"},
+    {scene_prompt:"Photo of cape being removed",text:"They take off the cape."},
+    {scene_prompt:"Photo of mirror",text:"I look in the mirror. My haircut looks great!"},
+    {scene_prompt:"Photo of paying at register",text:"We pay for the haircut."},
+    {scene_prompt:"Photo of leaving shop",text:"We say thank you and leave."},
+    {scene_prompt:"Photo of child smiling with new haircut",text:"I got a haircut! I was so brave!"}
+  ]},
+  {name:"Riding the School Bus",icon:"\u{1F68C}",pages:[
+    {scene_prompt:"Photo of getting ready for school",text:"Today I am riding the school bus."},
+    {scene_prompt:"Photo of backpack",text:"I make sure I have my backpack."},
+    {scene_prompt:"Photo of walking to bus stop",text:"I walk to the bus stop with a grown-up."},
+    {scene_prompt:"Photo of bus stop (curb or sign)",text:"I stand on the sidewalk and wait."},
+    {scene_prompt:"Photo of bus coming down street",text:"I see the bus coming! It is big and yellow."},
+    {scene_prompt:"Photo of bus stopped with door open",text:"The bus stops and the door opens."},
+    {scene_prompt:"Photo of bus steps",text:"I walk up the steps carefully."},
+    {scene_prompt:"Photo of bus driver",text:"I say hi to the bus driver."},
+    {scene_prompt:"Photo of bus aisle",text:"I walk down the aisle."},
+    {scene_prompt:"Photo of empty bus seat",text:"I find a seat and sit down."},
+    {scene_prompt:"Photo of sitting in seat (seatbelt if available)",text:"I sit facing forward with my bottom on the seat."},
+    {scene_prompt:"Photo of backpack on lap",text:"I hold my backpack on my lap."},
+    {scene_prompt:"Photo of looking out window",text:"I can look out the window. The bus moves and that is okay."},
+    {scene_prompt:"Photo of child being quiet",text:"I use a quiet voice on the bus."},
+    {scene_prompt:"Photo of bus arriving at school",text:"The bus stops at school."},
+    {scene_prompt:"Photo of standing up",text:"I wait for my turn to stand up."},
+    {scene_prompt:"Photo of walking down bus steps",text:"I walk down the steps carefully."},
+    {scene_prompt:"Photo of school entrance",text:"I walk into school. I rode the bus!"}
+  ]},
+  {name:"Going to a Restaurant",icon:"\u{1F37D}\u{FE0F}",pages:[
+    {scene_prompt:"Photo of parent telling child about restaurant",text:"Today we are going to a restaurant to eat."},
+    {scene_prompt:"Photo of getting in car",text:"We get in the car and drive there."},
+    {scene_prompt:"Photo of restaurant (outside)",text:"We are at the restaurant."},
+    {scene_prompt:"Photo of front door of restaurant",text:"We go inside."},
+    {scene_prompt:"Photo of host stand or waiting area",text:"Someone says hello. We might wait for a table."},
+    {scene_prompt:"Photo of being led to table",text:"They take us to our table."},
+    {scene_prompt:"Photo of chair at table",text:"I sit down in my chair."},
+    {scene_prompt:"Photo of menu",text:"We look at the menu to pick our food."},
+    {scene_prompt:"Photo of waiter/waitress",text:"A waiter comes to our table. They ask what we want to eat."},
+    {scene_prompt:"Photo of child pointing at menu",text:"I tell them what I want. Or Mom/Dad can order for me."},
+    {scene_prompt:"Photo of waiting at table",text:"We wait for our food. I can color or talk quietly."},
+    {scene_prompt:"Photo of food arriving",text:"Our food is here!"},
+    {scene_prompt:"Photo of eating food",text:"I eat my food. I use my fork or spoon."},
+    {scene_prompt:"Photo of napkin",text:"I wipe my mouth with my napkin."},
+    {scene_prompt:"Photo of empty plate",text:"I am done eating."},
+    {scene_prompt:"Photo of paying the bill",text:"We pay for our food."},
+    {scene_prompt:"Photo of leaving restaurant",text:"We say thank you and leave."},
+    {scene_prompt:"Photo of getting in car",text:"We get back in the car and go home."},
+    {scene_prompt:"Photo of child smiling",text:"I did a great job at the restaurant!"}
+  ]},
+  {name:"Going to the Dentist",icon:"\u{1F9B7}",pages:[
+    {scene_prompt:"Photo of parent explaining dentist day",text:"Today I am going to the dentist."},
+    {scene_prompt:"Photo of car",text:"We drive to the dentist office."},
+    {scene_prompt:"Photo of dentist office (outside)",text:"We are here."},
+    {scene_prompt:"Photo of front door",text:"We go inside."},
+    {scene_prompt:"Photo of front desk",text:"Mom or Dad talks to the person at the desk."},
+    {scene_prompt:"Photo of waiting room",text:"I sit and wait. I can read a book or play."},
+    {scene_prompt:"Photo of dental hygienist or door",text:"Someone calls my name."},
+    {scene_prompt:"Photo of dental chair",text:"I sit in a big chair that goes up and down."},
+    {scene_prompt:"Photo of dental bib",text:"They put a bib on me."},
+    {scene_prompt:"Photo of dental light",text:"There is a bright light above me. I can close my eyes."},
+    {scene_prompt:"Photo of dental mirror",text:"They use a small mirror to look inside my mouth."},
+    {scene_prompt:"Photo of dental pick tool",text:"They use a tool to check my teeth. It might feel funny but it does not hurt."},
+    {scene_prompt:"Photo of polishing tool",text:"They polish my teeth with a spinning brush. It tickles and buzzes."},
+    {scene_prompt:"Photo of rinse cup / suction",text:"I rinse my mouth and spit in the bowl."},
+    {scene_prompt:"Photo of dentist talking",text:"The dentist looks at my teeth and talks to Mom or Dad."},
+    {scene_prompt:"Photo of toothbrush or prize bin",text:"I might get a new toothbrush or pick a prize!"},
+    {scene_prompt:"Photo of leaving dentist",text:"We are done! We walk back to the car."},
+    {scene_prompt:"Photo of child smiling showing teeth",text:"My teeth are clean and healthy! I was very brave!"}
+  ]}
+],
+"Feelings":[
+  {name:"When I Feel Angry",icon:"\u{1F620}",pages:[
+    {scene_prompt:"Photo of a triggering situation (toy taken, told no)",text:"Something happened that made me angry."},
+    {scene_prompt:"Photo of child's angry face or fists",text:"I feel angry. My face gets hot. My hands might squeeze tight."},
+    {scene_prompt:"Photo of child's body tense",text:"My body feels tight and stiff."},
+    {scene_prompt:"Photo of stop sign or hand up",text:"I STOP. I do not hit, kick, or throw things."},
+    {scene_prompt:"Photo of child's chest/belly",text:"I put my hand on my belly."},
+    {scene_prompt:"Photo of child taking a deep breath",text:"I take a big breath in through my nose."},
+    {scene_prompt:"Photo of child blowing out",text:"I blow out slowly through my mouth. Like blowing out a candle."},
+    {scene_prompt:"Photo of doing it again",text:"I do it again. Breathe in... breathe out..."},
+    {scene_prompt:"Photo of counting fingers",text:"I can count to 10 slowly."},
+    {scene_prompt:"Photo of calm down corner or cozy spot",text:"I can go to my calm down spot."},
+    {scene_prompt:"Photo of fidget, stress ball, or squeeze toy",text:"I can squeeze something soft."},
+    {scene_prompt:"Photo of child looking calmer",text:"I am starting to feel calmer."},
+    {scene_prompt:"Photo of child talking to parent or teacher",text:"I use my words. I say: I feel angry because..."},
+    {scene_prompt:"Photo of adult listening",text:"A grown-up listens to me."},
+    {scene_prompt:"Photo of problem being worked out",text:"We figure it out together."},
+    {scene_prompt:"Photo of child calm and smiling",text:"I calmed down. I am proud of myself."}
+  ]},
+  {name:"When I Feel Worried or Scared",icon:"\u{1F630}",pages:[
+    {scene_prompt:"Photo of something new or uncertain",text:"Sometimes something makes me feel worried or scared."},
+    {scene_prompt:"Photo of child looking uncertain",text:"My tummy might feel funny. My heart might beat fast."},
+    {scene_prompt:"Photo of child's hands shaking or fidgeting",text:"My hands might shake. That is my body telling me I am worried."},
+    {scene_prompt:"Photo of stop/pause gesture",text:"I STOP and notice how I feel."},
+    {scene_prompt:"Photo of child taking a breath",text:"I take a slow, deep breath in."},
+    {scene_prompt:"Photo of child breathing out",text:"I breathe out slowly."},
+    {scene_prompt:"Photo of child hugging self or crossing arms",text:"I can give myself a hug. I squeeze tight."},
+    {scene_prompt:"Photo of stuffed animal, blanket, or comfort item",text:"I can hold something soft that makes me feel safe."},
+    {scene_prompt:"Photo of trusted adult (parent, teacher)",text:"I can tell a grown-up: I feel scared."},
+    {scene_prompt:"Photo of adult kneeling next to child",text:"They will help me. I am not alone."},
+    {scene_prompt:"Photo of the scary thing from a distance",text:"Sometimes the thing I am scared of is not as bad as I think."},
+    {scene_prompt:"Photo of child trying something brave",text:"I can try a little bit. I am brave."},
+    {scene_prompt:"Photo of child smiling after",text:"I did it! The worried feeling went away."}
+  ]},
+  {name:"Waiting My Turn",icon:"\u{270B}",pages:[
+    {scene_prompt:"Photo of group of kids or line",text:"Sometimes I have to wait my turn."},
+    {scene_prompt:"Photo of child wanting to go first",text:"I want to go NOW. But other people are first."},
+    {scene_prompt:"Photo of child's frustrated face",text:"Waiting can feel hard. That is okay."},
+    {scene_prompt:"Photo of child's body still (hands at sides)",text:"I keep my body calm. My hands stay at my sides."},
+    {scene_prompt:"Photo of feet standing still",text:"My feet stay where they are. I do not push."},
+    {scene_prompt:"Photo of child breathing",text:"I take a deep breath while I wait."},
+    {scene_prompt:"Photo of child looking at something (book, wall poster)",text:"I can look at something interesting while I wait."},
+    {scene_prompt:"Photo of child humming or quiet fidget",text:"I can hum a song quietly in my head."},
+    {scene_prompt:"Photo of line getting shorter",text:"The line gets shorter. My turn is getting closer."},
+    {scene_prompt:"Photo of it being child's turn",text:"It is MY turn!"},
+    {scene_prompt:"Photo of child doing the activity",text:"I did it! Waiting was worth it."},
+    {scene_prompt:"Photo of child smiling proudly",text:"I am good at waiting. I am patient!"}
+  ]},
+  {name:"When I Feel Sad",icon:"\u{1F622}",pages:[
+    {scene_prompt:"Photo of child looking down or sad",text:"Sometimes I feel sad."},
+    {scene_prompt:"Photo of tears or child's sad face",text:"I might cry. That is okay. Everyone cries sometimes."},
+    {scene_prompt:"Photo of child's body droopy/low energy",text:"My body might feel heavy or tired."},
+    {scene_prompt:"Photo of child sitting alone",text:"I might want to be alone for a little while. That is okay."},
+    {scene_prompt:"Photo of comfort item",text:"I can hold something that makes me feel better."},
+    {scene_prompt:"Photo of trusted adult",text:"I can tell someone: I feel sad."},
+    {scene_prompt:"Photo of hug",text:"A hug can help me feel better."},
+    {scene_prompt:"Photo of drawing or coloring",text:"I can draw a picture about how I feel."},
+    {scene_prompt:"Photo of doing a favorite activity",text:"I can do something I like."},
+    {scene_prompt:"Photo of child starting to smile",text:"The sad feeling gets smaller. I start to feel better."},
+    {scene_prompt:"Photo of child smiling",text:"It is okay to feel sad sometimes. The feeling always passes."}
+  ]}
+],
+"Social Skills":[
+  {name:"Saying Hello and Goodbye",icon:"\u{1F44B}",pages:[
+    {scene_prompt:"Photo of school entrance or front door",text:"When I see someone I know, I can greet them."},
+    {scene_prompt:"Photo of child noticing someone",text:"I see the person."},
+    {scene_prompt:"Photo of child looking at the person's face",text:"I look at their face."},
+    {scene_prompt:"Photo of child's mouth smiling",text:"I smile."},
+    {scene_prompt:"Photo of child waving",text:"I can wave my hand."},
+    {scene_prompt:"Photo of child's mouth talking",text:"I say: Hi! or Hello! or Good morning!"},
+    {scene_prompt:"Photo of the person responding",text:"They say hi back! That feels good."},
+    {scene_prompt:"Photo of child starting to leave",text:"When it is time to go, I can say goodbye."},
+    {scene_prompt:"Photo of child waving bye",text:"I wave and say: Bye! or See you later!"},
+    {scene_prompt:"Photo of child smiling",text:"Saying hello and goodbye makes people feel happy. I am friendly!"}
+  ]},
+  {name:"Sharing and Taking Turns",icon:"\u{1F91D}",pages:[
+    {scene_prompt:"Photo of toy or game",text:"I am playing with something fun."},
+    {scene_prompt:"Photo of another child nearby",text:"My friend wants to play with it too."},
+    {scene_prompt:"Photo of child holding toy tight",text:"I might not want to share right now. That feeling is normal."},
+    {scene_prompt:"Photo of timer",text:"I can use a timer. I play for 2 minutes, then my friend plays for 2 minutes."},
+    {scene_prompt:"Photo of child handing toy to friend",text:"I give my friend the toy. It is their turn."},
+    {scene_prompt:"Photo of child waiting while friend plays",text:"I wait for my turn. I can do something else while I wait."},
+    {scene_prompt:"Photo of friend handing toy back",text:"Now it is my turn again!"},
+    {scene_prompt:"Photo of both kids playing together",text:"Sometimes we can play together at the same time."},
+    {scene_prompt:"Photo of both kids smiling",text:"Sharing and taking turns makes playing more fun!"},
+    {scene_prompt:"Photo of child giving high five",text:"I am a good friend because I share!"}
+  ]},
+  {name:"Playing with Others",icon:"\u{1F3C3}",pages:[
+    {scene_prompt:"Photo of playground or play area",text:"I see other kids playing."},
+    {scene_prompt:"Photo of child watching from nearby",text:"I want to play too."},
+    {scene_prompt:"Photo of child walking toward the group",text:"I walk over to the group."},
+    {scene_prompt:"Photo of child near the other kids",text:"I stand close enough for them to see me."},
+    {scene_prompt:"Photo of child's mouth talking",text:"I say: Can I play too? or What are you playing?"},
+    {scene_prompt:"Photo of kids saying yes / nodding",text:"They say yes! I can join."},
+    {scene_prompt:"Photo of kids explaining rules",text:"I listen to the rules of the game."},
+    {scene_prompt:"Photo of child playing with group",text:"I follow the rules and take my turn."},
+    {scene_prompt:"Photo of child winning or doing well",text:"If I win, I say good game! I do not brag."},
+    {scene_prompt:"Photo of child not winning",text:"If I do not win, that is okay. I can say good game."},
+    {scene_prompt:"Photo of child smiling with friends",text:"Playing with others is fun! I can play again another time."},
+    {scene_prompt:"Photo of sometimes they say no",text:"Sometimes kids say no. That is okay. I can find someone else to play with."}
+  ]},
+  {name:"Using My Words (Not My Body)",icon:"\u{1F5E3}\u{FE0F}",pages:[
+    {scene_prompt:"Photo of child frustrated or upset",text:"Something made me upset."},
+    {scene_prompt:"Photo of child wanting to hit or push",text:"I might want to hit, push, or grab. But I STOP."},
+    {scene_prompt:"Photo of stop sign or red hand",text:"Hitting hurts people. I do not want to hurt anyone."},
+    {scene_prompt:"Photo of child's mouth",text:"I use my WORDS instead."},
+    {scene_prompt:"Photo of child saying stop",text:"I can say: Stop! I do not like that."},
+    {scene_prompt:"Photo of child saying I need help",text:"I can say: I need help."},
+    {scene_prompt:"Photo of child saying I feel mad",text:"I can say: I feel mad because..."},
+    {scene_prompt:"Photo of child saying that is mine",text:"I can say: That is mine. Please give it back."},
+    {scene_prompt:"Photo of adult helping resolve conflict",text:"If my words do not work, I can tell a grown-up."},
+    {scene_prompt:"Photo of problem solved, kids calm",text:"Using words helps us fix problems without anyone getting hurt."},
+    {scene_prompt:"Photo of child proud",text:"I used my words! I am proud of myself."}
+  ]}
+],
+"Safety":[
+  {name:"Fire Drill at School",icon:"\u{1F6A8}",pages:[
+    {scene_prompt:"Photo of classroom",text:"I am in my classroom."},
+    {scene_prompt:"Photo of fire alarm on wall",text:"A loud bell starts ringing. BRIIING!"},
+    {scene_prompt:"Photo of child covering ears",text:"The bell is very loud. I can cover my ears if I need to. That is okay."},
+    {scene_prompt:"Photo of teacher standing up",text:"My teacher tells us it is a fire drill. We are practicing."},
+    {scene_prompt:"Photo of child standing up from desk",text:"I stop what I am doing and stand up."},
+    {scene_prompt:"Photo of kids lining up",text:"I line up with my class quietly."},
+    {scene_prompt:"Photo of walking down hallway",text:"We walk in a line down the hallway. I do not run."},
+    {scene_prompt:"Photo of exit door",text:"We walk through the door to go outside."},
+    {scene_prompt:"Photo of class gathering spot outside",text:"We go to our special spot outside."},
+    {scene_prompt:"Photo of standing with class",text:"I stand with my class and stay quiet."},
+    {scene_prompt:"Photo of teacher counting kids",text:"My teacher counts everyone to make sure we are all here."},
+    {scene_prompt:"Photo of waiting outside",text:"We wait quietly."},
+    {scene_prompt:"Photo of bell stopping / all clear signal",text:"When the bell stops, the drill is over."},
+    {scene_prompt:"Photo of walking back inside",text:"We walk back inside to our classroom."},
+    {scene_prompt:"Photo of child back at desk",text:"I sit back down. The fire drill is done. I am safe!"}
+  ]},
+  {name:"Stranger Safety",icon:"\u{1F6E1}\u{FE0F}",pages:[
+    {scene_prompt:"Photo of family members",text:"There are people I know and people I do not know."},
+    {scene_prompt:"Photo of trusted adults (parents, teachers, family)",text:"People I know and trust are my safe people."},
+    {scene_prompt:"Photo of crowd or public place",text:"People I do not know are called strangers."},
+    {scene_prompt:"Photo of stranger approaching (staged)",text:"If a stranger talks to me, I do not talk back."},
+    {scene_prompt:"Photo of child shaking head no",text:"If a stranger asks me to go with them, I say NO."},
+    {scene_prompt:"Photo of child stepping back",text:"I step away from the stranger."},
+    {scene_prompt:"Photo of child running to safe adult",text:"I run to my safe person right away."},
+    {scene_prompt:"Photo of child telling an adult",text:"I tell a grown-up what happened."},
+    {scene_prompt:"Photo of stranger offering candy/toy",text:"If a stranger offers me something, I say NO and walk away."},
+    {scene_prompt:"Photo of car (stranger's car concept)",text:"I NEVER get in a car with someone I do not know."},
+    {scene_prompt:"Photo of child yelling for help",text:"If someone tries to grab me, I yell: HELP! THIS IS NOT MY PARENT!"},
+    {scene_prompt:"Photo of safe adults around child",text:"My safe people protect me. I know what to do!"}
+  ]},
+  {name:"Crossing the Street",icon:"\u{1F6B6}",pages:[
+    {scene_prompt:"Photo of sidewalk near street",text:"Sometimes I need to cross the street."},
+    {scene_prompt:"Photo of adult's hand",text:"I ALWAYS hold a grown-up's hand near the street."},
+    {scene_prompt:"Photo of crosswalk",text:"We walk to the crosswalk. This is the safe place to cross."},
+    {scene_prompt:"Photo of traffic signal or stop sign",text:"We look at the signal. Red means stop. Green means go."},
+    {scene_prompt:"Photo of looking left",text:"We look LEFT."},
+    {scene_prompt:"Photo of looking right",text:"We look RIGHT."},
+    {scene_prompt:"Photo of looking left again",text:"We look LEFT again."},
+    {scene_prompt:"Photo of no cars coming",text:"No cars are coming. It is safe."},
+    {scene_prompt:"Photo of stepping into crosswalk",text:"We step into the crosswalk."},
+    {scene_prompt:"Photo of walking (not running) across",text:"We WALK across. We do not run."},
+    {scene_prompt:"Photo of continuing to look",text:"We keep looking for cars while we walk."},
+    {scene_prompt:"Photo of reaching the other side",text:"We made it to the other side!"},
+    {scene_prompt:"Photo of child safe on sidewalk",text:"I crossed the street safely!"}
+  ]}
+]
+};
+
+// ===== STATE =====
+let story={name:"",pages:[],created:null};
+let pgIdx=0, prevIdx=0;
+let faces=JSON.parse(localStorage.getItem('sm_faces')||'[]');
+let scenes=JSON.parse(localStorage.getItem('sm_scenes')||'[]');
+let saved=JSON.parse(localStorage.getItem('sm_stories2')||'[]');
+let stack=['homeScreen'];
+let promptQueue=[];
+let promptCb=null;
+let activeCat=Object.keys(T)[0];
+let dragState=null;
+
+// ===== NAV =====
+function goTo(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('act'));
+  document.getElementById(id).classList.add('act');
+  if(id!=='homeScreen'){stack.push(id);document.getElementById('backBtn').classList.add('vis')}
+  else{stack=['homeScreen'];document.getElementById('backBtn').classList.remove('vis')}
+  if(id==='tmplScreen')renderTmpls();
+  if(id==='savedScreen')renderSaved();
+  if(id==='photoScreen')renderPhotos();
+  if(id==='editorScreen')renderPage();
+}
+function goBack(){stack.pop();goTo(stack[stack.length-1]||'homeScreen')}
+
+// ===== TEMPLATES =====
+function renderTmpls(){
+  document.getElementById('catTabs').innerHTML=Object.keys(T).map(c=>`<div class="tab ${c===activeCat?'act':''}" onclick="activeCat='${c}';renderTmpls()">${c}</div>`).join('');
+  document.getElementById('tmplGrid').innerHTML=T[activeCat].map((t,i)=>`<div class="tcard" onclick="loadTmpl('${activeCat}',${i})"><div class="tico" style="background:#E5DBFF">${t.icon}</div><div class="tinf"><h3>${t.name}</h3><p>Guided — ${t.pages.length} pages</p><div class="cnt">&#128247; Photo prompts for each step</div></div></div>`).join('');
+}
+
+function loadTmpl(cat,idx){
+  let t=T[cat][idx];
+  // Show review screen so parent can uncheck steps that don't apply
+  window._pendingTmpl = t;
+  let html = `<h2>Review Steps</h2>`;
+  html += `<p style="font-size:13px;color:var(--txtL);margin-bottom:12px">Uncheck any steps that don't apply to your child:</p>`;
+  html += `<div style="margin-bottom:16px">`;
+  t.pages.forEach((p,i) => {
+    html += `<label style="display:flex;align-items:flex-start;gap:10px;padding:10px 8px;border-bottom:1px solid #F1F3F5;cursor:pointer;font-size:14px;line-height:1.3">
+      <input type="checkbox" checked data-step="${i}" style="margin-top:2px;width:20px;height:20px;flex-shrink:0;accent-color:var(--pri)">
+      <span><strong>${i+1}.</strong> ${p.text}</span>
+    </label>`;
+  });
+  html += `</div>`;
+  html += `<div style="display:flex;gap:8px">`;
+  html += `<button class="btn bo" onclick="closeReview()" style="flex:1">Cancel</button>`;
+  html += `<button class="btn bp" onclick="confirmTmpl()" style="flex:2">Use ${t.pages.length} steps &#10132;</button>`;
+  html += `</div>`;
+  document.getElementById('reviewContent').innerHTML = html;
+  document.getElementById('reviewModal').classList.add('vis');
+  // Update button count when checkboxes change
+  document.querySelectorAll('#reviewContent input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      let ct = document.querySelectorAll('#reviewContent input[type=checkbox]:checked').length;
+      document.querySelector('#reviewContent .bp').textContent = `Use ${ct} steps \u{2794}`;
+    });
+  });
+}
+
+function closeReview(){ document.getElementById('reviewModal').classList.remove('vis'); }
+
+function confirmTmpl(){
+  let t = window._pendingTmpl;
+  let checks = document.querySelectorAll('#reviewContent input[type=checkbox]');
+  let kept = [];
+  checks.forEach((cb,i) => { if(cb.checked) kept.push(t.pages[i]); });
+  if(!kept.length){ toast('Keep at least one step!'); return; }
+  story = {name:t.name, pages:kept.map(p=>({scene:null,face:null,text:p.text,prompt:p.scene_prompt,faceX:50,faceY:20,faceSize:100,showFace:true})), created:Date.now()};
+  pgIdx=0;
+  closeReview();
+  goTo('editorScreen');
+  toast(`Story created with ${kept.length} steps`);
+}
+
+function startBlank(){
+  story={name:"My Story",pages:[{scene:null,face:null,text:"Tap to write your story text",prompt:null,faceX:50,faceY:20,faceSize:100,showFace:true}],created:Date.now()};
+  pgIdx=0;
+  goTo('editorScreen');
+}
+
+// ===== EDITOR =====
+function renderPage(){
+  if(!story.pages.length)return;
+  let p=story.pages[pgIdx];
+  let sph=document.getElementById('scenePH');
+  let simg=document.getElementById('sceneImg');
+  let fovl=document.getElementById('faceOvl');
+  let fph=document.getElementById('facePH');
+  let fimg=document.getElementById('faceImg');
+
+  // Scene
+  if(p.scene){sph.classList.add('hidden');simg.classList.remove('hidden');simg.src=p.scene}
+  else{sph.classList.remove('hidden');simg.classList.add('hidden');
+    document.getElementById('scenePromptText').textContent=p.prompt||'Tap to add scene photo';
+  }
+
+  // Face
+  if(p.showFace!==false){
+    fovl.style.display='';
+    if(p.face){fph.classList.add('hidden');fimg.classList.remove('hidden');fimg.src=p.face}
+    else{fph.classList.remove('hidden');fimg.classList.add('hidden')}
+    fovl.style.width=fovl.style.height=(p.faceSize||100)+'px';
+    fovl.style.left=p.faceX+'%';fovl.style.top=p.faceY+'%';
+    fovl.style.transform='translate(-50%,-50%)';
+    document.getElementById('faceSize').value=p.faceSize||100;
+  } else {
+    fovl.style.display='none';
+  }
+
+  document.getElementById('sText').textContent=p.text;
+  document.getElementById('pgLbl').textContent=`${pgIdx+1} / ${story.pages.length}`;
+  // Collapse tools panel on page change
+  document.getElementById('toolsPanel').style.display='none';
+}
+
+function saveCur(){if(!story.pages.length)return;story.pages[pgIdx].text=document.getElementById('sText').textContent||''}
+
+function prevPg(){saveCur();if(pgIdx>0){pgIdx--;renderPage()}}
+function nextPg(){saveCur();if(pgIdx<story.pages.length-1){pgIdx++;renderPage()}}
+
+function addPage(){saveCur();story.pages.splice(pgIdx+1,0,{scene:null,face:null,text:"Write text here...",prompt:null,faceX:50,faceY:20,faceSize:100,showFace:true});pgIdx++;renderPage();toast('Page added!')}
+function delPage(){if(story.pages.length<=1){toast('Need at least 1 page!');return}story.pages.splice(pgIdx,1);if(pgIdx>=story.pages.length)pgIdx--;renderPage();toast('Step removed')}
+
+function resizeFace(v){story.pages[pgIdx].faceSize=parseInt(v);let f=document.getElementById('faceOvl');f.style.width=f.style.height=v+'px'}
+function toggleFace(){let p=story.pages[pgIdx];p.showFace=!p.showFace;renderPage();toast(p.showFace?'Face shown':'Face hidden')}
+function showTools(){let tp=document.getElementById('toolsPanel');tp.style.display=tp.style.display==='none'?'block':'none'}
+function toggleFaceSize(){let r=document.getElementById('faceSizeRow');r.style.display=r.style.display==='flex'?'none':'flex'}
+
+function showArrange(){
+  saveCur();
+  let html=`<h2>&#8645; Arrange Steps</h2>`;
+  html+=`<p style="font-size:13px;color:var(--txtL);margin-bottom:12px">Use &#9650; &#9660; to reorder. Tap &#10005; to remove.</p>`;
+  html+=`<div id="arrangeList" style="max-height:55vh;overflow-y:auto;-webkit-overflow-scrolling:touch">`;
+  story.pages.forEach((p,i)=>{
+    let preview=p.scene?`<img src="${p.scene}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0">`:`<div style="width:36px;height:36px;border-radius:6px;background:#F1F3F5;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">\u{1F4F7}</div>`;
+    html+=`<div style="display:flex;align-items:center;gap:6px;padding:8px 4px;border-bottom:1px solid #F1F3F5;background:white">
+      <div style="display:flex;flex-direction:column;gap:1px;flex-shrink:0">
+        <button onclick="arrMove(${i},-1)" style="background:none;border:none;font-size:14px;cursor:pointer;padding:2px 6px;color:${i===0?'#DEE2E6':'var(--pri)'}" ${i===0?'disabled':''}>&#9650;</button>
+        <button onclick="arrMove(${i},1)" style="background:none;border:none;font-size:14px;cursor:pointer;padding:2px 6px;color:${i===story.pages.length-1?'#DEE2E6':'var(--pri)'}" ${i===story.pages.length-1?'disabled':''}>&#9660;</button>
+      </div>
+      ${preview}
+      <div style="flex:1;min-width:0"><span style="font-size:12px;line-height:1.3;display:block">${i+1}. ${p.text}</span></div>
+      <button onclick="arrRemove(${i})" style="background:none;border:none;font-size:14px;cursor:pointer;flex-shrink:0;padding:4px 6px;color:var(--acc);font-weight:700">&#10005;</button>
+    </div>`;
+  });
+  html+=`</div>`;
+  html+=`<div style="display:flex;gap:8px;margin-top:12px">`;
+  html+=`<button class="btn bo" onclick="closeArrange()" style="flex:1">Cancel</button>`;
+  html+=`<button class="btn bp" onclick="doneArrange()" style="flex:1">Done &#10004;</button>`;
+  html+=`</div>`;
+  document.getElementById('arrangeContent').innerHTML=html;
+  document.getElementById('arrangeModal').classList.add('vis');
+}
+
+function arrMove(idx,dir){
+  let newIdx=idx+dir;
+  if(newIdx<0||newIdx>=story.pages.length)return;
+  let tmp=story.pages[idx];
+  story.pages[idx]=story.pages[newIdx];
+  story.pages[newIdx]=tmp;
+  // Remember scroll position
+  let list=document.getElementById('arrangeList');
+  let scrollTop=list?list.scrollTop:0;
+  showArrange();
+  // Restore scroll
+  let newList=document.getElementById('arrangeList');
+  if(newList)newList.scrollTop=scrollTop;
+}
+
+function arrRemove(idx){
+  if(story.pages.length<=1){toast('Need at least 1 step!');return}
+  story.pages.splice(idx,1);
+  if(pgIdx>=story.pages.length)pgIdx=story.pages.length-1;
+  showArrange();
+}
+
+function closeArrange(){document.getElementById('arrangeModal').classList.remove('vis')}
+function doneArrange(){closeArrange();pgIdx=0;renderPage();toast('Steps arranged!')}
+// ===== PHOTO PICKING =====
+function pickSceneForPage(){showPicker('scene',d=>{story.pages[pgIdx].scene=d;renderPage()})}
+function pickFaceForPage(){showPicker('face',d=>{story.pages[pgIdx].face=d;renderPage()})}
+// (photo prompt functions removed — prompts now show inline on canvas placeholder)
+
+function showPicker(type,cb){
+  let lib=type==='face'?faces:scenes;
+  let label=type==='face'?'Face':'Scene';
+  let html=`<h2>Choose ${label} Photo</h2>`;
+
+  if(lib.length){
+    html+=`<p style="font-size:12px;font-weight:600;color:var(--txtL);margin-bottom:6px">My ${label}s:</p>`;
+    html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">';
+    lib.forEach((p,i)=>{html+=`<img src="${p}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;cursor:pointer" onclick="pickFromLib('${type}',${i})">`});
+    html+='</div>';
+  }
+  html+=`<button class="btn bp" onclick="uploadNew('${type}')" style="width:100%;margin-bottom:8px">&#128247; Take / Upload Photo</button>`;
+  html+=`<button class="btn bo" onclick="closePickerModal()" style="width:100%">Cancel</button>`;
+  document.getElementById('pickerContent').innerHTML=html;
+  document.getElementById('pickerModal').classList.add('vis');
+  window._pickerCb=cb;
+  window._pickerType=type;
+}
+
+function closePickerModal(){document.getElementById('pickerModal').classList.remove('vis')}
+
+function pickFromLib(type,idx){
+  let d=(type==='face'?faces:scenes)[idx];
+  closePickerModal();
+  if(window._pickerCb)window._pickerCb(d);
+}
+
+function uploadNew(type){
+  closePickerModal();
+  let inp=document.getElementById(type==='face'?'fInput2':'fInput');
+  inp.onchange=function(e){
+    let f=e.target.files[0];if(!f)return;
+    let r=new FileReader();
+    r.onload=function(ev){
+      let d=ev.target.result;
+      if(type==='face'){if(!faces.includes(d)){faces.push(d);localStorage.setItem('sm_faces',JSON.stringify(faces))}}
+      else{if(!scenes.includes(d)){scenes.push(d);localStorage.setItem('sm_scenes',JSON.stringify(scenes))}}
+      if(window._pickerCb)window._pickerCb(d);
+    };
+    r.readAsDataURL(f);
+    inp.value='';
+  };
+  inp.click();
+}
+
+// ===== DRAG FACE =====
+(function(){
+  let el=null,ox,oy,cx,cy;
+  function down(e){
+    el=document.getElementById('faceOvl');
+    if(!el||el.style.display==='none')return;
+    let t=e.touches?e.touches[0]:e;
+    let r=el.getBoundingClientRect();
+    ox=t.clientX-r.left-r.width/2;
+    oy=t.clientY-r.top-r.height/2;
+    e.preventDefault();
+  }
+  function move(e){
+    if(!el)return;
+    let t=e.touches?e.touches[0]:e;
+    let cvs=document.getElementById('canvas').getBoundingClientRect();
+    let x=((t.clientX-ox-cvs.left)/cvs.width)*100;
+    let y=((t.clientY-oy-cvs.top)/cvs.height)*100;
+    x=Math.max(5,Math.min(95,x));
+    y=Math.max(5,Math.min(95,y));
+    el.style.left=x+'%';el.style.top=y+'%';
+    story.pages[pgIdx].faceX=Math.round(x);
+    story.pages[pgIdx].faceY=Math.round(y);
+    e.preventDefault();
+  }
+  function up(){el=null}
+  document.addEventListener('mousedown',e=>{if(e.target.closest('.face-overlay'))down(e)});
+  document.addEventListener('mousemove',move);
+  document.addEventListener('mouseup',up);
+  document.addEventListener('touchstart',e=>{if(e.target.closest('.face-overlay'))down(e)},{passive:false});
+  document.addEventListener('touchmove',move,{passive:false});
+  document.addEventListener('touchend',up);
+})();
+
+// ===== PHOTO MANAGER =====
+function addFacePhoto(){
+  let inp=document.getElementById('fInput2');
+  inp.onchange=e=>{Array.from(e.target.files).forEach(f=>{let r=new FileReader();r.onload=ev=>{faces.push(ev.target.result);localStorage.setItem('sm_faces',JSON.stringify(faces));renderPhotos()};r.readAsDataURL(f)});inp.value=''};
+  inp.click();
+}
+function addScenePhoto(){
+  let inp=document.getElementById('fInput');
+  inp.onchange=e=>{Array.from(e.target.files).forEach(f=>{let r=new FileReader();r.onload=ev=>{scenes.push(ev.target.result);localStorage.setItem('sm_scenes',JSON.stringify(scenes));renderPhotos()};r.readAsDataURL(f)});inp.value=''};
+  inp.click();
+}
+function renderPhotos(){
+  let fg=document.getElementById('faceGrid');
+  let sg=document.getElementById('sceneGrid');
+  fg.innerHTML=faces.length?faces.map((p,i)=>`<div class="pitem"><img src="${p}"><div class="plabel">Face ${i+1}</div><button class="pdel" onclick="faces.splice(${i},1);localStorage.setItem('sm_faces',JSON.stringify(faces));renderPhotos()">X</button></div>`).join(''):'<p style="grid-column:1/-1;text-align:center;color:var(--txtL);padding:12px;font-size:13px">No face photos yet</p>';
+  sg.innerHTML=scenes.length?scenes.map((p,i)=>`<div class="pitem"><img src="${p}"><div class="plabel">Scene ${i+1}</div><button class="pdel" onclick="scenes.splice(${i},1);localStorage.setItem('sm_scenes',JSON.stringify(scenes));renderPhotos()">X</button></div>`).join(''):'<p style="grid-column:1/-1;text-align:center;color:var(--txtL);padding:12px;font-size:13px">No scene photos yet</p>';
+}
+
+// ===== SAVE / LOAD =====
+function saveStory(){
+  saveCur();
+  let ex=saved.findIndex(s=>s.created===story.created);
+  if(ex>=0)saved[ex]={...story,pages:story.pages.map(p=>({...p}))};
+  else saved.push({...story,pages:story.pages.map(p=>({...p}))});
+  localStorage.setItem('sm_stories2',JSON.stringify(saved));
+  document.getElementById('sCnt').textContent=saved.length+' saved';
+  toast('Story saved!');
+}
+function renderSaved(){
+  document.getElementById('sCnt').textContent=saved.length+' saved';
+  document.getElementById('emptyState').style.display=saved.length?'none':'block';
+  document.getElementById('savedList').innerHTML=saved.map((s,i)=>`<div class="sitem" onclick="loadSaved(${i})"><div class="sthumb">${s.pages[0]?.scene?`<img src="${s.pages[0].scene}">`:'&#128214;'}</div><div><h3>${s.name}</h3><p>${s.pages.length} pages</p></div><button class="dbtn" onclick="event.stopPropagation();saved.splice(${i},1);localStorage.setItem('sm_stories2',JSON.stringify(saved));renderSaved()">&#128465;</button></div>`).join('');
+}
+function loadSaved(i){story=JSON.parse(JSON.stringify(saved[i]));pgIdx=0;goTo('editorScreen')}
+
+// ===== PREVIEW =====
+function preview(){
+  saveCur();prevIdx=0;goTo('prevScreen');renderPrev();
+}
+function renderPrev(){
+  let p=story.pages[prevIdx];
+  let bg=document.getElementById('prevBg');
+  let fb=document.getElementById('prevBgFallback');
+  let fc=document.getElementById('prevFace');
+  if(p.scene){bg.classList.remove('hidden');bg.src=p.scene;fb.style.display='none'}
+  else{bg.classList.add('hidden');fb.style.display='';fb.style.background='#E9ECEF'}
+  if(p.face&&p.showFace!==false){fc.classList.remove('hidden');document.getElementById('prevFaceImg').src=p.face}
+  else fc.classList.add('hidden');
+  document.getElementById('prevTxt').textContent=p.text;
+  document.getElementById('prevProg').textContent=`${prevIdx+1} / ${story.pages.length}`;
+}
+function prevPrev(){if(prevIdx>0){prevIdx--;renderPrev()}}
+function nextPrev(){if(prevIdx<story.pages.length-1){prevIdx++;renderPrev()}}
+
+// ===== EXPORT =====
+function showExport(){document.getElementById('exportModal').classList.add('vis')}
+function closeModal(){document.getElementById('exportModal').classList.remove('vis')}
+
+function exportPrint(){
+  saveCur();closeModal();
+  let w=window.open('','_blank');
+  let html='<html><head><style>@page{margin:0}body{margin:0;font-family:sans-serif}.pg{page-break-after:always;width:100vw;height:100vh;position:relative;display:flex;align-items:center;justify-content:center;background:#E9ECEF}.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.face{width:180px;height:180px;border-radius:50%;border:5px solid #fff;overflow:hidden;position:relative;z-index:2;box-shadow:0 4px 20px rgba(0,0,0,.3)}.face img{width:100%;height:100%;object-fit:cover}.tbox{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.7));padding:30px 30px 40px;z-index:3}.txt{color:#fff;font-size:32px;font-weight:700;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,.5)}</style></head><body>';
+  story.pages.forEach(p=>{
+    html+='<div class="pg">';
+    if(p.scene)html+=`<img class="bg" src="${p.scene}">`;
+    if(p.face&&p.showFace!==false)html+=`<div class="face" style="position:absolute;top:${p.faceY}%;left:${p.faceX}%;transform:translate(-50%,-50%);width:${p.faceSize||100}px;height:${p.faceSize||100}px"><img src="${p.face}"></div>`;
+    html+=`<div class="tbox"><div class="txt">${p.text}</div></div></div>`;
+  });
+  html+='</body></html>';
+  w.document.write(html);w.document.close();
+  setTimeout(()=>w.print(),500);
+}
+
+let autoTimer=null;
+function exportSlideshow(){
+  saveCur();closeModal();prevIdx=0;goTo('prevScreen');renderPrev();
+  autoTimer=setInterval(()=>{
+    if(prevIdx<story.pages.length-1){prevIdx++;renderPrev()}
+    else{clearInterval(autoTimer);autoTimer=null;toast('Story complete!')}
+  },5000);
+}
+
+function shareData(){
+  saveCur();
+  let d=JSON.stringify({name:story.name,pages:story.pages.map(p=>({text:p.text,prompt:p.prompt}))},null,2);
+  navigator.clipboard.writeText(d).then(()=>toast('Copied!')).catch(()=>toast('Could not copy'));
+  closeModal();
+}
+
+// ===== TOAST =====
+function toast(m){let t=document.getElementById('toast');t.textContent=m;t.classList.add('vis');setTimeout(()=>t.classList.remove('vis'),2500)}
+
+// ===== TUTORIAL =====
+const TUT_STEPS=[
+  {emoji:"\u{1F4D6}\u{2728}",title:"Welcome to Story Maker!",body:"Create <span class='tut-highlight'>personalized social stories</span> using real photos from your child's world. Let's walk through how it works!"},
+  {emoji:"\u{1F3A8}",title:"Pick a Template",body:"Choose from <span class='tut-highlight'>22 guided templates</span> — bathroom routines, going to the store, doctor visits, feelings, safety, and more. Each one breaks the activity into <span class='tut-highlight'>small, clear steps</span>."},
+  {emoji:"\u{2705}",title:"Review & Customize Steps",body:"Before building, you'll see <span class='tut-highlight'>every step as a checklist</span>. Uncheck steps that don't apply to your child. Every kid is different!"},
+  {emoji:"\u{1F4F7}",title:"Add Real Photos",body:"Each step prompts you for a <span class='tut-highlight'>specific photo</span> — your actual bathroom, your child's bed, their school. You can also <span class='tut-highlight'>search free stock photos</span> right from the app."},
+  {emoji:"\u{1F9D2}",title:"Add Your Child's Face",body:"Upload a photo of your child and <span class='tut-highlight'>drag their face</span> right into the scene. Resize it, move it around — it's their story, with them in it."},
+  {emoji:"\u{2195}\u{FE0F}",title:"Arrange & Edit",body:"Use <span class='tut-highlight'>↕ Arrange</span> to reorder steps. Tap <span class='tut-highlight'>✕ Skip</span> to remove any step. Edit text by tapping on it. Make it fit YOUR child."},
+  {emoji:"\u{25B6}\u{FE0F}",title:"Preview & Export",body:"Play the story as a <span class='tut-highlight'>slideshow</span>, <span class='tut-highlight'>print it</span> to make a physical book, or save it for later. Stories auto-save to your device."},
+  {emoji:"\u{1F512}",title:"Your Privacy is Sacred",body:"<span class='tut-highlight'>Nothing leaves your device.</span> No server, no account, no uploads, no tracking. Your child's photos stay on YOUR phone. Period. We will never see them."},
+  {emoji:"\u{1F31F}",title:"You're Ready!",body:"Tap <span class='tut-highlight'>New Story</span> to pick a template, or <span class='tut-highlight'>Blank Story</span> to start from scratch. You've got this, and your child is lucky to have you."}
+];
+let tutIdx=0;
+
+function startTut(){
+  tutIdx=0;
+  renderTut();
+  let ov=document.getElementById('tutOverlay');
+  ov.style.display='flex';
+  requestAnimationFrame(()=>ov.classList.add('vis'));
+}
+
+function renderTut(){
+  let s=TUT_STEPS[tutIdx];
+  document.getElementById('tutEmoji').textContent='';
+  document.getElementById('tutEmoji').innerHTML=s.emoji;
+  document.getElementById('tutTitle').textContent=s.title;
+  document.getElementById('tutBody').innerHTML=s.body;
+  let dots=document.getElementById('tutDots');
+  dots.innerHTML=TUT_STEPS.map((_,i)=>`<div class="tut-dot ${i===tutIdx?'act':''}"></div>`).join('');
+  document.getElementById('tutNextBtn').textContent=tutIdx===TUT_STEPS.length-1?"Let's Go! \u{1F680}":'Next';
+}
+
+function nextTut(){
+  if(tutIdx<TUT_STEPS.length-1){tutIdx++;renderTut()}
+  else closeTut();
+}
+
+function closeTut(){
+  let ov=document.getElementById('tutOverlay');
+  ov.classList.remove('vis');
+  setTimeout(()=>ov.style.display='none',300);
+  localStorage.setItem('sm_tut_done','1');
+}
+
+// ===== INIT =====
+document.getElementById('sCnt').textContent=saved.length+' saved';
+// Auto-show tutorial on first visit
+if(!localStorage.getItem('sm_tut_done')){
+  setTimeout(startTut,600);
+}
+</script>
+</body>
+</html>
