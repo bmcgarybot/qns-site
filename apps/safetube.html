@@ -387,9 +387,9 @@ input[type="range"]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;b
 // ===== DEFAULT DATA =====
 const DEFAULT_CHANNELS=[
   {id:'1',name:'Sesame Street',url:'https://www.youtube.com/@SesameStreet',channelId:'UCoookXUzPciGrEZEXmh4Jjg',emoji:'🐸'},
-  {id:'2',name:'Bluey',url:'https://www.youtube.com/@BlueyChannel',channelId:'UCPIYDu5dEsK6r__qq-0YOuA',emoji:'🐕'},
+  {id:'2',name:'Bluey',url:'https://www.youtube.com/@BlueyOfficialChannel',channelId:'UCVzLLZkDuFGAE2BGdBuBNBg',emoji:'🐕'},
   {id:'3',name:'Numberblocks',url:'https://www.youtube.com/@Numberblocks',channelId:'UCPlwvN0w4qFSP1FllALB92w',emoji:'🔢'},
-  {id:'4',name:'Netflix Jr.',url:'https://www.youtube.com/@netflixjr',channelId:'UCpInjhuJ1WUekcFeXPPyGGg',emoji:'🤖'},
+  {id:'4',name:'Netflix Jr.',url:'https://www.youtube.com/@netflixjr',channelId:'UCAJnyTWJPpKXuwgWQDdNWrQ',emoji:'🤖'},
   {id:'5',name:'Nat Geo Kids',url:'https://www.youtube.com/@NatGeoKids',channelId:'UCXVCgDuD_QCkI7gTKU7-tpg',emoji:'🌍'},
   {id:'6',name:'Cosmic Kids Yoga',url:'https://www.youtube.com/@CosmicKidsYoga',channelId:'UC5uIZ2KOZZeQDQo_Gsi_qbQ',emoji:'🧘'},
   {id:'7',name:'SciShow Kids',url:'https://www.youtube.com/@scishowkids',channelId:'UCRFIPG2u1DxKLNuE3y2SjHA',emoji:'🔬'},
@@ -422,7 +422,7 @@ function loadSettings(){
     let s=JSON.parse(localStorage.getItem('safetube_settings'));
     // Force refresh if stored channels have wrong IDs (v1 bug)
     let v=localStorage.getItem('safetube_version');
-    if(v!=='2'){localStorage.removeItem('safetube_settings');localStorage.setItem('safetube_version','2');return{pin:'1234',sessionMinutes:30,channels:JSON.parse(JSON.stringify(DEFAULT_CHANNELS))};}
+    if(v!=='3'){localStorage.removeItem('safetube_settings');localStorage.setItem('safetube_version','3');return{pin:'1234',sessionMinutes:30,channels:JSON.parse(JSON.stringify(DEFAULT_CHANNELS))};}
     if(s&&s.channels){
       let needsSave=false;
       s.channels.forEach(c=>{if(!c.channelId){c.channelId='';needsSave=true}});
@@ -430,7 +430,7 @@ function loadSettings(){
       return s;
     }
   }catch(e){}
-  localStorage.setItem('safetube_version','2');
+  localStorage.setItem('safetube_version','3');
   return{pin:'1234',sessionMinutes:30,channels:JSON.parse(JSON.stringify(DEFAULT_CHANNELS))};
 }
 function saveSettings(){localStorage.setItem('safetube_settings',JSON.stringify(settings))}
