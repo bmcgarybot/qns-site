@@ -386,14 +386,14 @@ input[type="range"]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;b
 <script>
 // ===== DEFAULT DATA =====
 const DEFAULT_CHANNELS=[
-  {id:'1',name:'Sesame Street',url:'https://www.youtube.com/@SesameStreet',channelId:'UCETitdrgByBlbcPgWiVXE7g',emoji:'🐸'},
-  {id:'2',name:'Bluey',url:'https://www.youtube.com/@BlueyChannel',channelId:'UC_bM-LAfZEk5wOQ1u26bOCw',emoji:'🐕'},
+  {id:'1',name:'Sesame Street',url:'https://www.youtube.com/@SesameStreet',channelId:'UCoookXUzPciGrEZEXmh4Jjg',emoji:'🐸'},
+  {id:'2',name:'Bluey',url:'https://www.youtube.com/@BlueyChannel',channelId:'UCPIYDu5dEsK6r__qq-0YOuA',emoji:'🐕'},
   {id:'3',name:'Numberblocks',url:'https://www.youtube.com/@Numberblocks',channelId:'UCPlwvN0w4qFSP1FllALB92w',emoji:'🔢'},
-  {id:'4',name:'StoryBots',url:'https://www.youtube.com/@Storybots',channelId:'UCre7mV0bHFH_l4GAmQduSKA',emoji:'🤖'},
+  {id:'4',name:'Netflix Jr.',url:'https://www.youtube.com/@netflixjr',channelId:'UCpInjhuJ1WUekcFeXPPyGGg',emoji:'🤖'},
   {id:'5',name:'Nat Geo Kids',url:'https://www.youtube.com/@NatGeoKids',channelId:'UCXVCgDuD_QCkI7gTKU7-tpg',emoji:'🌍'},
-  {id:'6',name:'Cosmic Kids Yoga',url:'https://www.youtube.com/@CosmicKidsYoga',channelId:'UC5uIZ2KOZZeQDQo_18UIUcA',emoji:'🧘'},
-  {id:'7',name:'SciShow Kids',url:'https://www.youtube.com/@scishowkids',channelId:'UCddiUEpeqJcYeBxX1IVBKvQ',emoji:'🔬'},
-  {id:'8',name:'Art for Kids Hub',url:'https://www.youtube.com/@ArtforKidsHub',channelId:'UCZdTEwnMJOFjHjCrigmOxSw',emoji:'🎨'}
+  {id:'6',name:'Cosmic Kids Yoga',url:'https://www.youtube.com/@CosmicKidsYoga',channelId:'UC5uIZ2KOZZeQDQo_Gsi_qbQ',emoji:'🧘'},
+  {id:'7',name:'SciShow Kids',url:'https://www.youtube.com/@scishowkids',channelId:'UCRFIPG2u1DxKLNuE3y2SjHA',emoji:'🔬'},
+  {id:'8',name:'Art for Kids Hub',url:'https://www.youtube.com/@ArtforKidsHub',channelId:'UC5XMF3Inoi8R9nSI8ChOsdQ',emoji:'🎨'}
 ];
 const EMOJIS=['🐸','🐕','🔢','🤖','🌍','🧘','🔬','🎨','🦁','🐱','🐶','🦊','🐼','🐧','🦋','🌈','⭐','🚀','🎵','🎮','📚','🧩','🎭','🏆','🌸','🍎','🎪','🦄','🐢','🐠','🎯','🌙'];
 const TUTORIAL_STEPS=[
@@ -420,14 +420,17 @@ let newChEmoji='📺';
 function loadSettings(){
   try{
     let s=JSON.parse(localStorage.getItem('safetube_settings'));
+    // Force refresh if stored channels have wrong IDs (v1 bug)
+    let v=localStorage.getItem('safetube_version');
+    if(v!=='2'){localStorage.removeItem('safetube_settings');localStorage.setItem('safetube_version','2');return{pin:'1234',sessionMinutes:30,channels:JSON.parse(JSON.stringify(DEFAULT_CHANNELS))};}
     if(s&&s.channels){
-      // migrate old channels without channelId
       let needsSave=false;
       s.channels.forEach(c=>{if(!c.channelId){c.channelId='';needsSave=true}});
       if(needsSave)localStorage.setItem('safetube_settings',JSON.stringify(s));
       return s;
     }
   }catch(e){}
+  localStorage.setItem('safetube_version','2');
   return{pin:'1234',sessionMinutes:30,channels:JSON.parse(JSON.stringify(DEFAULT_CHANNELS))};
 }
 function saveSettings(){localStorage.setItem('safetube_settings',JSON.stringify(settings))}
