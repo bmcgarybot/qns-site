@@ -48,20 +48,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .channel-card .emoji{font-size:44px;margin-bottom:10px;position:relative;z-index:1}
 .channel-card .name{font-weight:700;font-size:14px;position:relative;z-index:1;line-height:1.3}
 
-/* BROWSER VIEW */
-.browser-frame{display:none;flex-direction:column;height:100vh;height:100dvh;animation:fadeIn .3s ease}
-.browser-nav{background:var(--card);padding:10px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--card-border);flex-shrink:0}
+/* CHANNEL VIEW (replaces old browser view) */
+.channel-view{display:none;flex-direction:column;height:100vh;height:100dvh;animation:fadeIn .3s ease}
+.channel-nav{background:var(--card);padding:10px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--card-border);flex-shrink:0}
 .back-btn{background:var(--surface2);border:none;color:#fff;width:36px;height:36px;border-radius:10px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .back-btn:hover{background:var(--accent-dim);color:var(--accent)}
-.browser-nav .title{color:var(--accent);font-weight:700;font-size:15px}
-.browser-nav .shield{background:var(--accent-dim);color:var(--accent);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;margin-left:auto}
-.browser-content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;background:#0d1b3e}
-.browser-content .channel-big-emoji{font-size:80px;margin-bottom:20px}
-.browser-content .channel-big-name{font-size:24px;font-weight:800;margin-bottom:8px}
-.browser-content .browser-info{color:var(--text-dim);font-size:14px;line-height:1.6;max-width:360px;margin-bottom:24px}
-.open-yt-btn{background:var(--accent);color:var(--bg);border:none;padding:14px 32px;border-radius:14px;font-weight:700;font-size:16px;cursor:pointer;font-family:var(--font);transition:all .2s;display:inline-flex;align-items:center;gap:8px}
-.open-yt-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(78,204,163,.3)}
-.browser-protected-note{margin-top:16px;font-size:12px;color:var(--text-dim);opacity:.7}
+.channel-nav .title{color:var(--accent);font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.channel-nav .shield{background:var(--accent-dim);color:var(--accent);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;margin-left:auto;white-space:nowrap}
+.channel-player-wrap{flex:1;display:flex;flex-direction:column;background:#0d1b3e;overflow:hidden}
+.channel-player-wrap iframe{width:100%;flex:1;border:none}
+.channel-footer{padding:12px 16px;background:var(--card);border-top:1px solid var(--card-border);flex-shrink:0}
+.channel-footer-name{font-weight:700;font-size:14px;margin-bottom:4px}
+.channel-footer-badge{display:inline-flex;align-items:center;gap:4px;background:var(--accent-dim);color:var(--accent);padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600}
 
 /* FLOATING TIMER */
 .floating-timer{display:none;position:fixed;bottom:24px;right:20px;background:var(--card);border:1px solid var(--card-border);color:var(--accent);padding:10px 18px;border-radius:24px;font-size:14px;font-weight:700;z-index:80;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:all .3s}
@@ -161,6 +159,7 @@ input[type="range"]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;b
 .modal-input{width:100%;padding:12px 16px;background:var(--bg);border:1px solid var(--card-border);border-radius:12px;color:var(--text);font-size:15px;font-family:var(--font);outline:none;transition:border-color .2s}
 .modal-input:focus{border-color:var(--accent)}
 .modal-input::placeholder{color:var(--text-dim)}
+.modal-helper{font-size:11px;color:var(--text-dim);margin-top:4px;line-height:1.4}
 .emoji-picker{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:8px}
 .emoji-pick{width:100%;aspect-ratio:1;border:2px solid transparent;border-radius:10px;background:var(--bg);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .emoji-pick:hover{background:var(--accent-dim)}
@@ -230,19 +229,22 @@ input[type="range"]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;b
   </div>
 </div>
 
-<!-- BROWSER VIEW -->
-<div class="browser-frame" id="browserFrame">
-  <div class="browser-nav">
+<!-- CHANNEL VIEW (embedded playlist player) -->
+<div class="channel-view" id="channelView">
+  <div class="channel-nav">
     <button class="back-btn" onclick="goHome()" aria-label="Back">←</button>
-    <span class="title">🛡️ SafeTube</span>
+    <span class="title" id="channelNavTitle">🐸 Sesame Street</span>
     <span class="shield">🛡️ Protected</span>
   </div>
-  <div class="browser-content" id="browserContent">
-    <div class="channel-big-emoji" id="browserEmoji"></div>
-    <div class="channel-big-name" id="browserName"></div>
-    <div class="browser-info">In the full app, this opens YouTube directly in a safe, ad-free browser. Tap below to visit the channel.</div>
-    <button class="open-yt-btn" id="openYtBtn" onclick="openYouTube()">▶️ Open on YouTube</button>
-    <div class="browser-protected-note">🛡️ Ads & trackers are blocked in the full app</div>
+  <div class="channel-player-wrap">
+    <iframe id="channelIframe" src="about:blank"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+      sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
+      allowfullscreen></iframe>
+  </div>
+  <div class="channel-footer">
+    <div class="channel-footer-name" id="channelFooterName">Sesame Street</div>
+    <div class="channel-footer-badge" id="channelFooterBadge">🛡️ Only Sesame Street videos</div>
   </div>
 </div>
 
@@ -284,17 +286,6 @@ input[type="range"]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;b
   </div>
 
   <div class="settings-section">
-    <div class="settings-section-title">Browsing</div>
-    <div class="setting-row">
-      <div>
-        <div class="setting-label">Block Ads</div>
-        <div class="setting-sub">Remove ads and trackers</div>
-      </div>
-      <div class="toggle" id="toggleAds" onclick="toggleBlockAds()"></div>
-    </div>
-  </div>
-
-  <div class="settings-section">
     <div class="settings-section-title">Session Timer</div>
     <div class="setting-row" style="flex-direction:column;align-items:stretch">
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -330,8 +321,11 @@ input[type="range"]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;b
     <h3>➕ Add Channel</h3>
     <div class="modal-label">Channel Name</div>
     <input class="modal-input" id="newChName" placeholder="e.g. Peppa Pig" oninput="updatePreview()">
-    <div class="modal-label">YouTube URL</div>
-    <input class="modal-input" id="newChUrl" placeholder="e.g. https://www.youtube.com/@PeppaPig" oninput="updatePreview()">
+    <div class="modal-label">YouTube Channel ID</div>
+    <input class="modal-input" id="newChId" placeholder="e.g. UCHkGOQSgl5kGlkx4YEcUgTw" oninput="updatePreview()">
+    <div class="modal-helper">Find this on the channel's About page → Share → Copy channel ID</div>
+    <div class="modal-label">YouTube URL (optional)</div>
+    <input class="modal-input" id="newChUrl" placeholder="e.g. https://www.youtube.com/@PeppaPig">
     <div class="modal-label">Pick an Emoji</div>
     <div class="emoji-picker" id="emojiPicker"></div>
     <div class="card-preview" id="cardPreview">
@@ -392,22 +386,23 @@ input[type="range"]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;b
 <script>
 // ===== DEFAULT DATA =====
 const DEFAULT_CHANNELS=[
-  {id:'1',name:'Sesame Street',url:'https://www.youtube.com/@SesameStreet',emoji:'🐸'},
-  {id:'2',name:'Bluey',url:'https://www.youtube.com/@BlueyChannel',emoji:'🐕'},
-  {id:'3',name:'Numberblocks',url:'https://www.youtube.com/@Numberblocks',emoji:'🔢'},
-  {id:'4',name:'StoryBots',url:'https://www.youtube.com/@Storybots',emoji:'🤖'},
-  {id:'5',name:'Nat Geo Kids',url:'https://www.youtube.com/@NatGeoKids',emoji:'🌍'},
-  {id:'6',name:'Cosmic Kids Yoga',url:'https://www.youtube.com/@CosmicKidsYoga',emoji:'🧘'},
-  {id:'7',name:'SciShow Kids',url:'https://www.youtube.com/@scishowkids',emoji:'🔬'},
-  {id:'8',name:'Art for Kids Hub',url:'https://www.youtube.com/@ArtforKidsHub',emoji:'🎨'}
+  {id:'1',name:'Sesame Street',url:'https://www.youtube.com/@SesameStreet',channelId:'UCETitdrgByBlbcPgWiVXE7g',emoji:'🐸'},
+  {id:'2',name:'Bluey',url:'https://www.youtube.com/@BlueyChannel',channelId:'UC_bM-LAfZEk5wOQ1u26bOCw',emoji:'🐕'},
+  {id:'3',name:'Numberblocks',url:'https://www.youtube.com/@Numberblocks',channelId:'UCPlwvN0w4qFSP1FllALB92w',emoji:'🔢'},
+  {id:'4',name:'StoryBots',url:'https://www.youtube.com/@Storybots',channelId:'UCre7mV0bHFH_l4GAmQduSKA',emoji:'🤖'},
+  {id:'5',name:'Nat Geo Kids',url:'https://www.youtube.com/@NatGeoKids',channelId:'UCXVCgDuD_QCkI7gTKU7-tpg',emoji:'🌍'},
+  {id:'6',name:'Cosmic Kids Yoga',url:'https://www.youtube.com/@CosmicKidsYoga',channelId:'UC5uIZ2KOZZeQDQo_18UIUcA',emoji:'🧘'},
+  {id:'7',name:'SciShow Kids',url:'https://www.youtube.com/@scishowkids',channelId:'UCddiUEpeqJcYeBxX1IVBKvQ',emoji:'🔬'},
+  {id:'8',name:'Art for Kids Hub',url:'https://www.youtube.com/@ArtforKidsHub',channelId:'UCZdTEwnMJOFjHjCrigmOxSw',emoji:'🎨'}
 ];
 const EMOJIS=['🐸','🐕','🔢','🤖','🌍','🧘','🔬','🎨','🦁','🐱','🐶','🦊','🐼','🐧','🦋','🌈','⭐','🚀','🎵','🎮','📚','🧩','🎭','🏆','🌸','🍎','🎪','🦄','🐢','🐠','🎯','🌙'];
 const TUTORIAL_STEPS=[
-  {emoji:'🛡️',title:'Welcome to SafeTube!',desc:'A safe, parent-controlled YouTube browser designed specifically for special needs kids. Real YouTube content — your rules.'},
-  {emoji:'📺',title:'Approved Channels',desc:'Kids see a grid of parent-approved channels. Tap any channel to start watching. Only channels YOU choose appear here.'},
-  {emoji:'🔒',title:'PIN-Protected Settings',desc:'All settings are locked behind a 4-digit parent PIN. Kids can\'t change channels, time limits, or any settings.'},
-  {emoji:'⏱️',title:'Session Timer',desc:'Set daily screen time limits. A gentle warning appears at 5 minutes. When time\'s up, the screen locks until a parent enters the PIN.'},
-  {emoji:'🚫',title:'Ad Blocking Built In',desc:'The full app blocks ads, trackers, and autoplay of unapproved content. Your child gets a clean, distraction-free experience.'},
+  {emoji:'🛡️',title:'Welcome to SafeTube!',desc:'A safe, parent-controlled video player designed specifically for special needs kids. Real YouTube content — your rules.'},
+  {emoji:'📺',title:'Approved Channels Only',desc:'Kids see ONLY channels you approve. No search bar. No recommendations. No surprises. Just the channels you chose.'},
+  {emoji:'🔒',title:'Safe Video Player',desc:'Videos play in a locked embedded player. Kids can browse videos within an approved channel, but can\'t navigate to YouTube or any other site.'},
+  {emoji:'🔑',title:'PIN-Protected Settings',desc:'All settings are locked behind a 4-digit parent PIN. Kids can\'t change channels, time limits, or any settings.'},
+  {emoji:'⏱️',title:'Session Timer',desc:'Set screen time limits. A gentle warning appears at 5 minutes. When time\'s up, the screen locks until a parent enters the PIN.'},
+  {emoji:'🚫',title:'No Search, No Surprises',desc:'There\'s no search bar. No address bar. No way to type a URL. No watch history from other users. Just the channels you chose.'},
   {emoji:'💚',title:'You\'re Ready!',desc:'Every child is different — that\'s why YOU control what they see. Tap a channel to try it out, or hit ⚙️ to customize.'}
 ];
 
@@ -417,21 +412,33 @@ let timerInterval=null;
 let timerSeconds=0;
 let timerRunning=false;
 let warningShown=false;
-let currentBrowsingChannel=null;
-let pinMode='settings'; // settings | extend | unlock
-let pinCallback=null;
+let currentChannelIdx=-1;
+let pinMode='settings';
 let newChEmoji='📺';
 
 // ===== PERSISTENCE =====
 function loadSettings(){
   try{
     let s=JSON.parse(localStorage.getItem('safetube_settings'));
-    if(s&&s.channels)return s;
+    if(s&&s.channels){
+      // migrate old channels without channelId
+      let needsSave=false;
+      s.channels.forEach(c=>{if(!c.channelId){c.channelId='';needsSave=true}});
+      if(needsSave)localStorage.setItem('safetube_settings',JSON.stringify(s));
+      return s;
+    }
   }catch(e){}
-  return{pin:'1234',blockAds:true,sessionMinutes:30,channels:JSON.parse(JSON.stringify(DEFAULT_CHANNELS))};
+  return{pin:'1234',sessionMinutes:30,channels:JSON.parse(JSON.stringify(DEFAULT_CHANNELS))};
 }
 function saveSettings(){localStorage.setItem('safetube_settings',JSON.stringify(settings))}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+
+// ===== EMBED URL BUILDER =====
+function getEmbedUrl(channelId){
+  // Convert UC... channel ID to UU... uploads playlist
+  let playlistId=channelId.replace(/^UC/,'UU');
+  return 'https://www.youtube.com/embed/videoseries?list='+playlistId+'&rel=0&modestbranding=1&autoplay=0&fs=1&iv_load_policy=3&disablekb=0';
+}
 
 // ===== RENDER =====
 function renderGrid(){
@@ -452,30 +459,32 @@ function renderChannelList(){
       <div class="channel-item-emoji">${c.emoji}</div>
       <div class="channel-item-info">
         <div class="channel-item-name">${c.name}</div>
-        <div class="channel-item-url">${c.url}</div>
+        <div class="channel-item-url">${c.channelId||c.url||'No channel ID'}</div>
       </div>
       <button class="channel-delete-btn" onclick="deleteChannel(${i})">✕</button>
     </div>`
   ).join('');
 }
 
-// ===== CHANNEL BROWSING =====
+// ===== CHANNEL VIEWING =====
 function openChannel(idx){
   let c=settings.channels[idx];
-  currentBrowsingChannel=c;
-  document.getElementById('browserEmoji').textContent=c.emoji;
-  document.getElementById('browserName').textContent=c.name;
-  document.getElementById('openYtBtn').onclick=function(){window.open(c.url,'_blank')};
+  if(!c.channelId){toast('This channel has no Channel ID set. Edit in settings.','error');return}
+  currentChannelIdx=idx;
+  document.getElementById('channelNavTitle').textContent=c.emoji+' '+c.name;
+  document.getElementById('channelFooterName').textContent=c.name;
+  document.getElementById('channelFooterBadge').textContent='🛡️ Only '+c.name+' videos';
+  document.getElementById('channelIframe').src=getEmbedUrl(c.channelId);
   document.getElementById('homeView').style.display='none';
-  document.getElementById('browserFrame').style.display='flex';
+  document.getElementById('channelView').style.display='flex';
   startTimer();
 }
-function openYouTube(){
-  if(currentBrowsingChannel)window.open(currentBrowsingChannel.url,'_blank');
-}
+
 function goHome(){
-  document.getElementById('browserFrame').style.display='none';
+  document.getElementById('channelView').style.display='none';
+  document.getElementById('channelIframe').src='about:blank';
   document.getElementById('homeView').style.display='block';
+  currentChannelIdx=-1;
   stopTimer();
 }
 
@@ -515,7 +524,8 @@ function updateTimerDisplay(){
 function showWarning(){document.getElementById('warningBanner').classList.add('visible');setTimeout(()=>document.getElementById('warningBanner').classList.remove('visible'),5000)}
 function timerExpired(){
   stopTimer();
-  document.getElementById('browserFrame').style.display='none';
+  document.getElementById('channelView').style.display='none';
+  document.getElementById('channelIframe').src='about:blank';
   document.getElementById('homeView').style.display='none';
   document.getElementById('timesupOverlay').classList.add('active');
 }
@@ -543,7 +553,12 @@ function handlePinKey(key){
       if(pinEntered===settings.pin){
         closePinOverlay();
         if(pinMode==='settings')showSettings();
-        else if(pinMode==='extend'){document.getElementById('timesupOverlay').classList.remove('active');document.getElementById('homeView').style.display='block';openChannel(settings.channels.indexOf(currentBrowsingChannel)||0);toast('Extended by '+settings.sessionMinutes+' minutes!')}
+        else if(pinMode==='extend'){
+          document.getElementById('timesupOverlay').classList.remove('active');
+          document.getElementById('homeView').style.display='block';
+          if(currentChannelIdx>=0)openChannel(currentChannelIdx);
+          toast('Extended by '+settings.sessionMinutes+' minutes!');
+        }
         else if(pinMode==='unlock'){document.getElementById('timesupOverlay').classList.remove('active');document.getElementById('homeView').style.display='block';toast('Unlocked!')}
       }else{
         document.getElementById('pinError').textContent='Wrong PIN';
@@ -572,7 +587,6 @@ document.getElementById('numpad').innerHTML=['1','2','3','4','5','6','7','8','9'
 function showSettings(){
   document.getElementById('homeView').style.display='none';
   document.getElementById('settingsView').classList.add('active');
-  document.getElementById('toggleAds').classList.toggle('on',settings.blockAds);
   document.getElementById('sessionSlider').value=settings.sessionMinutes;
   document.getElementById('sliderVal').textContent=settings.sessionMinutes+' min';
   renderChannelList();
@@ -583,10 +597,6 @@ function saveAndClose(){
   document.getElementById('homeView').style.display='block';
   renderGrid();
   toast('Settings saved!');
-}
-function toggleBlockAds(){
-  settings.blockAds=!settings.blockAds;
-  document.getElementById('toggleAds').classList.toggle('on',settings.blockAds);
 }
 function updateSlider(){
   let v=parseInt(document.getElementById('sessionSlider').value);
@@ -604,6 +614,7 @@ function deleteChannel(idx){
 // ===== ADD CHANNEL =====
 function openAddChannel(){
   document.getElementById('newChName').value='';
+  document.getElementById('newChId').value='';
   document.getElementById('newChUrl').value='';
   newChEmoji='📺';
   renderEmojiPicker();
@@ -623,11 +634,13 @@ function updatePreview(){
 }
 function saveNewChannel(){
   let name=document.getElementById('newChName').value.trim();
+  let channelId=document.getElementById('newChId').value.trim();
   let url=document.getElementById('newChUrl').value.trim();
   if(!name){toast('Enter a channel name','error');return}
-  if(!url){toast('Enter a YouTube URL','error');return}
-  if(!url.startsWith('http'))url='https://'+url;
-  settings.channels.push({id:uid(),name:name,url:url,emoji:newChEmoji});
+  if(!channelId){toast('Enter a YouTube Channel ID','error');return}
+  if(!channelId.startsWith('UC')){toast('Channel ID should start with UC...','error');return}
+  if(url&&!url.startsWith('http'))url='https://'+url;
+  settings.channels.push({id:uid(),name:name,url:url,channelId:channelId,emoji:newChEmoji});
   saveSettings();
   closeAddChannel();
   renderChannelList();
@@ -643,7 +656,6 @@ function startChangePin(){
   document.getElementById('cpSubtitle').textContent='Step 1 of 3';
   document.getElementById('cpError').textContent='';
   updatePinDots('cpDots',0);
-  // Build numpad
   document.getElementById('cpNumpad').innerHTML=['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>
     k===''?'<button class="empty"></button>':
     k==='⌫'?`<button class="backspace" onclick="handleCpKey('⌫')">⌫</button>`:
@@ -675,7 +687,7 @@ function handleCpKey(key){
 function confirmReset(){document.getElementById('confirmOverlay').classList.add('active')}
 function closeConfirm(){document.getElementById('confirmOverlay').classList.remove('active')}
 function doReset(){
-  settings={pin:'1234',blockAds:true,sessionMinutes:30,channels:JSON.parse(JSON.stringify(DEFAULT_CHANNELS))};
+  settings={pin:'1234',sessionMinutes:30,channels:JSON.parse(JSON.stringify(DEFAULT_CHANNELS))};
   saveSettings();
   closeConfirm();
   showSettings();
