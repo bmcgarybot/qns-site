@@ -2,756 +2,553 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SafeTube — Safe Browsing for Kids</title>
-<meta name="description" content="Parent-controlled YouTube browser for special needs kids. Approved channels, PIN-protected settings, session timer.">
-<meta name="theme-color" content="#1A1A2E">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeTube</title>
 <style>
-:root{--bg:#1A1A2E;--card:#16213E;--card-border:rgba(78,204,163,0.3);--accent:#4ECCA3;--accent-dim:rgba(78,204,163,0.15);--red:#E94560;--text:#F0F0F0;--text-dim:#A0A0C0;--surface2:#0f3460;--radius:16px;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes scaleIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
-@keyframes shake{0%,100%{transform:translateX(0)}10%,50%,90%{transform:translateX(-6px)}30%,70%{transform:translateX(6px)}}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-@keyframes timerWarn{0%,100%{opacity:1}50%{opacity:0.6}}
-@keyframes dotPop{0%{transform:scale(0.5)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
-@keyframes cardAppear{from{opacity:0;transform:translateY(20px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
-.shake{animation:shake 0.5s ease-in-out}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; background: #1a1a2e; color: white; min-height: 100vh; overflow-x: hidden; }
 
-/* HEADER */
-.header{background:var(--card);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--card-border);position:sticky;top:0;z-index:50}
-.header-left h1{font-size:22px;color:var(--accent);font-weight:800}
-.header-left .subtitle{font-size:12px;color:var(--text-dim);margin-top:2px}
-.header-right{display:flex;align-items:center;gap:10px}
-.session-timer-header{display:none;background:var(--accent-dim);color:var(--accent);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;white-space:nowrap}
-.session-timer-header.active{display:flex;align-items:center;gap:4px}
-.settings-btn{background:var(--surface2);border:1px solid var(--card-border);color:var(--text-dim);width:42px;height:42px;border-radius:12px;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.settings-btn:hover{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
+/* ═══ HEADER ═══ */
+.header { background: #16213e; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+.header h1 { font-size: 24px; color: #4ecca3; }
+.header .subtitle { font-size: 13px; color: #a0a0c0; }
+.settings-btn { background: none; border: 1px solid #a0a0c0; color: #a0a0c0; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+.settings-btn:hover { background: #0f3460; }
+.back-btn { background: none; border: none; color: white; font-size: 22px; cursor: pointer; padding: 4px 12px 4px 0; }
+.shield-badge { background: rgba(78, 204, 163, 0.2); color: #4ecca3; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; }
 
-/* PRIVACY & HOW-TO */
-.privacy-badge{text-align:center;padding:12px 20px 4px;font-size:12px;color:var(--text-dim);opacity:.8}
-.how-it-works-btn{display:block;margin:8px auto 0;background:none;border:1px solid var(--card-border);color:var(--text-dim);padding:8px 20px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--font)}
-.how-it-works-btn:hover{color:var(--accent);border-color:var(--accent)}
+/* ═══ CHANNEL GRID ═══ */
+.section-header { padding: 20px 24px 8px; display: flex; align-items: center; justify-content: space-between; }
+.section-header h2 { font-size: 18px; font-weight: 700; }
+.section-header .count { font-size: 13px; color: #a0a0c0; }
+.channel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; padding: 12px 24px 24px; }
+.channel-card { background: #16213e; border: 1px solid rgba(78, 204, 163, 0.3); border-radius: 16px; padding: 24px 16px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.channel-card:hover { transform: translateY(-4px); border-color: #4ecca3; box-shadow: 0 8px 24px rgba(78, 204, 163, 0.15); }
+.channel-card .emoji { font-size: 48px; margin-bottom: 12px; }
+.channel-card .name { font-weight: bold; font-size: 15px; }
+.channel-card .vid-count { font-size: 12px; color: #a0a0c0; margin-top: 4px; }
 
-/* GRID */
-.grid-container{padding:16px 16px 100px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;max-width:900px;margin:0 auto}
-@media(min-width:600px){.grid{grid-template-columns:repeat(3,1fr)}}
-@media(min-width:900px){.grid{grid-template-columns:repeat(4,1fr)}}
-.channel-card{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:24px 12px;text-align:center;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
-.channel-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,var(--accent-dim),transparent 70%);opacity:0;transition:opacity .3s}
-.channel-card:hover::before,.channel-card:active::before{opacity:1}
-.channel-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 8px 28px rgba(78,204,163,.2)}
-.channel-card:active{transform:translateY(-2px) scale(.97)}
-.channel-card .emoji{font-size:44px;margin-bottom:10px;position:relative;z-index:1}
-.channel-card .name{font-weight:700;font-size:14px;position:relative;z-index:1;line-height:1.3}
+/* ═══ VIDEO BROWSE GRID ═══ */
+.channel-banner { display: flex; align-items: center; gap: 16px; padding: 20px 24px; }
+.channel-banner .ch-emoji { font-size: 42px; }
+.channel-banner .ch-name { font-size: 22px; font-weight: 800; }
+.channel-banner .ch-count { font-size: 13px; color: #a0a0c0; margin-top: 2px; }
 
-/* CHANNEL VIEW (replaces old browser view) */
-.channel-view{display:none;flex-direction:column;height:100vh;height:100dvh;animation:fadeIn .3s ease}
-.channel-nav{background:var(--card);padding:10px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--card-border);flex-shrink:0}
-.back-btn{background:var(--surface2);border:none;color:#fff;width:36px;height:36px;border-radius:10px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.back-btn:hover{background:var(--accent-dim);color:var(--accent)}
-.channel-nav .title{color:var(--accent);font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.channel-nav .shield{background:var(--accent-dim);color:var(--accent);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;margin-left:auto;white-space:nowrap}
-.channel-player-wrap{flex:1;display:flex;flex-direction:column;background:#0d1b3e;overflow:hidden}
-.channel-player-wrap iframe{width:100%;flex:1;border:none}
-.channel-footer{padding:12px 16px;background:var(--card);border-top:1px solid var(--card-border);flex-shrink:0}
-.channel-footer-name{font-weight:700;font-size:14px;margin-bottom:4px}
-.channel-footer-badge{display:inline-flex;align-items:center;gap:4px;background:var(--accent-dim);color:var(--accent);padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600}
+.toolbar { padding: 0 24px 12px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.sort-btn { background: #16213e; border: 1px solid rgba(78, 204, 163, 0.3); color: #a0a0c0; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
+.sort-btn:hover, .sort-btn.active { background: #4ecca3; color: #1a1a2e; border-color: #4ecca3; font-weight: 600; }
+.search-box { background: #16213e; border: 1px solid rgba(78, 204, 163, 0.3); color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; outline: none; width: 200px; margin-left: auto; }
+.search-box:focus { border-color: #4ecca3; }
+.search-box::placeholder { color: #666; }
 
-/* FLOATING TIMER */
-.floating-timer{display:none;position:fixed;bottom:24px;right:20px;background:var(--card);border:1px solid var(--card-border);color:var(--accent);padding:10px 18px;border-radius:24px;font-size:14px;font-weight:700;z-index:80;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:all .3s}
-.floating-timer.active{display:flex;align-items:center;gap:6px}
-.floating-timer.warning{color:var(--red);border-color:var(--red);animation:timerWarn 1s infinite}
+.video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 0 24px 24px; }
+.video-card { background: #16213e; border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.2s; position: relative; }
+.video-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+.video-card .thumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: #0f3460; display: block; }
+.video-card .fav-star { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: none; font-size: 16px; cursor: pointer; padding: 4px 8px; border-radius: 8px; z-index: 5; }
+.video-card .info { padding: 12px 14px; }
+.video-card .title { font-size: 14px; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 6px; }
+.video-card .meta { font-size: 12px; color: #a0a0c0; display: flex; gap: 12px; }
 
-/* WARNING BANNER */
-.warning-banner{position:fixed;top:0;left:0;right:0;background:var(--red);color:#fff;text-align:center;padding:14px 20px;font-weight:700;font-size:15px;z-index:90;transform:translateY(-100%);transition:transform .4s cubic-bezier(.4,0,.2,1)}
-.warning-banner.visible{transform:translateY(0)}
+/* ═══ VIDEO PLAYER ═══ */
+.player-container { max-width: 960px; margin: 0 auto; padding: 20px 24px; }
+.player-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-radius: 12px; overflow: hidden; }
+.player-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+.player-title { font-size: 18px; font-weight: 700; margin-top: 16px; line-height: 1.4; }
+.player-meta { font-size: 13px; color: #a0a0c0; margin-top: 6px; }
+.player-fav { background: none; border: 1px solid #4ecca3; color: #4ecca3; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; margin-top: 12px; transition: all 0.2s; }
+.player-fav.is-fav { background: #4ecca3; color: #1a1a2e; }
+.more-videos-header { font-size: 16px; font-weight: 700; margin: 24px 0 12px; }
 
-/* TIME'S UP */
-.timesup-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
-.timesup-overlay.active{display:flex}
-.timesup-emoji{font-size:80px;margin-bottom:20px;animation:pulse 2s infinite}
-.timesup-title{font-size:32px;font-weight:800;margin-bottom:12px}
-.timesup-sub{font-size:16px;color:var(--text-dim);margin-bottom:40px;line-height:1.5}
-.timesup-buttons{display:flex;flex-direction:column;gap:14px;width:100%;max-width:300px}
-.timesup-btn{padding:16px 32px;border:none;border-radius:14px;font-weight:700;font-size:16px;cursor:pointer;font-family:var(--font);transition:all .2s}
-.timesup-btn:hover{transform:translateY(-2px)}
-.timesup-btn:active{transform:scale(.97)}
-.timesup-btn.extend{background:var(--accent);color:var(--bg)}
-.timesup-btn.unlock{background:var(--surface2);color:var(--text);border:1px solid var(--card-border)}
+/* ═══ FAVORITES SECTION ═══ */
+.fav-section { padding: 0 24px 12px; }
 
-/* PIN OVERLAY */
-.pin-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:150;flex-direction:column;align-items:center;justify-content:center;animation:fadeIn .25s ease}
-.pin-overlay.active{display:flex}
-.pin-lock-icon{font-size:48px;margin-bottom:12px}
-.pin-title{font-size:22px;font-weight:800;margin-bottom:4px}
-.pin-subtitle{font-size:13px;color:var(--text-dim);margin-bottom:20px}
-.pin-dots{display:flex;gap:14px;margin-bottom:8px}
-.pin-dot{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.2);transition:all .2s}
-.pin-dot.filled{background:var(--accent);border-color:var(--accent);animation:dotPop .25s ease}
-.pin-error{color:var(--red);font-size:13px;font-weight:600;height:24px;display:flex;align-items:center;margin-bottom:8px}
-.numpad{display:grid;grid-template-columns:repeat(3,72px);gap:12px}
-.numpad button{width:72px;height:72px;border-radius:50%;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#fff;font-size:26px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;display:flex;align-items:center;justify-content:center}
-.numpad button:hover{background:rgba(255,255,255,.1)}
-.numpad button:active{background:var(--accent-dim);transform:scale(.92)}
-.numpad button.empty{visibility:hidden;border:none}
-.numpad button.backspace{font-size:22px}
-.pin-cancel{background:none;border:none;color:var(--text-dim);font-size:15px;margin-top:24px;cursor:pointer;font-family:var(--font);padding:10px 20px;transition:color .2s}
-.pin-cancel:hover{color:var(--text)}
+/* ═══ LOAD MORE ═══ */
+.load-more { text-align: center; padding: 16px 24px 32px; }
+.load-more button { background: #16213e; border: 1px solid #4ecca3; color: #4ecca3; padding: 12px 32px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; }
+.load-more button:hover { background: #4ecca3; color: #1a1a2e; }
 
-/* SETTINGS */
-.settings-view{display:none;padding:20px;max-width:600px;margin:0 auto;padding-bottom:100px;animation:slideUp .3s ease}
-.settings-view.active{display:block}
-.settings-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
-.settings-header h2{font-size:22px;font-weight:800}
-.settings-close-btn{background:var(--surface2);border:1px solid var(--card-border);color:var(--text-dim);width:36px;height:36px;border-radius:10px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.settings-close-btn:hover{color:var(--red)}
-.settings-section{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px}
-.settings-section-title{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:14px;font-weight:700}
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
-.setting-row + .setting-row{border-top:1px solid rgba(255,255,255,.06)}
-.setting-label{font-weight:600;font-size:15px}
-.setting-sub{font-size:12px;color:var(--text-dim);margin-top:2px}
+/* ═══ LOADING ═══ */
+.loading { text-align: center; padding: 60px 24px; }
+.loading .spinner { width: 36px; height: 36px; border: 3px solid #16213e; border-top-color: #4ecca3; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading .text { color: #a0a0c0; font-size: 14px; }
+.progress-bar { width: 200px; height: 4px; background: #16213e; border-radius: 2px; margin: 12px auto 0; overflow: hidden; }
+.progress-fill { height: 100%; background: #4ecca3; border-radius: 2px; transition: width 0.3s; }
+.error-msg { text-align: center; padding: 40px; color: #e94560; }
 
-/* Toggle */
-.toggle{width:52px;height:28px;border-radius:14px;background:var(--surface2);position:relative;cursor:pointer;transition:background .25s;flex-shrink:0}
-.toggle.on{background:var(--accent)}
-.toggle::after{content:'';width:24px;height:24px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .25s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 6px rgba(0,0,0,.2)}
-.toggle.on::after{transform:translateX(24px)}
+/* ═══ PIN OVERLAY ═══ */
+.pin-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #1a1a2e; z-index: 100; justify-content: center; align-items: center; flex-direction: column; }
+.pin-dots { display: flex; gap: 12px; margin: 16px 0; }
+.pin-dot { width: 16px; height: 16px; border-radius: 50%; background: rgba(255,255,255,0.15); transition: background 0.15s; }
+.pin-dot.filled { background: #4ecca3; }
+.numpad { display: grid; grid-template-columns: repeat(3, 70px); gap: 10px; }
+.numpad button { width: 70px; height: 70px; border-radius: 50%; border: none; background: rgba(255,255,255,0.04); color: white; font-size: 24px; font-weight: bold; cursor: pointer; }
+.numpad button:hover { background: rgba(255,255,255,0.1); }
+.numpad button.empty { visibility: hidden; }
 
-/* Slider */
-.slider-val{font-size:16px;font-weight:700;color:var(--accent)}
-input[type="range"]{width:100%;height:6px;-webkit-appearance:none;appearance:none;background:var(--surface2);border-radius:3px;outline:none;margin-top:8px}
-input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 8px rgba(78,204,163,.3)}
-input[type="range"]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--accent);cursor:pointer;border:none}
+/* ═══ SETTINGS ═══ */
+.settings-view { display: none; padding: 24px; max-width: 600px; margin: 0 auto; }
+.setting-card { background: #16213e; border-radius: 14px; padding: 18px; margin-bottom: 12px; }
+.setting-row { display: flex; align-items: center; justify-content: space-between; }
+.toggle { width: 48px; height: 26px; border-radius: 13px; background: #0f3460; position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+.toggle.on { background: #4ecca3; }
+.toggle::after { content: ''; width: 22px; height: 22px; border-radius: 50%; background: white; position: absolute; top: 2px; left: 2px; transition: transform 0.2s; }
+.toggle.on::after { transform: translateX(22px); }
+.save-btn { background: #4ecca3; color: #1a1a2e; border: none; padding: 14px 32px; border-radius: 14px; font-weight: bold; font-size: 16px; cursor: pointer; width: 100%; margin-top: 24px; }
+.save-btn:hover { opacity: 0.9; }
+.danger-btn { background: #e94560; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
 
-/* Channel list settings */
-.channel-list{margin-top:8px}
-.channel-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
-.channel-item:last-child{border-bottom:none}
-.channel-item-emoji{font-size:28px;flex-shrink:0}
-.channel-item-info{flex:1;min-width:0}
-.channel-item-name{font-weight:600;font-size:14px}
-.channel-item-url{font-size:11px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.channel-delete-btn{background:rgba(233,69,96,.15);border:none;color:var(--red);width:34px;height:34px;border-radius:10px;font-size:16px;cursor:pointer;flex-shrink:0;transition:all .2s;display:flex;align-items:center;justify-content:center}
-.channel-delete-btn:hover{background:rgba(233,69,96,.3)}
-
-.add-channel-btn,.change-pin-btn,.reset-btn{width:100%;padding:12px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font);transition:all .2s;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px}
-.add-channel-btn{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent)}
-.add-channel-btn:hover{background:var(--accent);color:var(--bg)}
-.change-pin-btn{background:var(--surface2);border:1px solid var(--card-border);color:var(--text)}
-.change-pin-btn:hover{border-color:var(--accent);color:var(--accent)}
-.reset-btn{background:rgba(233,69,96,.1);border:1px solid rgba(233,69,96,.3);color:var(--red)}
-.reset-btn:hover{background:rgba(233,69,96,.2)}
-.save-close-btn{background:var(--accent);color:var(--bg);border:none;padding:16px 32px;border-radius:14px;font-weight:700;font-size:16px;cursor:pointer;width:100%;margin-top:20px;font-family:var(--font);transition:all .2s}
-.save-close-btn:hover{box-shadow:0 6px 20px rgba(78,204,163,.3);transform:translateY(-2px)}
-
-/* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:160;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease}
-.modal-overlay.active{display:flex}
-.modal{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:24px;width:100%;max-width:420px;max-height:85vh;overflow-y:auto;animation:scaleIn .3s ease}
-.modal h3{font-size:20px;margin-bottom:20px;text-align:center}
-.modal-label{font-size:12px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;margin-top:14px}
-.modal-label:first-of-type{margin-top:0}
-.modal-input{width:100%;padding:12px 16px;background:var(--bg);border:1px solid var(--card-border);border-radius:12px;color:var(--text);font-size:15px;font-family:var(--font);outline:none;transition:border-color .2s}
-.modal-input:focus{border-color:var(--accent)}
-.modal-input::placeholder{color:var(--text-dim)}
-.modal-helper{font-size:11px;color:var(--text-dim);margin-top:4px;line-height:1.4}
-.emoji-picker{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:8px}
-.emoji-pick{width:100%;aspect-ratio:1;border:2px solid transparent;border-radius:10px;background:var(--bg);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.emoji-pick:hover{background:var(--accent-dim)}
-.emoji-pick.selected{border-color:var(--accent);background:var(--accent-dim)}
-.card-preview{margin-top:16px;display:flex;justify-content:center}
-.card-preview-inner{background:var(--bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:20px 28px;text-align:center;min-width:140px}
-.card-preview-emoji{font-size:36px;margin-bottom:6px}
-.card-preview-name{font-weight:700;font-size:13px}
-.modal-buttons{display:flex;gap:10px;margin-top:20px}
-.modal-btn{flex:1;padding:13px;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font);transition:all .2s}
-.modal-btn.cancel{background:var(--surface2);color:var(--text)}
-.modal-btn.save{background:var(--accent);color:var(--bg)}
-.modal-btn:hover{transform:translateY(-1px)}
-.modal-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
-
-/* TOAST */
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:var(--bg);padding:12px 28px;border-radius:14px;font-size:14px;font-weight:700;z-index:300;transition:transform .35s cubic-bezier(.4,0,.2,1);white-space:nowrap;box-shadow:0 6px 24px rgba(78,204,163,.3)}
-.toast.visible{transform:translateX(-50%) translateY(0)}
-.toast.error{background:var(--red);color:#fff;box-shadow:0 6px 24px rgba(233,69,96,.3)}
-
-/* TUTORIAL */
-.tutorial-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,30,.95);z-index:250;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;text-align:center}
-.tutorial-overlay.active{display:flex}
-.tutorial-step{animation:scaleIn .4s ease}
-.tutorial-emoji{font-size:72px;margin-bottom:20px}
-.tutorial-title{font-size:24px;font-weight:800;margin-bottom:12px}
-.tutorial-desc{font-size:15px;color:var(--text-dim);line-height:1.7;max-width:380px;margin:0 auto 28px}
-.tutorial-dots{display:flex;gap:8px;margin-bottom:28px}
-.tutorial-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.15);transition:all .3s}
-.tutorial-dot.active{background:var(--accent);transform:scale(1.2)}
-.tutorial-buttons{display:flex;gap:12px}
-.tutorial-btn{padding:12px 28px;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font);transition:all .2s}
-.tutorial-btn.next{background:var(--accent);color:var(--bg)}
-.tutorial-btn.skip{background:transparent;color:var(--text-dim);border:1px solid var(--card-border)}
-.tutorial-btn:hover{transform:translateY(-1px)}
-
-/* CONFIRM DIALOG */
-.confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:170;align-items:center;justify-content:center;padding:20px}
-.confirm-overlay.active{display:flex}
-.confirm-box{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:28px;max-width:360px;width:100%;text-align:center;animation:scaleIn .3s ease}
-.confirm-box h3{font-size:18px;margin-bottom:10px}
-.confirm-box p{font-size:14px;color:var(--text-dim);margin-bottom:24px;line-height:1.5}
-.confirm-buttons{display:flex;gap:10px}
-.confirm-buttons button{flex:1;padding:13px;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font);transition:all .2s}
-.confirm-buttons .confirm-no{background:var(--surface2);color:var(--text)}
-.confirm-buttons .confirm-yes{background:var(--red);color:#fff}
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 600px) {
+    .channel-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px 16px; }
+    .video-grid { grid-template-columns: 1fr; padding: 0 16px 16px; }
+    .channel-banner { padding: 16px; }
+    .toolbar { padding: 0 16px 12px; }
+    .search-box { width: 140px; }
+    .player-container { padding: 12px 16px; }
+}
 </style>
 </head>
 <body>
 
-<!-- HOME VIEW -->
+<!-- ═══ HOME ═══ -->
 <div id="homeView">
-  <div class="header">
-    <div class="header-left">
-      <h1>🛡️ SafeTube</h1>
-      <div class="subtitle">Safe browsing for kids</div>
+    <div class="header">
+        <div><h1>🛡️ SafeTube</h1><div class="subtitle">Safe browsing for kids</div></div>
+        <button class="settings-btn" onclick="showPinGate()">⚙️ Settings</button>
     </div>
-    <div class="header-right">
-      <div class="session-timer-header" id="headerTimer">⏱️ <span id="headerTimerText">30:00</span></div>
-      <button class="settings-btn" onclick="openPinGate('settings')" aria-label="Settings">⚙️</button>
+    <div id="favSection" class="fav-section" style="display:none">
+        <div class="section-header" style="padding-left:0"><h2>⭐ Favorites</h2><span class="count" id="favCount"></span></div>
+        <div class="video-grid" id="favGrid" style="padding:0"></div>
     </div>
-  </div>
-  <div class="privacy-badge">🔒 100% Private. All settings stored on YOUR device only.</div>
-  <button class="how-it-works-btn" onclick="startTutorial()">❓ How It Works</button>
-  <div class="grid-container">
-    <div class="grid" id="channelGrid"></div>
-  </div>
+    <div class="section-header"><h2>Approved Channels</h2><span class="count" id="channelCount"></span></div>
+    <div class="channel-grid" id="channelGrid"></div>
 </div>
 
-<!-- CHANNEL VIEW (embedded playlist player) -->
-<div class="channel-view" id="channelView">
-  <div class="channel-nav">
-    <button class="back-btn" onclick="goHome()" aria-label="Back">←</button>
-    <span class="title" id="channelNavTitle">🐸 Sesame Street</span>
-    <span class="shield">🛡️ Protected</span>
-  </div>
-  <div class="channel-player-wrap">
-    <iframe id="channelIframe" src="about:blank"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-      sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
-      allowfullscreen></iframe>
-  </div>
-  <div class="channel-footer">
-    <div class="channel-footer-name" id="channelFooterName">Sesame Street</div>
-    <div class="channel-footer-badge" id="channelFooterBadge">🛡️ Only Sesame Street videos</div>
-  </div>
+<!-- ═══ BROWSE ═══ -->
+<div id="browseView" style="display:none">
+    <div class="header">
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="back-btn" onclick="goHome()">←</button>
+            <span style="color:#4ecca3;font-weight:bold;">🛡️ SafeTube</span>
+        </div>
+        <span class="shield-badge">🛡️ Protected</span>
+    </div>
+    <div class="channel-banner">
+        <div class="ch-emoji" id="browseEmoji"></div>
+        <div><div class="ch-name" id="browseName"></div><div class="ch-count" id="browseCount"></div></div>
+    </div>
+    <div class="toolbar">
+        <button class="sort-btn active" data-sort="newest" onclick="sortVideos('newest')">Newest</button>
+        <button class="sort-btn" data-sort="oldest" onclick="sortVideos('oldest')">Oldest</button>
+        <button class="sort-btn" data-sort="title" onclick="sortVideos('title')">A-Z</button>
+        <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search videos..." oninput="filterVideos()">
+    </div>
+    <div id="browseContent"></div>
 </div>
 
-<!-- FLOATING TIMER -->
-<div class="floating-timer" id="floatingTimer">⏱️ <span id="floatingTimerText">30:00</span></div>
-
-<!-- WARNING BANNER -->
-<div class="warning-banner" id="warningBanner">⚠️ 5 minutes remaining!</div>
-
-<!-- TIME'S UP OVERLAY -->
-<div class="timesup-overlay" id="timesupOverlay">
-  <div class="timesup-emoji">⏰</div>
-  <div class="timesup-title">Time's Up!</div>
-  <div class="timesup-sub">Your screen time is done for now.</div>
-  <div class="timesup-buttons">
-    <button class="timesup-btn extend" onclick="openPinGate('extend')">⏱️ Extend Time</button>
-    <button class="timesup-btn unlock" onclick="openPinGate('unlock')">🔓 Unlock</button>
-  </div>
+<!-- ═══ PLAYER ═══ -->
+<div id="playerView" style="display:none">
+    <div class="header">
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button class="back-btn" onclick="goBackToBrowse()">←</button>
+            <span style="color:#4ecca3;font-weight:bold;">🛡️ SafeTube</span>
+        </div>
+        <span class="shield-badge">🛡️ Protected</span>
+    </div>
+    <div class="player-container">
+        <div class="player-wrapper">
+            <iframe id="playerIframe" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div class="player-title" id="playerTitle"></div>
+        <div class="player-meta" id="playerMeta"></div>
+        <button class="player-fav" id="playerFav" onclick="toggleFavCurrent()">⭐ Add to Favorites</button>
+        <div class="more-videos-header">More from this channel</div>
+        <div class="video-grid" id="moreVideos"></div>
+    </div>
 </div>
 
-<!-- PIN OVERLAY -->
+<!-- ═══ PIN ═══ -->
 <div class="pin-overlay" id="pinOverlay">
-  <div class="pin-lock-icon">🔒</div>
-  <div class="pin-title" id="pinTitle">Parent PIN</div>
-  <div class="pin-subtitle" id="pinSubtitle">Enter your 4-digit PIN</div>
-  <div class="pin-dots" id="pinDots">
-    <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-  </div>
-  <div class="pin-error" id="pinError"></div>
-  <div class="numpad" id="numpad"></div>
-  <button class="pin-cancel" onclick="closePinOverlay()">Cancel</button>
+    <div style="text-align:center">
+        <div style="font-size:32px">🔒</div>
+        <div style="font-size:22px;font-weight:bold;margin:8px 0">Parent PIN</div>
+        <div class="pin-dots" id="pinDots"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
+        <div id="pinError" style="color:#e94560;font-size:13px;height:20px"></div>
+        <div class="numpad" id="numpad"></div>
+        <button onclick="closePinOverlay()" style="background:none;border:none;color:#a0a0c0;margin-top:16px;cursor:pointer;font-size:14px;">Cancel</button>
+    </div>
 </div>
 
-<!-- SETTINGS VIEW -->
+<!-- ═══ SETTINGS ═══ -->
 <div class="settings-view" id="settingsView">
-  <div class="settings-header">
-    <h2>⚙️ Parent Settings</h2>
-    <button class="settings-close-btn" onclick="saveAndClose()">✕</button>
-  </div>
-
-  <div class="settings-section">
-    <div class="settings-section-title">Session Timer</div>
-    <div class="setting-row" style="flex-direction:column;align-items:stretch">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div class="setting-label">Session Limit</div>
-        <div class="slider-val" id="sliderVal">30 min</div>
-      </div>
-      <input type="range" id="sessionSlider" min="10" max="120" step="5" value="30" oninput="updateSlider()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <h2>⚙️ Parent Settings</h2>
+        <button onclick="saveSettings()" style="background:none;border:none;color:#a0a0c0;font-size:24px;cursor:pointer;">✕</button>
     </div>
-  </div>
-
-  <div class="settings-section">
-    <div class="settings-section-title">Allowed Channels</div>
-    <div class="channel-list" id="channelList"></div>
-    <button class="add-channel-btn" onclick="openAddChannel()">➕ Add Channel</button>
-  </div>
-
-  <div class="settings-section">
-    <div class="settings-section-title">Security</div>
-    <button class="change-pin-btn" onclick="startChangePin()">🔑 Change PIN</button>
-  </div>
-
-  <div class="settings-section">
-    <div class="settings-section-title">Reset</div>
-    <button class="reset-btn" onclick="confirmReset()">🔄 Reset to Defaults</button>
-  </div>
-
-  <button class="save-close-btn" onclick="saveAndClose()">✅ Save & Close</button>
-</div>
-
-<!-- ADD CHANNEL MODAL -->
-<div class="modal-overlay" id="addChannelModal">
-  <div class="modal">
-    <h3>➕ Add Channel</h3>
-    <div class="modal-label">Channel Name</div>
-    <input class="modal-input" id="newChName" placeholder="e.g. Peppa Pig" oninput="updatePreview()">
-    <div class="modal-label">YouTube Channel ID</div>
-    <input class="modal-input" id="newChId" placeholder="e.g. UCHkGOQSgl5kGlkx4YEcUgTw" oninput="updatePreview()">
-    <div class="modal-helper">Find this on the channel's About page → Share → Copy channel ID</div>
-    <div class="modal-label">YouTube URL (optional)</div>
-    <input class="modal-input" id="newChUrl" placeholder="e.g. https://www.youtube.com/@PeppaPig">
-    <div class="modal-label">Pick an Emoji</div>
-    <div class="emoji-picker" id="emojiPicker"></div>
-    <div class="card-preview" id="cardPreview">
-      <div class="card-preview-inner">
-        <div class="card-preview-emoji" id="prevEmoji">📺</div>
-        <div class="card-preview-name" id="prevName">Channel Name</div>
-      </div>
+    <div class="setting-card">
+        <div style="font-weight:600;margin-bottom:8px;">Session Time Limit</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <input type="range" id="sessionSlider" min="10" max="120" step="5" value="30"
+                   style="flex:1;accent-color:#4ecca3;" oninput="document.getElementById('sessionVal').textContent=this.value+' min'">
+            <span id="sessionVal" style="color:#4ecca3;font-weight:600;min-width:55px;">30 min</span>
+        </div>
     </div>
-    <div class="modal-buttons">
-      <button class="modal-btn cancel" onclick="closeAddChannel()">Cancel</button>
-      <button class="modal-btn save" id="saveChBtn" onclick="saveNewChannel()">Add</button>
+    <div class="setting-card">
+        <div style="font-weight:600;margin-bottom:4px;">Video Cache</div>
+        <div style="font-size:12px;color:#a0a0c0;margin-bottom:8px;">Cached videos load instantly.</div>
+        <div style="font-size:13px;color:#4ecca3;margin-bottom:8px;" id="cacheStats"></div>
+        <button class="danger-btn" onclick="clearAllCache()">Clear Cache</button>
     </div>
-  </div>
+    <button class="save-btn" onclick="saveSettings()">Save & Close</button>
 </div>
-
-<!-- CHANGE PIN MODAL -->
-<div class="pin-overlay" id="changePinOverlay" style="display:none">
-  <div class="pin-lock-icon">🔑</div>
-  <div class="pin-title" id="cpTitle">Enter Current PIN</div>
-  <div class="pin-subtitle" id="cpSubtitle">Step 1 of 3</div>
-  <div class="pin-dots" id="cpDots">
-    <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-  </div>
-  <div class="pin-error" id="cpError"></div>
-  <div class="numpad" id="cpNumpad"></div>
-  <button class="pin-cancel" onclick="closeChangePin()">Cancel</button>
-</div>
-
-<!-- CONFIRM DIALOG -->
-<div class="confirm-overlay" id="confirmOverlay">
-  <div class="confirm-box">
-    <h3 id="confirmTitle">Reset Everything?</h3>
-    <p id="confirmMsg">This will restore all default channels, PIN, and settings.</p>
-    <div class="confirm-buttons">
-      <button class="confirm-no" onclick="closeConfirm()">Cancel</button>
-      <button class="confirm-yes" id="confirmYes" onclick="doReset()">Reset</button>
-    </div>
-  </div>
-</div>
-
-<!-- TUTORIAL -->
-<div class="tutorial-overlay" id="tutorialOverlay">
-  <div class="tutorial-step">
-    <div class="tutorial-emoji" id="tutEmoji"></div>
-    <div class="tutorial-title" id="tutTitle"></div>
-    <div class="tutorial-desc" id="tutDesc"></div>
-    <div class="tutorial-dots" id="tutDots"></div>
-    <div class="tutorial-buttons">
-      <button class="tutorial-btn skip" onclick="closeTutorial()">Skip</button>
-      <button class="tutorial-btn next" id="tutNextBtn" onclick="nextTutStep()">Next</button>
-    </div>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
 
 <script>
-// ===== DEFAULT DATA =====
-const DEFAULT_CHANNELS=[
-  {id:'1',name:'Sesame Street',url:'https://www.youtube.com/@SesameStreet',channelId:'UCoookXUzPciGrEZEXmh4Jjg',playlistId:'PL8TioFHubWFuoF9tJblGS5qPoesBhEhCP',emoji:'🐸'},
-  {id:'2',name:'Bluey',url:'https://www.youtube.com/@BlueyOfficialChannel',channelId:'UCVzLLZkDuFGAE2BGdBuBNBg',playlistId:'PLbtUQWldWkKhFxGPqDWCOnBBCzK25ZtS2',emoji:'🐕'},
-  {id:'3',name:'Numberblocks',url:'https://www.youtube.com/@Numberblocks',channelId:'UCPlwvN0w4qFSP1FllALB92w',playlistId:'PL9swKX1PviEqgqPBggcaswkooG0VeclZv',emoji:'🔢'},
-  {id:'4',name:'Netflix Jr.',url:'https://www.youtube.com/@netflixjr',channelId:'UCAJnyTWJPpKXuwgWQDdNWrQ',emoji:'🤖'},
-  {id:'5',name:'Nat Geo Kids',url:'https://www.youtube.com/@NatGeoKids',channelId:'UCXVCgDuD_QCkI7gTKU7-tpg',emoji:'🌍'},
-  {id:'6',name:'Cosmic Kids Yoga',url:'https://www.youtube.com/@CosmicKidsYoga',channelId:'UC5uIZ2KOZZeQDQo_Gsi_qbQ',emoji:'🧘'},
-  {id:'7',name:'SciShow Kids',url:'https://www.youtube.com/@scishowkids',channelId:'UCRFIPG2u1DxKLNuE3y2SjHA',emoji:'🔬'},
-  {id:'8',name:'Art for Kids Hub',url:'https://www.youtube.com/@ArtforKidsHub',channelId:'UC5XMF3Inoi8R9nSI8ChOsdQ',emoji:'🎨'},
-  {id:'9',name:'PBS KIDS',url:'https://www.youtube.com/@PBSKIDS',channelId:'UCrNnk0wFBnCS1awGjq_ijGQ',playlistId:'PLa8HWWMcQEGQfKO0zbaESPTD7M3_c6l5v',emoji:'📺'},
-  {id:'10',name:'PBS KIDS Movies',url:'https://www.youtube.com/@PBSKIDS',channelId:'UCrNnk0wFBnCS1awGjq_ijGQ',playlistId:'PLa8HWWMcQEGTbi5om5BkRD8y7BSIB9BzR',emoji:'🎬'},
-  {id:'11',name:'Daniel Tiger',url:'https://www.youtube.com/@PBSKIDS',channelId:'UCrNnk0wFBnCS1awGjq_ijGQ',playlistId:'PLa8HWWMcQEGTvVi5IkHY526u1YMqM0w7m',emoji:'🐯'},
-  {id:'12',name:'Wild Kratts',url:'https://www.youtube.com/@WildKratts',channelId:'UCxEmDFo1yUbbxjEb9RjitVA',emoji:'🦎'},
-  {id:'13',name:'Curious George',url:'https://www.youtube.com/@CuriousGeorge',channelId:'UCu7IDy0y-ZA0qaG51wrQY6w',emoji:'🐵'},
-  {id:'14',name:'Super Why',url:'https://www.youtube.com/@SuperWhy',channelId:'UCbxK6jzYms1iMkU9Kwvl0sA',emoji:'📖'},
-  {id:'15',name:'WordWorld',url:'https://www.youtube.com/@WordWorld',channelId:'UCvkXo_25rNCuXJVE9CNWIFg',emoji:'🔤'},
-  {id:'16',name:'Xavier Riddle',url:'https://www.youtube.com/@PBSKIDS',channelId:'UCrNnk0wFBnCS1awGjq_ijGQ',playlistId:'PLa8HWWMcQEGQGJpeBCGd5Oeaxqibti5Cm',emoji:'🦸'},
-  {id:'17',name:'Alma\'s Way',url:'https://www.youtube.com/@PBSKIDS',channelId:'UCrNnk0wFBnCS1awGjq_ijGQ',playlistId:'PLa8HWWMcQEGTPnXipUupo4caKOzY7a9f6',emoji:'💃'},
-  {id:'18',name:'Hero Elementary',url:'https://www.youtube.com/@PBSKIDS',channelId:'UCrNnk0wFBnCS1awGjq_ijGQ',playlistId:'PLa8HWWMcQEGTTMeqqSyRh8KU975jdGHBr',emoji:'🦸‍♂️'},
-  {id:'19',name:'Work It Out Wombats',url:'https://www.youtube.com/@PBSKIDS',channelId:'UCrNnk0wFBnCS1awGjq_ijGQ',playlistId:'PLa8HWWMcQEGTKmx7wb4P-MDfzs5tmcNRW',emoji:'🐨'},
-  {id:'20',name:'Donkey Hodie',url:'https://www.youtube.com/@PBSKIDS',channelId:'UCrNnk0wFBnCS1awGjq_ijGQ',playlistId:'PLa8HWWMcQEGQBlAQFUzJnfZqnvT0nqS0h',emoji:'🫏'},
-  {id:'21',name:'Molly of Denali',url:'https://www.youtube.com/@PBSKIDS',channelId:'UCrNnk0wFBnCS1awGjq_ijGQ',playlistId:'PLPZ40gM7aDFA1nIOkF3upPoyIyjHezUiO',emoji:'🏔️'},
-  {id:'22',name:"Let's Go Luna",url:'https://www.youtube.com/@PBSKIDS',channelId:'UCrNnk0wFBnCS1awGjq_ijGQ',playlistId:'PLBCSvaHIzmYLe_brRQ5CL9UvBZ22C1JVl',emoji:'🌙'},
-  {id:'23',name:'Odd Squad UK',url:'https://www.youtube.com/@PBSKIDS',channelId:'UCrNnk0wFBnCS1awGjq_ijGQ',playlistId:'PLa8HWWMcQEGSWWiIZ419mPtNrsI7dfWXR',emoji:'🔍'},
-  {id:'24',name:'The Singing Walrus',url:'https://www.youtube.com/@TheSingingWalrus',channelId:'UCe1VpF4wS_kdcjyTRSXBcnQ',playlistId:'PLt7Se3SAnZY4KoGnvV7TVn2K_9AMQJ60f',emoji:'🦭'},
-  {id:'25',name:'ASL for Kids',url:'https://www.youtube.com/@PBSKIDS',channelId:'UCrNnk0wFBnCS1awGjq_ijGQ',playlistId:'PLa8HWWMcQEGRRX_zhaMmDa5Wusv0aGm_7',emoji:'🧏'}
-];
-const EMOJIS=['🐸','🐕','🔢','🤖','🌍','🧘','🔬','🎨','🦁','🐱','🐶','🦊','🐼','🐧','🦋','🌈','⭐','🚀','🎵','🎮','📚','🧩','🎭','🏆','🌸','🍎','🎪','🦄','🐢','🐠','🎯','🌙'];
-const TUTORIAL_STEPS=[
-  {emoji:'🛡️',title:'Welcome to SafeTube!',desc:'A safe, parent-controlled video player designed specifically for special needs kids. Real YouTube content — your rules.'},
-  {emoji:'📺',title:'Approved Channels Only',desc:'Kids see ONLY channels you approve. No search bar. No recommendations. No surprises. Just the channels you chose.'},
-  {emoji:'🔒',title:'Safe Video Player',desc:'Videos play in a locked embedded player. Kids can browse videos within an approved channel, but can\'t navigate to YouTube or any other site.'},
-  {emoji:'🔑',title:'PIN-Protected Settings',desc:'All settings are locked behind a 4-digit parent PIN. Kids can\'t change channels, time limits, or any settings.'},
-  {emoji:'⏱️',title:'Session Timer',desc:'Set screen time limits. A gentle warning appears at 5 minutes. When time\'s up, the screen locks until a parent enters the PIN.'},
-  {emoji:'🚫',title:'No Search, No Surprises',desc:'There\'s no search bar. No address bar. No way to type a URL. No watch history from other users. Just the channels you chose.'},
-  {emoji:'💚',title:'You\'re Ready!',desc:'Every child is different — that\'s why YOU control what they see. Tap a channel to try it out, or hit ⚙️ to customize.'}
+// ═══════════════════════════════════════════
+// CONFIG & STATE
+// ═══════════════════════════════════════════
+const API_KEY = 'AIzaSyB5TGP6SsM4EHYJq20yDrShnyJypJThaXU';
+const API_BASE = 'https://www.googleapis.com/youtube/v3';
+
+const defaultChannels = [
+    { name: 'Sesame Street',    handle: '@SesameStreet',    emoji: '🐸' },
+    { name: 'Bluey',            handle: '@BlueyChannel',    emoji: '🐕' },
+    { name: 'Numberblocks',     handle: '@Numberblocks',    emoji: '🔢' },
+    { name: 'StoryBots',        handle: '@Storybots',       emoji: '🤖' },
+    { name: 'Nat Geo Kids',     handle: '@NatGeoKids',      emoji: '🌍' },
+    { name: 'Cosmic Kids Yoga', handle: '@CosmicKidsYoga',  emoji: '🧘' },
+    { name: 'SciShow Kids',     handle: '@scishowkids',     emoji: '🔬' },
+    { name: 'Art for Kids Hub', handle: '@ArtforKidsHub',   emoji: '🎨' }
 ];
 
-// ===== STATE =====
-let settings=loadSettings();
-let timerInterval=null;
-let timerSeconds=0;
-let timerRunning=false;
-let warningShown=false;
-let currentChannelIdx=-1;
-let pinMode='settings';
-let newChEmoji='📺';
+let channels = JSON.parse(localStorage.getItem('st-channels')) || defaultChannels;
+let favorites = JSON.parse(localStorage.getItem('st-favorites')) || {};
+let currentChannel = null;
+let currentChannelIdx = -1;
+let currentVideos = [];
+let displayedVideos = [];
+let currentSort = 'newest';
+let searchQuery = '';
+let currentPlayingVideo = null;
+const DISPLAY_CHUNK = 50; // show 50 at a time for perf
+let displayedCount = 0;
 
-// ===== PERSISTENCE =====
-function loadSettings(){
-  try{
-    let s=JSON.parse(localStorage.getItem('safetube_settings'));
-    // Force refresh if stored channels have wrong IDs (v1 bug)
-    let v=localStorage.getItem('safetube_version');
-    if(v!=='7'){localStorage.removeItem('safetube_settings');localStorage.setItem('safetube_version','7');return{pin:'1234',sessionMinutes:30,channels:JSON.parse(JSON.stringify(DEFAULT_CHANNELS))};}
-    if(s&&s.channels){
-      let needsSave=false;
-      s.channels.forEach(c=>{if(!c.channelId){c.channelId='';needsSave=true}});
-      if(needsSave)localStorage.setItem('safetube_settings',JSON.stringify(s));
-      return s;
+const PIN = localStorage.getItem('st-pin') || '1234';
+let enteredPin = '';
+const CACHE_PREFIX = 'st-cache-';
+const CACHE_TTL = 4 * 60 * 60 * 1000;
+
+// ═══════════════════════════════════════════
+// API
+// ═══════════════════════════════════════════
+async function apiGet(endpoint, params) {
+    params.key = API_KEY;
+    const resp = await fetch(`${API_BASE}/${endpoint}?${new URLSearchParams(params)}`);
+    if (!resp.ok) { const e = await resp.json().catch(()=>({})); throw new Error(e?.error?.message || `API ${resp.status}`); }
+    return resp.json();
+}
+
+async function resolveChannel(handle) {
+    const cached = getCache(handle);
+    if (cached?.channelId) return cached;
+    const clean = handle.startsWith('@') ? handle.substring(1) : handle;
+    const data = await apiGet('channels', { part: 'contentDetails', forHandle: clean });
+    if (!data.items?.length) throw new Error(`Channel ${handle} not found`);
+    const item = data.items[0];
+    const info = { channelId: item.id, uploadsId: item.contentDetails.relatedPlaylists.uploads };
+    let cache = getCache(handle) || {};
+    Object.assign(cache, info);
+    setCache(handle, cache);
+    return cache;
+}
+
+async function fetchAllVideos(handle, onProgress) {
+    const cache = await resolveChannel(handle);
+    if (cache.videos?.length && cache.fetchedAt && (Date.now() - cache.fetchedAt < CACHE_TTL)) {
+        return cache.videos;
     }
-  }catch(e){}
-  localStorage.setItem('safetube_version','7');
-  return{pin:'1234',sessionMinutes:30,channels:JSON.parse(JSON.stringify(DEFAULT_CHANNELS))};
-}
-function saveSettings(){localStorage.setItem('safetube_settings',JSON.stringify(settings))}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
-
-// ===== EMBED URL BUILDER =====
-function getEmbedUrl(channel){
-  // Prefer curated playlist (no Shorts), fall back to uploads playlist
-  let listId=channel.playlistId || channel.channelId.replace(/^UC/,'UU');
-  return 'https://www.youtube.com/embed/videoseries?list='+listId+'&rel=0&modestbranding=1&autoplay=0&fs=1&iv_load_policy=3&disablekb=0';
-}
-
-// ===== RENDER =====
-function renderGrid(){
-  const g=document.getElementById('channelGrid');
-  g.innerHTML=settings.channels.map((c,i)=>
-    `<div class="channel-card" onclick="openChannel(${i})" style="animation:cardAppear .4s ease ${i*0.06}s both">
-      <div class="emoji">${c.emoji}</div>
-      <div class="name">${c.name}</div>
-    </div>`
-  ).join('');
-}
-
-function renderChannelList(){
-  const l=document.getElementById('channelList');
-  if(!settings.channels.length){l.innerHTML='<p style="text-align:center;color:var(--text-dim);padding:16px;font-size:13px">No channels added yet</p>';return}
-  l.innerHTML=settings.channels.map((c,i)=>
-    `<div class="channel-item">
-      <div class="channel-item-emoji">${c.emoji}</div>
-      <div class="channel-item-info">
-        <div class="channel-item-name">${c.name}</div>
-        <div class="channel-item-url">${c.channelId||c.url||'No channel ID'}</div>
-      </div>
-      <button class="channel-delete-btn" onclick="deleteChannel(${i})">✕</button>
-    </div>`
-  ).join('');
-}
-
-// ===== CHANNEL VIEWING =====
-function openChannel(idx){
-  let c=settings.channels[idx];
-  if(!c.channelId){toast('This channel has no Channel ID set. Edit in settings.','error');return}
-  currentChannelIdx=idx;
-  document.getElementById('channelNavTitle').textContent=c.emoji+' '+c.name;
-  document.getElementById('channelFooterName').textContent=c.name;
-  document.getElementById('channelFooterBadge').textContent='🛡️ Only '+c.name+' videos';
-  document.getElementById('channelIframe').src=getEmbedUrl(c);
-  document.getElementById('homeView').style.display='none';
-  document.getElementById('channelView').style.display='flex';
-  startTimer();
-}
-
-function goHome(){
-  document.getElementById('channelView').style.display='none';
-  document.getElementById('channelIframe').src='about:blank';
-  document.getElementById('homeView').style.display='block';
-  currentChannelIdx=-1;
-  stopTimer();
-}
-
-// ===== SESSION TIMER =====
-function startTimer(){
-  if(timerRunning)return;
-  timerSeconds=settings.sessionMinutes*60;
-  timerRunning=true;
-  warningShown=false;
-  updateTimerDisplay();
-  document.getElementById('headerTimer').classList.add('active');
-  document.getElementById('floatingTimer').classList.add('active');
-  timerInterval=setInterval(()=>{
-    timerSeconds--;
-    if(timerSeconds<=0){timerSeconds=0;timerExpired()}
-    else{
-      if(timerSeconds<=300&&!warningShown){warningShown=true;showWarning()}
-      if(timerSeconds<=300){document.getElementById('floatingTimer').classList.add('warning')}
-    }
-    updateTimerDisplay();
-  },1000);
-}
-function stopTimer(){
-  clearInterval(timerInterval);
-  timerRunning=false;
-  document.getElementById('headerTimer').classList.remove('active');
-  document.getElementById('floatingTimer').classList.remove('active');
-  document.getElementById('floatingTimer').classList.remove('warning');
-  document.getElementById('warningBanner').classList.remove('visible');
-}
-function updateTimerDisplay(){
-  let m=Math.floor(timerSeconds/60),s=timerSeconds%60;
-  let txt=m+':'+(s<10?'0':'')+s;
-  document.getElementById('headerTimerText').textContent=txt;
-  document.getElementById('floatingTimerText').textContent=txt;
-}
-function showWarning(){document.getElementById('warningBanner').classList.add('visible');setTimeout(()=>document.getElementById('warningBanner').classList.remove('visible'),5000)}
-function timerExpired(){
-  stopTimer();
-  document.getElementById('channelView').style.display='none';
-  document.getElementById('channelIframe').src='about:blank';
-  document.getElementById('homeView').style.display='none';
-  document.getElementById('timesupOverlay').classList.add('active');
-}
-
-// ===== PIN SYSTEM =====
-let pinEntered='';
-function openPinGate(mode){
-  pinMode=mode;
-  pinEntered='';
-  let title='Parent PIN',sub='Enter your 4-digit PIN';
-  if(mode==='extend')title='Extend Time';
-  if(mode==='unlock')title='Unlock';
-  document.getElementById('pinTitle').textContent=title;
-  document.getElementById('pinSubtitle').textContent=sub;
-  document.getElementById('pinError').textContent='';
-  updatePinDots('pinDots',0);
-  document.getElementById('pinOverlay').classList.add('active');
-}
-function closePinOverlay(){document.getElementById('pinOverlay').classList.remove('active');pinEntered=''}
-function handlePinKey(key){
-  if(key==='⌫'){pinEntered=pinEntered.slice(0,-1);document.getElementById('pinError').textContent=''}
-  else if(pinEntered.length<4){
-    pinEntered+=key;
-    if(pinEntered.length===4){
-      if(pinEntered===settings.pin){
-        closePinOverlay();
-        if(pinMode==='settings')showSettings();
-        else if(pinMode==='extend'){
-          document.getElementById('timesupOverlay').classList.remove('active');
-          document.getElementById('homeView').style.display='block';
-          if(currentChannelIdx>=0)openChannel(currentChannelIdx);
-          toast('Extended by '+settings.sessionMinutes+' minutes!');
+    let all = [], pageToken = null;
+    do {
+        const params = { part: 'snippet', playlistId: cache.uploadsId, maxResults: '50' };
+        if (pageToken) params.pageToken = pageToken;
+        const data = await apiGet('playlistItems', params);
+        const total = data.pageInfo?.totalResults || 0;
+        for (const item of (data.items || [])) {
+            const s = item.snippet, vid = s.resourceId?.videoId;
+            if (!vid) continue;
+            all.push({
+                id: vid, title: s.title, published: s.publishedAt,
+                thumbnail: s.thumbnails?.high?.url || s.thumbnails?.medium?.url || `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`,
+                date: new Date(s.publishedAt)
+            });
         }
-        else if(pinMode==='unlock'){document.getElementById('timesupOverlay').classList.remove('active');document.getElementById('homeView').style.display='block';toast('Unlocked!')}
-      }else{
-        document.getElementById('pinError').textContent='Wrong PIN';
-        let dots=document.getElementById('pinDots');
-        dots.classList.add('shake');setTimeout(()=>dots.classList.remove('shake'),500);
-        pinEntered='';
-      }
-    }
-  }
-  updatePinDots('pinDots',pinEntered.length);
-}
-function updatePinDots(containerId,count){
-  document.querySelectorAll('#'+containerId+' .pin-dot').forEach((d,i)=>{
-    d.classList.toggle('filled',i<count);
-  });
+        pageToken = data.nextPageToken || null;
+        if (onProgress) onProgress(all.length, total);
+        if (pageToken) await new Promise(r => setTimeout(r, 80));
+    } while (pageToken);
+    cache.videos = all; cache.fetchedAt = Date.now(); cache.totalVideos = all.length;
+    setCache(handle, cache);
+    return all;
 }
 
-// Build main numpad
-document.getElementById('numpad').innerHTML=['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>
-  k===''?'<button class="empty"></button>':
-  k==='⌫'?`<button class="backspace" onclick="handlePinKey('⌫')">⌫</button>`:
-  `<button onclick="handlePinKey('${k}')">${k}</button>`
+// ═══════════════════════════════════════════
+// CACHE
+// ═══════════════════════════════════════════
+function getCache(h) { try { return JSON.parse(localStorage.getItem(CACHE_PREFIX+h)); } catch { return null; } }
+function setCache(h, d) { try { localStorage.setItem(CACHE_PREFIX+h, JSON.stringify(d)); } catch(e) { console.warn('Cache full'); } }
+function clearAllCache() {
+    channels.forEach(ch => localStorage.removeItem(CACHE_PREFIX + ch.handle));
+    updateCacheStats();
+    renderChannels();
+}
+function updateCacheStats() {
+    let tv = 0, tb = 0;
+    channels.forEach(ch => { const v = localStorage.getItem(CACHE_PREFIX+ch.handle); if (v) { tb += v.length*2; const d = JSON.parse(v); tv += d.totalVideos||0; } });
+    document.getElementById('cacheStats').textContent = `${tv.toLocaleString()} videos cached (${(tb/1024/1024).toFixed(1)} MB)`;
+}
+
+// ═══════════════════════════════════════════
+// FAVORITES
+// ═══════════════════════════════════════════
+function isFav(id) { return !!favorites[id]; }
+function toggleFav(id, title, thumbnail, channelName, dateStr) {
+    if (favorites[id]) delete favorites[id]; else favorites[id] = { title, thumbnail, channelName, date: dateStr };
+    localStorage.setItem('st-favorites', JSON.stringify(favorites));
+}
+function renderFavorites() {
+    const ids = Object.keys(favorites);
+    const sec = document.getElementById('favSection');
+    if (!ids.length) { sec.style.display = 'none'; return; }
+    sec.style.display = 'block';
+    document.getElementById('favCount').textContent = ids.length + ' videos';
+    document.getElementById('favGrid').innerHTML = ids.slice(0, 8).map(id => {
+        const f = favorites[id];
+        return videoCardHTML({ id, title: f.title, thumbnail: f.thumbnail, date: new Date(f.date) }, f.channelName);
+    }).join('');
+}
+
+// ═══════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════
+function showView(id) {
+    ['homeView','browseView','playerView','settingsView'].forEach(v => document.getElementById(v).style.display='none');
+    document.getElementById(id).style.display = 'block';
+    window.scrollTo(0, 0);
+}
+function goHome() { document.getElementById('playerIframe').src=''; renderFavorites(); showView('homeView'); }
+function goBackToBrowse() { document.getElementById('playerIframe').src=''; showView('browseView'); }
+
+// ═══════════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════════
+function renderChannels() {
+    document.getElementById('channelCount').textContent = channels.length + ' channels';
+    document.getElementById('channelGrid').innerHTML = channels.map((ch, i) => {
+        const c = getCache(ch.handle);
+        const ct = c?.totalVideos ? `${c.totalVideos.toLocaleString()} videos` : '';
+        return `<div class="channel-card" onclick="openChannel(${i})">
+            <div class="emoji">${ch.emoji}</div><div class="name">${ch.name}</div>
+            ${ct ? `<div class="vid-count">${ct}</div>` : ''}
+        </div>`;
+    }).join('');
+}
+
+// ═══════════════════════════════════════════
+// BROWSE
+// ═══════════════════════════════════════════
+async function openChannel(index) {
+    currentChannel = channels[index]; currentChannelIdx = index;
+    currentSort = 'newest'; searchQuery = '';
+    showView('browseView');
+    document.getElementById('browseEmoji').textContent = currentChannel.emoji;
+    document.getElementById('browseName').textContent = currentChannel.name;
+    document.getElementById('browseCount').textContent = 'Loading...';
+    document.getElementById('searchBox').value = '';
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.sort-btn[data-sort="newest"]').classList.add('active');
+
+    document.getElementById('browseContent').innerHTML =
+        `<div class="loading"><div class="spinner"></div><div class="text" id="loadText">Loading videos...</div>
+        <div class="progress-bar"><div class="progress-fill" id="loadProgress" style="width:0%"></div></div></div>`;
+
+    try {
+        currentVideos = await fetchAllVideos(currentChannel.handle, (loaded, total) => {
+            const pct = total > 0 ? Math.round(loaded/total*100) : 0;
+            const el = document.getElementById('loadProgress'), txt = document.getElementById('loadText');
+            if (el) el.style.width = pct+'%';
+            if (txt) txt.textContent = `Loading ${loaded.toLocaleString()} of ${total.toLocaleString()} videos...`;
+        });
+        document.getElementById('browseCount').textContent = currentVideos.length.toLocaleString() + ' videos';
+        applyFilters();
+    } catch (e) {
+        document.getElementById('browseCount').textContent = 'Error';
+        document.getElementById('browseContent').innerHTML =
+            `<div class="error-msg"><div style="font-size:32px;margin-bottom:8px;">😿</div>
+            <div>Couldn't load videos</div><div style="font-size:12px;margin-top:8px;opacity:0.7;">${escapeHTML(e.message)}</div>
+            <button onclick="openChannel(${index})" style="margin-top:16px;padding:10px 24px;background:#4ecca3;color:#1a1a2e;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Try Again</button></div>`;
+    }
+}
+
+function sortVideos(type) {
+    currentSort = type;
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.sort-btn[data-sort="${type}"]`).classList.add('active');
+    applyFilters();
+}
+
+function filterVideos() { searchQuery = document.getElementById('searchBox').value.toLowerCase(); applyFilters(); }
+
+function applyFilters() {
+    let vids = [...currentVideos];
+    if (searchQuery) vids = vids.filter(v => v.title.toLowerCase().includes(searchQuery));
+    switch (currentSort) {
+        case 'newest': vids.sort((a,b) => b.date - a.date); break;
+        case 'oldest': vids.sort((a,b) => a.date - b.date); break;
+        case 'title':  vids.sort((a,b) => a.title.localeCompare(b.title)); break;
+    }
+    displayedVideos = vids;
+    displayedCount = 0;
+    renderNextChunk(true);
+}
+
+function renderNextChunk(reset) {
+    const next = displayedVideos.slice(displayedCount, displayedCount + DISPLAY_CHUNK);
+    displayedCount += next.length;
+    const html = next.map(v => videoCardHTML(v, currentChannel?.name)).join('');
+    const container = document.getElementById('browseContent');
+
+    if (reset) {
+        container.innerHTML = '<div class="video-grid" id="videoGrid"></div>';
+    }
+    document.getElementById('videoGrid').insertAdjacentHTML('beforeend', html);
+
+    // Remove old load-more button
+    const oldBtn = container.querySelector('.load-more');
+    if (oldBtn) oldBtn.remove();
+
+    // Add load more button if there's more
+    if (displayedCount < displayedVideos.length) {
+        container.insertAdjacentHTML('beforeend',
+            `<div class="load-more"><button onclick="renderNextChunk(false)">Load More (${(displayedVideos.length - displayedCount).toLocaleString()} remaining)</button></div>`);
+    }
+
+    if (displayedVideos.length === 0) {
+        container.innerHTML = '<div class="error-msg"><div style="font-size:32px;margin-bottom:8px;">📭</div>No videos found.</div>';
+    }
+}
+
+// ═══════════════════════════════════════════
+// VIDEO CARD HTML
+// ═══════════════════════════════════════════
+function videoCardHTML(video, channelName) {
+    const dateStr = video.date ? video.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+    const star = isFav(video.id) ? '⭐' : '☆';
+    return `<div class="video-card" onclick="playVideo('${video.id}')">
+        <button class="fav-star" onclick="event.stopPropagation();toggleFavCard('${video.id}','${escapeAttr(video.title)}','${escapeAttr(video.thumbnail)}','${escapeAttr(channelName||'')}','${video.published||''}',this)">${star}</button>
+        <img class="thumb" src="${video.thumbnail}" alt="" loading="lazy"
+             onerror="this.style.background='#0f3460';this.style.minHeight='160px'">
+        <div class="info">
+            <div class="title">${escapeHTML(video.title)}</div>
+            <div class="meta"><span>${dateStr}</span>${channelName ? '<span>'+escapeHTML(channelName)+'</span>' : ''}</div>
+        </div>
+    </div>`;
+}
+
+function toggleFavCard(id, title, thumb, ch, date, btn) {
+    toggleFav(id, title, thumb, ch, date);
+    btn.textContent = isFav(id) ? '⭐' : '☆';
+}
+
+// ═══════════════════════════════════════════
+// PLAYER
+// ═══════════════════════════════════════════
+function playVideo(videoId) {
+    showView('playerView');
+    const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1&fs=1&iv_load_policy=3&playsinline=1`;
+    document.getElementById('playerIframe').src = embedUrl;
+
+    const video = currentVideos.find(v => v.id === videoId) ||
+                  (favorites[videoId] ? { id: videoId, ...favorites[videoId], date: new Date(favorites[videoId].date) } : null);
+    currentPlayingVideo = video;
+
+    if (video) {
+        document.getElementById('playerTitle').textContent = video.title || '';
+        const dateStr = video.date ? video.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) : '';
+        document.getElementById('playerMeta').textContent = [currentChannel?.name || video.channelName, dateStr].filter(Boolean).join(' • ');
+    }
+
+    // Favorite button state
+    const favBtn = document.getElementById('playerFav');
+    if (isFav(videoId)) { favBtn.classList.add('is-fav'); favBtn.textContent = '⭐ Favorited'; }
+    else { favBtn.classList.remove('is-fav'); favBtn.textContent = '⭐ Add to Favorites'; }
+
+    // More videos
+    const others = currentVideos.filter(v => v.id !== videoId).slice(0, 8);
+    document.getElementById('moreVideos').innerHTML = others.map(v => videoCardHTML(v, currentChannel?.name)).join('');
+}
+
+function toggleFavCurrent() {
+    if (!currentPlayingVideo) return;
+    const v = currentPlayingVideo;
+    toggleFav(v.id, v.title, v.thumbnail, currentChannel?.name || v.channelName || '', v.published || v.date?.toISOString() || '');
+    const favBtn = document.getElementById('playerFav');
+    if (isFav(v.id)) { favBtn.classList.add('is-fav'); favBtn.textContent = '⭐ Favorited'; }
+    else { favBtn.classList.remove('is-fav'); favBtn.textContent = '⭐ Add to Favorites'; }
+}
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
+function escapeHTML(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function escapeAttr(s) { return (s||'').replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+// ═══════════════════════════════════════════
+// PIN
+// ═══════════════════════════════════════════
+function showPinGate() { enteredPin = ''; updatePinDots(); document.getElementById('pinError').textContent = ''; document.getElementById('pinOverlay').style.display = 'flex'; }
+function closePinOverlay() { document.getElementById('pinOverlay').style.display = 'none'; }
+function updatePinDots() { document.querySelectorAll('.pin-dot').forEach((d,i) => d.classList.toggle('filled', i < enteredPin.length)); }
+function handlePinKey(key) {
+    if (key === '⌫') { enteredPin = enteredPin.slice(0,-1); document.getElementById('pinError').textContent = ''; }
+    else if (enteredPin.length < 4) {
+        enteredPin += key;
+        if (enteredPin.length === 4) {
+            if (enteredPin === PIN) { closePinOverlay(); showSettings(); }
+            else { document.getElementById('pinError').textContent = 'Wrong PIN'; enteredPin = ''; }
+        }
+    }
+    updatePinDots();
+}
+
+// ═══════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════
+function showSettings() { updateCacheStats(); showView('settingsView'); }
+function saveSettings() { showView('homeView'); }
+
+// ═══════════════════════════════════════════
+// KEYBOARD
+// ═══════════════════════════════════════════
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (document.getElementById('pinOverlay').style.display === 'flex') closePinOverlay();
+        else if (document.getElementById('playerView').style.display !== 'none') goBackToBrowse();
+        else if (document.getElementById('browseView').style.display !== 'none') goHome();
+        else if (document.getElementById('settingsView').style.display !== 'none') saveSettings();
+    }
+});
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+const keys = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
+document.getElementById('numpad').innerHTML = keys.map(k =>
+    k === '' ? '<button class="empty"></button>' : `<button onclick="handlePinKey('${k}')">${k}</button>`
 ).join('');
 
-// ===== SETTINGS =====
-function showSettings(){
-  document.getElementById('homeView').style.display='none';
-  document.getElementById('settingsView').classList.add('active');
-  document.getElementById('sessionSlider').value=settings.sessionMinutes;
-  document.getElementById('sliderVal').textContent=settings.sessionMinutes+' min';
-  renderChannelList();
-}
-function saveAndClose(){
-  saveSettings();
-  document.getElementById('settingsView').classList.remove('active');
-  document.getElementById('homeView').style.display='block';
-  renderGrid();
-  toast('Settings saved!');
-}
-function updateSlider(){
-  let v=parseInt(document.getElementById('sessionSlider').value);
-  settings.sessionMinutes=v;
-  document.getElementById('sliderVal').textContent=v+' min';
-}
-function deleteChannel(idx){
-  settings.channels.splice(idx,1);
-  saveSettings();
-  renderChannelList();
-  renderGrid();
-  toast('Channel removed');
-}
-
-// ===== ADD CHANNEL =====
-function openAddChannel(){
-  document.getElementById('newChName').value='';
-  document.getElementById('newChId').value='';
-  document.getElementById('newChUrl').value='';
-  newChEmoji='📺';
-  renderEmojiPicker();
-  updatePreview();
-  document.getElementById('addChannelModal').classList.add('active');
-}
-function closeAddChannel(){document.getElementById('addChannelModal').classList.remove('active')}
-function renderEmojiPicker(){
-  document.getElementById('emojiPicker').innerHTML=EMOJIS.map(e=>
-    `<button class="emoji-pick ${e===newChEmoji?'selected':''}" onclick="pickEmoji('${e}')">${e}</button>`
-  ).join('');
-}
-function pickEmoji(e){newChEmoji=e;renderEmojiPicker();updatePreview()}
-function updatePreview(){
-  document.getElementById('prevEmoji').textContent=newChEmoji;
-  document.getElementById('prevName').textContent=document.getElementById('newChName').value||'Channel Name';
-}
-function saveNewChannel(){
-  let name=document.getElementById('newChName').value.trim();
-  let channelId=document.getElementById('newChId').value.trim();
-  let url=document.getElementById('newChUrl').value.trim();
-  if(!name){toast('Enter a channel name','error');return}
-  if(!channelId){toast('Enter a YouTube Channel ID','error');return}
-  if(!channelId.startsWith('UC')){toast('Channel ID should start with UC...','error');return}
-  if(url&&!url.startsWith('http'))url='https://'+url;
-  settings.channels.push({id:uid(),name:name,url:url,channelId:channelId,emoji:newChEmoji});
-  saveSettings();
-  closeAddChannel();
-  renderChannelList();
-  renderGrid();
-  toast('Channel added!');
-}
-
-// ===== CHANGE PIN =====
-let cpStep=1,cpEntered='',cpNewPin='';
-function startChangePin(){
-  cpStep=1;cpEntered='';cpNewPin='';
-  document.getElementById('cpTitle').textContent='Enter Current PIN';
-  document.getElementById('cpSubtitle').textContent='Step 1 of 3';
-  document.getElementById('cpError').textContent='';
-  updatePinDots('cpDots',0);
-  document.getElementById('cpNumpad').innerHTML=['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>
-    k===''?'<button class="empty"></button>':
-    k==='⌫'?`<button class="backspace" onclick="handleCpKey('⌫')">⌫</button>`:
-    `<button onclick="handleCpKey('${k}')">${k}</button>`
-  ).join('');
-  document.getElementById('changePinOverlay').style.display='flex';
-}
-function closeChangePin(){document.getElementById('changePinOverlay').style.display='none';cpEntered=''}
-function handleCpKey(key){
-  if(key==='⌫'){cpEntered=cpEntered.slice(0,-1);document.getElementById('cpError').textContent=''}
-  else if(cpEntered.length<4){
-    cpEntered+=key;
-    if(cpEntered.length===4){
-      if(cpStep===1){
-        if(cpEntered===settings.pin){cpStep=2;cpEntered='';document.getElementById('cpTitle').textContent='Enter New PIN';document.getElementById('cpSubtitle').textContent='Step 2 of 3';document.getElementById('cpError').textContent=''}
-        else{document.getElementById('cpError').textContent='Wrong PIN';let d=document.getElementById('cpDots');d.classList.add('shake');setTimeout(()=>d.classList.remove('shake'),500);cpEntered=''}
-      }else if(cpStep===2){
-        cpNewPin=cpEntered;cpStep=3;cpEntered='';document.getElementById('cpTitle').textContent='Confirm New PIN';document.getElementById('cpSubtitle').textContent='Step 3 of 3';document.getElementById('cpError').textContent='';
-      }else if(cpStep===3){
-        if(cpEntered===cpNewPin){settings.pin=cpNewPin;saveSettings();closeChangePin();toast('PIN changed!')}
-        else{document.getElementById('cpError').textContent='PINs don\'t match';let d=document.getElementById('cpDots');d.classList.add('shake');setTimeout(()=>d.classList.remove('shake'),500);cpEntered=''}
-      }
-    }
-  }
-  updatePinDots('cpDots',cpEntered.length);
-}
-
-// ===== RESET =====
-function confirmReset(){document.getElementById('confirmOverlay').classList.add('active')}
-function closeConfirm(){document.getElementById('confirmOverlay').classList.remove('active')}
-function doReset(){
-  settings={pin:'1234',sessionMinutes:30,channels:JSON.parse(JSON.stringify(DEFAULT_CHANNELS))};
-  saveSettings();
-  closeConfirm();
-  showSettings();
-  renderGrid();
-  toast('Reset to defaults!');
-}
-
-// ===== TUTORIAL =====
-let tutStep=0;
-function startTutorial(){
-  tutStep=0;renderTutStep();
-  document.getElementById('tutorialOverlay').classList.add('active');
-}
-function closeTutorial(){
-  document.getElementById('tutorialOverlay').classList.remove('active');
-  localStorage.setItem('safetube_tut_done','1');
-}
-function nextTutStep(){
-  if(tutStep<TUTORIAL_STEPS.length-1){tutStep++;renderTutStep()}
-  else closeTutorial();
-}
-function renderTutStep(){
-  let s=TUTORIAL_STEPS[tutStep];
-  document.getElementById('tutEmoji').textContent=s.emoji;
-  document.getElementById('tutTitle').textContent=s.title;
-  document.getElementById('tutDesc').textContent=s.desc;
-  document.getElementById('tutDots').innerHTML=TUTORIAL_STEPS.map((_,i)=>
-    `<div class="tutorial-dot ${i===tutStep?'active':''}"></div>`
-  ).join('');
-  document.getElementById('tutNextBtn').textContent=tutStep===TUTORIAL_STEPS.length-1?"Let's Go! 🚀":'Next';
-}
-
-// ===== TOAST =====
-function toast(msg,type){
-  let t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='toast'+(type==='error'?' error':'');
-  t.classList.add('visible');
-  setTimeout(()=>t.classList.remove('visible'),2500);
-}
-
-// ===== INIT =====
-renderGrid();
-if(!localStorage.getItem('safetube_tut_done'))setTimeout(startTutorial,600);
+renderChannels();
+renderFavorites();
 </script>
 </body>
 </html>
