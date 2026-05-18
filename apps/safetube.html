@@ -158,8 +158,21 @@ body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; background: #
         <span class="shield-badge">🛡️ Protected</span>
     </div>
     <div class="player-container">
-        <div class="player-wrapper">
-            <iframe id="playerIframe" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        <div class="player-wrapper" id="playerWrapper">
+            <div id="ytPlayer"></div>
+            <!-- Overlays block YouTube logo (top-left) and "Watch on YouTube" (bottom-right) -->
+            <div id="overlayTopLeft" style="position:absolute;top:0;left:0;width:160px;height:50px;z-index:10;cursor:default;"></div>
+            <div id="overlayBottomRight" style="position:absolute;bottom:0;right:0;width:200px;height:44px;z-index:10;cursor:default;"></div>
+            <div id="overlayTopRight" style="position:absolute;top:0;right:0;width:80px;height:50px;z-index:10;cursor:default;"></div>
+            <!-- "Up Next" overlay shown when video ends -->
+            <div id="endOverlay" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;border-radius:12px;">
+                <div style="font-size:14px;color:#a0a0c0;">Up next...</div>
+                <div id="endNextTitle" style="font-size:18px;font-weight:bold;text-align:center;padding:0 24px;"></div>
+                <div style="display:flex;gap:12px;margin-top:8px;">
+                    <button onclick="playNextVideo()" style="background:#4ecca3;color:#1a1a2e;border:none;padding:12px 28px;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer;">▶ Play</button>
+                    <button onclick="goBackToBrowse()" style="background:#16213e;color:#a0a0c0;border:1px solid #a0a0c0;padding:12px 20px;border-radius:10px;font-size:14px;cursor:pointer;">Back to Videos</button>
+                </div>
+            </div>
         </div>
         <div class="player-title" id="playerTitle"></div>
         <div class="player-meta" id="playerMeta"></div>
@@ -369,8 +382,8 @@ function showView(id) {
     document.getElementById(id).style.display = 'block';
     window.scrollTo(0, 0);
 }
-function goHome() { document.getElementById('playerIframe').src=''; renderFavorites(); showView('homeView'); }
-function goBackToBrowse() { document.getElementById('playerIframe').src=''; showView('browseView'); }
+function goHome() { stopPlayer(); renderFavorites(); showView('homeView'); }
+function goBackToBrowse() { stopPlayer(); showView('browseView'); }
 
 // ═══════════════════════════════════════════
 // HOME
@@ -495,12 +508,54 @@ function toggleFavCard(id, title, thumb, ch, date, btn) {
 }
 
 // ═══════════════════════════════════════════
-// PLAYER
+// PLAYER (YouTube IFrame API)
 // ═══════════════════════════════════════════
+let ytPlayer = null;
+let ytApiReady = false;
+let nextVideoId = null;
+
+// Load YouTube IFrame API
+const ytScript = document.createElement('script');
+ytScript.src = 'https://www.youtube.com/iframe_api';
+document.head.appendChild(ytScript);
+
+window.onYouTubeIframeAPIReady = function() { ytApiReady = true; };
+
 function playVideo(videoId) {
     showView('playerView');
-    const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&autoplay=1&fs=1&iv_load_policy=3&playsinline=1`;
-    document.getElementById('playerIframe').src = embedUrl;
+    document.getElementById('endOverlay').style.display = 'none';
+
+    // Figure out the next video for auto-advance
+    const idx = currentVideos.findIndex(v => v.id === videoId);
+    const nextVid = idx >= 0 && idx < currentVideos.length - 1 ? currentVideos[idx + 1] : null;
+    nextVideoId = nextVid?.id || null;
+
+    if (ytPlayer && ytApiReady) {
+        ytPlayer.loadVideoById(videoId);
+    } else if (ytApiReady) {
+        ytPlayer = new YT.Player('ytPlayer', {
+            videoId: videoId,
+            playerVars: {
+                rel: 0,               // no external recommendations
+                modestbranding: 1,     // minimal branding
+                autoplay: 1,
+                fs: 1,                 // allow fullscreen
+                iv_load_policy: 3,     // no annotations
+                playsinline: 1,
+                disablekb: 0,          // keyboard controls ok
+                controls: 1,           // show play/pause/seek
+                cc_load_policy: 1,     // show captions if available
+                origin: window.location.origin
+            },
+            events: {
+                onStateChange: onPlayerStateChange
+            }
+        });
+    } else {
+        // API not loaded yet, retry in 500ms
+        setTimeout(() => playVideo(videoId), 500);
+        return;
+    }
 
     const video = currentVideos.find(v => v.id === videoId) ||
                   (favorites[videoId] ? { id: videoId, ...favorites[videoId], date: new Date(favorites[videoId].date) } : null);
@@ -517,9 +572,46 @@ function playVideo(videoId) {
     if (isFav(videoId)) { favBtn.classList.add('is-fav'); favBtn.textContent = '⭐ Favorited'; }
     else { favBtn.classList.remove('is-fav'); favBtn.textContent = '⭐ Add to Favorites'; }
 
+    // Prep "up next" overlay
+    if (nextVid) {
+        document.getElementById('endNextTitle').textContent = nextVid.title;
+    }
+
     // More videos
     const others = currentVideos.filter(v => v.id !== videoId).slice(0, 8);
     document.getElementById('moreVideos').innerHTML = others.map(v => videoCardHTML(v, currentChannel?.name)).join('');
+}
+
+function onPlayerStateChange(event) {
+    // YT.PlayerState.ENDED === 0
+    if (event.data === 0) {
+        // Video ended — show our "up next" overlay instead of YouTube's suggestions
+        if (nextVideoId) {
+            document.getElementById('endOverlay').style.display = 'flex';
+            // Auto-play next after 5 seconds
+            clearTimeout(window._autoNextTimer);
+            window._autoNextTimer = setTimeout(() => {
+                if (document.getElementById('endOverlay').style.display === 'flex') {
+                    playNextVideo();
+                }
+            }, 5000);
+        } else {
+            goBackToBrowse();
+        }
+    }
+}
+
+function playNextVideo() {
+    document.getElementById('endOverlay').style.display = 'none';
+    clearTimeout(window._autoNextTimer);
+    if (nextVideoId) playVideo(nextVideoId);
+}
+
+function stopPlayer() {
+    clearTimeout(window._autoNextTimer);
+    if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
+        try { ytPlayer.stopVideo(); } catch(e) {}
+    }
 }
 
 function toggleFavCurrent() {
