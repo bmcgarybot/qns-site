@@ -212,14 +212,33 @@ const API_KEY = 'AIzaSyB5TGP6SsM4EHYJq20yDrShnyJypJThaXU';
 const API_BASE = 'https://www.googleapis.com/youtube/v3';
 
 const defaultChannels = [
-    { name: 'Sesame Street',    handle: '@SesameStreet',    emoji: '🐸' },
-    { name: 'Bluey',            handle: '@BlueyChannel',    emoji: '🐕' },
-    { name: 'Numberblocks',     handle: '@Numberblocks',    emoji: '🔢' },
-    { name: 'StoryBots',        handle: '@Storybots',       emoji: '🤖' },
-    { name: 'Nat Geo Kids',     handle: '@NatGeoKids',      emoji: '🌍' },
-    { name: 'Cosmic Kids Yoga', handle: '@CosmicKidsYoga',  emoji: '🧘' },
-    { name: 'SciShow Kids',     handle: '@scishowkids',     emoji: '🔬' },
-    { name: 'Art for Kids Hub', handle: '@ArtforKidsHub',   emoji: '🎨' }
+    // ── Standalone Channels ──
+    { name: 'Sesame Street',      handle: '@SesameStreet',       emoji: '🐸' },
+    { name: 'Bluey',              handle: '@BlueyOfficialChannel', emoji: '🐕' },
+    { name: 'Numberblocks',       handle: '@Numberblocks',       emoji: '🔢' },
+    { name: 'Netflix Jr.',        handle: '@netflixjr',          emoji: '🤖' },
+    { name: 'Nat Geo Kids',       handle: '@NatGeoKids',         emoji: '🌍' },
+    { name: 'Cosmic Kids Yoga',   handle: '@CosmicKidsYoga',     emoji: '🧘' },
+    { name: 'SciShow Kids',       handle: '@scishowkids',        emoji: '🔬' },
+    { name: 'Art for Kids Hub',   handle: '@ArtforKidsHub',      emoji: '🎨' },
+    { name: 'PBS KIDS',           handle: '@PBSKIDS',            emoji: '📺' },
+    { name: 'Wild Kratts',        handle: '@WildKratts',         emoji: '🦎' },
+    { name: 'Curious George',     handle: '@CuriousGeorge',      emoji: '🐵' },
+    { name: 'Super Why',          handle: '@SuperWhy',           emoji: '📖' },
+    { name: 'WordWorld',          handle: '@WordWorld',          emoji: '🔤' },
+    { name: 'The Singing Walrus', handle: '@TheSingingWalrus',   emoji: '🦭' },
+    // ── PBS KIDS Playlists (specific shows) ──
+    { name: 'PBS KIDS Movies',    handle: '@PBSKIDS', playlistId: 'PLa8HWWMcQEGTbi5om5BkRD8y7BSIB9BzR', emoji: '🎬' },
+    { name: 'Daniel Tiger',       handle: '@PBSKIDS', playlistId: 'PLa8HWWMcQEGTvVi5IkHY526u1YMqM0w7m', emoji: '🐯' },
+    { name: 'Xavier Riddle',      handle: '@PBSKIDS', playlistId: 'PLa8HWWMcQEGQGJpeBCGd5Oeaxqibti5Cm', emoji: '🦸' },
+    { name: "Alma's Way",         handle: '@PBSKIDS', playlistId: 'PLa8HWWMcQEGTPnXipUupo4caKOzY7a9f6', emoji: '💃' },
+    { name: 'Hero Elementary',    handle: '@PBSKIDS', playlistId: 'PLa8HWWMcQEGTTMeqqSyRh8KU975jdGHBr', emoji: '🦸‍♂️' },
+    { name: 'Work It Out Wombats',handle: '@PBSKIDS', playlistId: 'PLa8HWWMcQEGTKmx7wb4P-MDfzs5tmcNRW', emoji: '🐨' },
+    { name: 'Donkey Hodie',       handle: '@PBSKIDS', playlistId: 'PLa8HWWMcQEGQBlAQFUzJnfZqnvT0nqS0h', emoji: '🫏' },
+    { name: 'Molly of Denali',    handle: '@PBSKIDS', playlistId: 'PLPZ40gM7aDFA1nIOkF3upPoyIyjHezUiO', emoji: '🏔️' },
+    { name: "Let's Go Luna",      handle: '@PBSKIDS', playlistId: 'PLBCSvaHIzmYLe_brRQ5CL9UvBZ22C1JVl', emoji: '🌙' },
+    { name: 'Odd Squad',          handle: '@PBSKIDS', playlistId: 'PLa8HWWMcQEGSWWiIZ419mPtNrsI7dfWXR', emoji: '🔍' },
+    { name: 'ASL for Kids',       handle: '@PBSKIDS', playlistId: 'PLa8HWWMcQEGRRX_zhaMmDa5Wusv0aGm_7', emoji: '🧏' },
 ];
 
 let channels = JSON.parse(localStorage.getItem('st-channels')) || defaultChannels;
@@ -263,20 +282,32 @@ async function resolveChannel(handle) {
     return cache;
 }
 
-async function fetchAllVideos(handle, onProgress) {
-    const cache = await resolveChannel(handle);
-    if (cache.videos?.length && cache.fetchedAt && (Date.now() - cache.fetchedAt < CACHE_TTL)) {
-        return cache.videos;
+async function fetchAllVideos(handle, onProgress, playlistId) {
+    // If a specific playlistId is provided (e.g. PBS KIDS show playlists), use it directly
+    let targetPlaylist;
+    if (playlistId) {
+        targetPlaylist = playlistId;
+    } else {
+        const cache = await resolveChannel(handle);
+        targetPlaylist = cache.uploadsId;
     }
+
+    // Cache key includes playlistId for playlist-specific entries
+    const cacheKey = playlistId ? handle + ':' + playlistId : handle;
+    const cached = getCache(cacheKey);
+    if (cached?.videos?.length && cached.fetchedAt && (Date.now() - cached.fetchedAt < CACHE_TTL)) {
+        return cached.videos;
+    }
+
     let all = [], pageToken = null;
     do {
-        const params = { part: 'snippet', playlistId: cache.uploadsId, maxResults: '50' };
+        const params = { part: 'snippet', playlistId: targetPlaylist, maxResults: '50' };
         if (pageToken) params.pageToken = pageToken;
         const data = await apiGet('playlistItems', params);
         const total = data.pageInfo?.totalResults || 0;
         for (const item of (data.items || [])) {
             const s = item.snippet, vid = s.resourceId?.videoId;
-            if (!vid) continue;
+            if (!vid || s.title === 'Private video' || s.title === 'Deleted video') continue;
             all.push({
                 id: vid, title: s.title, published: s.publishedAt,
                 thumbnail: s.thumbnails?.high?.url || s.thumbnails?.medium?.url || `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`,
@@ -287,8 +318,10 @@ async function fetchAllVideos(handle, onProgress) {
         if (onProgress) onProgress(all.length, total);
         if (pageToken) await new Promise(r => setTimeout(r, 80));
     } while (pageToken);
+
+    let cache = getCache(cacheKey) || {};
     cache.videos = all; cache.fetchedAt = Date.now(); cache.totalVideos = all.length;
-    setCache(handle, cache);
+    setCache(cacheKey, cache);
     return all;
 }
 
@@ -345,7 +378,8 @@ function goBackToBrowse() { document.getElementById('playerIframe').src=''; show
 function renderChannels() {
     document.getElementById('channelCount').textContent = channels.length + ' channels';
     document.getElementById('channelGrid').innerHTML = channels.map((ch, i) => {
-        const c = getCache(ch.handle);
+        const cacheKey = ch.playlistId ? ch.handle + ':' + ch.playlistId : ch.handle;
+        const c = getCache(cacheKey);
         const ct = c?.totalVideos ? `${c.totalVideos.toLocaleString()} videos` : '';
         return `<div class="channel-card" onclick="openChannel(${i})">
             <div class="emoji">${ch.emoji}</div><div class="name">${ch.name}</div>
@@ -378,7 +412,7 @@ async function openChannel(index) {
             const el = document.getElementById('loadProgress'), txt = document.getElementById('loadText');
             if (el) el.style.width = pct+'%';
             if (txt) txt.textContent = `Loading ${loaded.toLocaleString()} of ${total.toLocaleString()} videos...`;
-        });
+        }, currentChannel.playlistId);
         document.getElementById('browseCount').textContent = currentVideos.length.toLocaleString() + ' videos';
         applyFilters();
     } catch (e) {
