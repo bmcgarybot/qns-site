@@ -254,6 +254,17 @@ const defaultChannels = [
     { name: 'ASL for Kids',       handle: '@PBSKIDS', playlistId: 'PLa8HWWMcQEGRRX_zhaMmDa5Wusv0aGm_7', emoji: '🧏' },
 ];
 
+// Clear stale cache from old versions
+const ST_VERSION = 2;
+if (parseInt(localStorage.getItem('st-version')) !== ST_VERSION) {
+    // Wipe old channel data + caches from v1
+    localStorage.removeItem('st-channels');
+    ['settings','channels','safetube-channels','safetube-pin'].forEach(k => localStorage.removeItem(k));
+    // Clear all old caches
+    Object.keys(localStorage).filter(k => k.startsWith('st-cache-') || k.startsWith('st-chid-')).forEach(k => localStorage.removeItem(k));
+    localStorage.setItem('st-version', ST_VERSION);
+}
+
 let channels = JSON.parse(localStorage.getItem('st-channels')) || defaultChannels;
 let favorites = JSON.parse(localStorage.getItem('st-favorites')) || {};
 let currentChannel = null;
