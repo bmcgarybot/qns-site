@@ -269,8 +269,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="face-overlay" id="faceOvl" style="top:20%;left:50%;transform:translateX(-50%)">
       <div class="face-placeholder" id="facePH" onclick="pickFaceForPage()">
         <span>&#128103;</span>
+        <span style="font-size:9px;margin-top:2px">Tap to add</span>
       </div>
-      <img class="hidden" id="faceImg">
+      <img class="hidden" id="faceImg" onclick="pickFaceForPage()">
     </div>
     <!-- Text overlay (draggable) -->
     <div class="text-overlay bg-gradient" id="textOvl">
@@ -857,15 +858,17 @@ function confirmTmpl(){
   let kept = [];
   checks.forEach((cb,i) => { if(cb.checked) kept.push(t.pages[i]); });
   if(!kept.length){ toast('Keep at least one step!'); return; }
-  story = {name:t.name, pages:kept.map(p=>({scene:null,face:null,text:p.text,prompt:p.scene_prompt,faceX:50,faceY:20,faceSize:100,showFace:true,textX:50,textY:85,textColor:'#FFFFFF',textSize:20,textBg:'gradient'})), created:Date.now()};
+  let autoFace = faces.length > 0 ? faces[0] : null;
+  story = {name:t.name, pages:kept.map(p=>({scene:null,face:autoFace,text:p.text,prompt:p.scene_prompt,faceX:50,faceY:20,faceSize:100,showFace:true,textX:50,textY:85,textColor:'#FFFFFF',textSize:20,textBg:'gradient'})), created:Date.now()};
   pgIdx=0;
   closeReview();
   goTo('editorScreen');
-  toast(`Story created with ${kept.length} steps`);
+  toast(autoFace ? `Story created with ${kept.length} steps — face auto-added!` : `Story created with ${kept.length} steps`);
 }
 
 function startBlank(){
-  story={name:"My Story",pages:[{scene:null,face:null,text:"Tap to write your story text",prompt:null,faceX:50,faceY:20,faceSize:100,showFace:true,textX:50,textY:85,textColor:'#FFFFFF',textSize:20,textBg:'gradient'}],created:Date.now()};
+  let autoFace = faces.length > 0 ? faces[0] : null;
+  story={name:"My Story",pages:[{scene:null,face:autoFace,text:"Tap to write your story text",prompt:null,faceX:50,faceY:20,faceSize:100,showFace:true,textX:50,textY:85,textColor:'#FFFFFF',textSize:20,textBg:'gradient'}],created:Date.now()};
   pgIdx=0;
   goTo('editorScreen');
 }
@@ -895,11 +898,23 @@ function renderPage(){
     document.getElementById('scenePromptText').textContent=p.prompt||'Tap to add scene photo';
   }
 
-  // Face
+  // Face — auto-apply first available face if page has none
+  if(!p.face && faces.length > 0){
+    p.face = faces[0];
+  }
+
   if(p.showFace!==false){
-    fovl.style.display='';
-    if(p.face){fph.classList.add('hidden');fimg.classList.remove('hidden');fimg.src=p.face}
-    else{fph.classList.remove('hidden');fimg.classList.add('hidden')}
+    fovl.style.display='block';
+    if(p.face){
+      fph.style.display='none';
+      fimg.style.display='block';
+      fimg.classList.remove('hidden');
+      fimg.src=p.face;
+    } else {
+      fph.style.display='';
+      fimg.style.display='none';
+      fimg.classList.add('hidden');
+    }
     fovl.style.width=fovl.style.height=(p.faceSize||100)+'px';
     fovl.style.left=p.faceX+'%';fovl.style.top=p.faceY+'%';
     fovl.style.transform='translate(-50%,-50%)';
@@ -934,7 +949,7 @@ function saveCur(){if(!story.pages.length)return;let p=story.pages[pgIdx];p.text
 function prevPg(){saveCur();if(pgIdx>0){pgIdx--;renderPage()}}
 function nextPg(){saveCur();if(pgIdx<story.pages.length-1){pgIdx++;renderPage()}}
 
-function addPage(){saveCur();story.pages.splice(pgIdx+1,0,{scene:null,face:null,text:"Write text here...",prompt:null,faceX:50,faceY:20,faceSize:100,showFace:true,textX:50,textY:85,textColor:'#FFFFFF',textSize:20,textBg:'gradient'});pgIdx++;renderPage();toast('Page added!')}
+function addPage(){saveCur();let autoFace=faces.length>0?faces[0]:null;story.pages.splice(pgIdx+1,0,{scene:null,face:autoFace,text:"Write text here...",prompt:null,faceX:50,faceY:20,faceSize:100,showFace:true,textX:50,textY:85,textColor:'#FFFFFF',textSize:20,textBg:'gradient'});pgIdx++;renderPage();toast('Page added!')}
 function delPage(){if(story.pages.length<=1){toast('Need at least 1 page!');return}story.pages.splice(pgIdx,1);if(pgIdx>=story.pages.length)pgIdx--;renderPage();toast('Step removed')}
 
 function resizeFace(v){story.pages[pgIdx].faceSize=parseInt(v);let f=document.getElementById('faceOvl');f.style.width=f.style.height=v+'px'}
