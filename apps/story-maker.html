@@ -60,9 +60,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .cvs .face-overlay .face-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:var(--txtL);background:#F1F3F5;cursor:pointer}
 .cvs .face-overlay .face-placeholder span{font-size:28px}
 
-.cvs .text-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.7));padding:16px 20px 20px;z-index:5}
+.cvs .text-overlay{position:absolute;left:50%;top:85%;transform:translate(-50%,-50%);background:linear-gradient(transparent,rgba(0,0,0,.7));padding:12px 18px;z-index:5;cursor:grab;touch-action:none;border-radius:8px;max-width:90%;text-align:center}
 .cvs .text-overlay .stxt{color:#fff;font-size:20px;font-weight:700;line-height:1.3;text-shadow:0 2px 8px rgba(0,0,0,.5);outline:none;min-height:28px}
 .cvs .text-overlay .stxt:empty:before{content:attr(data-ph);opacity:.6}
+.cvs .text-overlay.bg-gradient{background:linear-gradient(transparent,rgba(0,0,0,.7))}
+.cvs .text-overlay.bg-solid{background:rgba(0,0,0,.55)}
+.cvs .text-overlay.bg-none{background:none}
+
+/* text color presets */
+.clr-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.clr-dot{width:28px;height:28px;border-radius:50%;border:3px solid #DEE2E6;cursor:pointer;flex-shrink:0;transition:border-color .2s}
+.clr-dot.act{border-color:var(--pri);box-shadow:0 0 0 2px var(--pri)}
+.clr-custom-wrap{position:relative;width:28px;height:28px;flex-shrink:0}
+.clr-custom-wrap input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.clr-custom-wrap .clr-ring{width:28px;height:28px;border-radius:50%;border:3px solid #DEE2E6;background:conic-gradient(red,yellow,lime,aqua,blue,magenta,red);cursor:pointer}
 
 /* face size slider */
 /* face-controls removed — now in toolsPanel */
@@ -101,10 +112,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 /* preview */
 .prev-page{width:100%;height:calc(100vh - 60px);position:relative;display:flex;align-items:center;justify-content:center}
-.prev-page .prev-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.prev-page .prev-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .prev-page .prev-face{width:160px;height:160px;border-radius:50%;border:5px solid #fff;box-shadow:0 4px 20px rgba(0,0,0,.4);overflow:hidden;position:relative;z-index:2}
 .prev-page .prev-face img{width:100%;height:100%;object-fit:cover}
-.prev-page .prev-txt-box{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.75));padding:24px 24px 80px;z-index:3}
+.prev-page .prev-txt-box{position:absolute;left:50%;top:85%;transform:translate(-50%,-50%);background:linear-gradient(transparent,rgba(0,0,0,.75));padding:20px 24px;z-index:3;border-radius:8px;max-width:90%;text-align:center}
+.prev-page .prev-txt-box.bg-gradient{background:linear-gradient(transparent,rgba(0,0,0,.75))}
+.prev-page .prev-txt-box.bg-solid{background:rgba(0,0,0,.55)}
+.prev-page .prev-txt-box.bg-none{background:none}
 .prev-page .prev-txt{color:#fff;font-size:28px;font-weight:700;text-align:center;text-shadow:0 2px 12px rgba(0,0,0,.6);line-height:1.3}
 .prev-nav{position:absolute;bottom:20px;display:flex;gap:16px;z-index:5}
 .prev-prog{position:absolute;bottom:76px;font-size:13px;color:rgba(255,255,255,.8);font-weight:600;z-index:5}
@@ -117,7 +131,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .pgrid .pitem .plabel{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);color:#fff;font-size:10px;padding:3px;text-align:center;font-weight:600}
 
 @media(max-width:480px){
-  .cvs .text-overlay .stxt{font-size:16px}
   .cvs .face-overlay{width:80px;height:80px}
 }
 
@@ -216,10 +229,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <button class="tb" onclick="pickFaceForPage()">&#128103; Face Photo</button>
       <button class="tb" onclick="toggleFace()">&#128064; Show/Hide Face</button>
       <button class="tb" onclick="toggleFaceSize()">&#128207; Face Size</button>
+      <button class="tb" onclick="toggleTextBg()" id="txtBgBtn">&#127912; Text BG: Gradient</button>
     </div>
     <div id="faceSizeRow" style="display:none;margin-top:8px;display:none;align-items:center;gap:8px;padding:0 4px">
       <label style="font-size:12px;font-weight:600;color:var(--txtL);white-space:nowrap">Size:</label>
       <input type="range" id="faceSize" min="50" max="200" value="100" oninput="resizeFace(this.value)" style="flex:1;accent-color:var(--pri)">
+    </div>
+    <!-- Text size slider -->
+    <div id="textSizeRow" style="display:flex;margin-top:8px;align-items:center;gap:8px;padding:0 4px">
+      <label style="font-size:12px;font-weight:600;color:var(--txtL);white-space:nowrap">Text:</label>
+      <input type="range" id="textSizeSlider" min="12" max="48" value="20" oninput="changeTextSize(this.value)" style="flex:1;accent-color:var(--pri)">
+      <span id="textSizeLabel" style="font-size:11px;color:var(--txtL);min-width:28px">20px</span>
+    </div>
+    <!-- Text color presets -->
+    <div style="margin-top:8px;padding:0 4px">
+      <label style="font-size:12px;font-weight:600;color:var(--txtL)">Color:</label>
+      <div class="clr-row" id="clrRow">
+        <div class="clr-dot act" style="background:#FFFFFF" data-c="#FFFFFF" onclick="pickClr(this)"></div>
+        <div class="clr-dot" style="background:#000000" data-c="#000000" onclick="pickClr(this)"></div>
+        <div class="clr-dot" style="background:#FFD700" data-c="#FFD700" onclick="pickClr(this)"></div>
+        <div class="clr-dot" style="background:#FF0000" data-c="#FF0000" onclick="pickClr(this)"></div>
+        <div class="clr-dot" style="background:#2196F3" data-c="#2196F3" onclick="pickClr(this)"></div>
+        <div class="clr-dot" style="background:#4CAF50" data-c="#4CAF50" onclick="pickClr(this)"></div>
+        <div class="clr-dot" style="background:#FF9800" data-c="#FF9800" onclick="pickClr(this)"></div>
+        <div class="clr-dot" style="background:#E91E63" data-c="#E91E63" onclick="pickClr(this)"></div>
+        <div class="clr-custom-wrap"><div class="clr-ring"></div><input type="color" id="customClr" value="#FFFFFF" oninput="pickCustomClr(this.value)"></div>
+      </div>
     </div>
   </div>
 
@@ -237,8 +272,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
       <img class="hidden" id="faceImg">
     </div>
-    <!-- Text at bottom -->
-    <div class="text-overlay">
+    <!-- Text overlay (draggable) -->
+    <div class="text-overlay bg-gradient" id="textOvl">
       <div class="stxt" id="sText" contenteditable="true" data-ph="Tap to write story text..."></div>
     </div>
   </div>
@@ -265,9 +300,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- PREVIEW -->
 <div class="scr" id="prevScreen" style="padding:0;max-width:100%">
   <div class="prev-page" id="prevBox">
-    <img class="prev-bg hidden" id="prevBg" style="z-index:1">
+    <img class="prev-bg hidden" id="prevBg">
     <div style="position:absolute;inset:0;background:#E9ECEF;z-index:0" id="prevBgFallback"></div>
-    <div class="prev-face hidden" id="prevFace" style="z-index:2"><img id="prevFaceImg"></div>
+    <div class="prev-face hidden" id="prevFace"><img id="prevFaceImg"></div>
     <div class="prev-txt-box"><div class="prev-txt" id="prevTxt"></div></div>
     <div class="prev-prog" id="prevProg"></div>
     <div class="prev-nav">
@@ -822,7 +857,7 @@ function confirmTmpl(){
   let kept = [];
   checks.forEach((cb,i) => { if(cb.checked) kept.push(t.pages[i]); });
   if(!kept.length){ toast('Keep at least one step!'); return; }
-  story = {name:t.name, pages:kept.map(p=>({scene:null,face:null,text:p.text,prompt:p.scene_prompt,faceX:50,faceY:20,faceSize:100,showFace:true})), created:Date.now()};
+  story = {name:t.name, pages:kept.map(p=>({scene:null,face:null,text:p.text,prompt:p.scene_prompt,faceX:50,faceY:20,faceSize:100,showFace:true,textX:50,textY:85,textColor:'#FFFFFF',textSize:20,textBg:'gradient'})), created:Date.now()};
   pgIdx=0;
   closeReview();
   goTo('editorScreen');
@@ -830,7 +865,7 @@ function confirmTmpl(){
 }
 
 function startBlank(){
-  story={name:"My Story",pages:[{scene:null,face:null,text:"Tap to write your story text",prompt:null,faceX:50,faceY:20,faceSize:100,showFace:true}],created:Date.now()};
+  story={name:"My Story",pages:[{scene:null,face:null,text:"Tap to write your story text",prompt:null,faceX:50,faceY:20,faceSize:100,showFace:true,textX:50,textY:85,textColor:'#FFFFFF',textSize:20,textBg:'gradient'}],created:Date.now()};
   pgIdx=0;
   goTo('editorScreen');
 }
@@ -839,11 +874,20 @@ function startBlank(){
 function renderPage(){
   if(!story.pages.length)return;
   let p=story.pages[pgIdx];
+  // Data migration: fill in defaults for old saves
+  if(p.textX==null)p.textX=50;
+  if(p.textY==null)p.textY=85;
+  if(!p.textColor)p.textColor='#FFFFFF';
+  if(!p.textSize)p.textSize=20;
+  if(!p.textBg)p.textBg='gradient';
+
   let sph=document.getElementById('scenePH');
   let simg=document.getElementById('sceneImg');
   let fovl=document.getElementById('faceOvl');
   let fph=document.getElementById('facePH');
   let fimg=document.getElementById('faceImg');
+  let tovl=document.getElementById('textOvl');
+  let stxt=document.getElementById('sText');
 
   // Scene
   if(p.scene){sph.classList.add('hidden');simg.classList.remove('hidden');simg.src=p.scene}
@@ -864,18 +908,33 @@ function renderPage(){
     fovl.style.display='none';
   }
 
+  // Text overlay position, color, size, background
+  tovl.style.left=p.textX+'%';
+  tovl.style.top=p.textY+'%';
+  tovl.style.transform='translate(-50%,-50%)';
+  stxt.style.color=p.textColor;
+  stxt.style.fontSize=p.textSize+'px';
+  tovl.className='text-overlay bg-'+p.textBg;
+
+  // Update tool controls
+  document.getElementById('textSizeSlider').value=p.textSize;
+  document.getElementById('textSizeLabel').textContent=p.textSize+'px';
+  updateClrDots(p.textColor);
+  document.getElementById('customClr').value=p.textColor;
+  updateBgBtn(p.textBg);
+
   document.getElementById('sText').textContent=p.text;
   document.getElementById('pgLbl').textContent=`${pgIdx+1} / ${story.pages.length}`;
   // Collapse tools panel on page change
   document.getElementById('toolsPanel').style.display='none';
 }
 
-function saveCur(){if(!story.pages.length)return;story.pages[pgIdx].text=document.getElementById('sText').textContent||''}
+function saveCur(){if(!story.pages.length)return;let p=story.pages[pgIdx];p.text=document.getElementById('sText').textContent||''}
 
 function prevPg(){saveCur();if(pgIdx>0){pgIdx--;renderPage()}}
 function nextPg(){saveCur();if(pgIdx<story.pages.length-1){pgIdx++;renderPage()}}
 
-function addPage(){saveCur();story.pages.splice(pgIdx+1,0,{scene:null,face:null,text:"Write text here...",prompt:null,faceX:50,faceY:20,faceSize:100,showFace:true});pgIdx++;renderPage();toast('Page added!')}
+function addPage(){saveCur();story.pages.splice(pgIdx+1,0,{scene:null,face:null,text:"Write text here...",prompt:null,faceX:50,faceY:20,faceSize:100,showFace:true,textX:50,textY:85,textColor:'#FFFFFF',textSize:20,textBg:'gradient'});pgIdx++;renderPage();toast('Page added!')}
 function delPage(){if(story.pages.length<=1){toast('Need at least 1 page!');return}story.pages.splice(pgIdx,1);if(pgIdx>=story.pages.length)pgIdx--;renderPage();toast('Step removed')}
 
 function resizeFace(v){story.pages[pgIdx].faceSize=parseInt(v);let f=document.getElementById('faceOvl');f.style.width=f.style.height=v+'px'}
@@ -941,7 +1000,18 @@ function pickFaceForPage(){showPicker('face',d=>{story.pages[pgIdx].face=d;rende
 function showPicker(type,cb){
   let lib=type==='face'?faces:scenes;
   let label=type==='face'?'Face':'Scene';
+  let curPrompt=story.pages[pgIdx]?.prompt||'';
   let html=`<h2>Choose ${label} Photo</h2>`;
+
+  // Search bar for free stock photos (scenes only or both)
+  html+=`<div style="margin-bottom:12px">
+    <div style="display:flex;gap:6px">
+      <input type="text" id="imgSearchQ" placeholder="Search free photos..." value="${type==='scene'&&curPrompt?curPrompt.replace(/^(Photo of |Take a photo of )/i,''):''}" style="flex:1;padding:10px 12px;border:2px solid #E9ECEF;border-radius:10px;font-size:14px;outline:none">
+      <button onclick="searchPhotos('${type}')" class="btn bp" style="flex:none;padding:10px 16px">&#128269;</button>
+    </div>
+    <div id="searchResults" style="margin-top:8px"></div>
+    <div id="searchAttrib" style="font-size:10px;color:var(--txtL);margin-top:4px;display:none">Photos from <a href="https://openverse.org" target="_blank" style="color:var(--pri)">Openverse</a> (Creative Commons)</div>
+  </div>`;
 
   if(lib.length){
     html+=`<p style="font-size:12px;font-weight:600;color:var(--txtL);margin-bottom:6px">My ${label}s:</p>`;
@@ -955,8 +1025,68 @@ function showPicker(type,cb){
   document.getElementById('pickerModal').classList.add('vis');
   window._pickerCb=cb;
   window._pickerType=type;
+  // Auto-search if there's a prompt
+  if(type==='scene'&&curPrompt){
+    setTimeout(()=>searchPhotos(type),100);
+  }
 }
 
+async function searchPhotos(type){
+  let q=document.getElementById('imgSearchQ').value.trim();
+  if(!q){toast('Type something to search');return}
+  let res=document.getElementById('searchResults');
+  res.innerHTML='<p style="text-align:center;padding:12px;color:var(--txtL);font-size:13px">Searching...</p>';
+  document.getElementById('searchAttrib').style.display='block';
+  try{
+    let resp=await fetch(`https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&page_size=12&license_type=all`,{headers:{'User-Agent':'StoryMaker/1.0'}});
+    let data=await resp.json();
+    let imgs=data.results||[];
+    if(!imgs.length){res.innerHTML='<p style="text-align:center;padding:12px;color:var(--txtL);font-size:13px">No results. Try different words.</p>';return}
+    let grid='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">';
+    imgs.forEach((img,i)=>{
+      let thumb=img.thumbnail||img.url;
+      let full=img.url||thumb;
+      grid+=`<img src="${thumb}" data-full="${full}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;cursor:pointer;background:#E9ECEF" onclick="pickSearchResult(this)" onerror="this.style.display='none'">`;
+    });
+    grid+='</div>';
+    res.innerHTML=grid;
+  }catch(e){
+    res.innerHTML='<p style="text-align:center;padding:12px;color:var(--txtL);font-size:13px">Search failed. Try uploading instead.</p>';
+  }
+}
+
+function pickSearchResult(el){
+  let url=el.dataset.full||el.src;
+  // Download image to data URL so it works offline
+  let img=new Image();
+  img.crossOrigin='anonymous';
+  img.onload=function(){
+    let c=document.createElement('canvas');
+    c.width=img.naturalWidth;c.height=img.naturalHeight;
+    c.getContext('2d').drawImage(img,0,0);
+    try{
+      let dataUrl=c.toDataURL('image/jpeg',0.85);
+      let type=window._pickerType;
+      if(type==='scene'){if(!scenes.includes(dataUrl)){scenes.push(dataUrl);localStorage.setItem('sm_scenes',JSON.stringify(scenes))}}
+      else{if(!faces.includes(dataUrl)){faces.push(dataUrl);localStorage.setItem('sm_faces',JSON.stringify(faces))}}
+      closePickerModal();
+      if(window._pickerCb)window._pickerCb(dataUrl);
+      toast('Photo added!');
+    }catch(e){
+      // CORS blocked — use URL directly
+      closePickerModal();
+      if(window._pickerCb)window._pickerCb(url);
+      toast('Photo added!');
+    }
+  };
+  img.onerror=function(){
+    // Fallback: use URL directly
+    closePickerModal();
+    if(window._pickerCb)window._pickerCb(url);
+    toast('Photo added!');
+  };
+  img.src=url;
+}
 function closePickerModal(){document.getElementById('pickerModal').classList.remove('vis')}
 
 function pickFromLib(type,idx){
@@ -1017,6 +1147,99 @@ function uploadNew(type){
   document.addEventListener('touchend',up);
 })();
 
+// ===== DRAG TEXT =====
+(function(){
+  let el=null,ox,oy,startX,startY,dragged=false;
+  function down(e){
+    // Don't start drag if user is selecting text inside contenteditable
+    if(e.target.id==='sText'||e.target.closest('.stxt')){
+      // We'll track — if drag distance >5px, we drag; otherwise let focus/edit happen
+    }
+    el=document.getElementById('textOvl');
+    if(!el)return;
+    let t=e.touches?e.touches[0]:e;
+    let r=el.getBoundingClientRect();
+    ox=t.clientX-r.left-r.width/2;
+    oy=t.clientY-r.top-r.height/2;
+    startX=t.clientX;startY=t.clientY;
+    dragged=false;
+  }
+  function move(e){
+    if(!el)return;
+    let t=e.touches?e.touches[0]:e;
+    let dx=Math.abs(t.clientX-startX),dy=Math.abs(t.clientY-startY);
+    if(dx<5&&dy<5)return; // threshold
+    dragged=true;
+    let cvs=document.getElementById('canvas').getBoundingClientRect();
+    let x=((t.clientX-ox-cvs.left)/cvs.width)*100;
+    let y=((t.clientY-oy-cvs.top)/cvs.height)*100;
+    x=Math.max(5,Math.min(95,x));
+    y=Math.max(5,Math.min(95,y));
+    el.style.left=x+'%';el.style.top=y+'%';
+    story.pages[pgIdx].textX=Math.round(x);
+    story.pages[pgIdx].textY=Math.round(y);
+    e.preventDefault();
+  }
+  function up(e){
+    if(el&&!dragged){
+      // Short tap — focus contenteditable for text editing
+      let stxt=document.getElementById('sText');
+      if(stxt){stxt.focus()}
+    }
+    el=null;
+  }
+  document.addEventListener('mousedown',e=>{if(e.target.closest('.text-overlay')&&e.target.closest('#canvas'))down(e)});
+  document.addEventListener('mousemove',move);
+  document.addEventListener('mouseup',up);
+  document.addEventListener('touchstart',e=>{if(e.target.closest('.text-overlay')&&e.target.closest('#canvas'))down(e)},{passive:false});
+  document.addEventListener('touchmove',e=>{if(el)move(e)},{passive:false});
+  document.addEventListener('touchend',up);
+})();
+
+// ===== TEXT CONTROLS =====
+function changeTextSize(v){
+  v=parseInt(v);
+  story.pages[pgIdx].textSize=v;
+  document.getElementById('sText').style.fontSize=v+'px';
+  document.getElementById('textSizeLabel').textContent=v+'px';
+}
+
+function pickClr(dot){
+  let c=dot.dataset.c;
+  story.pages[pgIdx].textColor=c;
+  document.getElementById('sText').style.color=c;
+  updateClrDots(c);
+  document.getElementById('customClr').value=c;
+}
+
+function pickCustomClr(c){
+  story.pages[pgIdx].textColor=c;
+  document.getElementById('sText').style.color=c;
+  updateClrDots(null); // deselect presets
+}
+
+function updateClrDots(activeColor){
+  document.querySelectorAll('#clrRow .clr-dot').forEach(d=>{
+    d.classList.toggle('act',d.dataset.c===activeColor);
+  });
+}
+
+function toggleTextBg(){
+  let p=story.pages[pgIdx];
+  let cycle=['gradient','solid','none'];
+  let idx=cycle.indexOf(p.textBg||'gradient');
+  p.textBg=cycle[(idx+1)%cycle.length];
+  let tovl=document.getElementById('textOvl');
+  tovl.className='text-overlay bg-'+p.textBg;
+  updateBgBtn(p.textBg);
+}
+
+function updateBgBtn(bg){
+  let labels={gradient:'Gradient',solid:'Solid',none:'None'};
+  let btn=document.getElementById('txtBgBtn');
+  if(btn)btn.textContent='\u{1F3A8} Text BG: '+(labels[bg]||'Gradient');
+}
+
 // ===== PHOTO MANAGER =====
 function addFacePhoto(){
   let inp=document.getElementById('fInput2');
@@ -1058,14 +1281,25 @@ function preview(){
 }
 function renderPrev(){
   let p=story.pages[prevIdx];
+  // Data migration
+  if(p.textX==null)p.textX=50;if(p.textY==null)p.textY=85;
+  if(!p.textColor)p.textColor='#FFFFFF';if(!p.textSize)p.textSize=20;if(!p.textBg)p.textBg='gradient';
+
   let bg=document.getElementById('prevBg');
   let fb=document.getElementById('prevBgFallback');
   let fc=document.getElementById('prevFace');
-  if(p.scene){bg.classList.remove('hidden');bg.src=p.scene;fb.style.display='none'}
-  else{bg.classList.add('hidden');fb.style.display='';fb.style.background='#E9ECEF'}
-  if(p.face&&p.showFace!==false){fc.classList.remove('hidden');document.getElementById('prevFaceImg').src=p.face}
+  let tbox=document.querySelector('.prev-txt-box');
+  let ptxt=document.getElementById('prevTxt');
+  if(p.scene){bg.classList.remove('hidden');bg.src=p.scene;fb.style.background='#333'}
+  else{bg.classList.add('hidden');fb.style.background='#E9ECEF'}
+  if(p.face&&p.showFace!==false){fc.classList.remove('hidden');document.getElementById('prevFaceImg').src=p.face;fc.style.position='absolute';fc.style.left=p.faceX+'%';fc.style.top=p.faceY+'%';fc.style.transform='translate(-50%,-50%)';fc.style.width=(p.faceSize||100)*1.6+'px';fc.style.height=(p.faceSize||100)*1.6+'px'}
   else fc.classList.add('hidden');
-  document.getElementById('prevTxt').textContent=p.text;
+  // Text position, color, size, bg
+  tbox.style.left=p.textX+'%';tbox.style.top=p.textY+'%';tbox.style.transform='translate(-50%,-50%)';
+  tbox.className='prev-txt-box bg-'+p.textBg;
+  ptxt.style.color=p.textColor;
+  ptxt.style.fontSize=Math.round(p.textSize*1.4)+'px';
+  ptxt.textContent=p.text;
   document.getElementById('prevProg').textContent=`${prevIdx+1} / ${story.pages.length}`;
 }
 function prevPrev(){if(prevIdx>0){prevIdx--;renderPrev()}}
@@ -1078,12 +1312,13 @@ function closeModal(){document.getElementById('exportModal').classList.remove('v
 function exportPrint(){
   saveCur();closeModal();
   let w=window.open('','_blank');
-  let html='<html><head><style>@page{margin:0}body{margin:0;font-family:sans-serif}.pg{page-break-after:always;width:100vw;height:100vh;position:relative;display:flex;align-items:center;justify-content:center;background:#E9ECEF}.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.face{width:180px;height:180px;border-radius:50%;border:5px solid #fff;overflow:hidden;position:relative;z-index:2;box-shadow:0 4px 20px rgba(0,0,0,.3)}.face img{width:100%;height:100%;object-fit:cover}.tbox{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.7));padding:30px 30px 40px;z-index:3}.txt{color:#fff;font-size:32px;font-weight:700;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,.5)}</style></head><body>';
+  let html='<html><head><style>@page{margin:0}body{margin:0;font-family:sans-serif}.pg{page-break-after:always;width:100vw;height:100vh;position:relative;display:flex;align-items:center;justify-content:center;background:#E9ECEF}.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.face{width:180px;height:180px;border-radius:50%;border:5px solid #fff;overflow:hidden;position:absolute;z-index:2;box-shadow:0 4px 20px rgba(0,0,0,.3)}.face img{width:100%;height:100%;object-fit:cover}.tbox{position:absolute;padding:20px 24px;z-index:3;border-radius:8px;max-width:90%;text-align:center;transform:translate(-50%,-50%)}.tbox.bg-gradient{background:linear-gradient(transparent,rgba(0,0,0,.7))}.tbox.bg-solid{background:rgba(0,0,0,.55)}.tbox.bg-none{background:none}.txt{font-weight:700;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,.5)}</style></head><body>';
   story.pages.forEach(p=>{
+    let tc=p.textColor||'#FFFFFF',ts=p.textSize||20,tb=p.textBg||'gradient',tx=p.textX!=null?p.textX:50,ty=p.textY!=null?p.textY:85;
     html+='<div class="pg">';
     if(p.scene)html+=`<img class="bg" src="${p.scene}">`;
-    if(p.face&&p.showFace!==false)html+=`<div class="face" style="position:absolute;top:${p.faceY}%;left:${p.faceX}%;transform:translate(-50%,-50%);width:${p.faceSize||100}px;height:${p.faceSize||100}px"><img src="${p.face}"></div>`;
-    html+=`<div class="tbox"><div class="txt">${p.text}</div></div></div>`;
+    if(p.face&&p.showFace!==false)html+=`<div class="face" style="top:${p.faceY}%;left:${p.faceX}%;transform:translate(-50%,-50%);width:${p.faceSize||100}px;height:${p.faceSize||100}px"><img src="${p.face}"></div>`;
+    html+=`<div class="tbox bg-${tb}" style="left:${tx}%;top:${ty}%"><div class="txt" style="color:${tc};font-size:${Math.round(ts*1.6)}px">${p.text}</div></div></div>`;
   });
   html+='</body></html>';
   w.document.write(html);w.document.close();
@@ -1114,7 +1349,7 @@ const TUT_STEPS=[
   {emoji:"\u{1F4D6}\u{2728}",title:"Welcome to Story Maker!",body:"Create <span class='tut-highlight'>personalized social stories</span> using real photos from your child's world. Let's walk through how it works!"},
   {emoji:"\u{1F3A8}",title:"Pick a Template",body:"Choose from <span class='tut-highlight'>22 guided templates</span> — bathroom routines, going to the store, doctor visits, feelings, safety, and more. Each one breaks the activity into <span class='tut-highlight'>small, clear steps</span>."},
   {emoji:"\u{2705}",title:"Review & Customize Steps",body:"Before building, you'll see <span class='tut-highlight'>every step as a checklist</span>. Uncheck steps that don't apply to your child. Every kid is different!"},
-  {emoji:"\u{1F4F7}",title:"Add Real Photos",body:"Each step prompts you for a <span class='tut-highlight'>specific photo</span> — your actual bathroom, your child's bed, their school. Tap the canvas to <span class='tut-highlight'>take a photo or upload</span> from your camera roll."},
+  {emoji:"\u{1F4F7}",title:"Add Real Photos",body:"Each step prompts you for a <span class='tut-highlight'>specific photo</span> — your actual bathroom, your child's bed, their school. You can also <span class='tut-highlight'>search free stock photos</span> right from the app."},
   {emoji:"\u{1F9D2}",title:"Add Your Child's Face",body:"Upload a photo of your child and <span class='tut-highlight'>drag their face</span> right into the scene. Resize it, move it around — it's their story, with them in it."},
   {emoji:"\u{2195}\u{FE0F}",title:"Arrange & Edit",body:"Use <span class='tut-highlight'>↕ Arrange</span> to reorder steps. Tap <span class='tut-highlight'>✕ Skip</span> to remove any step. Edit text by tapping on it. Make it fit YOUR child."},
   {emoji:"\u{25B6}\u{FE0F}",title:"Preview & Export",body:"Play the story as a <span class='tut-highlight'>slideshow</span>, <span class='tut-highlight'>print it</span> to make a physical book, or save it for later. Stories auto-save to your device."},
