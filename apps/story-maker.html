@@ -1384,6 +1384,83 @@ function exportPrint(){
     html+=`<div class="tbox bg-${tb}" style="left:${tx}%;top:${ty}%"><div class="txt" style="color:${tc};font-size:${Math.round(ts*1.6)}px">${p.text}</div></div></div>`;
   });
   html+='
+</body></html>';
+  w.document.write(html);w.document.close();
+  setTimeout(()=>w.print(),500);
+}
+
+let autoTimer=null;
+function exportSlideshow(){
+  saveCur();closeModal();prevIdx=0;goTo('prevScreen');renderPrev();
+  autoTimer=setInterval(()=>{
+    if(prevIdx<story.pages.length-1){prevIdx++;renderPrev()}
+    else{clearInterval(autoTimer);autoTimer=null;toast('Story complete!')}
+  },5000);
+}
+
+function shareData(){
+  saveCur();
+  let d=JSON.stringify({name:story.name,pages:story.pages.map(p=>({text:p.text,prompt:p.prompt}))},null,2);
+  navigator.clipboard.writeText(d).then(()=>toast('Copied!')).catch(()=>toast('Could not copy'));
+  closeModal();
+}
+
+// ===== TOAST =====
+function toast(m){let t=document.getElementById('toast');t.textContent=m;t.classList.add('vis');setTimeout(()=>t.classList.remove('vis'),2500)}
+
+// ===== TUTORIAL =====
+const TUT_STEPS=[
+  {emoji:"\u{1F4D6}\u{2728}",title:"Welcome to Story Maker!",body:"Create <span class='tut-highlight'>personalized social stories</span> using real photos from your child's world. Let's walk through how it works!"},
+  {emoji:"\u{1F3A8}",title:"Pick a Template",body:"Choose from <span class='tut-highlight'>22 guided templates</span> — bathroom routines, going to the store, doctor visits, feelings, safety, and more. Each one breaks the activity into <span class='tut-highlight'>small, clear steps</span>."},
+  {emoji:"\u{2705}",title:"Review & Customize Steps",body:"Before building, you'll see <span class='tut-highlight'>every step as a checklist</span>. Uncheck steps that don't apply to your child. Every kid is different!"},
+  {emoji:"\u{1F4F7}",title:"Add Real Photos",body:"Each step prompts you for a <span class='tut-highlight'>specific photo</span> — your actual bathroom, your child's bed, their school. You can also <span class='tut-highlight'>search free stock photos</span> right from the app."},
+  {emoji:"\u{1F9D2}",title:"Add Your Child's Face",body:"Upload a photo of your child and <span class='tut-highlight'>drag their face</span> right into the scene. Resize it, move it around — it's their story, with them in it."},
+  {emoji:"\u{2195}\u{FE0F}",title:"Arrange & Edit",body:"Use <span class='tut-highlight'>↕ Arrange</span> to reorder steps. Tap <span class='tut-highlight'>✕ Skip</span> to remove any step. Edit text by tapping on it. Make it fit YOUR child."},
+  {emoji:"\u{25B6}\u{FE0F}",title:"Preview & Export",body:"Play the story as a <span class='tut-highlight'>slideshow</span>, <span class='tut-highlight'>print it</span> to make a physical book, or save it for later. Stories auto-save to your device."},
+  {emoji:"\u{1F512}",title:"Your Privacy is Sacred",body:"<span class='tut-highlight'>Nothing leaves your device.</span> No server, no account, no uploads, no tracking. Your child's photos stay on YOUR phone. Period. We will never see them."},
+  {emoji:"\u{1F31F}",title:"You're Ready!",body:"Tap <span class='tut-highlight'>New Story</span> to pick a template, or <span class='tut-highlight'>Blank Story</span> to start from scratch. You've got this, and your child is lucky to have you."}
+];
+let tutIdx=0;
+
+function startTut(){
+  tutIdx=0;
+  renderTut();
+  let ov=document.getElementById('tutOverlay');
+  ov.style.display='flex';
+  requestAnimationFrame(()=>ov.classList.add('vis'));
+}
+
+function renderTut(){
+  let s=TUT_STEPS[tutIdx];
+  document.getElementById('tutEmoji').textContent='';
+  document.getElementById('tutEmoji').innerHTML=s.emoji;
+  document.getElementById('tutTitle').textContent=s.title;
+  document.getElementById('tutBody').innerHTML=s.body;
+  let dots=document.getElementById('tutDots');
+  dots.innerHTML=TUT_STEPS.map((_,i)=>`<div class="tut-dot ${i===tutIdx?'act':''}"></div>`).join('');
+  document.getElementById('tutNextBtn').textContent=tutIdx===TUT_STEPS.length-1?"Let's Go! \u{1F680}":'Next';
+}
+
+function nextTut(){
+  if(tutIdx<TUT_STEPS.length-1){tutIdx++;renderTut()}
+  else closeTut();
+}
+
+function closeTut(){
+  let ov=document.getElementById('tutOverlay');
+  ov.classList.remove('vis');
+  setTimeout(()=>ov.style.display='none',300);
+  localStorage.setItem('sm_tut_done','1');
+}
+
+// ===== INIT =====
+document.getElementById('sCnt').textContent=saved.length+' saved';
+// Auto-show tutorial on first visit
+if(!localStorage.getItem('sm_tut_done')){
+  setTimeout(startTut,600);
+}
+</script>
+
 <script id="premium-features">
 /* ── Read-aloud (speechSynthesis), fullscreen, nav, page-turn layer ── */
 (function(){
@@ -1481,82 +1558,6 @@ function exportPrint(){
   if('speechSynthesis' in window){ speechSynthesis.getVoices();
     speechSynthesis.onvoiceschanged=function(){}; }
 })();
-</script>
-</body></html>';
-  w.document.write(html);w.document.close();
-  setTimeout(()=>w.print(),500);
-}
-
-let autoTimer=null;
-function exportSlideshow(){
-  saveCur();closeModal();prevIdx=0;goTo('prevScreen');renderPrev();
-  autoTimer=setInterval(()=>{
-    if(prevIdx<story.pages.length-1){prevIdx++;renderPrev()}
-    else{clearInterval(autoTimer);autoTimer=null;toast('Story complete!')}
-  },5000);
-}
-
-function shareData(){
-  saveCur();
-  let d=JSON.stringify({name:story.name,pages:story.pages.map(p=>({text:p.text,prompt:p.prompt}))},null,2);
-  navigator.clipboard.writeText(d).then(()=>toast('Copied!')).catch(()=>toast('Could not copy'));
-  closeModal();
-}
-
-// ===== TOAST =====
-function toast(m){let t=document.getElementById('toast');t.textContent=m;t.classList.add('vis');setTimeout(()=>t.classList.remove('vis'),2500)}
-
-// ===== TUTORIAL =====
-const TUT_STEPS=[
-  {emoji:"\u{1F4D6}\u{2728}",title:"Welcome to Story Maker!",body:"Create <span class='tut-highlight'>personalized social stories</span> using real photos from your child's world. Let's walk through how it works!"},
-  {emoji:"\u{1F3A8}",title:"Pick a Template",body:"Choose from <span class='tut-highlight'>22 guided templates</span> — bathroom routines, going to the store, doctor visits, feelings, safety, and more. Each one breaks the activity into <span class='tut-highlight'>small, clear steps</span>."},
-  {emoji:"\u{2705}",title:"Review & Customize Steps",body:"Before building, you'll see <span class='tut-highlight'>every step as a checklist</span>. Uncheck steps that don't apply to your child. Every kid is different!"},
-  {emoji:"\u{1F4F7}",title:"Add Real Photos",body:"Each step prompts you for a <span class='tut-highlight'>specific photo</span> — your actual bathroom, your child's bed, their school. You can also <span class='tut-highlight'>search free stock photos</span> right from the app."},
-  {emoji:"\u{1F9D2}",title:"Add Your Child's Face",body:"Upload a photo of your child and <span class='tut-highlight'>drag their face</span> right into the scene. Resize it, move it around — it's their story, with them in it."},
-  {emoji:"\u{2195}\u{FE0F}",title:"Arrange & Edit",body:"Use <span class='tut-highlight'>↕ Arrange</span> to reorder steps. Tap <span class='tut-highlight'>✕ Skip</span> to remove any step. Edit text by tapping on it. Make it fit YOUR child."},
-  {emoji:"\u{25B6}\u{FE0F}",title:"Preview & Export",body:"Play the story as a <span class='tut-highlight'>slideshow</span>, <span class='tut-highlight'>print it</span> to make a physical book, or save it for later. Stories auto-save to your device."},
-  {emoji:"\u{1F512}",title:"Your Privacy is Sacred",body:"<span class='tut-highlight'>Nothing leaves your device.</span> No server, no account, no uploads, no tracking. Your child's photos stay on YOUR phone. Period. We will never see them."},
-  {emoji:"\u{1F31F}",title:"You're Ready!",body:"Tap <span class='tut-highlight'>New Story</span> to pick a template, or <span class='tut-highlight'>Blank Story</span> to start from scratch. You've got this, and your child is lucky to have you."}
-];
-let tutIdx=0;
-
-function startTut(){
-  tutIdx=0;
-  renderTut();
-  let ov=document.getElementById('tutOverlay');
-  ov.style.display='flex';
-  requestAnimationFrame(()=>ov.classList.add('vis'));
-}
-
-function renderTut(){
-  let s=TUT_STEPS[tutIdx];
-  document.getElementById('tutEmoji').textContent='';
-  document.getElementById('tutEmoji').innerHTML=s.emoji;
-  document.getElementById('tutTitle').textContent=s.title;
-  document.getElementById('tutBody').innerHTML=s.body;
-  let dots=document.getElementById('tutDots');
-  dots.innerHTML=TUT_STEPS.map((_,i)=>`<div class="tut-dot ${i===tutIdx?'act':''}"></div>`).join('');
-  document.getElementById('tutNextBtn').textContent=tutIdx===TUT_STEPS.length-1?"Let's Go! \u{1F680}":'Next';
-}
-
-function nextTut(){
-  if(tutIdx<TUT_STEPS.length-1){tutIdx++;renderTut()}
-  else closeTut();
-}
-
-function closeTut(){
-  let ov=document.getElementById('tutOverlay');
-  ov.classList.remove('vis');
-  setTimeout(()=>ov.style.display='none',300);
-  localStorage.setItem('sm_tut_done','1');
-}
-
-// ===== INIT =====
-document.getElementById('sCnt').textContent=saved.length+' saved';
-// Auto-show tutorial on first visit
-if(!localStorage.getItem('sm_tut_done')){
-  setTimeout(startTut,600);
-}
 </script>
 </body>
 </html>
