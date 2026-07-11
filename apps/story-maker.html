@@ -155,6 +155,54 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .priv-badge{display:flex;align-items:center;gap:8px;background:#F1FFF4;border:1px solid #B7EBC4;border-radius:12px;padding:10px 14px;margin-bottom:20px;font-size:12px;color:#2B8A3E;line-height:1.4}
 .priv-badge .priv-icon{font-size:20px;flex-shrink:0}
 </style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style id="premium-skin">
+/* ── Story Maker premium layer: storybook-warm, springy, tactile ── */
+:root{
+  --pri:#6C5CE7; --pri-dk:#5A4BD1; --acc:#FF8A5C; --grn:#4CC38A;
+  --bg:#FBF7F0; --card:#FFFFFF; --txt:#2A2440; --txtL:#6E6688;
+  --rad:20px;
+  --shd:0 2px 6px rgba(84,68,160,.06), 0 12px 32px rgba(84,68,160,.10);
+}
+body{background:
+  radial-gradient(60vmax 40vmax at 85% -10%, rgba(108,92,231,.07), transparent 60%),
+  radial-gradient(50vmax 35vmax at -10% 110%, rgba(255,138,92,.07), transparent 60%),
+  var(--bg);
+  font-family:"Nunito",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+h1,h2,h3,.stitle{font-family:"Baloo 2","Nunito",sans-serif;letter-spacing:.2px}
+.hdr{background:linear-gradient(120deg,#6C5CE7,#8E7CF5 55%,#A78BFA);box-shadow:0 2px 18px rgba(108,92,231,.35)}
+.hdr h1{font-size:21px}
+.scr.act{animation:screenIn .38s cubic-bezier(.2,.9,.3,1) both}
+@keyframes screenIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.wcard,.acard,.tcard,.tbar{border:1px solid rgba(84,68,160,.08)}
+.acard,.tcard{transition:transform .22s cubic-bezier(.2,.9,.3,1), box-shadow .22s}
+.acard:hover,.tcard:hover{transform:translateY(-3px) scale(1.012);box-shadow:0 6px 14px rgba(84,68,160,.10), 0 18px 44px rgba(84,68,160,.16)}
+.acard:active,.tcard:active{transform:translateY(0) scale(.985)}
+.tab{border-radius:999px;transition:all .2s cubic-bezier(.2,.9,.3,1)}
+.tab.act{box-shadow:0 4px 14px rgba(108,92,231,.35)}
+.btn,.pbtn,.tb{transition:transform .15s cubic-bezier(.2,.9,.3,1), box-shadow .2s, background .2s}
+.btn:active,.pbtn:active,.tb:active{transform:scale(.955)}
+button:focus-visible,.acard:focus-visible,.tcard:focus-visible{outline:3px solid rgba(108,92,231,.5);outline-offset:2px}
+.toast{border-radius:14px!important;font-family:"Nunito";font-weight:800;box-shadow:0 8px 28px rgba(42,36,64,.28)!important}
+/* Preview → storybook stage */
+#prevScreen{background:#171331}
+.prev-page{transition:opacity .3s ease}
+.prev-page.turning{opacity:0}
+.prev-nav .pbtn{backdrop-filter:blur(6px)}
+/* injected premium controls */
+.pv-extra{position:absolute;top:14px;right:14px;display:flex;gap:8px;z-index:30}
+.pv-xbtn{width:46px;height:46px;border-radius:14px;border:1.5px solid rgba(255,255,255,.35);
+  background:rgba(23,19,49,.45);backdrop-filter:blur(8px);color:#fff;font-size:20px;cursor:pointer;
+  display:grid;place-items:center;transition:transform .15s, background .2s}
+.pv-xbtn:hover{background:rgba(108,92,231,.55)}
+.pv-xbtn:active{transform:scale(.92)}
+.pv-xbtn.on{background:var(--pri);border-color:var(--pri)}
+.pv-tapzone{position:absolute;top:0;bottom:96px;width:26%;z-index:20;cursor:pointer}
+.pv-tapzone.left{left:0}.pv-tapzone.right{right:0}
+@media (prefers-reduced-motion: reduce){.scr.act{animation:none}.acard,.tcard{transition:none}}
+</style>
 </head>
 <body>
 
@@ -1335,7 +1383,106 @@ function exportPrint(){
     if(p.face&&p.showFace!==false)html+=`<div class="face" style="top:${p.faceY}%;left:${p.faceX}%;transform:translate(-50%,-50%);width:${p.faceSize||100}px;height:${p.faceSize||100}px"><img src="${p.face}"></div>`;
     html+=`<div class="tbox bg-${tb}" style="left:${tx}%;top:${ty}%"><div class="txt" style="color:${tc};font-size:${Math.round(ts*1.6)}px">${p.text}</div></div></div>`;
   });
-  html+='</body></html>';
+  html+='
+<script id="premium-features">
+/* ── Read-aloud (speechSynthesis), fullscreen, nav, page-turn layer ── */
+(function(){
+  var reading=false, autoNarrate=false;
+
+  function speakText(text, onend){
+    try{
+      speechSynthesis.cancel();
+      var clean=(text||"").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,"").trim();
+      if(!clean){ if(onend)onend(); return; }
+      var u=new SpeechSynthesisUtterance(clean);
+      u.rate=0.92; u.pitch=1.05;
+      var vs=speechSynthesis.getVoices();
+      var v=vs.find(v=>/en[-_]/i.test(v.lang)&&/female|Samantha|Google US/i.test(v.name))||vs.find(v=>/en[-_]/i.test(v.lang));
+      if(v)u.voice=v;
+      u.onend=function(){ if(onend)onend(); };
+      speechSynthesis.speak(u);
+    }catch(e){ if(onend)onend(); }
+  }
+  function stopSpeak(){ try{speechSynthesis.cancel();}catch(e){} reading=false; autoNarrate=false;
+    var b=document.getElementById('pvRead'); if(b)b.classList.remove('on');
+    var a=document.getElementById('pvAuto'); if(a)a.classList.remove('on'); }
+
+  /* Inject premium controls + tap zones into the preview screen */
+  function injectControls(){
+    var box=document.getElementById('prevBox');
+    if(!box || document.getElementById('pvRead'))return;
+    var wrap=document.createElement('div'); wrap.className='pv-extra';
+    wrap.innerHTML=
+      '<button class="pv-xbtn" id="pvRead" title="Read this page aloud">\uD83D\uDD0A</button>'+
+      '<button class="pv-xbtn" id="pvAuto" title="Read the whole story to me">\u25B6\uFE0F</button>'+
+      '<button class="pv-xbtn" id="pvFull" title="Fullscreen">\u26F6</button>';
+    box.appendChild(wrap);
+    var zl=document.createElement('div'); zl.className='pv-tapzone left';
+    var zr=document.createElement('div'); zr.className='pv-tapzone right';
+    box.appendChild(zl); box.appendChild(zr);
+
+    document.getElementById('pvRead').onclick=function(){
+      if(reading){ stopSpeak(); return; }
+      reading=true; this.classList.add('on'); var self=this;
+      speakText(story.pages[prevIdx].text,function(){ reading=false; self.classList.remove('on'); });
+    };
+    document.getElementById('pvAuto').onclick=function(){
+      if(autoNarrate){ stopSpeak(); return; }
+      autoNarrate=true; this.classList.add('on');
+      (function step(){
+        if(!autoNarrate)return;
+        speakText(story.pages[prevIdx].text,function(){
+          if(!autoNarrate)return;
+          if(prevIdx<story.pages.length-1){ nextPrev(); setTimeout(step,650); }
+          else{ stopSpeak(); toast('The end! \uD83C\uDF19'); }
+        });
+      })();
+    };
+    document.getElementById('pvFull').onclick=function(){
+      var el=document.getElementById('prevScreen');
+      if(!document.fullscreenElement){ (el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el); }
+      else{ document.exitFullscreen(); }
+    };
+    zl.onclick=function(){ prevPrev(); };
+    zr.onclick=function(){ nextPrev(); };
+  }
+
+  /* Soft page-turn: wrap renderPrev with a fade */
+  var _renderPrev=window.renderPrev;
+  window.renderPrev=function(){
+    injectControls();
+    var box=document.getElementById('prevBox');
+    if(box){ box.classList.add('turning');
+      setTimeout(function(){ _renderPrev(); box.classList.remove('turning'); },140);
+    } else { _renderPrev(); }
+  };
+
+  /* Narrated slideshow: upgrade exportSlideshow to advance when speech ends
+     (falls back to the original 5s timer if speech is unavailable) */
+  var _exportSlideshow=window.exportSlideshow;
+  window.exportSlideshow=function(){
+    if(!('speechSynthesis' in window)){ _exportSlideshow(); return; }
+    saveCur(); closeModal(); prevIdx=0; goTo('prevScreen'); renderPrev();
+    setTimeout(function(){ var a=document.getElementById('pvAuto'); if(a)a.click(); },500);
+  };
+
+  /* Keyboard nav in preview; stop speech on leave */
+  document.addEventListener('keydown',function(e){
+    var pv=document.getElementById('prevScreen');
+    if(!pv||!pv.classList.contains('act'))return;
+    if(e.key==='ArrowRight'||e.key===' '){ e.preventDefault(); nextPrev(); }
+    if(e.key==='ArrowLeft'){ e.preventDefault(); prevPrev(); }
+    if(e.key==='Escape'){ stopSpeak(); }
+  });
+  var _goTo=window.goTo;
+  window.goTo=function(id){ if(id!=='prevScreen')stopSpeak(); _goTo(id); };
+
+  /* Warm up voices (Chrome loads them async) */
+  if('speechSynthesis' in window){ speechSynthesis.getVoices();
+    speechSynthesis.onvoiceschanged=function(){}; }
+})();
+</script>
+</body></html>';
   w.document.write(html);w.document.close();
   setTimeout(()=>w.print(),500);
 }
