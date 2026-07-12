@@ -199,7 +199,15 @@ button:focus-visible,.acard:focus-visible,.tcard:focus-visible{outline:3px solid
 .pv-xbtn:hover{background:rgba(108,92,231,.55)}
 .pv-xbtn:active{transform:scale(.92)}
 .pv-xbtn.on{background:var(--pri);border-color:var(--pri)}
-.pv-tapzone{position:absolute;top:0;bottom:96px;width:26%;z-index:20;cursor:pointer}
+/* Preview stacking (the photo was being covered, not lost):
+   the gray fallback div comes AFTER the <img> in the DOM, so with equal
+   stacking both my tap zones and the fallback painted over the photo.
+   Explicit layers: fallback(0) < photo(1) < face(2) < text(3) < taps(20). */
+#prevScreen .prev-page #prevBgFallback{z-index:0}
+#prevScreen .prev-page .prev-bg{z-index:1}
+/* Tap zones are invisible hit areas — fully transparent, never obscure. */
+.pv-tapzone{position:absolute;top:0;bottom:96px;width:26%;z-index:20;cursor:pointer;
+  background:transparent}
 .pv-tapzone.left{left:0}.pv-tapzone.right{right:0}
 @media (prefers-reduced-motion: reduce){.scr.act{animation:none}.acard,.tcard{transition:none}}
 </style>
