@@ -1383,8 +1383,7 @@ function exportPrint(){
     if(p.face&&p.showFace!==false)html+=`<div class="face" style="top:${p.faceY}%;left:${p.faceX}%;transform:translate(-50%,-50%);width:${p.faceSize||100}px;height:${p.faceSize||100}px"><img src="${p.face}"></div>`;
     html+=`<div class="tbox bg-${tb}" style="left:${tx}%;top:${ty}%"><div class="txt" style="color:${tc};font-size:${Math.round(ts*1.6)}px">${p.text}</div></div></div>`;
   });
-  html+='
-</body></html>';
+  html+='</body></html>';
   w.document.write(html);w.document.close();
   setTimeout(()=>w.print(),500);
 }
