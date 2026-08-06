@@ -199,7 +199,9 @@ function render(){
     const d=document.createElement('div');
     if(!id||!b.tiles[id]){d.className='tile empty';boardEl.appendChild(d);return;}
     const t=b.tiles[id];d.className='tile';d.style.background=t.color;
-    d.innerHTML=(t.img&&SYMBOLS[t.img]?SYMBOLS[t.img]:'')+'<div class="lb">'+t.label+'</div>';
+    const isLetter=t.action&&t.action.indexOf('spell:')===0&&t.action.length===7;
+    if(isLetter){d.innerHTML='<div style="font-size:clamp(1rem,4vw,2rem);font-weight:900;color:#12161f">'+t.label.toUpperCase()+'</div><div class="lb">'+t.label+'</div>';}
+    else{d.innerHTML=(t.img&&SYMBOLS[t.img]?SYMBOLS[t.img]:'')+'<div class="lb">'+t.label+'</div>';}
     d.onclick=()=>onTile(t);boardEl.appendChild(d);
   });
 }
@@ -215,7 +217,7 @@ function onTile(t){
   const mk=actionToKey(a);
   if(mk){const i=lastWordIdx();if(i>=0){const base=sentence[i].label;
     const nw=mk==='NT'?applyNot(base):inflect(base,mk);sentence[i].label=nw;say(nw);renderStrip();}return;}
-  if(t.load){cur=t.load;render();if(t.load!=='root')say(t.label);return;}
+  if(t.load){cur=t.load;render();return;}
   sentence.push({label:t.label,img:t.img});say(t.label);renderStrip();
 }
 document.getElementById('home').onclick=()=>{cur='root';render();};
