@@ -13,6 +13,11 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .sb{height:48px;min-width:42px;border:none;border-radius:6px;font-size:18px;cursor:pointer;flex-shrink:0;color:#fff}
 .sb:active{opacity:.7}
 #bDel{background:#666}#bClr{background:#933}#bSpk{background:#2a9d8f;font-size:14px;padding:0 10px;font-weight:800}#bQP{background:#e9c46a;color:#333;font-size:16px;padding:0 8px}
+#bEdit{background:#9b5de5;font-size:14px;padding:0 8px;font-weight:800}
+#bEdit.active{background:#e63946;animation:editPulse 1.5s infinite}
+@keyframes editPulse{0%,100%{opacity:1}50%{opacity:.6}}
+.c.edit-mode{cursor:crosshair}
+.c.edit-mode::after{content:'✏️';position:absolute;top:2px;right:2px;font-size:10px;opacity:.6}
 #gramBar{background:#2a2a2a;display:flex;gap:2px;padding:2px 4px;flex-shrink:0;border-bottom:1px solid #444}
 .gb{background:#3a3a3a;border:1px solid #555;border-radius:4px;color:#aaa;font-size:11px;font-weight:700;padding:2px 8px;cursor:pointer;flex-shrink:0}
 .gb:active{background:#2a9d8f;color:#fff}
@@ -90,6 +95,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div id="sW"></div>
 <button class="sb" id="bClr" onclick="sClr()">✕</button>
 <button class="sb" id="bQP" onclick="openQP()">⚡</button>
+<button class="sb" id="bEdit" onclick="toggleEditMode()">EDIT</button>
 <button class="sb" id="bSpk" onclick="sSpk()">SPEAK</button>
 </div>
 <div id="gramBar">
@@ -169,6 +175,27 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div style="margin-top:8px"><button class="ok" onclick="saveCW()">Save</button> <button class="ca" onclick="closeOv('cwOv')">Cancel</button></div>
 </div></div>
 
+<!-- EDIT CELL -->
+<div class="ov" id="editOv"><div class="md">
+<h3>✏️ Edit Button</h3>
+<label>Word</label><input type="text" id="editWord">
+<label>Color Category</label><select id="editCat"><option value="core">Core (blue)</option><option value="verb">Action (green)</option><option value="desc">Descriptor (orange)</option><option value="pronoun">Pronoun (yellow)</option><option value="social">Social (warm)</option><option value="question">Question (purple)</option><option value="negation">Negation (red)</option><option value="prep">Preposition (teal)</option><option value="feeling">Feeling (pink)</option><option value="noun">Noun (grey)</option><option value="folder">Folder (dark)</option></select>
+<label>Image</label>
+<div id="editImgPreview" style="text-align:center;margin:6px 0"></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<button class="ok" onclick="document.getElementById('editCamera').click()" style="font-size:.8em">📷 Take Photo</button>
+<button class="ca" onclick="document.getElementById('editFile').click()" style="font-size:.8em">🖼️ Choose Photo</button>
+<button class="ca" onclick="clearEditPhoto()" style="font-size:.8em">❌ Reset to Default</button>
+<input type="file" id="editCamera" accept="image/*" capture="environment" style="display:none" onchange="handleEditPhoto(this)">
+<input type="file" id="editFile" accept="image/*" style="display:none" onchange="handleEditPhoto(this)">
+</div>
+<div style="margin-top:10px;display:flex;gap:6px">
+<button class="ok" onclick="saveEditCell()">Save</button>
+<button class="ca" onclick="closeOv('editOv')">Cancel</button>
+<button class="dn" onclick="resetEditCell()">Reset to Original</button>
+</div>
+</div></div>
+
 <!-- QUICK PHRASES -->
 <div class="ov" id="qpOv"><div class="md">
 <h3>⚡ Quick Phrases</h3>
@@ -213,6 +240,69 @@ const IM=p=>SYM[p]||'symbols/mybuddy/'+p+'.svg';
 const SK='mb4';
 let LV=1,GC=7,SP=.9,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='';
 let myInfo={name:'',address:'',city:'',school:'',phone:'',emergency:''};
+let editMode=false,editTarget=null,editPhotoData=null,cellOverrides={};
+
+// === EDIT MODE ===
+function toggleEditMode(){
+if(!editMode){
+// Require PIN first
+openPin();pinCallback=()=>{editMode=true;document.getElementById('bEdit').classList.add('active');document.getElementById('bEdit').textContent='DONE';render();};
+}else{
+editMode=false;document.getElementById('bEdit').classList.remove('active');document.getElementById('bEdit').textContent='EDIT';render();
+}
+}
+let pinCallback=null;
+function openEditCell(item,viewType){
+editTarget={item,viewType};
+editPhotoData=null;
+document.getElementById('editWord').value=item.w;
+const override=cellOverrides[viewType+'_'+item.w];
+if(override){
+document.getElementById('editCat').value=override.t||item.t;
+if(override.photo){editPhotoData=override.photo;document.getElementById('editImgPreview').innerHTML=`<img src="${override.photo}" style="width:60px;height:60px;border-radius:8px;object-fit:cover;border:2px solid #2a9d8f">`;}else{showEditDefaultImg(item);}
+}else{
+document.getElementById('editCat').value=item.t||'core';
+showEditDefaultImg(item);
+}
+document.getElementById('editOv').classList.add('open');
+}
+function showEditDefaultImg(item){
+const src=item.svgName?'symbols/mybuddy/'+item.svgName+'.svg':(item.i?IM(item.i):null);
+if(src){document.getElementById('editImgPreview').innerHTML=`<img src="${src}" style="width:60px;height:60px;filter:brightness(0) invert(1);background:#555;border-radius:8px;padding:4px">`;}else{document.getElementById('editImgPreview').innerHTML='<span style="color:#888">No image</span>';}
+}
+function handleEditPhoto(input){
+if(!input.files||!input.files[0])return;
+const file=input.files[0];
+const reader=new FileReader();
+reader.onload=function(e){
+const img=new Image();
+img.onload=function(){
+const MAX=120;let w=img.width,h=img.height;
+if(w>h){if(w>MAX){h=h*(MAX/w);w=MAX}}else{if(h>MAX){w=w*(MAX/h);h=MAX}}
+const canvas=document.createElement('canvas');
+canvas.width=w;canvas.height=h;
+const ctx=canvas.getContext('2d');
+ctx.drawImage(img,0,0,w,h);
+editPhotoData=canvas.toDataURL('image/jpeg',0.8);
+document.getElementById('editImgPreview').innerHTML=`<img src="${editPhotoData}" style="width:60px;height:60px;border-radius:8px;object-fit:cover;border:2px solid #2a9d8f">`;
+};
+img.src=e.target.result;
+};
+reader.readAsDataURL(file);
+}
+function clearEditPhoto(){editPhotoData=null;if(editTarget)showEditDefaultImg(editTarget.item);}
+function saveEditCell(){
+if(!editTarget)return;
+const key=editTarget.viewType+'_'+editTarget.item.w;
+cellOverrides[key]={w:document.getElementById('editWord').value.trim()||editTarget.item.w,t:document.getElementById('editCat').value,photo:editPhotoData||null};
+save();closeOv('editOv');render();
+}
+function resetEditCell(){
+if(!editTarget)return;
+const key=editTarget.viewType+'_'+editTarget.item.w;
+delete cellOverrides[key];
+save();closeOv('editOv');render();
+}
 
 function saveInfo(){
 myInfo.name=document.getElementById('infoName').value;
@@ -248,8 +338,8 @@ speak(text);
 }
 }
 
-function save(){try{localStorage.setItem(SK,JSON.stringify({LV,GC,SP,VU,MM,PIN,recents,usage,customWords,myInfo,tutDone:true}))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');LV=d.LV||1;GC=d.GC||7;SP=d.SP||.9;VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',city:'',school:'',phone:'',emergency:''};return d.tutDone}catch(e){return false}}
+function save(){try{localStorage.setItem(SK,JSON.stringify({LV,GC,SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,tutDone:true}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');LV=d.LV||1;GC=d.GC||7;SP=d.SP||.9;VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};return d.tutDone}catch(e){return false}}
 
 function speak(text){text=(text+'').toLowerCase();if(!text)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=SP;if(VU){const v=speechSynthesis.getVoices().find(v=>v.voiceURI===VU);if(v)u.voice=v}speechSynthesis.speak(u)}
 function addWord(w,i){if(spellBuf){const sw=spellBuf.trim();if(sw){sentence.push({w:sw,i:0});speak(sw)}spellBuf=''}sentence.push({w,i});rStrip();speak(w);if(!MM){usage[w]=(usage[w]||0)+1;recents=recents.filter(r=>r.w!==w);recents.unshift({w,i});if(recents.length>20)recents.length=20}save();renderRec()}
@@ -302,15 +392,26 @@ b.style.gridTemplateColumns=`repeat(${cols},1fr)`;
 b.style.gridTemplateRows=`repeat(${rows},1fr)`;
 b.style.overflow='hidden';
 b.innerHTML='';
-items.forEach(s=>{const d=document.createElement('div');d.className='c '+(s.t||'core');
-const imgSrc=s.photo?s.photo:(s.svgName?'symbols/mybuddy/'+s.svgName+'.svg':(s.i?IM(s.i):null));
+items.forEach(s=>{const d=document.createElement('div');
+const ovKey=curView+'_'+s.w;
+const ov=cellOverrides[ovKey];
+const displayW=ov?ov.w:s.w;
+const displayT=ov?ov.t:s.t;
+const displayPhoto=ov?ov.photo:s.photo;
+d.className='c '+(displayT||'core');
+if(editMode)d.classList.add('edit-mode');
+const imgSrc=displayPhoto?displayPhoto:(s.svgName?'symbols/mybuddy/'+s.svgName+'.svg':(s.i?IM(s.i):null));
+const isColorCat=(curView==='colors');
 if(imgSrc){
-d.innerHTML=`<img src="${imgSrc}" style="${s.photo?'border-radius:6px;object-fit:cover;':''}filter:brightness(0) invert(1);"
- onerror="this.style.filter='';this.onerror=null"><div class="lb">${s.w}</div>`;
+d.innerHTML=`<img src="${imgSrc}" style="${displayPhoto?'border-radius:6px;object-fit:cover;':(isColorCat?'':'filter:brightness(0) invert(1);')}"
+ onerror="this.style.filter='';this.onerror=null"><div class="lb">${displayW}</div>`;
 }else{
-d.innerHTML=`<div class="lb" style="font-size:clamp(12px,3vw,18px)">${s.w}</div>`;
+d.innerHTML=`<div class="lb" style="font-size:clamp(12px,3vw,18px)">${displayW}</div>`;
 }
-d.onclick=()=>{if(s.cat){curView=s.cat;render();document.getElementById('backBtn').style.display='block';return}addWord(s.w,s.i);d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300)};b.appendChild(d)})}
+d.onclick=()=>{
+if(editMode){openEditCell(s,curView);return;}
+if(s.cat){curView=s.cat;render();document.getElementById('backBtn').style.display='block';return}
+addWord(displayW,s.i);d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300)};b.appendChild(d)})}
 function renderSpell(b){
 b.style.gridTemplateColumns='repeat(10,1fr)';b.style.gridTemplateRows='repeat(5,1fr)';b.innerHTML='';
 SPELL_KEYS.forEach(row=>{row.forEach(k=>{const d=document.createElement('div');d.className='c misc';
@@ -340,9 +441,9 @@ function toggleRec(){showRec=!showRec;renderRec()}
 
 // === PIN ===
 let pinBuf='';
-function openPin(){pinBuf='';document.getElementById('pinErr').textContent='';updDots();document.getElementById('pinOv').classList.add('open')}
+function openPin(){pinBuf='';pinCallback=null;document.getElementById('pinErr').textContent='';updDots();document.getElementById('pinOv').classList.add('open')}
 function closePin(){document.getElementById('pinOv').classList.remove('open');pinBuf=''}
-function pinKey(k){if(k==='⌫'){pinBuf=pinBuf.slice(0,-1);document.getElementById('pinErr').textContent=''}else if(pinBuf.length<4){pinBuf+=k;if(pinBuf.length===4){if(pinBuf===PIN){closePin();openSet()}else{document.getElementById('pinErr').textContent='Wrong PIN';const d=document.getElementById('pinDots');d.classList.add('shake');setTimeout(()=>d.classList.remove('shake'),400);pinBuf=''}}}updDots()}
+function pinKey(k){if(k==='⌫'){pinBuf=pinBuf.slice(0,-1);document.getElementById('pinErr').textContent=''}else if(pinBuf.length<4){pinBuf+=k;if(pinBuf.length===4){if(pinBuf===PIN){closePin();if(pinCallback){pinCallback();pinCallback=null}else{openSet()}}else{document.getElementById('pinErr').textContent='Wrong PIN';const d=document.getElementById('pinDots');d.classList.add('shake');setTimeout(()=>d.classList.remove('shake'),400);pinBuf=''}}}updDots()}
 function updDots(){document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinBuf.length))}
 
 // === SETTINGS ===
