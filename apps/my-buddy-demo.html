@@ -47,8 +47,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 #backBtn{display:none;background:#2a9d8f;color:#fff;border:none;border-radius:0;padding:8px 16px;font-size:14px;font-weight:800;cursor:pointer;flex-shrink:0;width:100%;text-align:left}
 #gear{position:fixed;bottom:4px;right:4px;z-index:20;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;color:#999}
 #recToggle{position:fixed;bottom:4px;left:4px;z-index:20;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;color:#999}
-#phoneToggle{position:fixed;bottom:4px;left:40px;z-index:20;background:rgba(255,255,255,.15);border:none;border-radius:12px;height:28px;padding:0 8px;font-size:11px;font-weight:700;cursor:pointer;color:#999;white-space:nowrap}
-#phoneToggle.active{background:#2a9d8f;color:#fff}
+#phoneToggle{position:fixed;bottom:38px;left:4px;z-index:20;background:rgba(0,0,0,.6);border:1px solid #555;border-radius:8px;height:24px;padding:0 8px;font-size:10px;font-weight:700;cursor:pointer;color:#ccc;white-space:nowrap}
+#phoneToggle.active{background:#2a9d8f;color:#fff;border-color:#2a9d8f}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:none;align-items:center;justify-content:center;padding:10px}
 .ov.open{display:flex}
 .md{background:#2d3748;border-radius:14px;padding:16px;max-width:380px;width:100%;max-height:85vh;overflow-y:auto;color:#e2e8f0}
@@ -226,7 +226,7 @@ const SYM={2436:'symbols/mulberry/sleep_male_,_to.svg',2452:'symbols/mulberry/fo
 const IM=p=>SYM[p]||FRM[p]||'symbols/mybuddy/'+p+'.svg';
 const isMul=s=>s&&s.includes('/mulberry/');
 const SK='mb4';
-let SP=.9,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=false;
+let SP=.9,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=true;
 const PHONE_CORE=[0,1,24,36,26,28,29,4,2,22,7,39,40,41,27,6,73,74,75];
 // 0=yes,1=no,24=I,36=you,26=want,28=go,29=help,4=more,2=good,22=+s,7=stop,39=eat,40=drink,41=look,27=like,6=all done,73=food,74=people,75=feelings
 let myInfo={name:'',address:'',city:'',school:'',phone:'',emergency:''};
@@ -329,7 +329,7 @@ speak(text);
 }
 
 function save(){try{localStorage.setItem(SK,JSON.stringify({SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,phoneMode,tutDone:true}))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=d.SP||.9;VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode||false;return d.tutDone}catch(e){return false}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=d.SP||.9;VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:true;return d.tutDone}catch(e){return false}}
 
 function speak(text){text=(text+'').toLowerCase();if(!text)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=SP;if(VU){const v=speechSynthesis.getVoices().find(v=>v.voiceURI===VU);if(v)u.voice=v}speechSynthesis.speak(u)}
 function addWord(w,i){if(spellBuf){const sw=spellBuf.trim();if(sw){sentence.push({w:sw,i:0});speak(sw)}spellBuf=''}sentence.push({w,i});rStrip();speak(w);if(!MM){usage[w]=(usage[w]||0)+1;recents=recents.filter(r=>r.w!==w);recents.unshift({w,i});if(recents.length>20)recents.length=20}save();renderRec()}
