@@ -18,9 +18,6 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 @keyframes editPulse{0%,100%{opacity:1}50%{opacity:.6}}
 .c.edit-mode{cursor:crosshair}
 .c.edit-mode::after{content:'✏️';position:absolute;top:2px;right:2px;font-size:10px;opacity:.6}
-#gramBar{background:#2a2a2a;display:flex;gap:2px;padding:2px 4px;flex-shrink:0;border-bottom:1px solid #444}
-.gb{background:#3a3a3a;border:1px solid #555;border-radius:4px;color:#aaa;font-size:11px;font-weight:700;padding:2px 8px;cursor:pointer;flex-shrink:0}
-.gb:active{background:#2a9d8f;color:#fff}
 #infoBar{background:#1a3a4a;display:flex;gap:2px;padding:2px 4px;flex-shrink:0;border-bottom:1px solid #2a9d8f;overflow-x:auto;scrollbar-width:none}
 #infoBar::-webkit-scrollbar{display:none}
 .ib{background:#264653;border:1px solid #2a9d8f;border-radius:4px;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;cursor:pointer;flex-shrink:0;white-space:nowrap}
@@ -45,12 +42,13 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .c img{width:22px;height:22px;flex-shrink:0}
 .c .lb{font-size:13px;font-weight:800}
 #strip{height:46px}#sW .sw{min-width:40px;height:40px}.sb{height:40px;min-width:38px;font-size:15px}
-#bSpk{font-size:12px;padding:0 8px}.gb{font-size:10px;padding:2px 6px}#gramBar{padding:2px 4px}
-}
-.c.core{background:#2a6f97}.c.verb{background:#2d6a4f}.c.desc{background:#e76f51}.c.pronoun{background:#e9c46a;color:#333}.c.social{background:#f4a261}.c.question{background:#9b5de5}.c.negation{background:#e63946}.c.folder{background:#555;border:2px solid #888}.c.prep{background:#457b9d}.c.feeling{background:#b5838d}.c.noun{background:#6c757d}.c.misc{background:#4a4e69}
-#backBtn{display:none;position:fixed;top:4px;left:4px;z-index:20;background:#2a9d8f;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+#bSpk{font-size:12px;padding:0 8px}}
+.c.resp{background:#e76f51}.c.social{background:#e9c46a;color:#333}.c.prow_a{background:#2d6a4f}.c.prow_b{background:#e9c46a;color:#333}.c.prow_c{background:#457b9d}.c.prow_d{background:#b5838d}.c.folder{background:#555;border:2px solid #888}.c.util{background:#933}
+#backBtn{display:none;background:#2a9d8f;color:#fff;border:none;border-radius:0;padding:8px 16px;font-size:14px;font-weight:800;cursor:pointer;flex-shrink:0;width:100%;text-align:left}
 #gear{position:fixed;bottom:4px;right:4px;z-index:20;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;color:#999}
 #recToggle{position:fixed;bottom:4px;left:4px;z-index:20;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;color:#999}
+#phoneToggle{position:fixed;bottom:4px;left:40px;z-index:20;background:rgba(255,255,255,.15);border:none;border-radius:12px;height:28px;padding:0 8px;font-size:11px;font-weight:700;cursor:pointer;color:#999;white-space:nowrap}
+#phoneToggle.active{background:#2a9d8f;color:#fff}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:none;align-items:center;justify-content:center;padding:10px}
 .ov.open{display:flex}
 .md{background:#2d3748;border-radius:14px;padding:16px;max-width:380px;width:100%;max-height:85vh;overflow-y:auto;color:#e2e8f0}
@@ -94,18 +92,11 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="sb" id="bDel" onclick="sDel()">⌫</button>
 <div id="sW"></div>
 <button class="sb" id="bClr" onclick="sClr()">✕</button>
-<button class="sb" id="bQP" onclick="openQP()">⚡</button>
-<button class="sb" id="bEdit" onclick="toggleEditMode()">EDIT</button>
 <button class="sb" id="bSpk" onclick="sSpk()">SPEAK</button>
+<button class="sb" id="bQP" onclick="openQP()">⚡</button>
+<button class="sb" id="bEdit" onclick="toggleEditMode()">MENU</button>
 </div>
-<div id="gramBar">
-<button class="gb" onclick="gram('s')">+s</button>
-<button class="gb" onclick="gram('ed')">+ed</button>
-<button class="gb" onclick="gram('ing')">+ing</button>
-<button class="gb" onclick="gram('er')">+er</button>
-<button class="gb" onclick="gram('est')">+est</button>
-<button class="gb" onclick="gram(`n't`)">+n't</button>
-</div>
+
 <div id="infoBar">
 <button class="ib" onclick="sayInfo('name')"><span class="ib-icon">👤</span>My name</button>
 <button class="ib" onclick="sayInfo('address')"><span class="ib-icon">🏠</span>Address</button>
@@ -114,10 +105,11 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="ib" onclick="sayInfo('city')"><span class="ib-icon">📍</span>City</button>
 <button class="ib" onclick="sayInfo('emergency')"><span class="ib-icon">🚨</span>Emergency</button>
 </div>
+<button id="backBtn" onclick="goHome()">← Back</button>
 <div id="recentsBar"></div>
 <div id="board"></div>
-<button id="backBtn" onclick="goHome()">← Back</button>
 <button id="recToggle" onclick="toggleRec()">🕐</button>
+<button id="phoneToggle" onclick="togglePhone()">FULL</button>
 <button id="gear" onclick="openPin()">⚙</button>
 
 <!-- PIN OVERLAY -->
@@ -134,8 +126,6 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <h3>⚙️ Settings</h3>
 <label>Voice</label><select id="vSel"></select>
 <label>Speed <span id="spV">0.9</span></label><input type="range" id="spR" min=".3" max="1.5" step=".1" value=".9" oninput="SP=+this.value;document.getElementById('spV').textContent=SP.toFixed(1);save()">
-<label>Grid Columns</label><select id="gSel" onchange="GC=+this.value;save();render()"><option value="5">5</option><option value="6">6</option><option value="7" selected>7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
-<label>Vocabulary Level</label><select id="lSel" onchange="LV=+this.value;save();goHome()"><option value="1">Level 1 — First Words</option><option value="2">Level 2 — Growing</option><option value="3" selected>Level 3 — Full</option></select>
 <label>Modeling Mode</label><select id="mmSel" onchange="MM=this.value==='1';document.getElementById('modelBanner').style.display=MM?'block':'none';save()"><option value="0">Off</option><option value="1">On — taps won't count in stats</option></select>
 <hr style="border-color:#444;margin:10px 0">
 <h3>🚨 My Info (Safety)</h3>
@@ -162,7 +152,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div class="ov" id="cwOv"><div class="md">
 <h3>➕ Add Custom Word</h3>
 <label>Word</label><input type="text" id="cwWord" placeholder="e.g. Grandma">
-<label>Color Category</label><select id="cwCat"><option value="noun">Noun (grey)</option><option value="verb">Action (green)</option><option value="desc">Descriptor (orange)</option><option value="feeling">Feeling (pink)</option><option value="social">Social (warm)</option><option value="core">Core (blue)</option></select>
+<label>Color Category</label><select id="cwCat"><option value="resp">Response (red-orange)</option><option value="social">Social (yellow)</option><option value="prow_a">Green</option><option value="prow_b">Yellow-green</option><option value="prow_c">Blue</option><option value="prow_d">Pink</option><option value="folder">Folder (dark)</option></select>
 <label>Photo (optional)</label>
 <div style="display:flex;gap:6px;align-items:center;margin:4px 0">
 <button class="ok" onclick="document.getElementById('cwCamera').click()" style="font-size:.8em">📷 Take Photo</button>
@@ -179,7 +169,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div class="ov" id="editOv"><div class="md">
 <h3>✏️ Edit Button</h3>
 <label>Word</label><input type="text" id="editWord">
-<label>Color Category</label><select id="editCat"><option value="core">Core (blue)</option><option value="verb">Action (green)</option><option value="desc">Descriptor (orange)</option><option value="pronoun">Pronoun (yellow)</option><option value="social">Social (warm)</option><option value="question">Question (purple)</option><option value="negation">Negation (red)</option><option value="prep">Preposition (teal)</option><option value="feeling">Feeling (pink)</option><option value="noun">Noun (grey)</option><option value="folder">Folder (dark)</option></select>
+<label>Color Category</label><select id="editCat"><option value="resp">Response (red-orange)</option><option value="social">Social (yellow)</option><option value="prow_a">Green</option><option value="prow_b">Yellow-green</option><option value="prow_c">Blue</option><option value="prow_d">Pink</option><option value="folder">Folder (dark)</option><option value="util">Utility (red)</option></select>
 <label>Image</label>
 <div id="editImgPreview" style="text-align:center;margin:6px 0"></div>
 <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -205,19 +195,15 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 
 <script>
 const V=[
-{w:"I",t:"pronoun",i:6632,p:0},{w:"you",t:"pronoun",i:6625,p:1},{w:"he",t:"pronoun",i:6623,p:2},{w:"she",t:"pronoun",i:6624,p:3},{w:"we",t:"pronoun",i:36263,p:4},{w:"they",t:"pronoun",i:36264,p:5},{w:"it",t:"pronoun",i:31670,p:6},
-{w:"want",t:"verb",i:5441,p:7},{w:"like",t:"verb",i:37826,p:8},{w:"go",t:"verb",i:8142,p:9},{w:"help",t:"verb",i:32648,p:10},{w:"eat",t:"verb",i:6456,p:11},{w:"drink",t:"verb",i:6061,p:12},{w:"play",t:"verb",i:23392,p:13},
-{w:"look",t:"verb",i:6872,p:14},{w:"come",t:"verb",i:6857,p:15,lv:2},{w:"give",t:"verb",i:10044,p:16,lv:2},{w:"make",t:"verb",i:9403,p:17,lv:2},{w:"see",t:"verb",i:6872,p:18,lv:2},{w:"get",t:"verb",i:36512,p:19,lv:2},{w:"put",t:"verb",i:5335,p:20,lv:2},
-{w:"yes",t:"social",i:5584,p:21},{w:"no",t:"negation",i:5526,p:22},{w:"stop",t:"negation",i:7196,p:23},{w:"more",t:"core",i:5508,p:24},{w:"all done",t:"social",i:28429,p:25},{w:"please",t:"social",i:5324,p:26,lv:2},{w:"thank you",t:"social",i:5336,p:27,lv:2},
-{w:"good",t:"desc",i:7040,p:28,lv:2},{w:"bad",t:"desc",i:7041,p:29,lv:2},{w:"big",t:"desc",i:2466,p:30,lv:2},{w:"little",t:"desc",i:2467,p:31,lv:2},{w:"hot",t:"desc",i:2485,p:32,lv:3},{w:"cold",t:"desc",i:2486,p:33,lv:3},{w:"not",t:"negation",i:5526,p:34,lv:2},
-{w:"what",t:"question",i:5345,p:35,lv:2},{w:"where",t:"question",i:5346,p:36,lv:2},{w:"who",t:"question",i:5344,p:37,lv:2},{w:"on",t:"prep",i:8014,p:38,lv:2},{w:"in",t:"prep",i:8015,p:39,lv:2},{w:"up",t:"prep",i:5469,p:40,lv:2},{w:"down",t:"prep",i:5468,p:41,lv:2},
-{w:"open",t:"verb",i:24825,p:42},{w:"turn",t:"verb",i:28485,p:43,lv:2},{w:"do",t:"verb",i:36512,p:44,lv:2},{w:"read",t:"verb",i:6408,p:45,lv:3},{w:"sit",t:"verb",i:5553,p:46,lv:3},{w:"walk",t:"verb",i:6107,p:47,lv:3},{w:"run",t:"verb",i:6108,p:48,lv:3},
-{w:"happy",t:"feeling",i:35533,p:49,lv:2},{w:"sad",t:"feeling",i:35535,p:50,lv:2},{w:"angry",t:"feeling",i:35534,p:51,lv:3},{w:"scared",t:"feeling",i:35536,p:52,lv:3},{w:"tired",t:"feeling",i:35537,p:53,lv:3},{w:"hurt",t:"feeling",i:7086,p:54,lv:3},{w:"sick",t:"feeling",i:7074,p:55,lv:3},
-{w:"my",t:"pronoun",i:12264,p:56,lv:2},{w:"is",t:"core",i:36260,p:57,lv:2},{w:"that",t:"core",i:6906,p:58},{w:"here",t:"core",i:5382,p:59},{w:"some",t:"core",i:24971,p:60,lv:3},{w:"out",t:"prep",i:5287,p:61,lv:2},{w:"off",t:"prep",i:37236,p:62,lv:2},
-{w:"listen",t:"verb",i:9261,p:63,lv:3},{w:"sleep",t:"verb",i:2436,p:64,lv:3},{w:"wash",t:"verb",i:3204,p:65,lv:3},{w:"hug",t:"verb",i:37824,p:66,lv:3},{w:"wait",t:"verb",i:5373,p:67,lv:3},{w:"again",t:"core",i:6952,p:68,lv:3},{w:"can",t:"core",i:9124,p:69,lv:3},
-{w:"food",t:"folder",i:2452,p:70,cat:"food"},{w:"people",t:"folder",i:7093,p:71,cat:"people"},{w:"feelings",t:"folder",i:35533,p:72,cat:"feelings"},{w:"places",t:"folder",i:36858,p:73,cat:"places"},{w:"animals",t:"folder",i:2464,p:74,cat:"animals",lv:2},{w:"things",t:"folder",i:37011,p:75,cat:"things",lv:2},
-{w:"colors",t:"folder",i:38760,p:76,cat:"colors",lv:2},{w:"body",t:"folder",i:2490,p:77,cat:"body",lv:2},{w:"clothes",t:"folder",i:2509,p:78,cat:"clothes",lv:3},{w:"my words",t:"folder",i:6408,p:79,cat:"custom"},{w:"ABC",t:"folder",i:99999,p:80,cat:"spell"}
+{w:"yes",t:"resp",i:5584,p:0},{w:"no",t:"resp",svgName:"no",p:1},{w:"good",t:"resp",i:7040,p:2},{w:"bad",t:"resp",i:7041,p:3},{w:"more",t:"resp",i:5508,p:4},{w:"some",t:"resp",i:24971,p:5},{w:"all done",t:"resp",i:28429,p:6},{w:"stop",t:"resp",i:7196,p:7},{w:"big",t:"resp",i:2466,p:8},{w:"little",t:"resp",i:2467,p:9},{w:"hot",t:"resp",i:2485,p:10},{w:"cold",t:"resp",i:2486,p:11},
+{w:"my",t:"social",i:12264,p:12},{w:"please",t:"social",i:5324,p:13},{w:"thank you",t:"social",i:5336,p:14},{w:"sorry",t:"social",i:7220,p:15},{w:"what",t:"social",i:5345,p:16},{w:"where",t:"social",i:5346,p:17},{w:"who",t:"social",i:5344,p:18},{w:"here",t:"social",i:5382,p:19},{w:"that",t:"social",i:6906,p:20},{w:"not",t:"social",i:5526,p:21},{w:"+s",t:"social",svgName:"plus_s",p:22},{w:"+ing",t:"social",svgName:"plus_ing",p:23},
+{w:"I",t:"prow_a",i:6632,p:24},{w:"we",t:"prow_a",i:36263,p:25},{w:"want",t:"prow_a",i:5441,p:26},{w:"like",t:"prow_a",i:37826,p:27},{w:"go",t:"prow_a",i:8142,p:28},{w:"help",t:"prow_a",i:32648,p:29},{w:"is",t:"prow_a",i:36260,p:30},{w:"on",t:"prow_a",i:8014,p:31},{w:"in",t:"prow_a",i:8015,p:32},{w:"up",t:"prow_a",i:5469,p:33},{w:"down",t:"prow_a",i:5468,p:34},{w:"out",t:"prow_a",i:5287,p:35},
+{w:"you",t:"prow_b",i:6625,p:36},{w:"they",t:"prow_b",i:36264,p:37},{w:"play",t:"prow_b",i:23392,p:38},{w:"eat",t:"prow_b",i:6456,p:39},{w:"drink",t:"prow_b",i:6061,p:40},{w:"look",t:"prow_b",i:6872,p:41},{w:"come",t:"prow_b",i:6857,p:42},{w:"give",t:"prow_b",i:10044,p:43},{w:"do",t:"prow_b",svgName:"do",p:44},{w:"can",t:"prow_b",i:9124,p:45},{w:"+ed",t:"prow_b",svgName:"plus_ed",p:46},{w:"again",t:"prow_b",i:6952,p:47},
+{w:"he",t:"prow_c",i:6623,p:48},{w:"she",t:"prow_c",i:6624,p:49},{w:"make",t:"prow_c",i:9403,p:50},{w:"get",t:"prow_c",i:36512,p:51},{w:"put",t:"prow_c",i:5335,p:52},{w:"open",t:"prow_c",i:24825,p:53},{w:"turn",t:"prow_c",i:28485,p:54},{w:"read",t:"prow_c",i:6408,p:55},{w:"sit",t:"prow_c",i:5553,p:56},{w:"walk",t:"prow_c",i:6107,p:57},{w:"run",t:"prow_c",i:6108,p:58},{w:"off",t:"prow_c",i:37236,p:59},
+{w:"it",t:"prow_d",i:31670,p:60},{w:"sleep",t:"prow_d",i:2436,p:61},{w:"wash",t:"prow_d",i:3204,p:62},{w:"hug",t:"prow_d",i:37824,p:63},{w:"love",t:"prow_d",svgName:"love",p:64},{w:"happy",t:"prow_d",i:35533,p:65},{w:"sad",t:"prow_d",i:35535,p:66},{w:"angry",t:"prow_d",i:35534,p:67},{w:"scared",t:"prow_d",i:35536,p:68},{w:"tired",t:"prow_d",i:35537,p:69},{w:"+er",t:"prow_d",svgName:"plus_er",p:70},{w:"+est",t:"prow_d",svgName:"plus_est",p:71},
+{w:"CLEAR",t:"util",i:0,p:72},{w:"food",t:"folder",i:2452,p:73,cat:"food"},{w:"people",t:"folder",i:7093,p:74,cat:"people"},{w:"feelings",t:"folder",svgName:"feelings",p:75,cat:"feelings"},{w:"places",t:"folder",i:36858,p:76,cat:"places"},{w:"animals",t:"folder",i:2464,p:77,cat:"animals"},{w:"things",t:"folder",i:37011,p:78,cat:"things"},{w:"colors",t:"folder",i:38760,p:79,cat:"colors"},{w:"body",t:"folder",i:2490,p:80,cat:"body"},{w:"clothes",t:"folder",i:2509,p:81,cat:"clothes"},{w:"my words",t:"folder",svgName:"spk_word",p:82,cat:"custom"},{w:"ABC",t:"folder",i:99998,p:83,cat:"spell"}
 ];
+
 const SPELL_KEYS=[
 ['q','w','e','r','t','y','u','i','o','p'],
 ['a','s','d','f','g','h','j','k','l'],
@@ -235,10 +221,14 @@ body:[["head","head"],["mouth","mouth"],["hand","hand"],["feet","feet"],["eyes",
 clothes:[["shirt","shirt"],["pants","pants"],["shoes","shoes"],["socks","socks"],["hat","hat"],["jacket","jacket"],["diaper","diaper"]]
 };
 const QP=[["I need help",[[32648]]],["I need bathroom",[[2475]]],["I feel sick",[[7074]]],["I want more",[[5508]]],["I don't like that",[[37826]]],["I'm all done",[[28429]]],["I love you",[[37824]]],["I'm hungry",[[6456]]],["I'm thirsty",[[6061]]],["I want to go",[[8142]]]];
-const SYM={  2436:'symbols/mybuddy/sleep.svg',  2452:'symbols/mybuddy/food.svg',  2464:'symbols/mybuddy/animals.svg',  2466:'symbols/mybuddy/big.svg',  2467:'symbols/mybuddy/little.svg',  2485:'symbols/mybuddy/hot.svg',  2486:'symbols/mybuddy/cold.svg',  2490:'symbols/mybuddy/body.svg',  2509:'symbols/mybuddy/clothes.svg',  3204:'symbols/mybuddy/wash.svg',  5287:'symbols/mybuddy/out.svg',  5324:'symbols/mybuddy/please.svg',  5335:'symbols/mybuddy/put.svg',  5336:'symbols/mybuddy/thank_you.svg',  5344:'symbols/mybuddy/who.svg',  5345:'symbols/mybuddy/what.svg',  5346:'symbols/mulberry/where.svg',  5373:'symbols/mulberry/wait_,_to.svg',  5382:'symbols/mybuddy/here.svg',  5441:'symbols/mybuddy/want.svg',  5468:'symbols/mybuddy/down.svg',  5469:'symbols/mybuddy/up.svg',  5508:'symbols/mybuddy/more.svg',  5526:'symbols/mybuddy/no.svg',  5526:'symbols/mybuddy/not.svg',  5553:'symbols/mulberry/sit_,_to.svg',  5584:'symbols/mybuddy/yes.svg',  6061:'symbols/mybuddy/drink.svg',  6107:'symbols/mulberry/walk_,_to.svg',  6108:'symbols/mulberry/run_,_to.svg',  6408:'symbols/mybuddy/spk_word.svg',  6408:'symbols/mybuddy/read.svg',  6456:'symbols/mulberry/eat_,_to.svg',  6623:'symbols/mybuddy/he.svg',  6624:'symbols/mybuddy/she.svg',  6625:'symbols/mybuddy/you.svg',  6632:'symbols/mybuddy/i.svg',  6857:'symbols/mybuddy/come.svg',  6872:'symbols/mybuddy/look.svg',  6872:'symbols/mybuddy/look.svg',  6906:'symbols/mybuddy/that.svg',  6952:'symbols/mybuddy/again.svg',  7040:'symbols/mybuddy/good.svg',  7041:'symbols/mybuddy/bad.svg',  7074:'symbols/mybuddy/sick.svg',  7086:'symbols/mybuddy/hurt.svg',  7093:'symbols/mybuddy/people.svg',  7196:'symbols/mybuddy/stop.svg',  7220:'symbols/mybuddy/sorry.svg',  8014:'symbols/mybuddy/on.svg',  8015:'symbols/mybuddy/in.svg',  8142:'symbols/mybuddy/go.svg',  9124:'symbols/mybuddy/can.svg',  9261:'symbols/mulberry/hear_,_to.svg',  9403:'symbols/mybuddy/make.svg',  10044:'symbols/mybuddy/give.svg',  12264:'symbols/mybuddy/my.svg',  23392:'symbols/mybuddy/play.svg',  24825:'symbols/mybuddy/open.svg',  24971:'symbols/mybuddy/some.svg',  28429:'symbols/mybuddy/all_done.svg',  28485:'symbols/mybuddy/turn.svg',  31670:'symbols/mybuddy/it.svg',  32648:'symbols/mybuddy/help.svg',  35533:'symbols/mybuddy/feelings.svg',  35533:'symbols/mybuddy/happy.svg',  35534:'symbols/mybuddy/angry.svg',  35535:'symbols/mybuddy/sad.svg',  35536:'symbols/mybuddy/scared.svg',  35537:'symbols/mybuddy/tired.svg',  36260:'symbols/mybuddy/is.svg',  36263:'symbols/mybuddy/we.svg',  36264:'symbols/mybuddy/they.svg',  36512:'symbols/mybuddy/do.svg',  36512:'symbols/mybuddy/get.svg',  36858:'symbols/mybuddy/places.svg',  37011:'symbols/mybuddy/things.svg',  37236:'symbols/mybuddy/off.svg',  37824:'symbols/mulberry/hug_,_to.svg',  37826:'symbols/mybuddy/like.svg',  38760:'symbols/mybuddy/colors.svg'};
-const IM=p=>SYM[p]||'symbols/mybuddy/'+p+'.svg';
+const FRM={'angry':'symbols/mulberry/angry_man.svg','apple':'symbols/mulberry/apple.svg','baby':'symbols/mulberry/baby.svg','bad':'symbols/mulberry/bad.svg','ball':'symbols/mulberry/ball.svg','banana':'symbols/mulberry/banana.svg','bathroom':'symbols/mulberry/toilet.svg','bear':'symbols/mulberry/bear.svg','bedroom':'symbols/mulberry/single_bed.svg','big':'symbols/mulberry/large.svg','bird':'symbols/mulberry/bird.svg','blanket':'symbols/mulberry/blanket.svg','body':'symbols/mulberry/body_outline.svg','bread':'symbols/mulberry/bread.svg','brother':'symbols/mulberry/brother.svg','bunny':'symbols/mulberry/rabbit.svg','cake':'symbols/mulberry/cake.svg','calm':'symbols/mulberry/relax_,_to.svg','candy':'symbols/mulberry/sweet.svg','car':'symbols/mulberry/car.svg','cat':'symbols/mulberry/cat.svg','cereal':'symbols/mulberry/cereal.svg','cheese':'symbols/mulberry/cheese.svg','chicken':'symbols/mulberry/chicken.svg','come':'symbols/mulberry/come_,_to.svg','confused':'symbols/mulberry/confused_man.svg','cookie':'symbols/mulberry/biscuit_chocolate_chip.svg','cow':'symbols/mulberry/cow.svg','crackers':'symbols/mulberry/cracker.svg','cup':'symbols/mulberry/mug_2.svg','dad':'symbols/mulberry/dad_parent.svg','diaper':'symbols/mulberry/nappy.svg','doctor':'symbols/mulberry/doctor_1a.svg','dog':'symbols/mulberry/dog.svg','door':'symbols/mulberry/door.svg','down':'symbols/mulberry/down.svg','drink':'symbols/mulberry/drink_,_to.svg','duck':'symbols/mulberry/duck.svg','ears':'symbols/mulberry/ear.svg','eggs':'symbols/mulberry/eggs.svg','elephant':'symbols/mulberry/elephant.svg','excited':'symbols/mulberry/excited_man.svg','eyes':'symbols/mulberry/eyes.svg','family':'symbols/mulberry/family.svg','feet':'symbols/mulberry/feet.svg','fish':'symbols/mulberry/fish.svg','food':'symbols/mulberry/food.svg','friend':'symbols/mulberry/group_work.svg','fries':'symbols/mulberry/chips.svg','frog':'symbols/mulberry/frog.svg','funny':'symbols/mulberry/funny_laugh.svg','get':'symbols/mulberry/get_,_to.svg','give':'symbols/mulberry/give_,_to.svg','go':'symbols/mulberry/go_,_to.svg','good':'symbols/mulberry/good.svg','grandma':'symbols/mulberry/grandmother.svg','grandpa':'symbols/mulberry/grandfather.svg','grapes':'symbols/mulberry/grapes.svg','hand':'symbols/mulberry/right_hand.svg','happy':'symbols/mulberry/happy_man.svg','hat':'symbols/mulberry/hat_-_mans.svg','head':'symbols/mulberry/man_-_face.svg','help':'symbols/mulberry/help_,_to.svg','home':'symbols/mulberry/house.svg','horse':'symbols/mulberry/horse.svg','hot':'symbols/mulberry/hot.svg','hot_dog':'symbols/mulberry/hot_dog.svg','hurt':'symbols/mulberry/headache.svg','i':'symbols/mulberry/I.svg','ice_cream':'symbols/mulberry/ice_cream.svg','in':'symbols/mulberry/in.svg','jacket':'symbols/mulberry/jacket.svg','juice':'symbols/mulberry/orange_juice.svg','kitchen':'symbols/mulberry/cooker.svg','light':'symbols/mulberry/lamp.svg','lion':'symbols/mulberry/lion.svg','little':'symbols/mulberry/little.svg','look':'symbols/mulberry/look_,_to.svg','love':'symbols/mulberry/heart.svg','make':'symbols/mulberry/make_,_to.svg','milk':'symbols/mulberry/milk.svg','mom':'symbols/mulberry/mum_parent.svg','monkey':'symbols/mulberry/chimpanzee.svg','more':'symbols/mulberry/more.svg','mouth':'symbols/mulberry/mouth.svg','music':'symbols/mulberry/music.svg','nervous':'symbols/mulberry/worried_man.svg','off':'symbols/mulberry/off.svg','on':'symbols/mulberry/on.svg','open':'symbols/mulberry/open_,_to.svg','out':'symbols/mulberry/out.svg','outside':'symbols/mulberry/outside.svg','pants':'symbols/mulberry/trousers.svg','park':'symbols/mulberry/play_area.svg','phone':'symbols/mulberry/mobile_phone.svg','pig':'symbols/mulberry/piglet.svg','pizza':'symbols/mulberry/pizza.svg','play':'symbols/mulberry/play_,_to.svg','proud':'symbols/mulberry/medal.svg','put':'symbols/mulberry/put_,_to.svg','read':'symbols/mulberry/read_book_,_to.svg','rice':'symbols/mulberry/rice.svg','sad':'symbols/mulberry/sad_man.svg','sandwich':'symbols/mulberry/sandwich.svg','scared':'symbols/mulberry/afraid_man.svg','school':'symbols/mulberry/school.svg','shirt':'symbols/mulberry/shirt.svg','shoes':'symbols/mulberry/shoe_-_mans.svg','sick':'symbols/mulberry/headache.svg','sister':'symbols/mulberry/sister.svg','sleep':'symbols/mulberry/sleep_male_,_to.svg','socks':'symbols/mulberry/socks.svg','some':'symbols/mulberry/some.svg','soup':'symbols/mulberry/soup.svg','spk_word':'symbols/mulberry/talk_2_,_to.svg','stop':'symbols/mulberry/cross.svg','store':'symbols/mulberry/shop.svg','strawberry':'symbols/mulberry/strawberry.svg','teacher':'symbols/mulberry/teacher_1a.svg','tired':'symbols/mulberry/yawn_,_to.svg','toy':'symbols/mulberry/teddy_bear.svg','tummy':'symbols/mulberry/stomach.svg','turn':'symbols/mulberry/turn_,_to.svg','turtle':'symbols/mulberry/turtle.svg','tv':'symbols/mulberry/flatscreen_tv.svg','up':'symbols/mulberry/up.svg','want':'symbols/mulberry/want_,_to.svg','wash':'symbols/mulberry/wash_hands_,_to.svg','water':'symbols/mulberry/water.svg','what':'symbols/mulberry/what.svg','who':'symbols/mulberry/who.svg','yes':'symbols/mulberry/correct.svg','yogurt':'symbols/mulberry/yogurt.svg'};
+const SYM={2436:'symbols/mulberry/sleep_male_,_to.svg',2452:'symbols/mulberry/food.svg',2464:'symbols/mybuddy/animals.svg',2466:'symbols/mulberry/large.svg',2467:'symbols/mulberry/little.svg',2485:'symbols/mulberry/hot.svg',2486:'symbols/mybuddy/cold.svg',2490:'symbols/mulberry/body_outline.svg',2509:'symbols/mybuddy/clothes.svg',3204:'symbols/mulberry/wash_hands_,_to.svg',5287:'symbols/mulberry/out.svg',5324:'symbols/mybuddy/please.svg',5335:'symbols/mulberry/put_,_to.svg',5336:'symbols/mybuddy/thank_you.svg',5344:'symbols/mulberry/who.svg',5345:'symbols/mulberry/what.svg',5346:'symbols/mulberry/where.svg',5373:'symbols/mulberry/wait_,_to.svg',5382:'symbols/mybuddy/here.svg',5441:'symbols/mulberry/want_,_to.svg',5468:'symbols/mulberry/down.svg',5469:'symbols/mulberry/up.svg',5508:'symbols/mulberry/more.svg',5526:'symbols/mybuddy/no.svg',5526:'symbols/mybuddy/not.svg',5553:'symbols/mulberry/sit_,_to.svg',5584:'symbols/mulberry/correct.svg',6061:'symbols/mulberry/drink_,_to.svg',6107:'symbols/mulberry/walk_,_to.svg',6108:'symbols/mulberry/run_,_to.svg',6408:'symbols/mulberry/talk_2_,_to.svg',6408:'symbols/mulberry/read_book_,_to.svg',6456:'symbols/mulberry/eat_,_to.svg',6623:'symbols/mybuddy/he.svg',6624:'symbols/mybuddy/she.svg',6625:'symbols/mybuddy/you.svg',6632:'symbols/mulberry/I.svg',6857:'symbols/mulberry/come_,_to.svg',6872:'symbols/mulberry/look_,_to.svg',6872:'symbols/mulberry/look_,_to.svg',6906:'symbols/mybuddy/that.svg',6952:'symbols/mybuddy/again.svg',7040:'symbols/mulberry/good.svg',7041:'symbols/mulberry/bad.svg',7074:'symbols/mulberry/headache.svg',7086:'symbols/mulberry/headache.svg',7093:'symbols/mybuddy/people.svg',7196:'symbols/mulberry/cross.svg',7220:'symbols/mybuddy/sorry.svg',8014:'symbols/mulberry/on.svg',8015:'symbols/mulberry/in.svg',8142:'symbols/mulberry/go_,_to.svg',9124:'symbols/mybuddy/can.svg',9261:'symbols/mulberry/hear_,_to.svg',9403:'symbols/mulberry/make_,_to.svg',10044:'symbols/mulberry/give_,_to.svg',12264:'symbols/mybuddy/my.svg',23392:'symbols/mulberry/play_,_to.svg',24825:'symbols/mulberry/open_,_to.svg',24971:'symbols/mulberry/some.svg',28429:'symbols/mybuddy/all_done.svg',28485:'symbols/mulberry/turn_,_to.svg',31670:'symbols/mybuddy/it.svg',32648:'symbols/mulberry/help_,_to.svg',35533:'symbols/mybuddy/feelings.svg',35533:'symbols/mulberry/happy_man.svg',35534:'symbols/mulberry/angry_man.svg',35535:'symbols/mulberry/sad_man.svg',35536:'symbols/mulberry/afraid_man.svg',35537:'symbols/mulberry/yawn_,_to.svg',36260:'symbols/mybuddy/is.svg',36263:'symbols/mybuddy/we.svg',36264:'symbols/mybuddy/they.svg',36512:'symbols/mybuddy/do.svg',36512:'symbols/mulberry/get_,_to.svg',36858:'symbols/mybuddy/places.svg',37011:'symbols/mybuddy/things.svg',37236:'symbols/mulberry/off.svg',37824:'symbols/mulberry/hug_,_to.svg',37826:'symbols/mybuddy/like.svg',38760:'symbols/mybuddy/colors.svg',99998:'symbols/mulberry/computer_keyboard.svg'};
+const IM=p=>SYM[p]||FRM[p]||'symbols/mybuddy/'+p+'.svg';
+const isMul=s=>s&&s.includes('/mulberry/');
 const SK='mb4';
-let LV=1,GC=7,SP=.9,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='';
+let SP=.9,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=false;
+const PHONE_CORE=[0,1,24,36,26,28,29,4,2,22,7,39,40,41,27,6,73,74,75];
+// 0=yes,1=no,24=I,36=you,26=want,28=go,29=help,4=more,2=good,22=+s,7=stop,39=eat,40=drink,41=look,27=like,6=all done,73=food,74=people,75=feelings
 let myInfo={name:'',address:'',city:'',school:'',phone:'',emergency:''};
 let editMode=false,editTarget=null,editPhotoData=null,cellOverrides={};
 
@@ -248,7 +238,7 @@ if(!editMode){
 // Require PIN first
 openPin();pinCallback=()=>{editMode=true;document.getElementById('bEdit').classList.add('active');document.getElementById('bEdit').textContent='DONE';render();};
 }else{
-editMode=false;document.getElementById('bEdit').classList.remove('active');document.getElementById('bEdit').textContent='EDIT';render();
+editMode=false;document.getElementById('bEdit').classList.remove('active');document.getElementById('bEdit').textContent='MENU';render();
 }
 }
 let pinCallback=null;
@@ -261,14 +251,14 @@ if(override){
 document.getElementById('editCat').value=override.t||item.t;
 if(override.photo){editPhotoData=override.photo;document.getElementById('editImgPreview').innerHTML=`<img src="${override.photo}" style="width:60px;height:60px;border-radius:8px;object-fit:cover;border:2px solid #2a9d8f">`;}else{showEditDefaultImg(item);}
 }else{
-document.getElementById('editCat').value=item.t||'core';
+document.getElementById('editCat').value=item.t||'resp';
 showEditDefaultImg(item);
 }
 document.getElementById('editOv').classList.add('open');
 }
 function showEditDefaultImg(item){
-const src=item.svgName?'symbols/mybuddy/'+item.svgName+'.svg':(item.i?IM(item.i):null);
-if(src){document.getElementById('editImgPreview').innerHTML=`<img src="${src}" style="width:60px;height:60px;filter:brightness(0) invert(1);background:#555;border-radius:8px;padding:4px">`;}else{document.getElementById('editImgPreview').innerHTML='<span style="color:#888">No image</span>';}
+const src=item.svgName?(FRM[item.svgName]||'symbols/mybuddy/'+item.svgName+'.svg'):(item.i?IM(item.i):null);
+if(src){const ef=isMul(src)?'':'filter:brightness(0) invert(1);';document.getElementById('editImgPreview').innerHTML=`<img src="${src}" style="width:60px;height:60px;${ef}background:#555;border-radius:8px;padding:4px">`;}else{document.getElementById('editImgPreview').innerHTML='<span style="color:#888">No image</span>';}
 }
 function handleEditPhoto(input){
 if(!input.files||!input.files[0])return;
@@ -338,56 +328,32 @@ speak(text);
 }
 }
 
-function save(){try{localStorage.setItem(SK,JSON.stringify({LV,GC,SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,tutDone:true}))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');LV=d.LV||1;GC=d.GC||7;SP=d.SP||.9;VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};return d.tutDone}catch(e){return false}}
+function save(){try{localStorage.setItem(SK,JSON.stringify({SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,phoneMode,tutDone:true}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=d.SP||.9;VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode||false;return d.tutDone}catch(e){return false}}
 
 function speak(text){text=(text+'').toLowerCase();if(!text)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=SP;if(VU){const v=speechSynthesis.getVoices().find(v=>v.voiceURI===VU);if(v)u.voice=v}speechSynthesis.speak(u)}
 function addWord(w,i){if(spellBuf){const sw=spellBuf.trim();if(sw){sentence.push({w:sw,i:0});speak(sw)}spellBuf=''}sentence.push({w,i});rStrip();speak(w);if(!MM){usage[w]=(usage[w]||0)+1;recents=recents.filter(r=>r.w!==w);recents.unshift({w,i});if(recents.length>20)recents.length=20}save();renderRec()}
-function rStrip(){const c=document.getElementById('sW');c.innerHTML='';sentence.forEach(s=>{const d=document.createElement('div');d.className='sw';if(s.i){d.innerHTML=`<img src="${IM(s.i)}" style="filter:brightness(0) invert(1)" onerror="this.style.display='none'"><span>${s.w}</span>`}else{d.innerHTML=`<span style="font-size:11px;color:#fff">${s.w}</span>`}d.onclick=()=>speak(s.w);c.appendChild(d)});if(spellBuf){const sb=document.createElement('div');sb.className='sw';sb.style.background='#2a6f97';sb.innerHTML=`<span style="font-size:12px;color:#fff;font-weight:700">${spellBuf}▌</span>`;c.appendChild(sb)}c.scrollLeft=c.scrollWidth}
+function rStrip(){const c=document.getElementById('sW');c.innerHTML='';sentence.forEach(s=>{const d=document.createElement('div');d.className='sw';if(s.i){d.innerHTML=`<img src="${IM(s.i)}" style="${isMul(IM(s.i))?'':'filter:brightness(0) invert(1)'}" onerror="this.style.display='none'"><span>${s.w}</span>`}else{d.innerHTML=`<span style="font-size:11px;color:#fff">${s.w}</span>`}d.onclick=()=>speak(s.w);c.appendChild(d)});if(spellBuf){const sb=document.createElement('div');sb.className='sw';sb.style.background='#2a6f97';sb.innerHTML=`<span style="font-size:12px;color:#fff;font-weight:700">${spellBuf}▌</span>`;c.appendChild(sb)}c.scrollLeft=c.scrollWidth}
 function sDel(){if(spellBuf){spellBuf=spellBuf.slice(0,-1);rStrip();return}if(sentence.length){sentence.pop();rStrip()}}
 function sClr(){sentence=[];spellBuf='';rStrip()}
 function sSpk(){if(spellBuf.trim()){sentence.push({w:spellBuf.trim(),i:0});spellBuf='';rStrip()}if(sentence.length)speak(sentence.map(s=>s.w).join(' '))}
 function gram(sfx){if(!sentence.length)return;const last=sentence[sentence.length-1];last.w=last.w+sfx;rStrip();speak(last.w)}
 
-function isPhone(){return window.innerWidth<=500||(window.innerWidth<=850&&window.innerHeight<=500)}
-function getPhoneCols(){
-const landscape=window.innerWidth>window.innerHeight;
-return landscape?6:4;
-}
-function getPhoneRows(){
-const landscape=window.innerWidth>window.innerHeight;
-return landscape?3:5;
-}
-// Priority words for iPhone home — must fit on one screen
-const PHONE_PRIORITY=['I','you','want','go','help','more','yes','no','stop','eat','drink','play','like','look','open','all done','food','people','feelings','my words','ABC'];
-function getPhoneHome(){
-const phone=isPhone();
-if(!phone)return null;
-const maxCells=getPhoneCols()*getPhoneRows();
-const pWords=PHONE_PRIORITY.slice(0,maxCells);
-const result=[];
-for(const pw of pWords){
-const item=V.find(v=>v.w===pw);
-if(item)result.push(item);
-}
-return result;
-}
+
 function render(){
 const b=document.getElementById('board');
 if(curView==='spell'){renderSpell(b);return}
-const phone=isPhone();
 let items;
-if(curView==='home'&&phone){
-items=getPhoneHome()||getHome();
-}else if(curView==='home'){
+if(curView==='home'){
 items=getHome();
 }else if(curView==='custom'){
 items=getCustom();
 }else{
 items=getFringe(curView);
 }
-const cols=phone?getPhoneCols():GC;
-const rows=phone?getPhoneRows():Math.max(Math.ceil(items.length/cols),2);
+const isHome=(curView==='home');
+let cols,rows;
+if(isHome&&phoneMode){cols=Math.min(items.length,4);rows=Math.ceil(items.length/cols);}else if(isHome){cols=12;rows=7;}else{cols=Math.min(items.length,7);rows=Math.max(Math.ceil(items.length/cols),2);}
 b.style.gridTemplateColumns=`repeat(${cols},1fr)`;
 b.style.gridTemplateRows=`repeat(${rows},1fr)`;
 b.style.overflow='hidden';
@@ -398,46 +364,52 @@ const ov=cellOverrides[ovKey];
 const displayW=ov?ov.w:s.w;
 const displayT=ov?ov.t:s.t;
 const displayPhoto=ov?ov.photo:s.photo;
-d.className='c '+(displayT||'core');
+d.className='c '+(displayT||'resp');
 if(editMode)d.classList.add('edit-mode');
-const imgSrc=displayPhoto?displayPhoto:(s.svgName?'symbols/mybuddy/'+s.svgName+'.svg':(s.i?IM(s.i):null));
+const imgSrc=displayPhoto?displayPhoto:(s.svgName?(FRM[s.svgName]||'symbols/mybuddy/'+s.svgName+'.svg'):(s.i?IM(s.i):null));
 const isColorCat=(curView==='colors');
+const isGram=s.w&&s.w.startsWith('+');
 if(imgSrc){
-d.innerHTML=`<img src="${imgSrc}" style="${displayPhoto?'border-radius:6px;object-fit:cover;':(isColorCat?'':'filter:brightness(0) invert(1);')}"
+d.innerHTML=`<img src="${imgSrc}" style="${displayPhoto?'border-radius:6px;object-fit:cover;':(isColorCat||isMul(imgSrc)?'background:rgba(255,255,255,0.85);border-radius:6px;padding:1px;':'filter:brightness(0) invert(1);')}"
  onerror="this.style.filter='';this.onerror=null"><div class="lb">${displayW}</div>`;
 }else{
 d.innerHTML=`<div class="lb" style="font-size:clamp(12px,3vw,18px)">${displayW}</div>`;
 }
 d.onclick=()=>{
-if(editMode){openEditCell(s,curView);return;}
+if(editMode){openEditCell(s,curView);return}
+if(s.w==='CLEAR'){sClr();d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);return}
+if(isGram){gram(s.w.replace('+',''));d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);return}
 if(s.cat){curView=s.cat;render();document.getElementById('backBtn').style.display='block';return}
-addWord(displayW,s.i);d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300)};b.appendChild(d)})}
+addWord(displayW,s.i);d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);
+if(curView!=='home'&&curView!=='custom'&&curView!=='spell'){setTimeout(()=>goHome(),350)}};b.appendChild(d)})}
 function renderSpell(b){
 b.style.gridTemplateColumns='repeat(10,1fr)';b.style.gridTemplateRows='repeat(5,1fr)';b.innerHTML='';
-SPELL_KEYS.forEach(row=>{row.forEach(k=>{const d=document.createElement('div');d.className='c misc';
+SPELL_KEYS.forEach(row=>{row.forEach(k=>{const d=document.createElement('div');d.className='c';
 d.style.background='#3d405b';d.innerHTML=`<div style="font-size:clamp(16px,5vw,28px);font-weight:900">${k.toUpperCase()}</div><div class="lb">${k}</div>`;
 d.onclick=()=>{spellBuf+=k;speak(k);rStrip();d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300)};b.appendChild(d)});
-for(let p=row.length;p<10;p++){if(row.length===9&&p===9){const sp=document.createElement('div');sp.className='c core';sp.innerHTML='<div class="lb">⌫</div>';sp.onclick=()=>{spellBuf=spellBuf.slice(0,-1);rStrip()};b.appendChild(sp)}
-else if(row.length===7){if(p===7){const sp=document.createElement('div');sp.className='c core';sp.style.background='#2a9d8f';sp.innerHTML='<div class="lb">SPACE</div>';sp.onclick=()=>{const w=spellBuf.trim();if(w){sentence.push({w,i:0});speak(w)}spellBuf='';rStrip()};b.appendChild(sp)}
-else if(p===8){const sp=document.createElement('div');sp.className='c core';sp.style.background='#e9c46a';sp.style.color='#333';sp.innerHTML='<div class="lb" style="color:#333">SPEAK</div>';sp.onclick=()=>{if(spellBuf.trim())speak(spellBuf.trim())};b.appendChild(sp)}
-else if(p===9){const sp=document.createElement('div');sp.className='c negation';sp.innerHTML='<div class="lb">CLEAR</div>';sp.onclick=()=>{spellBuf='';rStrip()};b.appendChild(sp)}}
+for(let p=row.length;p<10;p++){if(row.length===9&&p===9){const sp=document.createElement('div');sp.className='c';sp.style.background='#2a6f97';sp.innerHTML='<div class="lb">⌫</div>';sp.onclick=()=>{spellBuf=spellBuf.slice(0,-1);rStrip()};b.appendChild(sp)}
+else if(row.length===7){if(p===7){const sp=document.createElement('div');sp.className='c';sp.style.background='#2a9d8f';sp.innerHTML='<div class="lb">SPACE</div>';sp.onclick=()=>{const w=spellBuf.trim();if(w){sentence.push({w,i:0});speak(w)}spellBuf='';rStrip()};b.appendChild(sp)}
+else if(p===8){const sp=document.createElement('div');sp.className='c';sp.style.background='#e9c46a';sp.style.color='#333';sp.innerHTML='<div class="lb" style="color:#333">SPEAK</div>';sp.onclick=()=>{if(spellBuf.trim())speak(spellBuf.trim())};b.appendChild(sp)}
+else if(p===9){const sp=document.createElement('div');sp.className='c util';sp.innerHTML='<div class="lb">CLEAR</div>';sp.onclick=()=>{spellBuf='';rStrip()};b.appendChild(sp)}}
 else{const e=document.createElement('div');e.className='c';e.style.visibility='hidden';b.appendChild(e)}}});
 // number row
-'1234567890'.split('').forEach(k=>{const d=document.createElement('div');d.className='c misc';d.style.background='#4a4e69';
+'1234567890'.split('').forEach(k=>{const d=document.createElement('div');d.className='c';d.style.background='#4a4e69';
 d.innerHTML=`<div style="font-size:clamp(14px,4vw,24px);font-weight:900">${k}</div><div class="lb">${k}</div>`;
 d.onclick=()=>{spellBuf+=k;speak(k);rStrip();d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300)};b.appendChild(d)});
 }
-function getHome(){return V.filter(v=>(!v.lv||v.lv<=LV)).sort((a,b)=>a.p-b.p)}
+function getHome(){const all=V.sort((a,b)=>a.p-b.p);if(!phoneMode)return all;return PHONE_CORE.map(p=>all.find(v=>v.p===p)).filter(Boolean)}
 function getFringe(cat){
-const catColors={food:'social',people:'pronoun',feelings:'feeling',places:'prep',animals:'verb',things:'core',colors:'desc',body:'feeling',clothes:'desc'};
-return(FR[cat]||[]).map(([w,svgName])=>({w,svgName,i:0,t:catColors[cat]||'noun'}));
+const catColors={food:'resp',people:'prow_a',feelings:'prow_d',places:'prow_c',animals:'prow_a',things:'prow_c',colors:'social',body:'prow_d',clothes:'social'};
+return(FR[cat]||[]).map(([w,svgName])=>({w,svgName,i:0,t:catColors[cat]||'resp'}));
 }
-function getCustom(){return customWords.map(c=>({w:c.w,i:c.i||0,t:c.t||'noun',photo:c.photo||null}))}
+function getCustom(){return customWords.map(c=>({w:c.w,i:c.i||0,t:c.t||'resp',photo:c.photo||null}))}
+
 function goHome(){curView='home';const w=spellBuf.trim();if(w){sentence.push({w,i:0});speak(w)}spellBuf='';render();rStrip();document.getElementById('backBtn').style.display='none'}
 
 // === RECENTS ===
-function renderRec(){const rb=document.getElementById('recentsBar');if(!showRec){rb.style.display='none';return}rb.style.display='flex';rb.innerHTML='';recents.slice(0,8).forEach(s=>{const d=document.createElement('div');d.className='rc';d.innerHTML=`<img src="${IM(s.i)}" onerror="this.style.display='none'"><span>${s.w}</span>`;d.onclick=()=>addWord(s.w,s.i);rb.appendChild(d)})}
+function renderRec(){const rb=document.getElementById('recentsBar');if(!showRec){rb.style.display='none';return}rb.style.display='flex';rb.innerHTML='';recents.slice(0,8).forEach(s=>{const d=document.createElement('div');d.className='rc';d.innerHTML=`<img src="${IM(s.i)}" style="${isMul(IM(s.i))?'':'filter:brightness(0) invert(1)'}" onerror="this.style.display='none'"><span>${s.w}</span>`;d.onclick=()=>addWord(s.w,s.i);rb.appendChild(d)})}
 function toggleRec(){showRec=!showRec;renderRec()}
+function togglePhone(){phoneMode=!phoneMode;const btn=document.getElementById('phoneToggle');btn.textContent=phoneMode?'FULL':'SIMPLE';btn.className=phoneMode?'active':'';save();if(curView==='home')render()}
 
 // === PIN ===
 let pinBuf='';
@@ -447,11 +419,11 @@ function pinKey(k){if(k==='⌫'){pinBuf=pinBuf.slice(0,-1);document.getElementBy
 function updDots(){document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinBuf.length))}
 
 // === SETTINGS ===
-function openSet(){document.getElementById('setOv').classList.add('open');populateVoices();document.getElementById('gSel').value=GC;document.getElementById('lSel').value=LV;document.getElementById('spR').value=SP;document.getElementById('mmSel').value=MM?'1':'0';document.getElementById('modelBanner').style.display=MM?'block':'none';loadInfo();renderStats();renderCWList()}
+function openSet(){document.getElementById('setOv').classList.add('open');populateVoices();document.getElementById('spR').value=SP;document.getElementById('mmSel').value=MM?'1':'0';document.getElementById('modelBanner').style.display=MM?'block':'none';loadInfo();renderStats();renderCWList()}
 function closeOv(id){document.getElementById(id).classList.remove('open')}
 function populateVoices(){const sel=document.getElementById('vSel');const voices=speechSynthesis.getVoices();sel.innerHTML=voices.map(v=>`<option value="${v.voiceURI}" ${v.voiceURI===VU?'selected':''}>${v.name}</option>`).join('');sel.onchange=()=>{VU=sel.value;save()}}
-function renderStats(){const box=document.getElementById('statsBox');const total=Object.values(usage).reduce((a,b)=>a+b,0);const sorted=Object.entries(usage).sort((a,b)=>b[1]-a[1]).slice(0,5);const lvWords=V.filter(v=>!v.lv||v.lv<=LV).filter(v=>!v.cat);const usedLv=lvWords.filter(v=>usage[v.w]>0).length;const pct=lvWords.length?Math.round(usedLv/lvWords.length*100):0;
-box.innerHTML=`<div class="stat-row"><span>Total taps</span><b>${total}</b></div><div class="stat-row"><span>Unique words</span><b>${Object.keys(usage).length}</b></div><div class="stat-row"><span>Level ${LV} coverage</span><b>${pct}%</b></div>${sorted.map(([w,c])=>`<div class="stat-row"><span>${w}</span><b>${c}×</b></div>`).join('')}${pct>=70&&LV<3?`<div style="margin-top:6px;padding:6px;background:rgba(42,157,143,.2);border-radius:6px;font-size:.8em">💡 Your child uses ${pct}% of Level ${LV} words. Consider upgrading to Level ${LV+1}!</div>`:''}`}
+function renderStats(){const box=document.getElementById('statsBox');const total=Object.values(usage).reduce((a,b)=>a+b,0);const sorted=Object.entries(usage).sort((a,b)=>b[1]-a[1]).slice(0,5);const allWords=V.filter(v=>!v.cat&&v.w!=='CLEAR'&&!v.w.startsWith('+'));const usedW=allWords.filter(v=>usage[v.w]>0).length;const pct=allWords.length?Math.round(usedW/allWords.length*100):0;
+box.innerHTML=`<div class="stat-row"><span>Total taps</span><b>${total}</b></div><div class="stat-row"><span>Unique words</span><b>${Object.keys(usage).length}</b></div><div class="stat-row"><span>Coverage</span><b>${pct}%</b></div>${sorted.map(([w,c])=>`<div class="stat-row"><span>${w}</span><b>${c}×</b></div>`).join('')}`}
 
 // === CUSTOM WORDS ===
 function renderCWList(){const el=document.getElementById('cwList');if(!customWords.length){el.innerHTML='<p style="font-size:.75em;opacity:.5">No custom words yet</p>';return}el.innerHTML=customWords.map((c,i)=>`<div class="cw-item"><span>${c.w}</span><button class="dn" onclick="delCW(${i})" style="padding:2px 8px;font-size:.7em">✕</button></div>`).join('')}
@@ -487,7 +459,7 @@ function openQP(){const g=document.getElementById('qpGrid');g.innerHTML=QP.map((
 function sayPhrase(p){speak(p);closeOv('qpOv')}
 
 // === TUTORIAL ===
-const TUT=[{e:'🗣️',h:'Welcome to My Buddy!',p:'Tap any word to hear it spoken. Build your child\'s language one word at a time.'},{e:'📝',h:'Build Sentences',p:'Tap multiple words to build a sentence. Then press SPEAK to say it all together.'},{e:'⚙️',h:'Parents: Settings',p:'Tap ⚙️ to adjust voice, grid size, vocabulary level, and add custom words. Default PIN: 1234'}];
+const TUT=[{e:'🗣️',h:'Welcome to My Buddy!',p:'Tap any word to hear it spoken. Build your child\'s language one word at a time.'},{e:'📝',h:'Build Sentences',p:'Tap multiple words to build a sentence. Then press SPEAK to say it all together.'},{e:'⚙️',h:'Parents: Settings',p:'Tap ⚙️ to adjust voice, speed, and add custom words. Default PIN: 1234'}];
 let tutStep=0;
 function showTut(){tutStep=0;rTut();document.getElementById('tutOv').style.display='flex'}
 function rTut(){const s=TUT[tutStep];document.getElementById('tutE').textContent=s.e;document.getElementById('tutH').textContent=s.h;document.getElementById('tutP').textContent=s.p;document.getElementById('tutD').innerHTML=TUT.map((_,i)=>`<div class="tut-d ${i===tutStep?'on':''}"></div>`).join('');document.getElementById('tutBtn').textContent=tutStep===TUT.length-1?"Got it! 🚀":"Next"}
@@ -496,9 +468,10 @@ function tutNext(){if(tutStep<TUT.length-1){tutStep++;rTut()}else{document.getEl
 // === INIT ===
 function init(){
 const tutDone=load();
+const ptBtn=document.getElementById('phoneToggle');if(ptBtn){ptBtn.textContent=phoneMode?'FULL':'SIMPLE';if(phoneMode)ptBtn.classList.add('active')}
 document.getElementById('pinPad').innerHTML=['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>k===''?'<button class="nk empty"></button>':k==='⌫'?`<button class="nk" onclick="pinKey('⌫')">⌫</button>`:`<button class="nk" onclick="pinKey('${k}')">${k}</button>`).join('');
 render();renderRec();
-window.addEventListener('resize',()=>{render();});
+window.addEventListener('resize',render);
 speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=populateVoices;
 setTimeout(()=>{const sp=document.getElementById('splash');sp.classList.add('gone');setTimeout(()=>{sp.remove();if(!tutDone)showTut()},500)},800);
 }
