@@ -47,8 +47,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 #backBtn{display:none;background:#2a9d8f;color:#fff;border:none;border-radius:0;padding:8px 16px;font-size:14px;font-weight:800;cursor:pointer;flex-shrink:0;width:100%;text-align:left}
 #gear{position:fixed;bottom:4px;right:4px;z-index:20;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;color:#999}
 #recToggle{position:fixed;bottom:4px;left:4px;z-index:20;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;color:#999}
-#phoneToggle{background:#555;font-size:9px;font-weight:800;padding:0 6px;color:#fff;letter-spacing:.5px}
-#phoneToggle.active{background:#2a9d8f;color:#fff}
+#phoneToggle{background:#264653;border:1px solid #2a9d8f;border-radius:4px;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;cursor:pointer;flex-shrink:0;white-space:nowrap;margin-left:auto;line-height:1.2;text-align:center}
+#phoneToggle:active{opacity:.7}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:none;align-items:center;justify-content:center;padding:10px}
 .ov.open{display:flex}
 .md{background:#2d3748;border-radius:14px;padding:16px;max-width:380px;width:100%;max-height:85vh;overflow-y:auto;color:#e2e8f0}
@@ -95,7 +95,6 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="sb" id="bClr" onclick="sClr()">✕</button>
 <button class="sb" id="bSpk" onclick="sSpk()">SPEAK</button>
 <button class="sb" id="bQP" onclick="openQP()"><span style="font-size:12px;line-height:1">⚡<br><span style="font-size:7px;font-weight:700">QUICK</span></span></button>
-<button class="sb" id="phoneToggle" onclick="togglePhone()">FULL</button>
 <button class="sb" id="bEdit" onclick="toggleEditMode()">MENU</button>
 </div>
 
@@ -104,8 +103,10 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="ib" onclick="sayInfo('address')"><span class="ib-icon">🏠</span>Address</button>
 <button class="ib" onclick="sayInfo('phone')"><span class="ib-icon">📱</span>Parent phone</button>
 <button class="ib" onclick="sayInfo('school')"><span class="ib-icon">🏫</span>School</button>
+<button class="ib" onclick="sayInfo('state')"><span class="ib-icon">🏛️</span>State</button>
 <button class="ib" onclick="sayInfo('city')"><span class="ib-icon">📍</span>City</button>
 <button class="ib" onclick="sayInfo('emergency')"><span class="ib-icon">🚨</span>Emergency</button>
+<button id="phoneToggle" onclick="togglePhone()">FULL<br><span style="font-size:7px;opacity:.7">VIEW</span></button>
 </div>
 <button id="backBtn" onclick="goHome()">← Back</button>
 <div id="recentsBar"></div>
@@ -133,7 +134,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <h3>🚨 My Info (Safety)</h3>
 <label>Child's Name</label><input type="text" id="infoName" placeholder="e.g. Alex" onchange="saveInfo()">
 <label>Home Address</label><input type="text" id="infoAddr" placeholder="e.g. 123 Main St" onchange="saveInfo()">
-<label>City</label><input type="text" id="infoCity" placeholder="e.g. Prescott, AZ" onchange="saveInfo()">
+<label>State</label><input type="text" id="infoState" placeholder="e.g. Arizona" onchange="saveInfo()">
+<label>City</label><input type="text" id="infoCity" placeholder="e.g. Prescott" onchange="saveInfo()">
 <label>School</label><input type="text" id="infoSchool" placeholder="e.g. Lincoln Elementary" onchange="saveInfo()">
 <label>Parent Phone</label><input type="text" id="infoPhone" placeholder="e.g. 555-123-4567" onchange="saveInfo()">
 <label>Emergency Info</label><input type="text" id="infoEmergency" placeholder="e.g. Allergies: dairy, wheat" onchange="saveInfo()">
@@ -275,7 +277,7 @@ const PRONOUNS=[
 {w:'she',i:6624,t:'prow_c',conj:v=>{if(v==='go')return'goes';if(v==='do')return'does';if(v==='have')return'has';if(v.endsWith('ch')||v.endsWith('sh')||v.endsWith('x')||v.endsWith('ss'))return v+'es';return v+'s'}},
 {w:'it',i:31670,t:'prow_d',conj:v=>{if(v==='go')return'goes';if(v==='do')return'does';if(v==='have')return'has';if(v.endsWith('ch')||v.endsWith('sh')||v.endsWith('x')||v.endsWith('ss'))return v+'es';return v+'s'}}
 ];
-let myInfo={name:'',address:'',city:'',school:'',phone:'',emergency:''};
+let myInfo={name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};
 let editMode=false,editTarget=null,editPhotoData=null,cellOverrides={};
 
 // === EDIT MODE ===
@@ -343,6 +345,7 @@ save();closeOv('editOv');render();
 function saveInfo(){
 myInfo.name=document.getElementById('infoName').value;
 myInfo.address=document.getElementById('infoAddr').value;
+myInfo.state=document.getElementById('infoState').value;
 myInfo.city=document.getElementById('infoCity').value;
 myInfo.school=document.getElementById('infoSchool').value;
 myInfo.phone=document.getElementById('infoPhone').value;
@@ -352,6 +355,7 @@ save();
 function loadInfo(){
 document.getElementById('infoName').value=myInfo.name||'';
 document.getElementById('infoAddr').value=myInfo.address||'';
+document.getElementById('infoState').value=myInfo.state||'';
 document.getElementById('infoCity').value=myInfo.city||'';
 document.getElementById('infoSchool').value=myInfo.school||'';
 document.getElementById('infoPhone').value=myInfo.phone||'';
@@ -361,6 +365,7 @@ function sayInfo(field){
 const phrases={
 name: myInfo.name ? 'My name is '+myInfo.name : 'My name is not set yet',
 address: myInfo.address ? 'I live at '+myInfo.address : 'My address is not set yet',
+state: myInfo.state ? 'I live in '+myInfo.state : 'My state is not set yet',
 city: myInfo.city ? 'I live in '+myInfo.city : 'My city is not set yet',
 school: myInfo.school ? 'I go to '+myInfo.school : 'My school is not set yet',
 phone: myInfo.phone ? 'Call my parent at '+myInfo.phone.split('').join(' ') : 'Parent phone is not set yet',
@@ -375,7 +380,7 @@ speak(text);
 }
 
 function save(){try{localStorage.setItem(SK,JSON.stringify({SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,phoneMode,tutDone:true}))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=d.SP||.9;VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;return d.tutDone}catch(e){return false}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=d.SP||.9;VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;return d.tutDone}catch(e){return false}}
 
 function speak(text){text=(text+'').toLowerCase();if(!text)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=SP;if(VU){const v=speechSynthesis.getVoices().find(v=>v.voiceURI===VU);if(v)u.voice=v}speechSynthesis.speak(u)}
 function addWord(w,i){if(spellBuf){const sw=spellBuf.trim();if(sw){sentence.push({w:sw,i:0});speak(sw)}spellBuf=''}sentence.push({w,i});rStrip();speak(w);if(!MM){usage[w]=(usage[w]||0)+1;recents=recents.filter(r=>r.w!==w);recents.unshift({w,i});if(recents.length>20)recents.length=20}save();renderRec()}
@@ -493,7 +498,7 @@ function goHome(){curView='home';const w=spellBuf.trim();if(w){sentence.push({w,
 // === RECENTS ===
 function renderRec(){const rb=document.getElementById('recentsBar');if(!showRec){rb.style.display='none';return}rb.style.display='flex';rb.innerHTML='';recents.slice(0,8).forEach(s=>{const d=document.createElement('div');d.className='rc';d.innerHTML=`<img src="${IM(s.i)}" style="${isMul(IM(s.i))?'':'filter:brightness(0) invert(1)'}" onerror="this.style.display='none'"><span>${s.w}</span>`;d.onclick=()=>addWord(s.w,s.i);rb.appendChild(d)})}
 function toggleRec(){showRec=!showRec;renderRec()}
-function togglePhone(){phoneMode=!phoneMode;const btn=document.getElementById('phoneToggle');btn.textContent=phoneMode?'FULL':'SIMPLE';if(phoneMode)btn.classList.add('active');else btn.classList.remove('active');save();if(curView==='home')render()}
+function togglePhone(){phoneMode=!phoneMode;const btn=document.getElementById('phoneToggle');btn.innerHTML=phoneMode?'FULL<br><span style="font-size:7px;opacity:.7">VIEW</span>':'SIMPLE<br><span style="font-size:7px;opacity:.7">VIEW</span>';save();if(curView==='home')render()}
 
 // === PIN ===
 let pinBuf='';
@@ -592,7 +597,7 @@ if(sorted[0].t!=='prow_a'||sorted[12].t!=='prow_b'||sorted[24].t!=='prow_c'||sor
 console.error('ROW ORDER VIOLATION: Pronoun rows must be p:0-47. Someone changed the p: values. Fix immediately.');
 }
 const tutDone=load();
-const ptBtn=document.getElementById('phoneToggle');if(ptBtn){ptBtn.textContent=phoneMode?'FULL':'SIMPLE';if(phoneMode)ptBtn.classList.add('active')}
+const ptBtn=document.getElementById('phoneToggle');if(ptBtn){ptBtn.innerHTML=phoneMode?'FULL<br><span style="font-size:7px;opacity:.7">VIEW</span>':'SIMPLE<br><span style="font-size:7px;opacity:.7">VIEW</span>'}
 document.getElementById('pinPad').innerHTML=['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>k===''?'<button class="nk empty"></button>':k==='⌫'?`<button class="nk" onclick="pinKey('⌫')">⌫</button>`:`<button class="nk" onclick="pinKey('${k}')">${k}</button>`).join('');
 render();renderRec();
 window.addEventListener('resize',render);
