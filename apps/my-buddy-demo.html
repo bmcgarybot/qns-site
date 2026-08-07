@@ -100,11 +100,11 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 
 <div id="infoBar">
 <button class="ib" onclick="sayInfo('name')"><span class="ib-icon">👤</span>My name</button>
+<button class="ib" onclick="sayInfo('phone')"><span class="ib-icon">📱</span>My phone</button>
 <button class="ib" onclick="sayInfo('address')"><span class="ib-icon">🏠</span>Address</button>
-<button class="ib" onclick="sayInfo('phone')"><span class="ib-icon">📱</span>Parent phone</button>
-<button class="ib" onclick="sayInfo('school')"><span class="ib-icon">🏫</span>School</button>
-<button class="ib" onclick="sayInfo('state')"><span class="ib-icon">🏛️</span>State</button>
 <button class="ib" onclick="sayInfo('city')"><span class="ib-icon">📍</span>City</button>
+<button class="ib" onclick="sayInfo('state')"><span class="ib-icon">🏛️</span>State</button>
+<button class="ib" onclick="sayInfo('school')"><span class="ib-icon">🏫</span>School</button>
 <button class="ib" onclick="sayInfo('emergency')"><span class="ib-icon">🚨</span>Emergency</button>
 <button id="phoneToggle" onclick="togglePhone()">FULL<br><span style="font-size:7px;opacity:.7">VIEW</span></button>
 </div>
@@ -137,7 +137,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <label>State</label><input type="text" id="infoState" placeholder="e.g. Arizona" onchange="saveInfo()">
 <label>City</label><input type="text" id="infoCity" placeholder="e.g. Prescott" onchange="saveInfo()">
 <label>School</label><input type="text" id="infoSchool" placeholder="e.g. Lincoln Elementary" onchange="saveInfo()">
-<label>Parent Phone</label><input type="text" id="infoPhone" placeholder="e.g. 555-123-4567" onchange="saveInfo()">
+<label>My Phone</label><input type="text" id="infoPhone" placeholder="e.g. 555-123-4567" onchange="saveInfo()">
 <label>Emergency Info</label><input type="text" id="infoEmergency" placeholder="e.g. Allergies: dairy, wheat" onchange="saveInfo()">
 <hr style="border-color:#444;margin:10px 0">
 <h3>📊 Progress</h3>
@@ -368,7 +368,7 @@ address: myInfo.address ? 'I live at '+myInfo.address : 'My address is not set y
 state: myInfo.state ? 'I live in '+myInfo.state : 'My state is not set yet',
 city: myInfo.city ? 'I live in '+myInfo.city : 'My city is not set yet',
 school: myInfo.school ? 'I go to '+myInfo.school : 'My school is not set yet',
-phone: myInfo.phone ? 'Call my parent at '+myInfo.phone.split('').join(' ') : 'Parent phone is not set yet',
+phone: myInfo.phone ? 'My phone number is '+myInfo.phone.split('').join(' ') : 'My phone number is not set yet',
 emergency: myInfo.emergency ? myInfo.emergency : 'No emergency info set'
 };
 const text=phrases[field]||'';
