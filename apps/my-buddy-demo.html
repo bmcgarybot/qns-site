@@ -432,7 +432,7 @@ const d=document.createElement('div');
 d.className='c '+pn.t;
 const pnSrc=IM(pn.i);
 d.innerHTML=`<img src="${pnSrc}" style="${isMul(pnSrc)?'background:rgba(255,255,255,0.85);border-radius:6px;padding:1px;':'filter:brightness(0) invert(1);'}" onerror="this.style.filter='';this.onerror=null"><div class="lb">${pn.w}</div>`;
-d.onclick=()=>{addWord(pn.w,pn.i);d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300)};
+d.onclick=()=>{addWord(pn.w,pn.i);d.classList.add('pulse');setTimeout(()=>{d.classList.remove('pulse');goHome()},300)};
 b.appendChild(d);
 }else{
 const empty=document.createElement('div');empty.style.visibility='hidden';b.appendChild(empty);
