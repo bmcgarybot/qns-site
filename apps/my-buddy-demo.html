@@ -95,6 +95,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="sb" id="bClr" onclick="sClr()">✕</button>
 <button class="sb" id="bSpk" onclick="sSpk()">SPEAK</button>
 <button class="sb" id="bQP" onclick="openQP()"><span style="font-size:12px;line-height:1">⚡<br><span style="font-size:7px;font-weight:700">QUICK</span></span></button>
+<button class="sb" id="bFind" onclick="openFinder()" title="Find where a word lives">FIND</button>
 <button class="sb" id="bEdit" onclick="toggleEditMode()">MENU</button>
 </div>
 
@@ -230,13 +231,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
  * ████████████████████████████████████████████████████████
  */
 const V=[
-{w:"I",t:"prow_a",i:6632,p:0,cat:"pn_I"},{w:"we",t:"prow_a",i:36263,p:1,cat:"pn_we"},{w:"want",t:"prow_a",i:5441,p:2},{w:"like",t:"prow_a",i:37826,p:3},{w:"go",t:"prow_a",i:8142,p:4},{w:"help",t:"prow_a",i:32648,p:5},{w:"is",t:"prow_a",i:36260,p:6},{w:"on",t:"prow_a",i:8014,p:7},{w:"in",t:"prow_a",i:8015,p:8},{w:"up",t:"prow_a",i:5469,p:9},{w:"down",t:"prow_a",i:5468,p:10},{w:"out",t:"prow_a",i:5287,p:11},
-{w:"you",t:"prow_b",i:6625,p:12,cat:"pn_you"},{w:"they",t:"prow_b",i:36264,p:13,cat:"pn_they"},{w:"play",t:"prow_b",i:23392,p:14},{w:"eat",t:"prow_b",i:6456,p:15},{w:"drink",t:"prow_b",i:6061,p:16},{w:"look",t:"prow_b",i:6872,p:17},{w:"come",t:"prow_b",i:6857,p:18},{w:"give",t:"prow_b",i:10044,p:19},{w:"do",t:"prow_b",svgName:"do",p:20},{w:"can",t:"prow_b",i:9124,p:21},{w:"+ed",t:"prow_b",svgName:"plus_ed",p:22},{w:"again",t:"prow_b",i:6952,p:23},
-{w:"he",t:"prow_c",i:6623,p:24,cat:"pn_he"},{w:"she",t:"prow_c",i:6624,p:25,cat:"pn_she"},{w:"make",t:"prow_c",i:9403,p:26},{w:"get",t:"prow_c",i:36512,p:27},{w:"put",t:"prow_c",i:5335,p:28},{w:"open",t:"prow_c",i:24825,p:29},{w:"turn",t:"prow_c",i:28485,p:30},{w:"read",t:"prow_c",i:6408,p:31},{w:"sit",t:"prow_c",i:5553,p:32},{w:"walk",t:"prow_c",i:6107,p:33},{w:"run",t:"prow_c",i:6108,p:34},{w:"off",t:"prow_c",i:37236,p:35},
-{w:"it",t:"prow_d",i:31670,p:36,cat:"pn_it"},{w:"sleep",t:"prow_d",i:2436,p:37},{w:"wash",t:"prow_d",i:3204,p:38},{w:"hug",t:"prow_d",i:37824,p:39},{w:"love",t:"prow_d",svgName:"love",p:40},{w:"happy",t:"prow_d",i:35533,p:41},{w:"sad",t:"prow_d",i:35535,p:42},{w:"angry",t:"prow_d",i:35534,p:43},{w:"scared",t:"prow_d",i:35536,p:44},{w:"tired",t:"prow_d",i:35537,p:45},{w:"+er",t:"prow_d",svgName:"plus_er",p:46},{w:"+est",t:"prow_d",svgName:"plus_est",p:47},
-{w:"yes",t:"resp",i:5584,p:48},{w:"no",t:"resp",svgName:"no",p:49},{w:"good",t:"resp",i:7040,p:50},{w:"bad",t:"resp",i:7041,p:51},{w:"more",t:"resp",i:5508,p:52},{w:"some",t:"resp",i:24971,p:53},{w:"all done",t:"resp",i:28429,p:54},{w:"stop",t:"resp",svgName:"stop",p:55},{w:"big",t:"resp",i:2466,p:56},{w:"little",t:"resp",i:2467,p:57},{w:"hot",t:"resp",i:2485,p:58},{w:"cold",t:"resp",i:2486,p:59},
-{w:"my",t:"social",i:12264,p:60},{w:"please",t:"social",i:5324,p:61},{w:"thank you",t:"social",i:5336,p:62},{w:"sorry",t:"social",i:7220,p:63},{w:"what",t:"social",i:5345,p:64},{w:"where",t:"social",i:5346,p:65},{w:"who",t:"social",i:5344,p:66},{w:"here",t:"social",i:5382,p:67},{w:"that",t:"social",i:6906,p:68},{w:"not",t:"social",i:5526,p:69},{w:"+s",t:"social",svgName:"plus_s",p:70},{w:"+ing",t:"social",svgName:"plus_ing",p:71},
-{w:"CLEAR",t:"util",i:0,p:72},{w:"food",t:"folder",i:2452,p:73,cat:"food"},{w:"people",t:"folder",i:7093,p:74,cat:"people"},{w:"feelings",t:"folder",svgName:"feelings",p:75,cat:"feelings"},{w:"places",t:"folder",i:36858,p:76,cat:"places"},{w:"animals",t:"folder",i:2464,p:77,cat:"animals"},{w:"things",t:"folder",i:37011,p:78,cat:"things"},{w:"colors",t:"folder",i:38760,p:79,cat:"colors"},{w:"body",t:"folder",i:2490,p:80,cat:"body"},{w:"clothes",t:"folder",i:2509,p:81,cat:"clothes"},{w:"my words",t:"folder",svgName:"spk_word",p:82,cat:"custom"},{w:"ABC",t:"folder",i:99998,p:83,cat:"spell"}
+{w:"yes",t:"resp",i:5584,p:0},{w:"more",t:"resp",i:5508,p:1},{w:"good",t:"resp",i:7040,p:2},{w:"big",t:"resp",i:2466,p:3},{w:"hot",t:"resp",i:2485,p:4},{w:"some",t:"resp",i:24971,p:5},{w:"all done",t:"resp",i:28429,p:6},{w:"little",t:"resp",i:2467,p:7},{w:"bad",t:"resp",i:7041,p:8},{w:"no",t:"resp",svgName:"no",p:9},{w:"stop",t:"resp",svgName:"stop",p:10},{w:"cold",t:"resp",i:2486,p:11},{w:"my",t:"social",i:12264,p:12},{w:"please",t:"social",i:5324,p:13},{w:"thank you",t:"social",i:5336,p:14},{w:"sorry",t:"social",i:7220,p:15},{w:"what",t:"social",i:5345,p:16},{w:"where",t:"social",i:5346,p:17},{w:"who",t:"social",i:5344,p:18},{w:"when",t:"social",svgName:"when",p:19},{w:"why",t:"social",svgName:"why",p:20},{w:"how",t:"social",svgName:"how",p:21},{w:"+s",t:"social",svgName:"plus_s",p:22},{w:"+ing",t:"social",svgName:"plus_ing",p:23},{w:"I",t:"prow_a",i:6632,cat:"pn_I",p:24},{w:"we",t:"prow_a",i:36263,cat:"prow_a",p:25},{w:"want",t:"prow_a",i:5441,p:26},{w:"like",t:"prow_a",i:37826,p:27},{w:"go",t:"prow_a",i:8142,p:28},{w:"help",t:"prow_a",i:32648,p:29},{w:"is",t:"prow_a",i:36260,p:30},{w:"on",t:"prow_a",i:8014,p:31},{w:"in",t:"prow_a",i:8015,p:32},{w:"up",t:"prow_a",i:5469,p:33},{w:"feel",t:"prow_a",svgName:"feel",p:34},{w:"here",t:"prow_a",i:5382,p:35},{w:"you",t:"prow_b",i:6625,cat:"prow_b",p:36},{w:"they",t:"prow_b",i:36264,cat:"prow_b",p:37},{w:"play",t:"prow_b",i:23392,p:38},{w:"eat",t:"prow_b",i:6456,p:39},{w:"drink",t:"prow_b",i:6061,p:40},{w:"look",t:"prow_b",i:6872,p:41},{w:"come",t:"prow_b",i:6857,p:42},{w:"give",t:"prow_b",i:10044,p:43},{w:"do",t:"prow_b",svgName:"do",p:44},{w:"can",t:"prow_b",i:9124,p:45},{w:"+ed",t:"prow_b",svgName:"plus_ed",p:46},{w:"again",t:"prow_b",i:6952,p:47},{w:"he",t:"prow_c",i:6623,cat:"prow_c",p:48},{w:"she",t:"prow_c",i:6624,cat:"prow_c",p:49},{w:"make",t:"prow_c",i:9403,p:50},{w:"get",t:"prow_c",i:36512,p:51},{w:"put",t:"prow_c",i:5335,p:52},{w:"open",t:"prow_c",i:24825,p:53},{w:"turn",t:"prow_c",i:28485,p:54},{w:"read",t:"prow_c",i:6408,p:55},{w:"sit",t:"prow_c",i:5553,p:56},{w:"walk",t:"prow_c",i:6107,p:57},{w:"run",t:"prow_c",i:6108,p:58},{w:"down",t:"prow_c",i:5468,p:59},{w:"it",t:"prow_d",i:31670,cat:"prow_d",p:60},{w:"sleep",t:"prow_d",i:2436,p:61},{w:"wash",t:"prow_d",i:3204,p:62},{w:"hug",t:"prow_d",i:37824,p:63},{w:"love",t:"prow_d",svgName:"love",p:64},{w:"happy",t:"prow_d",i:35533,p:65},{w:"not",t:"prow_d",i:5526,p:66},{w:"out",t:"prow_d",i:5287,p:67},{w:"off",t:"prow_d",i:37236,p:68},{w:"sad",t:"prow_d",i:35535,p:69},{w:"+er",t:"prow_d",svgName:"plus_er",p:70},{w:"+est",t:"prow_d",svgName:"plus_est",p:71},{w:"CLEAR",t:"folder",i:0,p:72},{w:"food",t:"folder",i:2452,cat:"folder",p:73},{w:"people",t:"folder",i:7093,cat:"folder",p:74},{w:"feelings",t:"folder",svgName:"feelings",cat:"folder",p:75},{w:"places",t:"folder",i:36858,cat:"folder",p:76},{w:"animals",t:"folder",i:2464,cat:"folder",p:77},{w:"things",t:"folder",i:37011,cat:"folder",p:78},{w:"colors",t:"folder",i:38760,cat:"folder",p:79},{w:"body",t:"folder",i:2490,cat:"folder",p:80},{w:"clothes",t:"folder",i:2509,cat:"folder",p:81},{w:"my words",t:"folder",svgName:"spk_word",cat:"folder",p:82},{w:"ABC",t:"folder",i:99998,cat:"folder",p:83}
 ];
 
 const SPELL_KEYS=[
@@ -247,7 +242,7 @@ const SPELL_KEYS=[
 const FR={
 food:[["water","water"],["milk","milk"],["juice","juice"],["apple","apple"],["banana","banana"],["cookie","cookie"],["bread","bread"],["cheese","cheese"],["chicken","chicken"],["rice","rice"],["pizza","pizza"],["ice cream","ice_cream"],["cereal","cereal"],["soup","soup"],["crackers","crackers"],["yogurt","yogurt"],["eggs","eggs"],["fries","fries"],["grapes","grapes"],["strawberry","strawberry"],["sandwich","sandwich"],["cake","cake"],["candy","candy"],["popcorn","popcorn"],["hot dog","hot_dog"]],
 people:[["mom","mom"],["dad","dad"],["brother","brother"],["sister","sister"],["baby","baby"],["teacher","teacher"],["friend","friend"],["doctor","doctor"],["grandma","grandma"],["grandpa","grandpa"],["family","family"],["boy","boy"],["girl","girl"]],
-feelings:[["happy","happy"],["sad","sad"],["angry","angry"],["scared","scared"],["tired","tired"],["hurt","hurt"],["sick","sick"],["funny","funny"],["excited","excited"],["calm","calm"],["bored","bored"],["nervous","nervous"],["proud","proud"],["love","love"],["confused","confused"]],
+feelings:[["angry","angry"],["scared","scared"],["tired","tired"],["happy","happy"],["sad","sad"],["angry","angry"],["scared","scared"],["tired","tired"],["hurt","hurt"],["sick","sick"],["funny","funny"],["excited","excited"],["calm","calm"],["bored","bored"],["nervous","nervous"],["proud","proud"],["love","love"],["confused","confused"]],
 places:[["home","home"],["school","school"],["bathroom","bathroom"],["outside","outside"],["car","car"],["park","park"],["store","store"],["kitchen","kitchen"],["bedroom","bedroom"]],
 animals:[["dog","dog"],["cat","cat"],["fish","fish"],["bird","bird"],["horse","horse"],["bunny","bunny"],["bear","bear"],["turtle","turtle"],["duck","duck"],["elephant","elephant"],["lion","lion"],["monkey","monkey"],["cow","cow"],["pig","pig"],["frog","frog"]],
 things:[["toy","toy"],["book","book_g"],["ball","ball"],["phone","phone"],["blanket","blanket"],["shoes","shoes"],["cup","cup"],["door","door"],["light","light"],["music","music"]],
@@ -269,6 +264,13 @@ const FRM={'angry':'symbols/mulberry/angry_man.svg','apple':'symbols/mulberry/ap
 const SYM={2436:'symbols/mulberry/sleep_male_,_to.svg',2452:'symbols/mulberry/food.svg',2464:'symbols/mulberry/paw.svg',2466:'symbols/mulberry/large.svg',2467:'symbols/mulberry/little.svg',2485:'symbols/mulberry/hot.svg',2486:'symbols/mulberry/snow.svg',2490:'symbols/mulberry/body_outline.svg',2509:'symbols/mulberry/clothes_generic.svg',3204:'symbols/mulberry/wash_hands_,_to.svg',5287:'symbols/mulberry/out.svg',5324:'symbols/mybuddy/please.svg',5335:'symbols/mulberry/put_,_to.svg',5336:'symbols/mybuddy/thank_you.svg',5344:'symbols/mulberry/who.svg',5345:'symbols/mulberry/what.svg',5346:'symbols/mulberry/where.svg',5373:'symbols/mulberry/wait_,_to.svg',5382:'symbols/mybuddy/here.svg',5441:'symbols/mulberry/want_,_to.svg',5468:'symbols/mulberry/down.svg',5469:'symbols/mulberry/up.svg',5508:'symbols/mulberry/more.svg',5526:'symbols/mulberry/mistake_no_wrong.svg',5553:'symbols/mulberry/sit_,_to.svg',5584:'symbols/mulberry/correct.svg',6061:'symbols/mulberry/drink_,_to.svg',6107:'symbols/mulberry/walk_,_to.svg',6108:'symbols/mulberry/run_,_to.svg',6408:'symbols/mulberry/talk_2_,_to.svg',6408:'symbols/mulberry/read_book_,_to.svg',6456:'symbols/mulberry/eat_,_to.svg',6623:'symbols/mybuddy/he.svg',6624:'symbols/mybuddy/she.svg',6625:'symbols/mybuddy/you.svg',6632:'symbols/mulberry/I.svg',6857:'symbols/mulberry/come_,_to.svg',6872:'symbols/mulberry/look_,_to.svg',6872:'symbols/mulberry/look_,_to.svg',6906:'symbols/mybuddy/that.svg',6952:'symbols/mybuddy/again.svg',7040:'symbols/mulberry/good.svg',7041:'symbols/mulberry/bad.svg',7074:'symbols/mulberry/headache.svg',7086:'symbols/mulberry/headache.svg',7093:'symbols/mulberry/family_2.svg',7196:'symbols/mybuddy/stop.svg',7220:'symbols/mybuddy/sorry.svg',8014:'symbols/mulberry/on.svg',8015:'symbols/mulberry/in.svg',8142:'symbols/mulberry/go_,_to.svg',9124:'symbols/mybuddy/can.svg',9261:'symbols/mulberry/hear_,_to.svg',9403:'symbols/mulberry/make_,_to.svg',10044:'symbols/mulberry/give_,_to.svg',12264:'symbols/mybuddy/my.svg',23392:'symbols/mulberry/play_,_to.svg',24825:'symbols/mulberry/open_,_to.svg',24971:'symbols/mulberry/some.svg',28429:'symbols/mulberry/finish.svg',28485:'symbols/mulberry/turn_,_to.svg',31670:'symbols/mybuddy/it.svg',32648:'symbols/mulberry/help_,_to.svg',35533:'symbols/mybuddy/feelings.svg',35533:'symbols/mulberry/happy_man.svg',35534:'symbols/mulberry/angry_man.svg',35535:'symbols/mulberry/sad_man.svg',35536:'symbols/mulberry/afraid_man.svg',35537:'symbols/mulberry/yawn_,_to.svg',36260:'symbols/mybuddy/is.svg',36263:'symbols/mybuddy/we.svg',36264:'symbols/mybuddy/they.svg',36512:'symbols/mybuddy/do.svg',36512:'symbols/mulberry/get_,_to.svg',36858:'symbols/mulberry/point_,_to.svg',37011:'symbols/mulberry/place_setting.svg',37236:'symbols/mulberry/off.svg',37824:'symbols/mulberry/hug_,_to.svg',37826:'symbols/mulberry/thumb.svg',38760:'symbols/mulberry/colour.svg',99998:'symbols/mulberry/computer_keyboard.svg'};
 const IM=p=>SYM[p]||FRM[p]||'symbols/mybuddy/'+p+'.svg';
 const isMul=s=>s&&s.includes('/mulberry/');
+
+// Every word keeps the SAME grid position everywhere it appears. Opening a
+// pronoun must not rearrange the board: "want" has to sit in the exact cell
+// it occupies on Home, or the child is learning two motor plans for one word,
+// which defeats the whole point of a fixed layout.
+const HOME_POS={};
+V.forEach(function(c){ HOME_POS[c.w]=c.p; });
 const SK='mb4';
 const isPhone=window.innerWidth<=600;
 let SP=.9,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=isPhone;
@@ -410,10 +412,15 @@ items=getCustom();
 items=getFringe(curView);
 }
 const isHome=(curView==='home');
-const isFringe=!isHome&&curView!=='custom';
+const isPron=curView.indexOf('pn_')===0;
+const isFringe=!isHome&&curView!=='custom'&&!isPron;
 let cols,rows;
 if(isHome&&phoneMode){cols=Math.min(items.length,4);rows=Math.ceil(items.length/cols);
 }else if(isHome){cols=12;rows=7;
+}else if(isPron){
+// Pronoun pages mirror Home exactly: 12x7, and each conjugated phrase sits in
+// the cell its base verb occupies on Home.
+cols=12;rows=7;
 }else if(isFringe){
 const fringeCols=Math.min(items.length,6);
 cols=1+fringeCols;
@@ -423,7 +430,28 @@ b.style.gridTemplateColumns=isFringe?`minmax(0,1fr) repeat(${cols-1},minmax(0,1f
 b.style.gridTemplateRows=`repeat(${rows},1fr)`;
 b.style.overflow='hidden';
 b.innerHTML='';
-if(isFringe){
+if(isPron){
+  // Build a 12x7 board where each phrase occupies its base verb's Home cell.
+  // Everything else stays empty, so the motor path to "want" from "I" is the
+  // same movement as reaching "want" on Home.
+  const slots=new Array(84).fill(null);
+  items.forEach(function(it){
+    const base=it.svgName||it.w;
+    const hp=HOME_POS[base];
+    if(hp!=null&&hp<84&&!slots[hp]){ slots[hp]=it; }
+  });
+  // Anything with no Home counterpart falls into the first free cell so it is
+  // never silently dropped.
+  items.forEach(function(it){
+    if(slots.indexOf(it)!==-1) return;
+    const free=slots.indexOf(null);
+    if(free!==-1) slots[free]=it;
+  });
+  for(let i=0;i<84;i++){
+    if(slots[i]){ renderCell(b,slots[i]); }
+    else{ const e=document.createElement('div'); e.style.visibility='hidden'; b.appendChild(e); }
+  }
+}else if(isFringe){
 const fCols=cols-1;
 for(let r=0;r<rows;r++){
 if(r<PRONOUNS.length){
@@ -499,6 +527,67 @@ return(FR[cat]||[]).map(([w,svgName])=>({w,svgName,i:0,t:catColors[cat]||'resp'}
 function getCustom(){return customWords.map(c=>({w:c.w,i:c.i||0,t:c.t||'resp',photo:c.photo||null}))}
 
 function goHome(){curView='home';const w=spellBuf.trim();if(w){sentence.push({w,i:0});speak(w)}spellBuf='';render();rStrip();document.getElementById('backBtn').style.display='none'}
+
+
+// === WORD FINDER ===
+// Answers "where is that word?" for a communication partner without changing
+// anything on the board. It navigates to the word and highlights the cell, so
+// the motor path is taught rather than just the answer given.
+function buildWordIndex(){
+  const idx=[];
+  V.forEach(function(c){
+    if(c.t==='folder'||c.w==='CLEAR') return;
+    idx.push({w:c.w, where:'Home', view:'home', pos:c.p});
+  });
+  Object.keys(FR).forEach(function(cat){
+    (FR[cat]||[]).forEach(function(pair){
+      idx.push({w:pair[0], where:(cat.indexOf('pn_')===0?cat.slice(3):cat), view:cat, pos:null});
+    });
+  });
+  return idx;
+}
+
+function openFinder(){
+  document.getElementById('finderModal').style.display='flex';
+  const inp=document.getElementById('finderInput');
+  inp.value=''; document.getElementById('finderResults').innerHTML='';
+  setTimeout(function(){ inp.focus(); },50);
+}
+function closeFinder(){ document.getElementById('finderModal').style.display='none'; }
+
+function runFinder(){
+  const q=document.getElementById('finderInput').value.trim().toLowerCase();
+  const box=document.getElementById('finderResults');
+  if(!q){ box.innerHTML=''; return; }
+  const hits=buildWordIndex().filter(function(e){ return e.w.toLowerCase().indexOf(q)!==-1; }).slice(0,40);
+  if(!hits.length){ box.innerHTML='<div style="padding:10px;opacity:.7;">No match for "'+q+'".</div>'; return; }
+  box.innerHTML=hits.map(function(h,n){
+    return '<div class="find-hit" data-n="'+n+'" style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.12);cursor:pointer;">'
+      +'<b>'+h.w+'</b> <span style="opacity:.65;font-size:.85em;">in '+h.where+'</span></div>';
+  }).join('');
+  Array.prototype.forEach.call(box.querySelectorAll('.find-hit'),function(el){
+    el.onclick=function(){ gotoWord(hits[parseInt(el.dataset.n,10)]); };
+  });
+}
+
+function gotoWord(hit){
+  closeFinder();
+  curView=hit.view; render();
+  document.getElementById('backBtn').style.display=(hit.view==='home'?'none':'');
+  setTimeout(function(){
+    const cells=document.querySelectorAll('#board .c');
+    for(let i=0;i<cells.length;i++){
+      const lb=cells[i].querySelector('.lb');
+      if(lb&&lb.textContent.trim().toLowerCase()===hit.w.toLowerCase()){
+        cells[i].style.outline='4px solid #ffd166';
+        cells[i].style.outlineOffset='-4px';
+        cells[i].scrollIntoView({block:'center',behavior:'smooth'});
+        setTimeout(function(){ cells[i].style.outline=''; },2600);
+        break;
+      }
+    }
+  },80);
+}
 
 // === RECENTS ===
 function renderRec(){const rb=document.getElementById('recentsBar');if(!showRec){rb.style.display='none';return}rb.style.display='flex';rb.innerHTML='';recents.slice(0,8).forEach(s=>{const d=document.createElement('div');d.className='rc';d.innerHTML=`<img src="${IM(s.i)}" style="${isMul(IM(s.i))?'':'filter:brightness(0) invert(1)'}" onerror="this.style.display='none'"><span>${s.w}</span>`;d.onclick=()=>addWord(s.w,s.i);rb.appendChild(d)})}
@@ -614,4 +703,17 @@ setTimeout(()=>{const sp=document.getElementById('splash');sp.classList.add('gon
 document.body.insertAdjacentHTML('beforeend','<div class="tut-ov" id="tutOv" style="display:none"><div class="tut-card"><div class="tut-emoji" id="tutE"></div><div class="tut-h" id="tutH"></div><div class="tut-p" id="tutP"></div><div class="tut-dots" id="tutD"></div><button class="tut-btn" id="tutBtn" onclick="tutNext()">Next</button></div></div>');
 
 init();
-</script></body></html>
+</script><div id="finderModal" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.65);align-items:center;justify-content:center;">
+ <div style="background:#1b1f2a;border:1px solid #3a4255;border-radius:14px;width:min(520px,92vw);max-height:80vh;display:flex;flex-direction:column;padding:16px;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+   <b style="font-size:1.05rem;">Find a word</b>
+   <button onclick="closeFinder()" style="margin-left:auto;background:#2a3040;color:#fff;border:1px solid #3a4255;border-radius:8px;padding:6px 12px;cursor:pointer;">Close</button>
+  </div>
+  <input id="finderInput" type="text" placeholder="Type a word, e.g. drink"
+    oninput="runFinder()" onkeydown="if(event.key==='Escape')closeFinder()"
+    style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #3a4255;background:#0f131c;color:#fff;font-size:1rem;">
+  <div style="font-size:.8rem;opacity:.6;margin:8px 2px 4px;">Tap a result to jump there and highlight it.</div>
+  <div id="finderResults" style="overflow:auto;border-top:1px solid rgba(255,255,255,.1);"></div>
+ </div>
+</div>
+</body></html>

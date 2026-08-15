@@ -1,10 +1,13 @@
-
-The Mulberry Symbol set
+The Mulberry Symbol Set
 =======================
 
 Copyright 2008-2017 Garry Paxton
-Copyright 2018-2020 Steve Lee
+Copyright 2018-2026 Steve Lee
 
-This work is licensed under the Creative Commons Attribution-Share Alike License. 
+Mulberry Symbols are licensed under the Creative Commons
+Attribution-ShareAlike 2.0 UK: England & Wales License.
 
-To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/
+To view a copy of this license, visit:
+https://creativecommons.org/licenses/by-sa/2.0/uk/
+
+For more information, see: https://mulberrysymbols.org
