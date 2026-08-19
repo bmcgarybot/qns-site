@@ -130,7 +130,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <h3>⚙️ Settings</h3>
 <label>Voice</label><select id="vSel"></select>
 <label>Speed <span id="spV">0.9</span></label><input type="range" id="spR" min=".3" max="1.5" step=".1" value=".9" oninput="SP=+this.value;document.getElementById('spV').textContent=SP.toFixed(1);save()">
-<label>Modeling Mode</label><select id="mmSel" onchange="MM=this.value==='1';document.getElementById('modelBanner').style.display=MM?'block':'none';save()"><option value="0">Off</option><option value="1">On — taps won't count in stats</option></select>
+<label>Modeling Mode</label><select id="mmSel" onchange="MM=this.value==='1';document.getElementById('modelBanner').style.display=MM?'block':'none';save()"><option value="0">Off</option><option value="1">On - taps won't count in stats</option></select>
 <hr style="border-color:#444;margin:10px 0">
 <h3>🚨 My Info (Safety)</h3>
 <label>Child's Name</label><input type="text" id="infoName" placeholder="e.g. Alex" onchange="saveInfo()">
@@ -152,8 +152,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="ca" onclick="closeOv('setOv')">Close</button>
 <hr style="border-color:#444;margin:10px 0">
 <div style="font-size:.65em;opacity:.5;text-align:center;line-height:1.6">
-<p>My Buddy AAC v1.0 — BMC Luminary Ventures LLC</p>
-<p>Mulberry Symbols © 2008–2017 Garry Paxton, 2018–2026 Steve Lee<br>Licensed under <a href="https://creativecommons.org/licenses/by-sa/2.0/uk/" style="color:#2a9d8f" target="_blank">CC BY-SA 2.0 UK</a> — <a href="https://mulberrysymbols.org" style="color:#2a9d8f" target="_blank">mulberrysymbols.org</a></p>
+<p>My Buddy AAC v1.0 - BMC Luminary Ventures LLC</p>
+<p>Mulberry Symbols © 2008-2017 Garry Paxton, 2018-2026 Steve Lee<br>Licensed under <a href="https://creativecommons.org/licenses/by-sa/2.0/uk/" style="color:#2a9d8f" target="_blank">CC BY-SA 2.0 UK</a> - <a href="https://mulberrysymbols.org" style="color:#2a9d8f" target="_blank">mulberrysymbols.org</a></p>
 <p><a href="https://quantumneuroshift.com/apps/my-buddy-privacy.html" style="color:#2a9d8f" target="_blank">Privacy Policy</a></p>
 </div>
 </div></div>
@@ -214,13 +214,13 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 
 <script>
 /*
- * ██████  ROW ORDER IS LOCKED — DO NOT CHANGE  ██████
- * Row 1 (p:0-11):   prow_a  — I/we + verbs (green)
- * Row 2 (p:12-23):  prow_b  — you/they + verbs (yellow)
- * Row 3 (p:24-35):  prow_c  — he/she + verbs (blue)
- * Row 4 (p:36-47):  prow_d  — it + feelings (pink)
- * Row 5 (p:48-59):  resp    — yes/no/descriptors (red)
- * Row 6 (p:60-71):  social  — my/please/grammar (yellow)
+ * ██████  ROW ORDER IS LOCKED - DO NOT CHANGE  ██████
+ * Row 1 (p:0-11):   prow_a - I/we + verbs (green)
+ * Row 2 (p:12-23):  prow_b - you/they + verbs (yellow)
+ * Row 3 (p:24-35):  prow_c - he/she + verbs (blue)
+ * Row 4 (p:36-47):  prow_d - it + feelings (pink)
+ * Row 5 (p:48-59):  resp - yes/no/descriptors (red)
+ * Row 6 (p:60-71):  social - my/please/grammar (yellow)
  * Row 7 (p:72-83):  folders (gray)
  *
  * Pronoun rows ALWAYS come first. This has been reverted
@@ -257,7 +257,7 @@ pn_he:[["he wants","want"],["he likes","like"],["he goes","go"],["he plays","pla
 pn_she:[["she wants","want"],["she likes","like"],["she goes","go"],["she plays","play"],["she eats","eat"],["she looks","look"],["she needs","need"],["she can","can"],["she has","give"],["she is","is"]],
 pn_it:[["it is","is"],["it goes","go"],["it looks","look"],["it has","give"],["it can","can"]]
 };
-// DEFAULT quick phrases — user edits saved to localStorage
+// DEFAULT quick phrases - user edits saved to localStorage
 const QP_DEFAULT=["I need help","I need bathroom","I feel sick","I want more","I don't like that","I'm all done","I love you","I'm hungry","I'm thirsty","I want to go"];
 let quickPhrases=JSON.parse(localStorage.getItem('mybuddy_qp'))||[...QP_DEFAULT];
 const FRM={'angry':'symbols/mulberry/angry_man.svg','apple':'symbols/mulberry/apple.svg','baby':'symbols/mulberry/baby.svg','bad':'symbols/mulberry/bad.svg','ball':'symbols/mulberry/ball.svg','banana':'symbols/mulberry/banana.svg','bathroom':'symbols/mulberry/toilet.svg','bear':'symbols/mulberry/bear.svg','bedroom':'symbols/mulberry/single_bed.svg','big':'symbols/mulberry/large.svg','bird':'symbols/mulberry/bird.svg','blanket':'symbols/mulberry/blanket.svg','body':'symbols/mulberry/body_outline.svg','bread':'symbols/mulberry/bread.svg','brother':'symbols/mulberry/brother.svg','bunny':'symbols/mulberry/rabbit.svg','cake':'symbols/mulberry/cake.svg','calm':'symbols/mulberry/relax_,_to.svg','candy':'symbols/mulberry/sweet.svg','car':'symbols/mulberry/car.svg','cat':'symbols/mulberry/cat.svg','cereal':'symbols/mulberry/cereal.svg','cheese':'symbols/mulberry/cheese.svg','chicken':'symbols/mulberry/chicken.svg','come':'symbols/mulberry/come_,_to.svg','confused':'symbols/mulberry/confused_man.svg','cookie':'symbols/mulberry/biscuit_chocolate_chip.svg','cow':'symbols/mulberry/cow.svg','crackers':'symbols/mulberry/cracker.svg','cup':'symbols/mulberry/mug_2.svg','dad':'symbols/mulberry/dad_parent.svg','diaper':'symbols/mulberry/nappy.svg','doctor':'symbols/mulberry/doctor_1a.svg','dog':'symbols/mulberry/dog.svg','door':'symbols/mulberry/door.svg','down':'symbols/mulberry/down.svg','drink':'symbols/mulberry/drink_,_to.svg','duck':'symbols/mulberry/duck.svg','ears':'symbols/mulberry/ear.svg','eggs':'symbols/mulberry/eggs.svg','elephant':'symbols/mulberry/elephant.svg','excited':'symbols/mulberry/excited_man.svg','eyes':'symbols/mulberry/eyes.svg','family':'symbols/mulberry/family.svg','feet':'symbols/mulberry/feet.svg','fish':'symbols/mulberry/fish.svg','food':'symbols/mulberry/food.svg','friend':'symbols/mulberry/group_work.svg','fries':'symbols/mulberry/chips.svg','frog':'symbols/mulberry/frog.svg','funny':'symbols/mulberry/funny_laugh.svg','get':'symbols/mulberry/get_,_to.svg','give':'symbols/mulberry/give_,_to.svg','go':'symbols/mulberry/go_,_to.svg','good':'symbols/mulberry/good.svg','grandma':'symbols/mulberry/grandmother.svg','grandpa':'symbols/mulberry/grandfather.svg','grapes':'symbols/mulberry/grapes.svg','hand':'symbols/mulberry/right_hand.svg','happy':'symbols/mulberry/happy_man.svg','hat':'symbols/mulberry/hat_-_mans.svg','head':'symbols/mulberry/man_-_face.svg','help':'symbols/mulberry/help_,_to.svg','home':'symbols/mulberry/house.svg','horse':'symbols/mulberry/horse.svg','hot':'symbols/mulberry/hot.svg','hot_dog':'symbols/mulberry/hot_dog.svg','hurt':'symbols/mulberry/headache.svg','i':'symbols/mulberry/I.svg','ice_cream':'symbols/mulberry/ice_cream.svg','in':'symbols/mulberry/in.svg','jacket':'symbols/mulberry/jacket.svg','juice':'symbols/mulberry/orange_juice.svg','kitchen':'symbols/mulberry/cooker.svg','light':'symbols/mulberry/lamp.svg','lion':'symbols/mulberry/lion.svg','little':'symbols/mulberry/little.svg','look':'symbols/mulberry/look_,_to.svg','love':'symbols/mulberry/heart.svg','make':'symbols/mulberry/make_,_to.svg','milk':'symbols/mulberry/milk.svg','mom':'symbols/mulberry/mum_parent.svg','monkey':'symbols/mulberry/chimpanzee.svg','more':'symbols/mulberry/more.svg','mouth':'symbols/mulberry/mouth.svg','music':'symbols/mulberry/music.svg','nervous':'symbols/mulberry/worried_man.svg','off':'symbols/mulberry/off.svg','on':'symbols/mulberry/on.svg','open':'symbols/mulberry/open_,_to.svg','out':'symbols/mulberry/out.svg','outside':'symbols/mulberry/outside.svg','pants':'symbols/mulberry/trousers.svg','park':'symbols/mulberry/play_area.svg','phone':'symbols/mulberry/mobile_phone.svg','pig':'symbols/mulberry/piglet.svg','pizza':'symbols/mulberry/pizza.svg','play':'symbols/mulberry/play_,_to.svg','proud':'symbols/mulberry/medal.svg','put':'symbols/mulberry/put_,_to.svg','read':'symbols/mulberry/read_book_,_to.svg','rice':'symbols/mulberry/rice.svg','sad':'symbols/mulberry/sad_man.svg','sandwich':'symbols/mulberry/sandwich.svg','scared':'symbols/mulberry/afraid_man.svg','school':'symbols/mulberry/school.svg','shirt':'symbols/mulberry/shirt.svg','shoes':'symbols/mulberry/shoe_-_mans.svg','sick':'symbols/mulberry/headache.svg','sister':'symbols/mulberry/sister.svg','sleep':'symbols/mulberry/sleep_male_,_to.svg','socks':'symbols/mulberry/socks.svg','some':'symbols/mulberry/some.svg','soup':'symbols/mulberry/soup.svg','spk_word':'symbols/mulberry/talk_2_,_to.svg','stop':'symbols/mybuddy/stop.svg','store':'symbols/mulberry/shop.svg','strawberry':'symbols/mulberry/strawberry.svg','teacher':'symbols/mulberry/teacher_1a.svg','tired':'symbols/mulberry/yawn_,_to.svg','toy':'symbols/mulberry/teddy_bear.svg','tummy':'symbols/mulberry/stomach.svg','turn':'symbols/mulberry/turn_,_to.svg','turtle':'symbols/mulberry/turtle.svg','tv':'symbols/mulberry/flatscreen_tv.svg','up':'symbols/mulberry/up.svg','want':'symbols/mulberry/want_,_to.svg','wash':'symbols/mulberry/wash_hands_,_to.svg','water':'symbols/mulberry/water.svg','what':'symbols/mulberry/what.svg','who':'symbols/mulberry/who.svg','yes':'symbols/mulberry/correct.svg','yogurt':'symbols/mulberry/yogurt.svg'};
@@ -413,14 +413,10 @@ items=getFringe(curView);
 }
 const isHome=(curView==='home');
 const isPron=curView.indexOf('pn_')===0;
-const isFringe=!isHome&&curView!=='custom'&&!isPron;
+const isFringe=!isHome&&curView!=='custom';
 let cols,rows;
 if(isHome&&phoneMode){cols=Math.min(items.length,4);rows=Math.ceil(items.length/cols);
 }else if(isHome){cols=12;rows=7;
-}else if(isPron){
-// Pronoun pages mirror Home exactly: 12x7, and each conjugated phrase sits in
-// the cell its base verb occupies on Home.
-cols=12;rows=7;
 }else if(isFringe){
 const fringeCols=Math.min(items.length,6);
 cols=1+fringeCols;
@@ -430,28 +426,7 @@ b.style.gridTemplateColumns=isFringe?`minmax(0,1fr) repeat(${cols-1},minmax(0,1f
 b.style.gridTemplateRows=`repeat(${rows},1fr)`;
 b.style.overflow='hidden';
 b.innerHTML='';
-if(isPron){
-  // Build a 12x7 board where each phrase occupies its base verb's Home cell.
-  // Everything else stays empty, so the motor path to "want" from "I" is the
-  // same movement as reaching "want" on Home.
-  const slots=new Array(84).fill(null);
-  items.forEach(function(it){
-    const base=it.svgName||it.w;
-    const hp=HOME_POS[base];
-    if(hp!=null&&hp<84&&!slots[hp]){ slots[hp]=it; }
-  });
-  // Anything with no Home counterpart falls into the first free cell so it is
-  // never silently dropped.
-  items.forEach(function(it){
-    if(slots.indexOf(it)!==-1) return;
-    const free=slots.indexOf(null);
-    if(free!==-1) slots[free]=it;
-  });
-  for(let i=0;i<84;i++){
-    if(slots[i]){ renderCell(b,slots[i]); }
-    else{ const e=document.createElement('div'); e.style.visibility='hidden'; b.appendChild(e); }
-  }
-}else if(isFringe){
+if(isFringe){
 const fCols=cols-1;
 for(let r=0;r<rows;r++){
 if(r<PRONOUNS.length){
@@ -634,7 +609,7 @@ img.src=e.target.result;
 reader.readAsDataURL(file);
 }
 function openAddFromBoard(){
-// If we're in settings PIN flow, skip PIN again — otherwise require PIN
+// If we're in settings PIN flow, skip PIN again - otherwise require PIN
 if(editMode){
   openAddCWFor(curView);
 }else{
@@ -685,7 +660,7 @@ function tutNext(){if(tutStep<TUT.length-1){tutStep++;rTut()}else{document.getEl
 
 // === INIT ===
 function init(){
-// ROW ORDER ASSERTION — pronoun rows must be first (p:0-47)
+// ROW ORDER ASSERTION - pronoun rows must be first (p:0-47)
 const sorted=V.slice().sort((a,b)=>a.p-b.p);
 if(sorted[0].t!=='prow_a'||sorted[12].t!=='prow_b'||sorted[24].t!=='prow_c'||sorted[36].t!=='prow_d'){
 console.error('ROW ORDER VIOLATION: Pronoun rows must be p:0-47. Someone changed the p: values. Fix immediately.');

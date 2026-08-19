@@ -596,7 +596,7 @@ function playVideo(videoId) {
 function onPlayerStateChange(event) {
     // YT.PlayerState.ENDED === 0
     if (event.data === 0) {
-        // Video ended — show our "up next" overlay instead of YouTube's suggestions
+        // Video ended - show our "up next" overlay instead of YouTube's suggestions
         if (nextVideoId) {
             document.getElementById('endOverlay').style.display = 'flex';
             // Auto-play next after 5 seconds

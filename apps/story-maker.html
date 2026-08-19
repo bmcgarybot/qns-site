@@ -76,7 +76,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .clr-custom-wrap .clr-ring{width:28px;height:28px;border-radius:50%;border:3px solid #DEE2E6;background:conic-gradient(red,yellow,lime,aqua,blue,magenta,red);cursor:pointer}
 
 /* face size slider */
-/* face-controls removed — now in toolsPanel */
+/* face-controls removed - now in toolsPanel */
 
 .pnav{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px}
 .pbtn{background:var(--pri);color:#fff;border:none;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
@@ -88,7 +88,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .bp{background:var(--pri);color:#fff}.bg{background:var(--grn);color:#fff}.ba{background:var(--acc);color:#fff}.bo{background:#fff;color:var(--pri);border:2px solid var(--pri)}
 
 /* photo prompt */
-/* prompt-card removed — prompt now inline on canvas */
+/* prompt-card removed - prompt now inline on canvas */
 
 /* saved */
 .sitem{background:var(--card);border-radius:var(--rad);padding:14px;box-shadow:var(--shd);margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer}
@@ -205,7 +205,7 @@ button:focus-visible,.acard:focus-visible,.tcard:focus-visible{outline:3px solid
    Explicit layers: fallback(0) < photo(1) < face(2) < text(3) < taps(20). */
 #prevScreen .prev-page #prevBgFallback{z-index:0}
 #prevScreen .prev-page .prev-bg{z-index:1}
-/* Tap zones are invisible hit areas — fully transparent, never obscure. */
+/* Tap zones are invisible hit areas - fully transparent, never obscure. */
 .pv-tapzone{position:absolute;top:0;bottom:96px;width:26%;z-index:20;cursor:pointer;
   background:transparent}
 .pv-tapzone.left{left:0}.pv-tapzone.right{right:0}
@@ -225,7 +225,7 @@ button:focus-visible,.acard:focus-visible,.tcard:focus-visible{outline:3px solid
   <div class="wcard">
     <div class="emo">&#128247;&#10024;</div>
     <h2>Social Story Maker</h2>
-    <p>Create personalized visual stories using <strong>real photos</strong> of your child's world. Upload pictures of their bathroom, bedroom, school — then add their face right into the story!</p>
+    <p>Create personalized visual stories using <strong>real photos</strong> of your child's world. Upload pictures of their bathroom, bedroom, school - then add their face right into the story!</p>
   </div>
   <div class="priv-badge">
     <span class="priv-icon">&#128274;</span>
@@ -374,7 +374,7 @@ button:focus-visible,.acard:focus-visible,.tcard:focus-visible{outline:3px solid
 <div class="mov" id="exportModal">
   <div class="mod">
     <h2>&#128228; Export Story</h2>
-    <div class="eopt" onclick="exportPrint()"><span class="ei">&#128424;</span><div><h3>Print Story Book</h3><p>Print all pages — great for binders!</p></div></div>
+    <div class="eopt" onclick="exportPrint()"><span class="ei">&#128424;</span><div><h3>Print Story Book</h3><p>Print all pages - great for binders!</p></div></div>
     <div class="eopt" onclick="exportSlideshow()"><span class="ei">&#9654;&#65039;</span><div><h3>Auto Slideshow</h3><p>Plays automatically (5s per page)</p></div></div>
     <div class="eopt" onclick="shareData()"><span class="ei">&#128279;</span><div><h3>Share Story</h3><p>Copy story data to clipboard</p></div></div>
     <button class="btn bo" onclick="closeModal()" style="margin-top:12px;width:100%">Cancel</button>
@@ -415,7 +415,7 @@ button:focus-visible,.acard:focus-visible,.tcard:focus-visible{outline:3px solid
 <input type="file" id="fInput2" class="hidden" accept="image/*" capture="user">
 
 <script>
-// ===== TEMPLATES (with photo prompts — OT-level granular steps) =====
+// ===== TEMPLATES (with photo prompts - OT-level granular steps) =====
 const T={
 "Daily Routines":[
   {name:"Going to the Bathroom",icon:"\u{1F6BD}",pages:[
@@ -874,7 +874,7 @@ function goBack(){stack.pop();goTo(stack[stack.length-1]||'homeScreen')}
 // ===== TEMPLATES =====
 function renderTmpls(){
   document.getElementById('catTabs').innerHTML=Object.keys(T).map(c=>`<div class="tab ${c===activeCat?'act':''}" onclick="activeCat='${c}';renderTmpls()">${c}</div>`).join('');
-  document.getElementById('tmplGrid').innerHTML=T[activeCat].map((t,i)=>`<div class="tcard" onclick="loadTmpl('${activeCat}',${i})"><div class="tico" style="background:#E5DBFF">${t.icon}</div><div class="tinf"><h3>${t.name}</h3><p>Guided — ${t.pages.length} pages</p><div class="cnt">&#128247; Photo prompts for each step</div></div></div>`).join('');
+  document.getElementById('tmplGrid').innerHTML=T[activeCat].map((t,i)=>`<div class="tcard" onclick="loadTmpl('${activeCat}',${i})"><div class="tico" style="background:#E5DBFF">${t.icon}</div><div class="tinf"><h3>${t.name}</h3><p>Guided - ${t.pages.length} pages</p><div class="cnt">&#128247; Photo prompts for each step</div></div></div>`).join('');
 }
 
 function loadTmpl(cat,idx){
@@ -919,7 +919,7 @@ function confirmTmpl(){
   pgIdx=0;
   closeReview();
   goTo('editorScreen');
-  toast(autoFace ? `Story created with ${kept.length} steps — face auto-added!` : `Story created with ${kept.length} steps`);
+  toast(autoFace ? `Story created with ${kept.length} steps - face auto-added!` : `Story created with ${kept.length} steps`);
 }
 
 function startBlank(){
@@ -954,7 +954,7 @@ function renderPage(){
     document.getElementById('scenePromptText').textContent=p.prompt||'Tap to add scene photo';
   }
 
-  // Face — auto-apply first available face if page has none
+  // Face - auto-apply first available face if page has none
   if(!p.face && faces.length > 0){
     p.face = faces[0];
   }
@@ -1066,7 +1066,7 @@ function doneArrange(){closeArrange();pgIdx=0;renderPage();toast('Steps arranged
 // ===== PHOTO PICKING =====
 function pickSceneForPage(){showPicker('scene',d=>{story.pages[pgIdx].scene=d;renderPage()})}
 function pickFaceForPage(){showPicker('face',d=>{story.pages[pgIdx].face=d;renderPage()})}
-// (photo prompt functions removed — prompts now show inline on canvas placeholder)
+// (photo prompt functions removed - prompts now show inline on canvas placeholder)
 
 function showPicker(type,cb){
   let lib=type==='face'?faces:scenes;
@@ -1144,7 +1144,7 @@ function pickSearchResult(el){
       if(window._pickerCb)window._pickerCb(dataUrl);
       toast('Photo added!');
     }catch(e){
-      // CORS blocked — use URL directly
+      // CORS blocked - use URL directly
       closePickerModal();
       if(window._pickerCb)window._pickerCb(url);
       toast('Photo added!');
@@ -1224,7 +1224,7 @@ function uploadNew(type){
   function down(e){
     // Don't start drag if user is selecting text inside contenteditable
     if(e.target.id==='sText'||e.target.closest('.stxt')){
-      // We'll track — if drag distance >5px, we drag; otherwise let focus/edit happen
+      // We'll track - if drag distance >5px, we drag; otherwise let focus/edit happen
     }
     el=document.getElementById('textOvl');
     if(!el)return;
@@ -1253,7 +1253,7 @@ function uploadNew(type){
   }
   function up(e){
     if(el&&!dragged){
-      // Short tap — focus contenteditable for text editing
+      // Short tap - focus contenteditable for text editing
       let stxt=document.getElementById('sText');
       if(stxt){stxt.focus()}
     }
@@ -1418,10 +1418,10 @@ function toast(m){let t=document.getElementById('toast');t.textContent=m;t.class
 // ===== TUTORIAL =====
 const TUT_STEPS=[
   {emoji:"\u{1F4D6}\u{2728}",title:"Welcome to Story Maker!",body:"Create <span class='tut-highlight'>personalized social stories</span> using real photos from your child's world. Let's walk through how it works!"},
-  {emoji:"\u{1F3A8}",title:"Pick a Template",body:"Choose from <span class='tut-highlight'>22 guided templates</span> — bathroom routines, going to the store, doctor visits, feelings, safety, and more. Each one breaks the activity into <span class='tut-highlight'>small, clear steps</span>."},
+  {emoji:"\u{1F3A8}",title:"Pick a Template",body:"Choose from <span class='tut-highlight'>22 guided templates</span> - bathroom routines, going to the store, doctor visits, feelings, safety, and more. Each one breaks the activity into <span class='tut-highlight'>small, clear steps</span>."},
   {emoji:"\u{2705}",title:"Review & Customize Steps",body:"Before building, you'll see <span class='tut-highlight'>every step as a checklist</span>. Uncheck steps that don't apply to your child. Every kid is different!"},
-  {emoji:"\u{1F4F7}",title:"Add Real Photos",body:"Each step prompts you for a <span class='tut-highlight'>specific photo</span> — your actual bathroom, your child's bed, their school. You can also <span class='tut-highlight'>search free stock photos</span> right from the app."},
-  {emoji:"\u{1F9D2}",title:"Add Your Child's Face",body:"Upload a photo of your child and <span class='tut-highlight'>drag their face</span> right into the scene. Resize it, move it around — it's their story, with them in it."},
+  {emoji:"\u{1F4F7}",title:"Add Real Photos",body:"Each step prompts you for a <span class='tut-highlight'>specific photo</span> - your actual bathroom, your child's bed, their school. You can also <span class='tut-highlight'>search free stock photos</span> right from the app."},
+  {emoji:"\u{1F9D2}",title:"Add Your Child's Face",body:"Upload a photo of your child and <span class='tut-highlight'>drag their face</span> right into the scene. Resize it, move it around - it's their story, with them in it."},
   {emoji:"\u{2195}\u{FE0F}",title:"Arrange & Edit",body:"Use <span class='tut-highlight'>↕ Arrange</span> to reorder steps. Tap <span class='tut-highlight'>✕ Skip</span> to remove any step. Edit text by tapping on it. Make it fit YOUR child."},
   {emoji:"\u{25B6}\u{FE0F}",title:"Preview & Export",body:"Play the story as a <span class='tut-highlight'>slideshow</span>, <span class='tut-highlight'>print it</span> to make a physical book, or save it for later. Stories auto-save to your device."},
   {emoji:"\u{1F512}",title:"Your Privacy is Sacred",body:"<span class='tut-highlight'>Nothing leaves your device.</span> No server, no account, no uploads, no tracking. Your child's photos stay on YOUR phone. Period. We will never see them."},

@@ -1,5 +1,5 @@
 # 🐌 QNS Website Editing Guide
-### For Big Dog — no code skills needed
+### For Big Dog - no code skills needed
 
 ---
 
@@ -18,7 +18,7 @@ Example: `<h1>Old Title</h1>` → `<h1>New Title</h1>`
 
 ---
 
-## 📄 index.html — Main Page
+## 📄 index.html - Main Page
 
 ### 🔹 Page Title (browser tab)
 Search for: `Quantum Neuroshift - Brett Coon`
@@ -51,8 +51,8 @@ Search for: `Quantum Neuroshift - Brett Coon`
 
 ### 🔹 About Brett Section
 - **Title:** Search for `Meet Brett Coon` (inside `Meet <span`)
-- **Bio paragraphs:** Search for `I didn't learn this from a textbook` — there are 4 paragraphs in a row
-- **Credentials box:** Search for `Credentials` — lists all certifications (Solution Based Hypnotherapy, Master Hypnotherapist, NLP, EFT/TFT, CTAA)
+- **Bio paragraphs:** Search for `I didn't learn this from a textbook` - there are 4 paragraphs in a row
+- **Credentials box:** Search for `Credentials` - lists all certifications (Solution Based Hypnotherapy, Master Hypnotherapist, NLP, EFT/TFT, CTAA)
 
 ### 🔹 Services Section (3 cards on dark background)
 - **Section title:** Search for `Structured, online, and built around your real life`
@@ -72,7 +72,7 @@ Search for any question text to find and edit it:
 ### 🔹 Contact / CTA Section
 - **Title:** Search for `Ready to Start a Conversation?`
 - **Subtext:** Search for `No pitch. No pressure.`
-- **Email link:** Search for `brett.coon2@gmail.com` (appears multiple times — change all of them if you change email)
+- **Email link:** Search for `brett.coon2@gmail.com` (appears multiple times - change all of them if you change email)
 
 ### 🔹 Footer
 - **Company name:** Search for `BMC Luminary Ventures LLC`
@@ -80,7 +80,7 @@ Search for any question text to find and edit it:
 
 ---
 
-## 📄 technology.html — Apps Page
+## 📄 technology.html - Apps Page
 
 ### 🔹 Hero
 - **Title:** Search for `Assistive Technology for`
@@ -88,12 +88,12 @@ Search for any question text to find and edit it:
 
 ### 🔹 App Cards (6 apps)
 Each app has a name, tagline, description, and bullet features. Search by app name:
-- `My Buddy AAC` — Communication app
-- `Story Maker` — Social stories
-- `Visual Timer` — Schedules + routines
-- `Life Preserver` — Safety monitoring
-- `EMI-Tech` — Eye tracking intervention
-- `SafeTube` — Filtered browsing
+- `My Buddy AAC` - Communication app
+- `Story Maker` - Social stories
+- `Visual Timer` - Schedules + routines
+- `Life Preserver` - Safety monitoring
+- `EMI-Tech` - Eye tracking intervention
+- `SafeTube` - Filtered browsing
 
 ### 🔹 Bonus Apps
 - Search for `Tap Along EFT + Calm Journey`
@@ -114,8 +114,8 @@ Each app has a name, tagline, description, and bullet features. Search by app na
 ## 💡 Tips
 
 - **Use Ctrl+F** (or Cmd+F on Mac) to search for text on the page
-- **Change text only** — the words between `>` and `<`
-- **Preview before committing** — GitHub shows you what changed in green/red
+- **Change text only** - the words between `>` and `<`
+- **Preview before committing** - GitHub shows you what changed in green/red
 - **Broke something?** Go to the file's history (clock icon) and revert to the previous version
 - **Want to change photos?** Upload new images to the `img/` folder, then update the filename in the `src="./img/filename.jpg"` part
 

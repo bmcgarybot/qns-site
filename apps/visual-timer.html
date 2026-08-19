@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>TaskBuddy — Visual Task Timer</title>
+<title>TaskBuddy - Visual Task Timer</title>
 <meta name="description" content="Visual task timer designed for autism & special needs. Colorful timers, photo reveals, rewards, and accessibility features.">
 <meta name="theme-color" content="#1a1a2e">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -154,7 +154,7 @@
   .profile-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
   .profile-chip.add { background: transparent; border: 2px dashed var(--text-dim); color: var(--text-dim); }
 
-  /* Classroom profile slider — horizontal scroll carousel */
+  /* Classroom profile slider - horizontal scroll carousel */
   .classroom-profile-slider {
     display: flex; align-items: center; gap: 0; padding: 0 0 10px 0;
   }
@@ -449,7 +449,7 @@
   .save-indicator { font-size: 0.8rem; color: var(--success); opacity: 0; transition: opacity 0.3s; }
   .save-indicator.show { opacity: 1; }
 
-  /* ===== RESPONSIVE — MOBILE ===== */
+  /* ===== RESPONSIVE - MOBILE ===== */
   @media (max-width: 600px) {
     .top-bar { padding: 6px 8px; gap: 4px; flex-wrap: wrap; }
     .top-bar h1 { font-size: 1rem; width: 100%; text-align: center; margin: 0; }
@@ -479,7 +479,7 @@
     .classroom-profile-card .cp-meta { font-size: 0.55rem; }
     .classroom-profile-card img.cp-photo { width: 32px; height: 32px; }
     .classroom-profile-slider .cps-arrow { width: 22px; min-width: 22px; font-size: 0.85rem; height: 40px; }
-    /* Classroom column header — compact */
+    /* Classroom column header - compact */
     .classroom-header { padding: 8px 10px; font-size: 0.9rem; }
     .classroom-header .student-emoji { font-size: 1.2rem; }
     .classroom-task .ct-time { font-size: 1.5rem; padding: 4px 0; }
@@ -502,7 +502,7 @@
     .top-bar h1 { font-size: 1.1rem; }
     .task-time-display { font-size: 2.1rem; }
   }
-  /* Landscape on phones — compact everything */
+  /* Landscape on phones - compact everything */
   @media (max-height: 500px) and (orientation: landscape) {
     .top-bar { padding: 4px 10px; gap: 4px; }
     .top-bar h1 { font-size: 1rem; width: auto; }
@@ -907,18 +907,18 @@ const ONBOARDING_STEPS = window.innerWidth >= 768 ? [
   { title: 'Profiles', body: 'Create a profile for each student or family member. Each gets their own tasks, stars, and streak.', target: '#profileBar' },
   { title: 'Daily & Weekly Views', body: 'Daily shows all tasks. Weekly lets you assign tasks to specific days of the week. Use the tabs here to switch.', target: '#viewTabs' },
   { title: 'Timer Controls', body: 'Start All runs timers in sequence. Each task also has its own play/pause/reset buttons.', target: '#globalControls' },
-  { title: 'Stars & Rewards ⭐', body: 'Every completed timer earns a star. Set a goal in Settings — when they hit it, the reward celebration fires!', target: '#rewardBar' },
-  { title: '🏫 Classroom View', body: 'Now let\'s look at Classroom View — see ALL students side-by-side with their own timers!', target: '#classroomContainer', action: () => { currentView = 'classroom'; render(); } },
+  { title: 'Stars & Rewards ⭐', body: 'Every completed timer earns a star. Set a goal in Settings - when they hit it, the reward celebration fires!', target: '#rewardBar' },
+  { title: '🏫 Classroom View', body: 'Now let\'s look at Classroom View - see ALL students side-by-side with their own timers!', target: '#classroomContainer', action: () => { currentView = 'classroom'; render(); } },
   { title: '🏫 Student Columns', body: 'Each student gets a column with their tasks, timers, and controls. Use the Show bar to toggle who\'s visible. Tap ＋ Add Student to create new profiles right here.', target: '#classroomContainer' },
   { title: 'Save & Sync', body: 'Use 💾 Save to download your setup. Open it on any device with 📂 Open to keep everything in sync!', target: '#globalControls', action: () => { currentView = 'daily'; render(); } },
   { title: 'Settings & Kid Lock', body: 'Pick themes, enable dyslexia-friendly font, set a PIN lock to prevent kids from changing things.', target: '#settingsBtn' },
   { title: 'Need Help Later?', body: 'Click ❓ anytime to see this tour again. Happy timing!', target: '#helpBtn' },
 ] : [
-  { title: 'Welcome to TaskBuddy! 🌟', body: 'A visual task timer designed for everyone — especially kids and families. Let\'s take a quick look at how it works!', target: null, action: () => { currentView = 'daily'; render(); } },
+  { title: 'Welcome to TaskBuddy! 🌟', body: 'A visual task timer designed for everyone - especially kids and families. Let\'s take a quick look at how it works!', target: null, action: () => { currentView = 'daily'; render(); } },
   { title: 'Add a Task', body: 'Tap the + Add button to create your first task. Pick a name, set a timer, choose a color and sound!', target: '#addBtn' },
   { title: 'Profiles', body: 'Create separate profiles for each person. Each profile gets its own tasks, stars, and streaks.', target: '#profileBar' },
   { title: 'Daily & Weekly Views', body: 'Switch between Daily view (all tasks) and Weekly view (tasks scheduled for each day).', target: '#viewTabs' },
-  { title: 'Start Timers', body: 'Tap ▶ Start on any task — or Start All to run them in sequence! Watch the color fill as time passes.', target: '#globalControls' },
+  { title: 'Start Timers', body: 'Tap ▶ Start on any task - or Start All to run them in sequence! Watch the color fill as time passes.', target: '#globalControls' },
   { title: 'Earn Stars ⭐', body: 'Each completed timer earns a star. Set a star goal in Settings to unlock rewards!', target: '#rewardBar' },
   { title: 'Settings & Kid Lock', body: 'Customize themes, set a PIN lock (so little hands can\'t change things), and adjust sounds.', target: '#settingsBtn' },
   { title: '🏫 Classroom View', body: 'Got a tablet or desktop? Enable Classroom View in Settings to see all students side-by-side. Best on bigger screens!', target: '#settingsBtn' },
@@ -930,18 +930,18 @@ const ONBOARDING_STEPS = window.innerWidth >= 768 ? [
 const WHATS_NEW_STEPS = window.innerWidth >= 768 ? [
   { title: '✨ What\'s New in v1.6.0', body: 'Big update! Tap through to see what\'s new and what we\'re still working on.', target: null, action: () => { currentView = 'daily'; render(); } },
   { title: '👥 Multi-Profile Timers', body: 'Switching profiles no longer pauses timers. Multiple students can have timers running at the same time!', target: '#profileBar' },
-  { title: '🏫 Classroom View', body: 'NEW! See all students side-by-side with their timers. Add tasks, rename students, start/pause/reset — all from one screen.', target: '#classroomContainer', action: () => { currentView = 'classroom'; render(); } },
+  { title: '🏫 Classroom View', body: 'NEW! See all students side-by-side with their timers. Add tasks, rename students, start/pause/reset - all from one screen.', target: '#classroomContainer', action: () => { currentView = 'classroom'; render(); } },
   { title: '🔊 Sound Improvements', body: 'Timer completion sounds are more reliable now. Known limitation: if the browser tab is minimized or another app is open, sounds may not play until you return. A native app is in development to solve this!', target: '#globalControls', action: () => { currentView = 'daily'; render(); } },
-  { title: '💡 Screen Stay-On', body: 'The screen will try to stay on while timers run. On some devices, the browser may still auto-lock — we\'re working on it. For now, keep the tab visible for best results.', target: null },
-  { title: '💬 Your Feedback Matters', body: 'This is a web-based app and some features work differently across devices. Found something that doesn\'t work? Hit the Feedback button below — it helps us build the native iOS app right!', target: '#globalControls' },
+  { title: '💡 Screen Stay-On', body: 'The screen will try to stay on while timers run. On some devices, the browser may still auto-lock - we\'re working on it. For now, keep the tab visible for best results.', target: null },
+  { title: '💬 Your Feedback Matters', body: 'This is a web-based app and some features work differently across devices. Found something that doesn\'t work? Hit the Feedback button below - it helps us build the native iOS app right!', target: '#globalControls' },
   { title: '❓ Help Anytime', body: 'Click the ❓ button to replay this tour whenever you need it. Thanks for testing!', target: '#helpBtn' },
 ] : [
   { title: '✨ What\'s New in v1.6.0', body: 'Updates + honesty about what\'s working! Tap through.', target: null, action: () => { currentView = 'daily'; render(); } },
   { title: '👥 Multi-Profile Timers', body: 'Switching profiles no longer pauses timers. Multiple people can have timers running at the same time!', target: '#profileBar' },
-  { title: '🔊 Sound — What Works & What Doesn\'t', body: 'Timer sounds work when the app is on screen. BUT — if you lock your phone or switch apps, sounds won\'t play until you come back. When you return, tap the screen and you\'ll hear the alert. This is an iPhone/browser limitation we can\'t fix — a native iOS app is coming!', target: '#globalControls' },
+  { title: '🔊 Sound - What Works & What Doesn\'t', body: 'Timer sounds work when the app is on screen. BUT - if you lock your phone or switch apps, sounds won\'t play until you come back. When you return, tap the screen and you\'ll hear the alert. This is an iPhone/browser limitation we can\'t fix - a native iOS app is coming!', target: '#globalControls' },
   { title: '💡 Screen Stay-On', body: 'We try to keep your screen on while timers run. If your phone still auto-locks, try keeping the timer page open and visible. The native app will handle this properly.', target: null },
-  { title: '📱 Heads Up', body: 'TaskBuddy runs in your browser — not as an installed app. Some things (background alerts, vibration, lock-screen notifications) need a native app to work fully. We\'re building it based on YOUR feedback!', target: null },
-  { title: '💬 Help Us Improve', body: 'Found a bug? Something confusing? Tap the 💬 Feedback button at the bottom — every response helps us build the real app. You\'re shaping what this becomes!', target: '#globalControls' },
+  { title: '📱 Heads Up', body: 'TaskBuddy runs in your browser - not as an installed app. Some things (background alerts, vibration, lock-screen notifications) need a native app to work fully. We\'re building it based on YOUR feedback!', target: null },
+  { title: '💬 Help Us Improve', body: 'Found a bug? Something confusing? Tap the 💬 Feedback button at the bottom - every response helps us build the real app. You\'re shaping what this becomes!', target: '#globalControls' },
   { title: '❓ Help Anytime', body: 'Tap ❓ to replay this tour. Thanks for being an early tester! 🙏', target: '#helpBtn' },
 ];
 
@@ -1012,7 +1012,7 @@ function showTourStep() {
   `;
   tooltip.style.display = 'block';
 
-  // Position tooltip — center horizontally, place below or above spotlight
+  // Position tooltip - center horizontally, place below or above spotlight
   requestAnimationFrame(() => {
     const ttRect = tooltip.getBoundingClientRect();
     const isMobile = window.innerWidth <= 600;
@@ -1029,14 +1029,14 @@ function showTourStep() {
         } else if (above > 10) {
           tooltip.style.top = above + 'px';
         } else {
-          // Neither fits — place in center
+          // Neither fits - place in center
           tooltip.style.top = Math.max(10, (window.innerHeight - ttRect.height) / 2) + 'px';
         }
         // Horizontal centering handled by CSS (left:50% + translateX)
         return;
       }
     }
-    // No target — center vertically too
+    // No target - center vertically too
     tooltip.style.top = Math.max(10, (window.innerHeight - ttRect.height) / 2) + 'px';
   });
   }, step.action ? 150 : 0);
@@ -1056,12 +1056,12 @@ function startOnboarding() { startTour(ONBOARDING_STEPS); }
 
 // ---- Classroom Tour (triggered when classroom is first enabled) ----
 const CLASSROOM_TOUR_STEPS = [
-  { title: '🏫 Classroom View Activated!', body: 'This mode lets you see ALL students at once with their own timers. Let\'s walk through it — we\'ll actually go there and show you.', target: null },
+  { title: '🏫 Classroom View Activated!', body: 'This mode lets you see ALL students at once with their own timers. Let\'s walk through it - we\'ll actually go there and show you.', target: null },
   { title: 'Switch to Classroom', body: 'Tap the 🏫 Classroom tab to enter Classroom View. Let\'s go there now!', target: '#viewTabs',
     action: () => { closeSettings(); currentView = 'classroom'; render(); }
   },
-  { title: 'Your Student Columns', body: 'Each student gets their own column with their tasks, timers, stars, and streak. Everything runs independently — start one student\'s timer without affecting others.', target: '#classroomContainer' },
-  { title: 'Show / Hide Students', body: 'This bar lets you toggle which students appear. Tap a name to hide them temporarily — their data stays safe. Useful when only some students are present.', target: '#classroomContainer',
+  { title: 'Your Student Columns', body: 'Each student gets their own column with their tasks, timers, stars, and streak. Everything runs independently - start one student\'s timer without affecting others.', target: '#classroomContainer' },
+  { title: 'Show / Hide Students', body: 'This bar lets you toggle which students appear. Tap a name to hide them temporarily - their data stays safe. Useful when only some students are present.', target: '#classroomContainer',
     action: () => { const bar = document.querySelector('#classroomContainer > div > div:first-child'); if(bar) bar.scrollIntoView({behavior:'smooth',block:'start'}); }
   },
   { title: '＋ Add Student', body: 'Tap "＋ Add Student" here to create a new profile right from the classroom. Pick a name, emoji, or upload their photo.', target: '#classroomContainer' },
@@ -1111,7 +1111,7 @@ const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
 function activeProfile() { return profiles.find(p=>p.id===activeProfileId)||profiles[0]; }
 
-// ===== WAKE LOCK (keeps screen on while timers run — critical for iOS) =====
+// ===== WAKE LOCK (keeps screen on while timers run - critical for iOS) =====
 let wakeLock = null;
 async function requestWakeLock() {
   if(!('wakeLock' in navigator)) return;
@@ -1144,7 +1144,7 @@ function checkMissedCompletions() {
       const elapsed = Math.floor((Date.now() - task._startedAt) / 1000);
       const remaining = Math.max(0, task._remainingAtStart - elapsed);
       if(remaining <= 0 && task.running) {
-        // Timer finished while we were away — handle completion now
+        // Timer finished while we were away - handle completion now
         task.remaining = 0;
         task.running = false;
         clearInterval(timerIntervals[task.id]);
@@ -1160,7 +1160,7 @@ function checkMissedCompletions() {
     }
   });
   if(pendingSounds.length > 0) {
-    // Show a banner prompting them to tap — iOS needs a gesture to play audio after background
+    // Show a banner prompting them to tap - iOS needs a gesture to play audio after background
     showTransition('⏰ Timer finished! Tap anywhere to hear the alert.');
     render(); save();
   }
@@ -1278,7 +1278,7 @@ function updateProfileArrows(){
   right.classList.toggle('disabled',!canScrollRight);
 }
 function updateClassroomArrows(){
-  // no-op — classroom arrows always enabled
+  // no-op - classroom arrows always enabled
 }
 function switchProfile(id){
   // Save current profile's tasks with their running state + interval references
@@ -1425,7 +1425,7 @@ function timerTick(id) {
   const elapsed = Math.floor((Date.now() - task._startedAt) / 1000);
   task.remaining = Math.max(0, task._remainingAtStart - elapsed);
   if (task.remaining <= settings.transitionWarn && task.remaining > 0 && (task._remainingAtStart - elapsed + 1) > settings.transitionWarn) {
-    showTransition(`⏰ ${task.name} — ${settings.transitionWarn} seconds left!`);
+    showTransition(`⏰ ${task.name} - ${settings.transitionWarn} seconds left!`);
   }
   if (task.remaining <= 0) {
     task.remaining = 0; task.running = false; task._completionHandled = true;
@@ -2016,7 +2016,7 @@ function save(){
 }
 function loadProfileTasks(){
   const allTasks=JSON.parse(localStorage.getItem('tb_allTasks')||'{}');
-  // Don't force running:false — let profileTimerState handle active timers
+  // Don't force running:false - let profileTimerState handle active timers
   tasks=(allTasks[activeProfileId]||[]).map(t=>({...t,running:false,_completionHandled:false}));
 }
 function load(){
