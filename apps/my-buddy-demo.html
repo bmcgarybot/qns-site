@@ -284,6 +284,14 @@ const PRONOUNS=[
 {w:'she',i:6624,t:'prow_c',conj:v=>{if(v==='go')return'goes';if(v==='do')return'does';if(v==='have')return'has';if(v.endsWith('ch')||v.endsWith('sh')||v.endsWith('x')||v.endsWith('ss'))return v+'es';return v+'s'}},
 {w:'it',i:31670,t:'prow_d',conj:v=>{if(v==='go')return'goes';if(v==='do')return'does';if(v==='have')return'has';if(v.endsWith('ch')||v.endsWith('sh')||v.endsWith('x')||v.endsWith('ss'))return v+'es';return v+'s'}}
 ];
+function sidebarPronouns(){
+  // Pronoun folders show only their own pronoun; everything else shows all.
+  if(curView.indexOf('pn_')===0){
+    const only=PRONOUNS.filter(p=>'pn_'+p.w===curView);
+    return only.length?only:PRONOUNS;
+  }
+  return PRONOUNS;
+}
 let myInfo={name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};
 let editMode=false,editTarget=null,editPhotoData=null,cellOverrides={};
 
@@ -418,9 +426,12 @@ let cols,rows;
 if(isHome&&phoneMode){cols=Math.min(items.length,4);rows=Math.ceil(items.length/cols);
 }else if(isHome){cols=12;rows=7;
 }else if(isFringe){
+// In a pronoun folder you have already chosen the pronoun, so the sidebar
+// shows just that one. Category folders (food, animals) still show all of
+// them, because there you are picking a pronoun AND a noun.
 const fringeCols=Math.min(items.length,6);
 cols=1+fringeCols;
-rows=Math.max(PRONOUNS.length,Math.ceil(items.length/fringeCols));
+rows=Math.max(sidebarPronouns().length,Math.ceil(items.length/fringeCols));
 }else{cols=Math.min(items.length,7);rows=Math.max(Math.ceil(items.length/cols),2);}
 b.style.gridTemplateColumns=isFringe?`minmax(0,1fr) repeat(${cols-1},minmax(0,1fr))`:`repeat(${cols},1fr)`;
 b.style.gridTemplateRows=`repeat(${rows},1fr)`;
@@ -429,8 +440,9 @@ b.innerHTML='';
 if(isFringe){
 const fCols=cols-1;
 for(let r=0;r<rows;r++){
-if(r<PRONOUNS.length){
-const pn=PRONOUNS[r];
+const pnList=sidebarPronouns();
+if(r<pnList.length){
+const pn=pnList[r];
 const d=document.createElement('div');
 d.className='c '+pn.t;
 const pnSrc=IM(pn.i);
