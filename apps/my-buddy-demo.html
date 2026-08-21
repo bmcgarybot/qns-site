@@ -428,8 +428,8 @@ if(isHome&&phoneMode){cols=Math.min(items.length,4);rows=Math.ceil(items.length/
 }else if(isPron){
 // You already chose the pronoun, so it becomes the first cell of a normal
 // flowing grid. No reserved sidebar column, so no empty gaps beneath it.
-cols=Math.min(items.length,7);
-rows=Math.ceil(items.length/cols);
+cols=Math.min(items.length+1,7);
+rows=Math.ceil((items.length+1)/cols);
 }else if(isFringe){
 // Category folders keep the pronoun sidebar: there you pick a pronoun AND
 // a noun, so all of them stay available.
@@ -451,6 +451,18 @@ if(isHome){
 b.style.overflow='hidden';
 b.innerHTML='';
 if(isPron){
+  // The pronoun's own word lives here as the first cell: hitting "I" on Home
+  // only navigates, so saying "I" alone is I then I. This is the LAMP
+  // pattern, not a duplicate.
+  const me=PRONOUNS.find(p=>'pn_'+p.w===curView);
+  if(me){
+    const d=document.createElement('div');
+    d.className='c '+me.t;
+    const src=IM(me.i);
+    d.innerHTML=`<img src="${src}" style="${isMul(src)?'background:rgba(255,255,255,0.85);border-radius:6px;padding:1px;':'filter:brightness(0) invert(1);'}" onerror="this.style.filter='';this.onerror=null"><div class="lb">${me.w}</div>`;
+    d.onclick=()=>{addWord(me.w,me.i);d.classList.add('pulse');setTimeout(()=>{d.classList.remove('pulse');goHome()},300)};
+    b.appendChild(d);
+  }
   items.forEach(s=>renderCell(b,s));
 }else if(isFringe){
 const fCols=cols-1;
@@ -503,7 +515,7 @@ d.onclick=()=>{
 if(editMode){openEditCell(s,curView);return}
 if(s.w==='CLEAR'){sClr();d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);return}
 if(isGram){gram(s.w.replace('+',''));d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);return}
-if(s.cat){if(s.cat!=='custom'&&s.cat!=='spell'){addWord(displayW,s.i)}curView=s.cat;render();document.getElementById('backBtn').style.display='block';d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);return}
+if(s.cat){curView=s.cat;render();document.getElementById('backBtn').style.display='block';return}
 addWord(displayW,s.i);d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);
 if(curView!=='home'&&curView!=='custom'&&curView!=='spell'){setTimeout(()=>goHome(),350)}};b.appendChild(d)}
 function renderSpell(b){
