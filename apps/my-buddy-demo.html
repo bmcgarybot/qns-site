@@ -86,6 +86,31 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .tut-dots{display:flex;gap:6px;justify-content:center;margin-bottom:12px}
 .tut-d{width:8px;height:8px;border-radius:50%;background:#555}.tut-d.on{background:#2a9d8f}
 .tut-btn{background:#2a9d8f;color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:15px;font-weight:700;cursor:pointer}
+
+  /* Teaching walkthrough */
+  .teach-glow {
+    outline: 5px solid #ffd166 !important;
+    outline-offset: -5px;
+    box-shadow: 0 0 26px rgba(255,209,102,.85);
+    animation: teachPulse 1s ease-in-out infinite;
+    z-index: 5;
+  }
+  @keyframes teachPulse {
+    0%,100% { box-shadow: 0 0 20px rgba(255,209,102,.7); }
+    50%     { box-shadow: 0 0 38px rgba(255,209,102,1); }
+  }
+  #teachBanner {
+    display:none; position:fixed; left:0; right:0; bottom:0; z-index:300;
+    align-items:center; gap:14px; padding:14px 18px;
+    background:rgba(10,12,16,.95); border-top:2px solid #ffd166;
+    color:#fff; font-size:1.05rem;
+  }
+  #teachStep { color:#ffd166; font-weight:700; white-space:nowrap; }
+  #teachText { flex:1; }
+  #teachBanner button {
+    background:#2a3040; color:#fff; border:1px solid #3a4255;
+    border-radius:8px; padding:8px 14px; font:inherit; cursor:pointer;
+  }
 </style></head><body>
 <div id="splash"><div style="font-size:60px">🗣️</div><div class="sn">My Buddy</div><div class="ss">Communication for Everyone</div></div>
 <div id="modelBanner">👨‍🏫 MODELING MODE</div>
@@ -907,17 +932,117 @@ function goHome(){curView='home';const w=spellBuf.trim();if(w){sentence.push({w,
 // anything on the board. It navigates to the word and highlights the cell, so
 // the motor path is taught rather than just the answer given.
 function buildWordIndex(){
+  // Every entry carries the FULL PATH to the word, not just where it lives.
+  // path = [{view, w}, ...] - the sequence of presses, in order.
   const idx=[];
+
+  // Level 1: words on the home board.
   V.forEach(function(c){
-    if(c.t==='folder'||c.w==='CLEAR') return;
-    idx.push({w:c.w, where:'Home', view:'home', pos:c.p});
+    if(c.w==='CLEAR') return;
+    if(c.t==='folder'){
+      return;  // folders are doorways, not words
+    }
+    idx.push({w:c.w, where:'Home', hits:1,
+              path:[{view:'home', w:c.w}]});
   });
-  Object.keys(FR).forEach(function(cat){
-    (FR[cat]||[]).forEach(function(pair){
-      idx.push({w:pair[0], where:(cat.indexOf('pn_')===0?cat.slice(3):cat), view:cat, pos:null});
+
+  // Level 2: anchor pages. Reached by pressing the anchor on Home.
+  [...Object.keys(ANCHORS), ...Object.keys(ANCHORS2)].forEach(function(a){
+    if(a.endsWith('_')) return;
+    anchorItems(a).filter(Boolean).forEach(function(it){
+      if(it.w===a) return;   // the anchor's own word is level 1
+      idx.push({w:it.w, where:a, hits:2,
+                path:[{view:'home', w:a}, {view:'anchor_'+a, w:it.w}]});
     });
   });
+
+  // Level 2: category and pronoun folders.
+  Object.keys(FR).forEach(function(cat){
+    const doorway = V.find(function(c){ return c.cat===cat; });
+    if(!doorway) return;
+    (FR[cat]||[]).forEach(function(pair){
+      idx.push({w:pair[0], where:doorway.w, hits:2,
+                path:[{view:'home', w:doorway.w}, {view:cat, w:pair[0]}]});
+    });
+  });
+
   return idx;
+}
+
+/* ------------------------------------------------------------------
+   TEACH THE PATH
+   Rather than jumping straight to the word, walk the route: show Home,
+   highlight the cell to press, press it, then highlight the target on
+   the page that opens. The point is that the person LEARNS the motor
+   pattern and can find it themselves next time.
+   ------------------------------------------------------------------ */
+let teachTimers=[];
+function stopTeaching(){
+  teachTimers.forEach(clearTimeout); teachTimers=[];
+  document.querySelectorAll('.teach-glow').forEach(function(e){
+    e.classList.remove('teach-glow');
+  });
+  const b=document.getElementById('teachBanner');
+  if(b) b.style.display='none';
+}
+
+function findCellByLabel(label){
+  const cells=document.querySelectorAll('#board .c');
+  for(let i=0;i<cells.length;i++){
+    const lb=cells[i].querySelector('.lb');
+    if(lb && lb.textContent.trim().toLowerCase()===String(label).trim().toLowerCase())
+      return cells[i];
+  }
+  return null;
+}
+
+function showTeachBanner(text, step, total){
+  let b=document.getElementById('teachBanner');
+  b.style.display='flex';
+  document.getElementById('teachStep').textContent='Step '+step+' of '+total;
+  document.getElementById('teachText').textContent=text;
+}
+
+function teachPath(hit){
+  stopTeaching();
+  closeFinder();
+  const path=hit.path, total=path.length;
+
+  function step(i){
+    if(i>=total){
+      // Final word is highlighted and stays highlighted.
+      const cell=findCellByLabel(path[total-1].w);
+      if(cell){
+        cell.classList.add('teach-glow');
+        cell.scrollIntoView({block:'center', behavior:'smooth'});
+      }
+      showTeachBanner('"'+hit.w+'" is here. '+
+        (total===1?'One press from Home.':total+' presses from Home.'), total, total);
+      teachTimers.push(setTimeout(stopTeaching, 9000));
+      return;
+    }
+
+    const s=path[i];
+    curView=s.view;
+    render();
+    document.getElementById('backBtn').style.display=(s.view==='home'?'none':'block');
+
+    teachTimers.push(setTimeout(function(){
+      const cell=findCellByLabel(s.w);
+      if(cell){
+        cell.classList.add('teach-glow');
+        cell.scrollIntoView({block:'center', behavior:'smooth'});
+      }
+      const last=(i===total-1);
+      showTeachBanner(last ? 'Then press "'+s.w+'"'
+                           : 'Press "'+s.w+'"'+(i===0?' on the home board':''),
+                      i+1, total);
+      // Hold long enough to actually register the position, then move on.
+      if(!last) teachTimers.push(setTimeout(function(){ step(i+1); }, 1600));
+      else      teachTimers.push(setTimeout(function(){ step(i+1); }, 1400));
+    }, 120));
+  }
+  step(0);
 }
 
 function openFinder(){
@@ -932,14 +1057,33 @@ function runFinder(){
   const q=document.getElementById('finderInput').value.trim().toLowerCase();
   const box=document.getElementById('finderResults');
   if(!q){ box.innerHTML=''; return; }
-  const hits=buildWordIndex().filter(function(e){ return e.w.toLowerCase().indexOf(q)!==-1; }).slice(0,40);
+  const all=buildWordIndex();
+  // Exact match first, then starts-with, then contains. Fewest presses wins
+  // within each group, because that is the route worth teaching.
+  const score=function(e){
+    const w=e.w.toLowerCase();
+    if(w===q) return 0;
+    if(w.indexOf(q)===0) return 1;
+    return 2;
+  };
+  const hits=all.filter(function(e){ return e.w.toLowerCase().indexOf(q)!==-1; })
+                .sort(function(a,b){ return score(a)-score(b) || a.hits-b.hits
+                                            || a.w.length-b.w.length; })
+                .slice(0,40);
   if(!hits.length){ box.innerHTML='<div style="padding:10px;opacity:.7;">No match for "'+q+'".</div>'; return; }
+  window._finderHits=hits;
   box.innerHTML=hits.map(function(h,n){
-    return '<div class="find-hit" data-n="'+n+'" style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.12);cursor:pointer;">'
-      +'<b>'+h.w+'</b> <span style="opacity:.65;font-size:.85em;">in '+h.where+'</span></div>';
+    const route=h.path.map(function(s){ return s.w; }).join('  \u2192  ');
+    return '<div class="find-hit" data-n="'+n+'" style="padding:11px 12px;'
+      +'border-bottom:1px solid rgba(255,255,255,.12);cursor:pointer;">'
+      +'<b>'+h.w+'</b>'
+      +'<span style="opacity:.55;font-size:.8em;margin-left:8px;">'
+      +h.hits+(h.hits===1?' press':' presses')+'</span>'
+      +'<div style="opacity:.7;font-size:.85em;margin-top:3px;">'+route+'</div>'
+      +'</div>';
   }).join('');
   Array.prototype.forEach.call(box.querySelectorAll('.find-hit'),function(el){
-    el.onclick=function(){ gotoWord(hits[parseInt(el.dataset.n,10)]); };
+    el.onclick=function(){ teachPath(window._finderHits[parseInt(el.dataset.n,10)]); };
   });
 }
 
@@ -1076,7 +1220,13 @@ setTimeout(()=>{const sp=document.getElementById('splash');sp.classList.add('gon
 document.body.insertAdjacentHTML('beforeend','<div class="tut-ov" id="tutOv" style="display:none"><div class="tut-card"><div class="tut-emoji" id="tutE"></div><div class="tut-h" id="tutH"></div><div class="tut-p" id="tutP"></div><div class="tut-dots" id="tutD"></div><button class="tut-btn" id="tutBtn" onclick="tutNext()">Next</button></div></div>');
 
 init();
-</script><div id="finderModal" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.65);align-items:center;justify-content:center;">
+</script><div id="teachBanner">
+  <span id="teachStep"></span>
+  <span id="teachText"></span>
+  <button onclick="stopTeaching()">Done</button>
+</div>
+
+<div id="finderModal" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.65);align-items:center;justify-content:center;">
  <div style="background:#1b1f2a;border:1px solid #3a4255;border-radius:14px;width:min(520px,92vw);max-height:80vh;display:flex;flex-direction:column;padding:16px;">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
    <b style="font-size:1.05rem;">Find a word</b>
@@ -1085,7 +1235,7 @@ init();
   <input id="finderInput" type="text" placeholder="Type a word, e.g. drink"
     oninput="runFinder()" onkeydown="if(event.key==='Escape')closeFinder()"
     style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #3a4255;background:#0f131c;color:#fff;font-size:1rem;">
-  <div style="font-size:.8rem;opacity:.6;margin:8px 2px 4px;">Tap a result to jump there and highlight it.</div>
+  <div style="font-size:.8rem;opacity:.6;margin:8px 2px 4px;">Tap a result and it will walk you through how to get there.</div>
   <div id="finderResults" style="overflow:auto;border-top:1px solid rgba(255,255,255,.1);"></div>
  </div>
 </div>
