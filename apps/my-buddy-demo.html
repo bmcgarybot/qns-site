@@ -437,6 +437,10 @@ function render(){
 const b=document.getElementById('board');
 const addBtn=document.getElementById('addBtn');
 if(addBtn)addBtn.style.display=(curView!=='home'&&curView!=='spell')?'block':'none';
+// Clear the board first. Without this every render appends another full set
+// of cells on top of the last one, which stacks duplicate grids and squashes
+// the rows until labels and icons are clipped away.
+b.innerHTML='';
 if(curView==='spell'){renderSpell(b);return}
 let items;
 if(curView==='home'){
@@ -471,10 +475,14 @@ b.style.gridTemplateColumns=`repeat(${cols},minmax(0,1fr))`;
 if(isHome){
   b.style.gridTemplateRows=`repeat(${rows},1fr)`;
   b.style.alignContent='stretch';
+  b.style.overflowY='hidden';
 }else{
   const rowH=Math.max(64,Math.floor((b.clientHeight||window.innerHeight)/7));
   b.style.gridTemplateRows=`repeat(${rows},${rowH}px)`;
   b.style.alignContent='start';
+  // Fixed pixel rows can total more than the board height. Allow scrolling on
+  // non-home views so nothing is silently cut off.
+  b.style.overflowY='auto';
 }
 
 if(isAnchor){
