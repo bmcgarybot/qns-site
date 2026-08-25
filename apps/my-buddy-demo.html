@@ -34,8 +34,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .c:active{opacity:.8;transform:scale(.95)}
 .c.pulse{animation:pulse .3s}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(42,157,143,.7)}70%{box-shadow:0 0 0 8px rgba(42,157,143,0)}100%{box-shadow:0 0 0 0 rgba(42,157,143,0)}}
-.c img{width:clamp(22px,5.5vw,42px);height:clamp(22px,5.5vw,42px);object-fit:contain;flex-shrink:1}
-.c .lb{font-size:clamp(9px,2.2vw,13px);font-weight:800;text-align:center;line-height:1.15;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);word-break:break-word;flex-shrink:0}
+.c img{width:clamp(22px,5.5vw,42px);height:clamp(22px,5.5vw,42px);object-fit:contain;flex-shrink:1}.c.phrase img{width:clamp(16px,3.2vw,26px);height:clamp(16px,3.2vw,26px)}
+.c .lb{font-size:clamp(9px,2.2vw,13px);font-weight:800;text-align:center;line-height:1.12;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);overflow-wrap:break-word;hyphens:none;flex-shrink:1;min-width:0;max-width:100%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}.c .lb.len2{font-size:clamp(8px,1.8vw,11px)}.c .lb.len3{font-size:clamp(7px,1.5vw,10px);-webkit-line-clamp:4}.c .lb.len4{font-size:clamp(6px,1.3vw,9px);-webkit-line-clamp:4}
 @media(max-width:500px),(max-height:500px) and (orientation:landscape){
 #board{gap:2px;padding:2px;overflow:hidden}
 .c{border-width:1.5px;border-radius:8px;padding:4px 2px;justify-content:center}
@@ -495,15 +495,19 @@ const displayW=ov?ov.w:s.w;
 const displayT=ov?ov.t:s.t;
 const displayPhoto=ov?ov.photo:s.photo;
 d.className='c '+(displayT||'resp');
+// Multi-word labels need smaller type and a smaller image, or a phrase like
+// "nosotros estamos felices" overflows a cell built for one word.
+const _wc=String(displayW||'').trim().split(/\s+/).length;
+if(_wc>1) d.classList.add('phrase');
 if(editMode)d.classList.add('edit-mode');
 const imgSrc=displayPhoto?displayPhoto:(s.svgName?(FRM[s.svgName]||'symbols/mybuddy/'+s.svgName+'.svg'):(s.i?IM(s.i):null));
 const isColorCat=(curView==='colors');
 const isGram=s.w&&s.w.startsWith('+');
 if(imgSrc){
 d.innerHTML=`<img src="${imgSrc}" style="${displayPhoto?'border-radius:6px;object-fit:cover;':(isColorCat||isMul(imgSrc)?'background:rgba(255,255,255,0.85);border-radius:6px;padding:1px;':'filter:brightness(0) invert(1);')}"
- onerror="this.style.filter='';this.onerror=null"><div class="lb">${displayW}</div>`;
+ onerror="this.style.filter='';this.onerror=null"><div class="lb${_wc>3?' len4':_wc===3?' len3':_wc===2?' len2':''}">${displayW}</div>`;
 }else{
-d.innerHTML=`<div class="lb" style="font-size:clamp(12px,3vw,18px)">${displayW}</div>`;
+d.innerHTML=`<div class="lb${_wc>3?' len4':_wc===3?' len3':_wc===2?' len2':''}" style="font-size:${_wc>3?'clamp(8px,1.6vw,12px)':_wc===3?'clamp(9px,1.9vw,14px)':_wc===2?'clamp(10px,2.3vw,16px)':'clamp(12px,3vw,18px)'}">${displayW}</div>`;
 }
 d.onclick=()=>{
 if(editMode){openEditCell(s,curView);return}
@@ -544,13 +548,13 @@ function getHome(){const all=V.sort((a,b)=>a.p-b.p);if(!phoneMode)return all;ret
 
 // Verbs English refuses to inflect politely.
 const IRREGULAR = {
-  go:{s:'goes',ing:'going',ed:'went'},        do:{s:'does',ing:'doing',ed:'did'},
-  make:{s:'makes',ing:'making',ed:'made'},    get:{s:'gets',ing:'getting',ed:'got'},
-  eat:{s:'eats',ing:'eating',ed:'ate'},       drink:{s:'drinks',ing:'drinking',ed:'drank'},
-  come:{s:'comes',ing:'coming',ed:'came'},    give:{s:'gives',ing:'giving',ed:'gave'},
-  put:{s:'puts',ing:'putting',ed:'put'},      run:{s:'runs',ing:'running',ed:'ran'},
-  sit:{s:'sits',ing:'sitting',ed:'sat'},      read:{s:'reads',ing:'reading',ed:'read'},
-  sleep:{s:'sleeps',ing:'sleeping',ed:'slept'},feel:{s:'feels',ing:'feeling',ed:'felt'},
+  go:{frames_en:['where do you go','when do we go','why do we go','how do we get there','who is going'], s:'goes',ing:'going',ed:'went'},        do:{s:'does',ing:'doing',ed:'did'},
+  make:{frames_en:['what do you want to make','how do you make it','can you help me make it','look what I made'], s:'makes',ing:'making',ed:'made'},    get:{s:'gets',ing:'getting',ed:'got'},
+  eat:{frames_en:['what do you want to eat','when do we eat','are you hungry','do you want more'], s:'eats',ing:'eating',ed:'ate'},       drink:{s:'drinks',ing:'drinking',ed:'drank'},
+  come:{frames_en:['come here please','who is coming','when are you coming','where do we go'], s:'comes',ing:'coming',ed:'came'},    give:{s:'gives',ing:'giving',ed:'gave'},
+  put:{frames_en:['where does it go','put it here','put it away','can you put it down'], s:'puts',ing:'putting',ed:'put'},      run:{s:'runs',ing:'running',ed:'ran'},
+  sit:{frames_en:['sit with me','where do I sit','can I get up','I want to stand'], s:'sits',ing:'sitting',ed:'sat'},      read:{s:'reads',ing:'reading',ed:'read'},
+  sleep:{frames_en:['I am tired','I want to sleep','it is bedtime','I am not tired'], s:'sleeps',ing:'sleeping',ed:'slept'},feel:{s:'feels',ing:'feeling',ed:'felt'},
   see:{s:'sees',ing:'seeing',ed:'saw'},       have:{s:'has',ing:'having',ed:'had'},
   is:{s:'is',ing:'being',ed:'was'},           can:{s:'can',ing:'',ed:'could'},
   hold:{s:'holds',ing:'holding',ed:'held'},   find:{s:'finds',ing:'finding',ed:'found'},
@@ -609,55 +613,55 @@ function morph(base){
 // One row per anchor. This is where vocabulary grows: add related verbs,
 // nouns and describing words and the page fills itself out.
 const ANCHORS = {
-  want:  {icon:'want',  related:['need','wish','pick','choose','ask'],
+  want:  {frames_en:['what do you want','which one','how many','do you want this'], icon:'want',  related:['need','wish','pick','choose','ask'],
           nouns:['toy','snack','drink','turn','break'], adjs:['more','big','little']},
-  like:  {icon:'like',  related:['love','enjoy','hate','prefer','miss'],
+  like:  {frames_en:['what do you like','who do you like','why do you like it','do you like this'], icon:'like',  related:['love','enjoy','hate','prefer','miss'],
           nouns:['show','song','game','friend','story'], adjs:['good','fun','nice']},
-  go:    {questions:['where','when','why','how','who'], icon:'go',    related:['come','leave','stay','walk','run','ride'],
+  go:    {frames_en:['where do you go','when do we go','why do we go','how do we get there','who is going'], questions:['where','when','why','how','who'], icon:'go',    related:['come','leave','stay','walk','run','ride'],
           nouns:['home','school','store','park','car','bus'], adjs:['fast','slow','far']},
-  help:  {icon:'help',  related:['show','share','carry','fix','wait'],
+  help:  {frames_en:['can you help me','who can help','what do you need','help me please'], icon:'help',  related:['show','share','carry','fix','wait'],
           nouns:['hand','turn','job','problem'], adjs:['hard','easy']},
-  play:  {icon:'play',  related:['win','lose','share','build','hide','throw'],
+  play:  {frames_en:['what do you want to play','who wants to play','where do we play','can I play'], icon:'play',  related:['win','lose','share','build','hide','throw'],
           nouns:['game','toy','ball','outside','friend','turn'], adjs:['fun','fair','loud']},
-  eat:   {icon:'eat',   related:['drink','taste','bite','cook','share'],
+  eat:   {frames_en:['what do you want to eat','when do we eat','are you hungry','do you want more'], icon:'eat',   related:['drink','taste','bite','cook','share'],
           nouns:['food','snack','lunch','dinner','plate'], adjs:['hungry','full','yummy','hot']},
-  drink: {icon:'drink', related:['eat','pour','taste','fill'],
+  drink: {frames_en:['what do you want to drink','are you thirsty','do you want more','is it too cold'], icon:'drink', related:['eat','pour','taste','fill'],
           nouns:['water','juice','milk','cup'], adjs:['thirsty','cold','empty']},
-  look:  {icon:'look',  related:['see','watch','find','show','point'],
+  look:  {frames_en:['what do you see','look at this','where is it','did you see that'], icon:'look',  related:['see','watch','find','show','point'],
           nouns:['book','picture','window','outside'], adjs:['pretty','dark','bright']},
-  come:  {questions:['where','when','why','who'], icon:'come',  related:['go','bring','follow','wait','stay'],
+  come:  {frames_en:['come here please','who is coming','when are you coming','where do we go'], questions:['where','when','why','who'], icon:'come',  related:['go','bring','follow','wait','stay'],
           nouns:['here','home','inside','outside'], adjs:['close','near']},
-  give:  {icon:'give',  related:['take','share','get','send','show'],
+  give:  {frames_en:['can I have it','who gets it','give it to me','whose turn is it'], icon:'give',  related:['take','share','get','send','show'],
           nouns:['gift','turn','hug','money'], adjs:['nice','mine']},
-  make:  {icon:'make',  related:['build','draw','fix','cook','write'],
+  make:  {frames_en:['what do you want to make','how do you make it','can you help me make it','look what I made'], icon:'make',  related:['build','draw','fix','cook','write'],
           nouns:['picture','cake','mess','noise','thing'], adjs:['big','messy','new']},
-  get:   {icon:'get',   related:['take','find','bring','buy','keep'],
+  get:   {frames_en:['what do you need','can you get it','where is it','I will get it'], icon:'get',   related:['take','find','bring','buy','keep'],
           nouns:['thing','one','ready','help'], adjs:['ready','new','more']},
-  put:   {questions:['where','what','when','who'], icon:'put',   related:['take','move','drop','hold','keep'],
+  put:   {frames_en:['where does it go','put it here','put it away','can you put it down'], questions:['where','what','when','who'], icon:'put',   related:['take','move','drop','hold','keep'],
           nouns:['it','there','away','down','back'], adjs:['careful','gentle']},
-  open:  {questions:['what','when','why','how','who'], icon:'open',  related:['close','lock','shut','pull','push'],
+  open:  {frames_en:['can you open it','what is inside','open it please','it will not open'], questions:['what','when','why','how','who'], icon:'open',  related:['close','lock','shut','pull','push'],
           nouns:['door','box','window','book','bag'], adjs:['open','stuck','tight']},
-  turn:  {questions:['what','when','why','how','who'], icon:'turn',  related:['move','spin','flip','stop','push'],
+  turn:  {frames_en:['turn it on','turn it off','turn the page','which way'], questions:['what','when','why','how','who'], icon:'turn',  related:['move','spin','flip','stop','push'],
           nouns:['page','light','music','corner'], adjs:['on','off','around']},
-  read:  {icon:'read',  related:['look','write','tell','listen','learn'],
+  read:  {frames_en:['read this to me','what does it say','which book','read it again'], icon:'read',  related:['look','write','tell','listen','learn'],
           nouns:['book','story','word','page'], adjs:['funny','scary','long']},
-  sit:   {questions:['where','when','why','who'], icon:'sit',   related:['stand','rest','wait','stay','lie'],
+  sit:   {frames_en:['sit with me','where do I sit','can I get up','I want to stand'], questions:['where','when','why','who'], icon:'sit',   related:['stand','rest','wait','stay','lie'],
           nouns:['chair','floor','couch','seat'], adjs:['still','comfy','tired']},
-  walk:  {questions:['where','when','why','how','who'], icon:'walk',  related:['run','go','stop','move','climb'],
+  walk:  {frames_en:['where are we walking','walk with me','can we go outside','I am tired'], questions:['where','when','why','how','who'], icon:'walk',  related:['run','go','stop','move','climb'],
           nouns:['outside','park','dog','stairs'], adjs:['slow','far','careful']},
-  run:   {questions:['where','when','why','how','who'], icon:'run',   related:['walk','jump','chase','race','stop'],
+  run:   {frames_en:['let us run','I want to run','not so fast','wait for me'], questions:['where','when','why','how','who'], icon:'run',   related:['walk','jump','chase','race','stop'],
           nouns:['outside','race','game'], adjs:['fast','tired','fun']},
-  sleep: {questions:['where','when','why','who'], icon:'sleep', related:['rest','wake','dream','lie','nap'],
+  sleep: {frames_en:['I am tired','I want to sleep','it is bedtime','I am not tired'], questions:['where','when','why','who'], icon:'sleep', related:['rest','wake','dream','lie','nap'],
           nouns:['bed','pillow','night','nap'], adjs:['tired','sleepy','quiet']},
-  wash:  {questions:['what','when','why','how','who'], icon:'wash',  related:['clean','dry','brush','scrub'],
+  wash:  {frames_en:['wash my hands','I am dirty','I need soap','all clean'], questions:['what','when','why','how','who'], icon:'wash',  related:['clean','dry','brush','scrub'],
           nouns:['hands','face','hair','dishes'], adjs:['clean','dirty','wet']},
-  love:  {questions:['who','what','why'], icon:'love',  related:['like','hug','miss','care','need'],
+  love:  {frames_en:['I love you','who do you love','I miss you','give me a hug'], questions:['who','what','why'], icon:'love',  related:['like','hug','miss','care','need'],
           nouns:['mom','dad','friend','pet','family'], adjs:['happy','safe','kind']},
-  feel:  {questions:['how','what','why','when','who'], icon:'feel',  related:['am','look','seem','get'],
+  feel:  {frames_en:['how do you feel','what is wrong','are you okay','I feel bad'], questions:['how','what','why','when','who'], icon:'feel',  related:['am','look','seem','get'],
           nouns:['tummy','head','heart'], adjs:['happy','sad','mad','scared','sick','tired']},
-  need:  {icon:'need',  related:['want','have','get','ask'],
+  need:  {frames_en:['what do you need','I need help','I need it now','do you need this'], icon:'need',  related:['want','have','get','ask'],
           nouns:['help','break','bathroom','water','time'], adjs:['now','more']},
-  do:    {icon:'do',    related:['make','try','finish','start','work'],
+  do:    {frames_en:['what are you doing','what should I do','I am done','can I do it'], icon:'do',    related:['make','try','finish','start','work'],
           nouns:['work','job','homework','thing'], adjs:['done','busy','hard']},
   help_: {icon:'help',  related:[], nouns:[], adjs:[]}
 };
@@ -863,23 +867,16 @@ function buildAnchorItems(word){
   });
 
   // Row 6: question forms of this verb.
-  // Not every question word fits every verb. "what do you go" is not
-  // English. Each anchor names the ones that work; the rest are omitted
-  // rather than generated badly.
-  const qs = a.questions || ['what','where','when','why','how'];
-  const QSLOT = {what:60, where:61, who:62, when:63, why:64, how:65};
-  qs.forEach(function(qw){
-    const p = QSLOT[qw];
-    if (p === undefined) return;
-    if (qw === 'who') put(p, 'who '+m.s, 'who', 'social');
-    else put(p, qw+' do you '+word, qw, 'social');
-  });
-  if (word !== 'want' && word !== 'need') put(67, 'I want to '+word, 'want', 'social');
-  put(68, word+' more',         'more', 'social');
-  put(69, word+' again',        'again','social');
-  put(70, 'stop '+m.ing,        'stop', 'social');
-  put(71, 'all done',           'all done','social');
-
+  // Real question and control frames, one set per anchor. Generating these
+  // from a template produced things like "where do you want", which is not
+  // English. Where an anchor has no natural frames, the row is left empty.
+  const FRAMES = a.frames_en || [];
+  FRAMES.slice(0,6).forEach(function(f,i){ put(60+i, f, a.icon, 'social'); });
+  put(67, 'yes',      'yes',      'social');
+  put(68, 'no',       'no',       'social');
+  put(69, 'more',     'more',     'social');
+  put(70, 'stop',     'stop',     'social');
+  put(71, 'all done', 'all done', 'social');
   return out;
 }
 

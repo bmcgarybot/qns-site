@@ -34,8 +34,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .c:active{opacity:.8;transform:scale(.95)}
 .c.pulse{animation:pulse .3s}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(42,157,143,.7)}70%{box-shadow:0 0 0 8px rgba(42,157,143,0)}100%{box-shadow:0 0 0 0 rgba(42,157,143,0)}}
-.c img{width:clamp(22px,5.5vw,42px);height:clamp(22px,5.5vw,42px);object-fit:contain;flex-shrink:1}
-.c .lb{font-size:clamp(9px,2.2vw,13px);font-weight:800;text-align:center;line-height:1.15;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);word-break:break-word;flex-shrink:0}
+.c img{width:clamp(22px,5.5vw,42px);height:clamp(22px,5.5vw,42px);object-fit:contain;flex-shrink:1}.c.phrase img{width:clamp(16px,3.2vw,26px);height:clamp(16px,3.2vw,26px)}
+.c .lb{font-size:clamp(9px,2.2vw,13px);font-weight:800;text-align:center;line-height:1.12;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);overflow-wrap:break-word;hyphens:none;flex-shrink:1;min-width:0;max-width:100%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}.c .lb.len2{font-size:clamp(8px,1.8vw,11px)}.c .lb.len3{font-size:clamp(7px,1.5vw,10px);-webkit-line-clamp:4}.c .lb.len4{font-size:clamp(6px,1.3vw,9px);-webkit-line-clamp:4}
 @media(max-width:500px),(max-height:500px) and (orientation:landscape){
 #board{gap:2px;padding:2px;overflow:hidden}
 .c{border-width:1.5px;border-radius:8px;padding:4px 2px;justify-content:center}
@@ -155,8 +155,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div class="ov" id="setOv"><div class="md" id="setMd">
 <h3>⚙️ Settings</h3>
 <label>Voice</label><select id="vSel"></select>
-<label>Velocidad <span id="spV">0.9</span></label><input type="range" id="spR" min=".3" max="1.5" step=".1" value=".9" oninput="SP=+this.value;document.getElementById('spV').textContent=SP.toFixed(1);save()">
-<label>Tono <span id="ptV">1.0</span></label><input type="range" id="ptR" min=".5" max="2" step=".1" value="1" oninput="PITCH=+this.value;document.getElementById('ptV').textContent=PITCH.toFixed(1);save();speak('this is my voice')">
+<label>Speed <span id="spV">0.9</span></label><input type="range" id="spR" min=".3" max="1.5" step=".1" value=".9" oninput="SP=+this.value;document.getElementById('spV').textContent=SP.toFixed(1);save()">
+<label>Pitch <span id="ptV">1.0</span></label><input type="range" id="ptR" min=".5" max="2" step=".1" value="1" oninput="PITCH=+this.value;document.getElementById('ptV').textContent=PITCH.toFixed(1);save();speak('this is my voice')">
 <label>Modeling Mode</label><select id="mmSel" onchange="MM=this.value==='1';document.getElementById('modelBanner').style.display=MM?'block':'none';save()"><option value="0">Off</option><option value="1">On - taps won't count in stats</option></select>
 <hr style="border-color:#444;margin:10px 0">
 <h3>🚨 My Info (Safety)</h3>
@@ -176,7 +176,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="ok" onclick="openAddCWFor('custom')" style="margin-top:6px">➕ Add Word</button>
 <hr style="border-color:#444;margin:10px 0">
 <button class="ok" onclick="speak('Hello, I am your buddy')">🔊 Test</button>
-<button class="ca" onclick="closeOv('setOv')">Cerrar</button>
+<button class="ca" onclick="closeOv('setOv')">Close</button>
 <hr style="border-color:#444;margin:10px 0">
 <div style="font-size:.65em;opacity:.5;text-align:center;line-height:1.6">
 <p>My Buddy AAC v1.0 - BMC Luminary Ventures LLC</p>
@@ -230,7 +230,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div id="qpEditArea" style="display:none;margin-top:8px">
 <div style="display:flex;gap:4px"><input type="text" id="qpInput" placeholder="Type a new phrase..." style="flex:1;padding:8px;border-radius:8px;border:1px solid #555;background:#1a202c;color:#fff;font-size:.9em"><button class="ok" onclick="addQP()" style="padding:8px 14px">Add</button></div>
 </div>
-<div style="display:flex;gap:6px;margin-top:8px"><button class="ca" onclick="closeOv('qpOv')" style="flex:1">Cerrar</button><button class="ok" id="qpEditBtn" onclick="toggleQPEdit()" style="flex:1">✏️ Edit</button></div>
+<div style="display:flex;gap:6px;margin-top:8px"><button class="ca" onclick="closeOv('qpOv')" style="flex:1">Close</button><button class="ok" id="qpEditBtn" onclick="toggleQPEdit()" style="flex:1">✏️ Edit</button></div>
 </div></div>
 <!-- QUICK PHRASE EDIT MODAL -->
 <div class="ov" id="qpEditOv"><div class="md">
@@ -421,8 +421,8 @@ speak(text);
 }
 }
 
-function save(){try{localStorage.setItem(SK,JSON.stringify({PITCH,SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,phoneMode,tutListo:true}))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=d.SP||.9;PITCH=d.PITCH||1;VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;return d.tutListo}catch(e){return false}}
+function save(){try{localStorage.setItem(SK,JSON.stringify({PITCH,SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,phoneMode,tutDone:true}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=d.SP||.9;PITCH=d.PITCH||1;VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;return d.tutDone}catch(e){return false}}
 
 function speak(text){text=(text+'').toLowerCase();if(!text)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=SP;u.lang=APP_LANG;u.pitch=PITCH;if(VU){const v=speechSynthesis.getVoices().find(v=>v.voiceURI===VU);if(v)u.voice=v}speechSynthesis.speak(u)}
 function addWord(w,i){if(spellBuf){const sw=spellBuf.trim();if(sw){sentence.push({w:sw,i:0});speak(sw)}spellBuf=''}sentence.push({w,i});rStrip();speak(w);if(!MM){usage[w]=(usage[w]||0)+1;recents=recents.filter(r=>r.w!==w);recents.unshift({w,i});if(recents.length>20)recents.length=20}save();renderRec()}
@@ -495,15 +495,19 @@ const displayW=ov?ov.w:s.w;
 const displayT=ov?ov.t:s.t;
 const displayPhoto=ov?ov.photo:s.photo;
 d.className='c '+(displayT||'resp');
+// Multi-word labels need smaller type and a smaller image, or a phrase like
+// "nosotros estamos felices" overflows a cell built for one word.
+const _wc=String(displayW||'').trim().split(/\s+/).length;
+if(_wc>1) d.classList.add('phrase');
 if(editMode)d.classList.add('edit-mode');
 const imgSrc=displayPhoto?displayPhoto:(s.svgName?(FRM[s.svgName]||'symbols/mybuddy/'+s.svgName+'.svg'):(s.i?IM(s.i):null));
 const isColorCat=(curView==='colors');
 const isGram=s.w&&s.w.startsWith('+');
 if(imgSrc){
 d.innerHTML=`<img src="${imgSrc}" style="${displayPhoto?'border-radius:6px;object-fit:cover;':(isColorCat||isMul(imgSrc)?'background:rgba(255,255,255,0.85);border-radius:6px;padding:1px;':'filter:brightness(0) invert(1);')}"
- onerror="this.style.filter='';this.onerror=null"><div class="lb">${displayW}</div>`;
+ onerror="this.style.filter='';this.onerror=null"><div class="lb${_wc>3?' len4':_wc===3?' len3':_wc===2?' len2':''}">${displayW}</div>`;
 }else{
-d.innerHTML=`<div class="lb" style="font-size:clamp(12px,3vw,18px)">${displayW}</div>`;
+d.innerHTML=`<div class="lb${_wc>3?' len4':_wc===3?' len3':_wc===2?' len2':''}" style="font-size:${_wc>3?'clamp(8px,1.6vw,12px)':_wc===3?'clamp(9px,1.9vw,14px)':_wc===2?'clamp(10px,2.3vw,16px)':'clamp(12px,3vw,18px)'}">${displayW}</div>`;
 }
 d.onclick=()=>{
 if(editMode){openEditCell(s,curView);return}
@@ -541,7 +545,6 @@ function getHome(){const all=V.sort((a,b)=>a.p-b.p);if(!phoneMode)return all;ret
    anchors reach thousands of words without thousands of hand-placed
    cells.
    ================================================================== */
-
 
 // Spanish conjugation. More regular than English once stem changes and the
 // true irregulars are handled, so most forms are generated.
@@ -635,55 +638,55 @@ function morph(base){
 // One row per anchor. This is where vocabulary grows: add related verbs,
 // nouns and describing words and the page fills itself out.
 const ANCHORS = {
-  querer: {icon:'want',  related:['necesitar','desear','elegir','escoger','preguntar'],
-          nouns:['juguete','merienda','bebida','turno','descanso'], adjs:['más','grande','pequeño']},
-  gustar: {icon:'like',  related:['amar','disfrutar','odiar','preferir','extrañar'],
+  querer:  {frames_en:['¿qué quieres?','¿cuál?','¿cuántos?','¿quieres esto?'], icon:'want',  related:['necesitar','desear','elegir','escoger','preguntar'],
+          nouns:['juguete','merienda','beber','girar','descanso'], adjs:['más','grande','pequeño']},
+  gustar:  {frames_en:['¿qué te gusta?','¿quién te gusta?','¿por qué te gusta?','me gusta mucho'], icon:'like',  related:['amar','disfrutar','odiar','preferir','extrañar'],
           nouns:['mostrar','canción','juego','amigo','cuento'], adjs:['bueno','divertido','amable']},
-  ir: {questions:['where','when','why','how','who'], icon:'go',    related:['venir','salir','quedarse','caminar','correr','montar'],
+  ir:    {frames_en:['¿a dónde vamos?','¿cuándo vamos?','¿por qué vamos?','¿quién viene?'], questions:['where','when','why','how','who'], icon:'go',    related:['venir','salir','quedarse','caminar','correr','montar'],
           nouns:['casa','escuela','tienda','parque','carro','autobús'], adjs:['rápido','lento','lejos']},
-  ayudar: {icon:'help',  related:['mostrar','compartir','llevar','arreglar','esperar'],
-          nouns:['mano','turno','trabajo','problema'], adjs:['difícil','fácil']},
-  jugar: {icon:'play',  related:['ganar','perder','compartir','construir','esconder','lanzar'],
-          nouns:['juego','juguete','pelota','afuera','amigo','turno'], adjs:['divertido','justo','ruidoso']},
-  comer: {icon:'eat',   related:['beber','probar','morder','cocinar','compartir'],
-          nouns:['comida','merienda','almuerzo','cena','plato'], adjs:['hambre','lleno','rico','caliente']},
-  beber: {icon:'drink', related:['comer','servir','probar','llenar'],
-          nouns:['agua','jugo','leche','taza'], adjs:['sed','frío','vacío']},
-  mirar: {icon:'look',  related:['ver','observar','encontrar','mostrar','señalar'],
+  ayudar:  {frames_en:['¿me ayudas?','¿quién me ayuda?','¿qué necesitas?','ayúdame por favor'], icon:'help',  related:['mostrar','compartir','llevar','arreglar','esperar'],
+          nouns:['mano','girar','trabajo','problema'], adjs:['difícil','fácil']},
+  jugar:  {frames_en:['¿a qué jugamos?','¿quién quiere jugar?','¿dónde jugamos?','¿puedo jugar?'], icon:'play',  related:['ganar','perder','compartir','construir','esconder','lanzar'],
+          nouns:['juego','juguete','pelota','afuera','amigo','girar'], adjs:['divertido','justo','ruidoso']},
+  comer:   {frames_en:['¿qué quieres comer?','¿cuándo comemos?','¿tienes hambre?','¿quieres más?'], icon:'eat',   related:['beber','probar','morder','cocinar','compartir'],
+          nouns:['comida','merienda','almuerzo','cena','plato'], adjs:['hambriento','lleno','rico','caliente']},
+  beber: {frames_en:['¿qué quieres tomar?','¿tienes sed?','¿quieres más?','está muy frío'], icon:'drink', related:['comer','servir','probar','llenar'],
+          nouns:['agua','jugo','leche','taza'], adjs:['sediento','frío','vacío']},
+  mirar:  {frames_en:['¿qué ves?','mira esto','¿dónde está?','¿viste eso?'], icon:'look',  related:['ver','observar','encontrar','mostrar','señalar'],
           nouns:['libro','foto','ventana','afuera'], adjs:['bonito','oscuro','brillante']},
-  venir: {questions:['where','when','why','who'], icon:'come',  related:['ir','traer','seguir','esperar','quedarse'],
+  venir:  {frames_en:['ven aquí por favor','¿quién viene?','¿cuándo vienes?','vamos'], questions:['where','when','why','who'], icon:'come',  related:['ir','traer','seguir','esperar','quedarse'],
           nouns:['here','casa','adentro','afuera'], adjs:['cerrar','cerca']},
-  dar: {icon:'give',  related:['tomar','compartir','conseguir','enviar','mostrar'],
-          nouns:['regalo','turno','abrazar','dinero'], adjs:['amable','mío']},
-  crear: {icon:'make',  related:['construir','dibujar','arreglar','cocinar','escribir'],
+  dar:  {frames_en:['¿me lo das?','¿de quién es?','dámelo','¿a quién le toca?'], icon:'give',  related:['tomar','compartir','conseguir','enviar','mostrar'],
+          nouns:['regalo','girar','abrazar','dinero'], adjs:['amable','mío']},
+  crear:  {frames_en:['¿qué quieres hacer?','¿cómo se hace?','¿me ayudas?','mira lo que hice'], icon:'make',  related:['construir','dibujar','arreglar','cocinar','escribir'],
           nouns:['foto','pastel','desorden','ruido','cosa'], adjs:['grande','desordenado','nuevo']},
-  conseguir: {icon:'get',   related:['tomar','encontrar','traer','comprar','guardar'],
+  conseguir:   {frames_en:['¿qué necesitas?','¿lo puedes traer?','¿dónde está?','yo lo traigo'], icon:'get',   related:['tomar','encontrar','traer','comprar','guardar'],
           nouns:['cosa','uno','listo','ayudar'], adjs:['listo','nuevo','más']},
-  poner: {questions:['where','what','when','who'], icon:'put',   related:['tomar','mover','soltar','sostener','guardar'],
+  poner:   {frames_en:['¿dónde va?','ponlo aquí','guárdalo','¿lo puedes bajar?'], questions:['where','what','when','who'], icon:'put',   related:['tomar','mover','soltar','sostener','guardar'],
           nouns:['eso','allí','lejos','down','atrás'], adjs:['cuidadoso','suave']},
-  abrir: {questions:['what','when','why','how','who'], icon:'open',  related:['cerrar','cerrar con llave','cerrar','jalar','empujar'],
+  abrir:  {frames_en:['¿lo puedes abrir?','¿qué hay adentro?','ábrelo por favor','no se abre'], questions:['what','when','why','how','who'], icon:'open',  related:['cerrar','cerrar con llave','cerrar','jalar','empujar'],
           nouns:['puerta','caja','ventana','libro','bolsa'], adjs:['abrir','atascado','apretado']},
-  girar: {questions:['what','when','why','how','who'], icon:'turn',  related:['mover','girar','voltear','stop','empujar'],
+  girar:  {frames_en:['préndelo','apágalo','pasa la página','¿para qué lado?'], questions:['what','when','why','how','who'], icon:'turn',  related:['mover','girar','voltear','stop','empujar'],
           nouns:['página','luz','música','esquina'], adjs:['encendido','apagado','alrededor']},
-  leer: {icon:'read',  related:['mirar','escribir','decir','escuchar','aprender'],
+  leer:  {frames_en:['léeme esto','¿qué dice?','¿cuál libro?','léelo otra vez'], icon:'read',  related:['mirar','escribir','decir','escuchar','aprender'],
           nouns:['libro','cuento','palabra','página'], adjs:['gracioso','aterrador','largo']},
-  sentarse: {questions:['where','when','why','who'], icon:'sit',   related:['pararse','descansar','esperar','quedarse','acostarse'],
+  sentarse:   {frames_en:['siéntate conmigo','¿dónde me siento?','¿me puedo parar?','quiero pararme'], questions:['where','when','why','who'], icon:'sit',   related:['pararse','descansar','esperar','quedarse','acostarse'],
           nouns:['silla','piso','sofá','asiento'], adjs:['quieto','cómodo','cansado']},
-  caminar: {questions:['where','when','why','how','who'], icon:'walk',  related:['correr','ir','stop','mover','subir'],
+  caminar:  {frames_en:['¿a dónde caminamos?','camina conmigo','¿vamos afuera?','estoy cansado'], questions:['where','when','why','how','who'], icon:'walk',  related:['correr','ir','stop','mover','subir'],
           nouns:['afuera','parque','perro','escaleras'], adjs:['lento','lejos','cuidadoso']},
-  correr: {questions:['where','when','why','how','who'], icon:'run',   related:['caminar','saltar','perseguir','competir','stop'],
+  correr:   {frames_en:['vamos a correr','quiero correr','no tan rápido','espérame'], questions:['where','when','why','how','who'], icon:'run',   related:['caminar','saltar','perseguir','competir','stop'],
           nouns:['afuera','competir','juego'], adjs:['rápido','cansado','divertido']},
-  dormir: {questions:['where','when','why','who'], icon:'sleep', related:['descansar','despertar','soñar','acostarse','siesta'],
+  dormir: {frames_en:['estoy cansado','quiero dormir','es hora de dormir','no tengo sueño'], questions:['where','when','why','who'], icon:'sleep', related:['descansar','despertar','soñar','acostarse','siesta'],
           nouns:['cama','almohada','noche','siesta'], adjs:['cansado','soñoliento','silencioso']},
-  lavar: {questions:['what','when','why','how','who'], icon:'wash',  related:['limpiar','secar','cepillar','fregar'],
+  lavar:  {frames_en:['lávame las manos','estoy sucio','necesito jabón','ya está limpio'], questions:['what','when','why','how','who'], icon:'wash',  related:['limpiar','secar','cepillar','fregar'],
           nouns:['manos','cara','pelo','platos'], adjs:['limpiar','sucio','mojado']},
-  amar: {questions:['who','what','why'], icon:'love',  related:['gustar','abrazar','extrañar','cuidar','necesitar'],
+  amar:  {frames_en:['te quiero','¿a quién quieres?','te extraño','dame un abrazo'], questions:['who','what','why'], icon:'love',  related:['gustar','abrazar','extrañar','cuidar','necesitar'],
           nouns:['mamá','papá','amigo','mascota','familia'], adjs:['feliz','seguro','amable']},
-  sentir: {questions:['how','what','why','when','who'], icon:'feel',  related:['estar','mirar','parecer','conseguir'],
+  sentir:  {frames_en:['¿cómo te sientes?','¿qué te pasa?','¿estás bien?','me siento mal'], questions:['how','what','why','when','who'], icon:'feel',  related:['estar','mirar','parecer','conseguir'],
           nouns:['barriga','cabeza','corazón'], adjs:['feliz','triste','enojado','asustado','enfermo','cansado']},
-  necesitar: {icon:'need',  related:['querer','tener','conseguir','preguntar'],
+  necesitar:  {frames_en:['¿qué necesitas?','necesito ayuda','lo necesito ahora','¿necesitas esto?'], icon:'need',  related:['querer','tener','conseguir','preguntar'],
           nouns:['ayudar','descanso','baño','agua','tiempo'], adjs:['ahora','más']},
-  hacer: {icon:'do',    related:['crear','intentar','terminar','empezar','trabajar'],
+  hacer:    {frames_en:['¿qué estás haciendo?','¿qué hago?','ya terminé','¿lo puedo hacer?'], icon:'do',    related:['crear','intentar','terminar','empezar','trabajar'],
           nouns:['trabajar','trabajo','tarea','cosa'], adjs:['terminado','ocupado','difícil']},
   help_: {icon:'help',  related:[], nouns:[], adjs:[]}
 };
@@ -694,100 +697,86 @@ const ANCHORS = {
    describing word page looks the same as every other. */
 const ANCHORS2 = {
   // ---- describing words -------------------------------------------------
-  feliz: {type:'adj', icon:'happy', opposite:'triste',
+  feliz:{type:'adj', icon:'happy', opposite:'triste',
          related:['excited','proud','silly','calm','amar'],
          things:['amigo','música','party','juego','mascota']},
-  triste: {type:'adj', icon:'sad', opposite:'feliz',
+  triste:  {type:'adj', icon:'sad', opposite:'feliz',
          related:['lonely','hurt','extrañar','cry','upset'],
          things:['goodbye','alone','broken','hurt']},
-  bueno: {type:'adj', icon:'good', opposite:'bad',
+  bueno: {type:'adj', icon:'good', opposite:'malo',
          related:['great','amable','amable','divertido','right'],
          things:['trabajo','idea','day','amigo','comida']},
-  bad: {type:'adj', icon:'bad', opposite:'bueno',
+  malo:  {type:'adj', icon:'bad', opposite:'bueno',
          related:['mean','wrong','yucky','aterrador','enfermo'],
          things:['day','soñar','idea','smell']},
-  grande: {type:'adj', icon:'big', opposite:'pequeño',
+  grande:  {type:'adj', icon:'big', opposite:'pequeño',
          related:['tall','huge','wide','largo','heavy'],
          things:['perro','truck','house','tree']},
-  pequeño: {type:'adj', icon:'little', opposite:'grande',
+  pequeño:{type:'adj', icon:'little', opposite:'grande',
          related:['small','short','tiny','thin','luz'],
          things:['baby','bug','juguete','piece']},
-  caliente: {type:'adj', icon:'hot', opposite:'frío',
+  caliente:  {type:'adj', icon:'hot', opposite:'frío',
          related:['warm','burning','sunny','spicy'],
          things:['sun','comida','beber','bath']},
   frío: {type:'adj', icon:'cold', opposite:'caliente',
          related:['cool','freezing','snowy','mojado'],
          things:['ice','snow','agua','wind']},
-  más: {type:'adj', icon:'more', opposite:'some',
+  más: {type:'adj', icon:'more', opposite:'algo',
          related:['another','again','lots','all','extra'],
          things:['comida','beber','tiempo','girar','please']},
-  some: {type:'adj', icon:'some', opposite:'más',
+  algo: {type:'adj', icon:'some', opposite:'más',
          related:['a little','part','half','few'],
          things:['comida','agua','tiempo','ayudar']},
 
   // ---- place words ------------------------------------------------------
-  encendido: {type:'prep', icon:'on',   opposite:'apagado',
+  encendido:   {type:'prep', icon:'on',   opposite:'apagado',
          places:['table','silla','cama','piso','top']},
-  apagado: {type:'prep', icon:'off',  opposite:'encendido',
+  apagado:  {type:'prep', icon:'off',  opposite:'encendido',
          places:['luz','TV','shoes','coat','lid']},
-  in: {type:'prep', icon:'in',   opposite:'out',
+  dentro:   {type:'prep', icon:'in',   opposite:'fuera',
          places:['caja','carro','house','bolsa','room']},
-  out: {type:'prep', icon:'out',  opposite:'in',
+  fuera:  {type:'prep', icon:'out',  opposite:'dentro',
          places:['afuera','carro','puerta','caja']},
-  up: {type:'prep', icon:'up',   opposite:'down',
+  arriba:   {type:'prep', icon:'up',   opposite:'abajo',
          places:['escaleras','ladder','tree','hill','slide']},
-  down: {type:'prep', icon:'down', opposite:'up',
+  abajo: {type:'prep', icon:'down', opposite:'arriba',
          places:['escaleras','slide','hill','ladder']},
-  here: {type:'prep', icon:'here', opposite:'allí',
+  aquí: {type:'prep', icon:'here', opposite:'allí',
          places:['table','caja','room','silla']},
-  that: {type:'prep', icon:'that', opposite:'this',
+  eso: {type:'prep', icon:'that', opposite:'this',
          places:['table','caja','shelf','silla']},
 
   // ---- question words ---------------------------------------------------
-  what: {type:'question', icon:'what',
-         frames:['what is that','what do you want','what happened','what is this',
-                 'what time','what color','what next','what for']},
-  where: {type:'question', icon:'where',
-         frames:['where is it','where are you','where do we go','where is mom',
-                 'where is dad','where did it go','where do you hurt']},
-  who: {type:'question', icon:'who',
-         frames:['who is that','who did it','who is coming','who can help',
-                 'who is next','who wants it']},
-  when: {type:'question', icon:'when',
-         frames:['when is it','when do we go','when will you come','when is lunch',
-                 'when can I','when is bedtime']},
-  why: {type:'question', icon:'why',
-         frames:['why not','why did you','why is that','why me','why now',
-                 'why are you sad']},
-  how: {type:'question', icon:'how',
-         frames:['how are you','how do I','how many','how much','how long',
-                 'how does it work']},
+  qué: {frames:["¿qué es eso?","¿qué quieres?","¿qué pasó?","¿qué es esto?","¿qué hora es?","¿de qué color?","¿qué sigue?","¿para qué?"], type:'question', icon:'what',
+         },
+  dónde:{frames:["¿dónde está?","¿dónde estás?","¿a dónde vamos?","¿dónde está mamá?","¿dónde está papá?","¿a dónde se fue?","¿dónde te duele?"], type:'question', icon:'where',
+         },
+  quién:  {frames:["¿quién es?","¿quién fue?","¿quién viene?","¿quién me ayuda?","¿a quién le toca?","¿quién lo quiere?"], type:'question', icon:'who',
+         },
+  cuándo: {frames:["¿cuándo es?","¿cuándo nos vamos?","¿cuándo vienes?","¿cuándo comemos?","¿cuándo puedo?","¿cuándo dormimos?"], type:'question', icon:'when',
+         },
+  'por qué':  {frames:["¿por qué no?","¿por qué lo hiciste?","¿por qué eso?","¿por qué yo?","¿por qué ahora?","¿por qué estás triste?"], type:'question', icon:'why',
+         },
+  cómo:  {frames:["¿cómo estás?","¿cómo lo hago?","¿cuántos?","¿cuánto?","¿cuánto falta?","¿cómo funciona?"], type:'question', icon:'how',
+         },
 
   // ---- body and health --------------------------------------------------
   // Urgent by nature. Toileting and pain must be fast to reach, and the
   // frames are whole sentences so nothing has to be assembled under stress.
-  body: {type:'helper', icon:'body',
-         frames:['I need the bathroom','I need to poop','I need to pee',
-                 'I had an accident','it hurts','I am in pain',
-                 'I feel sick','I am going to throw up','I feel dizzy',
-                 'I am bleeding','I need medicine','I need a nurse']},
+  cuerpo: {frames:["necesito ir al baño","tengo que hacer popó","tengo que hacer pipí","tuve un accidente","me duele","tengo dolor","me siento mal","voy a vomitar","estoy mareado","estoy sangrando","necesito medicina","necesito una enfermera"], type:'helper', icon:'body',
+         },
 
   // ---- helper words -----------------------------------------------------
-  can: {type:'helper', icon:'can',
-         frames:['can I','can you','can we','I can','I can not','you can',
-                 'can I have','can I go','can I play','can I try']},
-  is: {type:'helper', icon:'is',
-         frames:['I am','you are','he is','she is','it is','we are','they are',
-                 'is it','are you','am I']},
-  not: {type:'helper', icon:'not',
-         frames:['not now','not me','not that','I do not','do not','no more',
-                 'not yet','I am not','not fair','not this']},
-  again: {type:'helper', icon:'again',
-         frames:['do it again','one more time','play again','read again',
-                 'say it again','not again','again please']},
-  my: {type:'helper', icon:'my',
-         frames:['my turn','my name','mine','my mom','my dad','my house',
-                 'my toy','my friend','my room','my bag']}
+  poder:  {frames:["¿puedo?","¿puedes?","¿podemos?","yo puedo","no puedo","tú puedes","¿me lo das?","¿puedo ir?","¿puedo jugar?","¿puedo intentar?"], type:'helper', icon:'can',
+         },
+  ser:   {frames:["yo soy","tú eres","él es","ella es","esto es","nosotros somos","ellos son","¿eres tú?","¿es esto?","yo estoy"], type:'helper', icon:'is',
+         },
+  no:  {frames:["ahora no","yo no","eso no","no quiero","no lo hagas","ya no","todavía no","no soy yo","no es justo","esto no"], type:'helper', icon:'not',
+         },
+  'otra vez':{frames:["hazlo otra vez","una vez más","juguemos otra vez","léelo otra vez","dilo otra vez","otra vez no","otra vez por favor"], type:'helper', icon:'again',
+         },
+  mi:   {frames:["me toca a mí","mi nombre","es mío","mi mamá","mi papá","mi casa","mi juguete","mi amigo","mi cuarto","mi mochila"], type:'helper', icon:'my',
+         }
 };
 
 function anchorType(w){
@@ -815,8 +804,6 @@ function buildTypedItems(word){
     put(4, 'no '+word,        'not', 'prow_a');
     if(a.opposite) put(5, a.opposite, a.opposite, 'prow_a');
     // Row 2: who is it. Fixed pronoun order, as everywhere else.
-    // Spanish adjectives agree with the subject, so each form is generated.
-    // hambre, sed, frío, calor, sueño and miedo take TENER, not ESTAR.
     const TENER=/^(hambre|sed|frío|calor|sueño|miedo|razón|prisa)$/.test(word);
     // SER for lasting qualities (size, character), ESTAR for states you are
     // temporarily in (mood, condition). "yo estoy grande" is wrong.
@@ -832,12 +819,15 @@ function buildTypedItems(word){
          ['esto está',{}]];
     SUBJ.forEach(function(p,i){
       put(12+i, p[0]+' '+(TENER?word:agree(word,p[1])), a.icon, 'prow_b'); });
+
     (a.related||[]).forEach((r,i)=>put(24+i, r, r, 'prow_c'));
     (a.things||[]).forEach((n,i)=>put(36+i, n, n, 'prow_d'));
     put(48, TENER?('tengo mucha '+word):('me siento '+word), 'feel','resp');
     put(49, TENER?('¿tienes '+word+'?'):(SER?('¿eres '+word+'?'):('¿estás '+word+'?')), 'what','resp');
-    put(50,'¿por qué '+word+'?','why','resp'); put(51,'demasiado '+word,'more','resp');
-    put(52, TENER?('un poco de '+word):('un poco '+word), 'little','resp'); put(53,'tan '+word,'more','resp');
+    put(50,'¿por qué '+word+'?','why','resp');
+    put(51, TENER?('mucha '+word):('demasiado '+word), 'more','resp');
+    put(52, TENER?('un poco de '+word):('un poco '+word), 'little','resp');
+    put(53,'tan '+word,'more','resp');
   }
   else if (a.type === 'prep') {
     put(1,'ponlo '+word, 'put','prow_a');
@@ -845,7 +835,7 @@ function buildTypedItems(word){
     put(3,'saca '+word,  'get','prow_a');
     put(4,'mira '+word,  'look','prow_a');
     if(a.opposite) put(5, a.opposite, a.opposite,'prow_a');
-    ['yo quiero','tú','nosotros','eso está','ponlo','ven','tómalo'].forEach(function(p,i){
+    ['yo quiero','tú','nosotros','esto está','ponlo','ven','tómalo'].forEach(function(p,i){
       put(12+i, p+' '+word, a.icon,'prow_b'); });
     (a.places||[]).forEach((pl,i)=>put(24+i, word+' de '+pl, pl,'prow_c'));
     (a.places||[]).forEach((pl,i)=>put(36+i, pl, pl,'prow_d'));
@@ -877,15 +867,13 @@ function buildAnchorItems(word){
   put(2,  m.ing,       a.icon, 'prow_a');
   put(3,  m.ed,        a.icon, 'prow_a');
   put(4,  word+', por favor',  'please', 'prow_a');
-  put(6,  'no '+(conjugate(word).yo), 'not', 'resp');
+  put(6,  'no '+conjugate(word).yo, 'not', 'resp');
   if(!/^(gustar|encantar|doler|importar)$/.test(word)) put(7, 'puedo '+word, 'can', 'resp');
   if(!/^(gustar|encantar|doler|importar)$/.test(word)) put(8, 'voy a '+word, a.icon, 'resp');
 
   // Row 2: pronoun + this verb. Always here, always this order.
   const PN = [['yo','yo'],['tú','tu'],['nosotros','nosotros'],['ellos','ellos'],['él','el'],['ella','el'],['esto','el']];
   const C = conjugate(word);
-  // gustar and friends take an indirect object and no subject pronoun:
-  // "me gusta", not "yo me gusta".
   const BACKWARDS = /^(gustar|encantar|doler|importar)$/.test(word);
   PN.forEach(function(p,i){
     const form = C[p[1]] || word;
@@ -910,28 +898,16 @@ function buildAnchorItems(word){
   });
 
   // Row 6: question forms of this verb.
-  // Not every question word fits every verb. "what do you go" is not
-  // English. Each anchor names the ones that work; the rest are omitted
-  // rather than generated badly.
-  const qs = a.questions || ['what','where','when','why','how'];
-  const QSLOT = {what:60, where:61, who:62, when:63, why:64, how:65};
-  qs.forEach(function(qw){
-    const p = QSLOT[qw];
-    if (p === undefined) return;
-    const QW={what:'qué',where:'dónde',who:'quién',when:'cuándo',why:'por qué',how:'cómo'};
-    const C2=conjugate(word);
-    if (qw === 'who') put(p, '¿quién '+C2.el+'?', 'who', 'social');
-    else put(p, '¿'+QW[qw]+' '+C2.tu+'?', qw, 'social');
-  });
-  if(/^(gustar|encantar|doler|importar)$/.test(word)) put(67, 'me gusta mucho', 'want', 'social');
-  else if (word !== 'querer' && word !== 'necesitar') put(67, 'quiero '+word, 'want', 'social');
-  put(68, /^(gustar|encantar)$/.test(word) ? 'me gusta más' : word+' más', 'more', 'social');
-  put(69, /^(gustar|encantar|doler)$/.test(word) ? 'me gusta otra vez' : word+' otra vez',
-      'again','social');
-  put(70, /^(gustar|encantar|doler)$/.test(word) ? 'ya no me gusta' : 'dejar de '+word,
-      'stop', 'social');
-  put(71, 'terminé',          'all done','social');
-
+  // Real question and control frames, one set per anchor. Generating these
+  // from a template produced things like "where do you want", which is not
+  // English. Where an anchor has no natural frames, the row is left empty.
+  const FRAMES = a.frames_en || [];
+  FRAMES.slice(0,6).forEach(function(f,i){ put(60+i, f, a.icon, 'social'); });
+  put(67, 'sí',        'yes',      'social');
+  put(68, 'no',        'no',       'social');
+  put(69, 'más',       'more',     'social');
+  put(70, 'para',      'stop',     'social');
+  put(71, 'terminé',   'all done', 'social');
   return out;
 }
 
@@ -1087,7 +1063,7 @@ function runFinder(){
                 .sort(function(a,b){ return score(a)-score(b) || a.hits-b.hits
                                             || a.w.length-b.w.length; })
                 .slice(0,40);
-  if(!hits.length){ box.innerHTML='<div style="padding:10px;opacity:.7;">Sin resultados para "'+q+'".</div>'; return; }
+  if(!hits.length){ box.innerHTML='<div style="padding:10px;opacity:.7;">No match for "'+q+'".</div>'; return; }
   window._finderHits=hits;
   box.innerHTML=hits.map(function(h,n){
     const route=h.path.map(function(s){ return s.w; }).join('  \u2192  ');
@@ -1256,7 +1232,7 @@ function openQP(){qpEditing=false;document.getElementById('qpEditBtn').textConte
 function renderQP(){const g=document.getElementById('qpGrid');g.innerHTML=quickPhrases.map((phrase,i)=>{
 if(qpEditing){return `<button class="qp-btn" style="border:1px solid #e9c46a" onclick="openQPEditModal(${i})">${phrase} ✏️</button>`}
 return `<button class="qp-btn" onclick="sayPhrase('${phrase.replace(/'/g,"\\'")}')">${phrase}</button>`}).join('')}
-function toggleQPEdit(){qpEditing=!qpEditing;document.getElementById('qpEditBtn').textContent=qpEditing?'✅ Listo':'✏️ Edit';document.getElementById('qpEditArea').style.display=qpEditing?'block':'none';renderQP()}
+function toggleQPEdit(){qpEditing=!qpEditing;document.getElementById('qpEditBtn').textContent=qpEditing?'✅ Done':'✏️ Edit';document.getElementById('qpEditArea').style.display=qpEditing?'block':'none';renderQP()}
 function addQP(){const inp=document.getElementById('qpInput');const txt=inp.value.trim();if(!txt)return;quickPhrases.push(txt);inp.value='';saveQP();renderQP()}
 function openQPEditModal(i){qpEditIdx=i;document.getElementById('qpEditInput').value=quickPhrases[i];document.getElementById('qpEditOv').classList.add('open')}
 function saveQPEdit(){const txt=document.getElementById('qpEditInput').value.trim();if(!txt||qpEditIdx<0)return;quickPhrases[qpEditIdx]=txt;saveQP();closeOv('qpEditOv');renderQP()}
@@ -1277,13 +1253,13 @@ const sorted=V.slice().sort((a,b)=>a.p-b.p);
 if(sorted[0].t!=='prow_a'||sorted[12].t!=='prow_b'||sorted[24].t!=='prow_c'||sorted[36].t!=='prow_d'){
 console.error('ROW ORDER VIOLATION: Pronoun rows must be p:0-47. Someone changed the p: values. Fix immediately.');
 }
-const tutListo=load();
+const tutDone=load();
 const ptBtn=document.getElementById('phoneToggle');if(ptBtn){ptBtn.innerHTML=phoneMode?'FULL<br><span style="font-size:7px;opacity:.7">VIEW</span>':'SIMPLE<br><span style="font-size:7px;opacity:.7">VIEW</span>'}
 document.getElementById('pinPad').innerHTML=['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>k===''?'<button class="nk empty"></button>':k==='⌫'?`<button class="nk" onclick="pinKey('⌫')">⌫</button>`:`<button class="nk" onclick="pinKey('${k}')">${k}</button>`).join('');
 render();renderRec();
 window.addEventListener('resize',render);
 speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=populateVoices;
-setTimeout(()=>{const sp=document.getElementById('splash');sp.classList.add('gone');setTimeout(()=>{sp.remove();if(!tutListo)showTut()},500)},800);
+setTimeout(()=>{const sp=document.getElementById('splash');sp.classList.add('gone');setTimeout(()=>{sp.remove();if(!tutDone)showTut()},500)},800);
 }
 
 // Tutorial overlay (added dynamically to keep HTML clean)
@@ -1293,19 +1269,19 @@ init();
 </script><div id="teachBanner">
   <span id="teachStep"></span>
   <span id="teachText"></span>
-  <button onclick="stopTeaching()">Listo</button>
+  <button onclick="stopTeaching()">Done</button>
 </div>
 
 <div id="finderModal" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.65);align-items:center;justify-content:center;">
  <div style="background:#1b1f2a;border:1px solid #3a4255;border-radius:14px;width:min(520px,92vw);max-height:80vh;display:flex;flex-direction:column;padding:16px;">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-   <b style="font-size:1.05rem;">Buscar una palabra</b>
-   <button onclick="closeFinder()" style="margin-left:auto;background:#2a3040;color:#fff;border:1px solid #3a4255;border-radius:8px;padding:6px 12px;cursor:pointer;">Cerrar</button>
+   <b style="font-size:1.05rem;">Find a word</b>
+   <button onclick="closeFinder()" style="margin-left:auto;background:#2a3040;color:#fff;border:1px solid #3a4255;border-radius:8px;padding:6px 12px;cursor:pointer;">Close</button>
   </div>
-  <input id="finderInput" type="text" placeholder="Escribe una palabra, por ejemplo beber"
+  <input id="finderInput" type="text" placeholder="Type a word, e.g. drink"
     oninput="runFinder()" onkeydown="if(event.key==='Escape')closeFinder()"
     style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #3a4255;background:#0f131c;color:#fff;font-size:1rem;">
-  <div style="font-size:.8rem;opacity:.6;margin:8px 2px 4px;">Toca un resultado y te mostrará cómo llegar.</div>
+  <div style="font-size:.8rem;opacity:.6;margin:8px 2px 4px;">Tap a result and it will walk you through how to get there.</div>
   <div id="finderResults" style="overflow:auto;border-top:1px solid rgba(255,255,255,.1);"></div>
  </div>
 </div>
