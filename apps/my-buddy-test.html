@@ -36,12 +36,12 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .c.pulse{animation:pulse .3s}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(42,157,143,.7)}70%{box-shadow:0 0 0 8px rgba(42,157,143,0)}100%{box-shadow:0 0 0 0 rgba(42,157,143,0)}}
 .c img{width:clamp(22px,5.5vw,42px);height:clamp(22px,5.5vw,42px);object-fit:contain;flex-shrink:1}.c.phrase img{width:clamp(16px,3.2vw,26px);height:clamp(16px,3.2vw,26px)}
-.c .lb{font-size:clamp(9px,2.2vw,13px);font-weight:800;text-align:center;line-height:1.15;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);overflow-wrap:break-word;flex-shrink:0;max-width:100%}.c.phrase .lb{font-size:clamp(7px,1.6vw,11px);line-height:1.1}
+.c .lb{font-size:clamp(9px,2.2vw,13px);font-weight:800;text-align:center;line-height:1.15;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);overflow-wrap:normal;word-break:keep-all;hyphens:none;flex-shrink:0;max-width:100%}.c.phrase .lb{font-size:clamp(7px,1.6vw,11px);line-height:1.1}
 @media(max-width:500px),(max-height:500px) and (orientation:landscape){
 #board{gap:2px;padding:2px;overflow:hidden}
 .c{border-width:1.5px;border-radius:8px;padding:4px 2px;justify-content:center}
-.c img{width:22px;height:22px;flex-shrink:0}
-.c .lb{font-size:13px;font-weight:800}
+.c img{width:var(--ic,22px);height:var(--ic,22px);flex-shrink:0}
+.c .lb{font-size:var(--lb,13px);font-weight:800}
 #strip{height:46px}#sW .sw{min-width:40px;height:40px}.sb{height:40px;min-width:38px;font-size:15px}
 #bSpk{font-size:12px;padding:0 8px}}
 .c.resp{background:#e76f51}.c.social{background:#e9c46a;color:#333}.c.prow_a{background:#2d6a4f}.c.prow_b{background:#e9c46a;color:#333}.c.prow_c{background:#457b9d}.c.prow_d{background:#b5838d}.c.folder{background:#555;border:2px solid #888}.c.util{background:#933}
@@ -307,7 +307,15 @@ V.forEach(function(c){ HOME_POS[c.w]=c.p; });
 const SK='mb4';
 const isPhone=window.innerWidth<=600;
 let SP=.9,PITCH=1,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=isPhone;
-const PHONE_CORE=[0,1,24,36,26,28,29,4,2,22,7,39,40,41,27,6,73,74,75];
+const PHONE_CORE=[
+  0, 1, 2, 3, 4, 5,        // I we want like go help
+ 12,13,14,15,16,18,        // you they play eat drink come
+ 24,25,26,27,28,29,        // he she make get put open
+ 36,38,40,41,42,43,        // it need love happy not out
+ 48,49,50,54,57,58,        // yes more good all-done no stop
+ 60,61,62,64,65,66,        // my please thank-you what where who
+ 72,73,74,75,76,77         // CLEAR food people feelings places animals
+];
 const PRONOUNS=[
 {w:'I',i:6632,t:'prow_a',conj:v=>v},
 {w:'we',i:36263,t:'prow_a',conj:v=>v},
@@ -465,7 +473,7 @@ const isPron=curView.indexOf('pn_')===0;
 const isAnchor=curView.indexOf('anchor_')===0;
 const isFringe=!isHome&&curView!=='custom'&&!isPron&&!isAnchor;
 let cols,rows;
-if(isHome&&phoneMode){cols=Math.min(items.length,4);rows=Math.ceil(items.length/cols);
+if(isHome&&phoneMode){cols=Math.min(items.length,6);rows=Math.ceil(items.length/cols);
 }else if(isHome){cols=12;rows=7;
 }else if(isAnchor){
 // Anchor pages keep the full 84-cell grid so a word is always in the same
@@ -480,6 +488,11 @@ rows=Math.ceil(items.length/cols)||1;
 }
 
 b.style.gridTemplateColumns=`repeat(${cols},minmax(0,1fr))`;
+// Label and icon are sized from the column count so a word never has to
+// break mid-word to fit. Narrow grids get smaller type, not shredded type.
+{const w=(b.clientWidth||window.innerWidth)/cols;
+ b.style.setProperty('--lb',Math.max(7,Math.min(14,Math.round(w*0.20)))+'px');
+ b.style.setProperty('--ic',Math.max(12,Math.min(42,Math.round(w*0.42)))+'px');}
 if(isHome){
   b.style.gridTemplateRows=`repeat(${rows},1fr)`;
   b.style.alignContent='stretch';
