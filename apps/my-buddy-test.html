@@ -1,0 +1,1273 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>My Buddy TEST</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+#strip{background:#333;height:56px;display:flex;align-items:center;gap:2px;padding:2px 4px;border-bottom:2px solid #555;flex-shrink:0}
+#sW{display:flex;gap:2px;flex:1;overflow-x:auto;align-items:center;height:100%;scrollbar-width:none}
+#sW::-webkit-scrollbar{display:none}
+.sw{background:#444;border-radius:4px;padding:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:48px;height:48px;flex-shrink:0}
+.sw img{width:28px;height:28px;object-fit:contain}.sw span{font-size:8px;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46px;text-align:center}
+.sb{height:48px;min-width:42px;border:none;border-radius:6px;font-size:18px;cursor:pointer;flex-shrink:0;color:#fff}
+.sb:active{opacity:.7}
+#bDel{background:#666}#bClr{background:#933}#bSpk{background:#2a9d8f;font-size:14px;padding:0 10px;font-weight:800}#bQP{background:#e9c46a;color:#333;font-size:16px;padding:0 8px}
+#bEdit{background:#9b5de5;font-size:14px;padding:0 8px;font-weight:800}
+#bEdit.active{background:#e63946;animation:editPulse 1.5s infinite}
+@keyframes editPulse{0%,100%{opacity:1}50%{opacity:.6}}
+.c.edit-mode{cursor:crosshair}
+.c.edit-mode::after{content:'✏️';position:absolute;top:2px;right:2px;font-size:10px;opacity:.6}
+#infoBar{background:#1a3a4a;display:flex;gap:2px;padding:2px 4px;flex-shrink:0;border-bottom:1px solid #2a9d8f;overflow-x:auto;scrollbar-width:none}
+#infoBar::-webkit-scrollbar{display:none}
+.ib{background:#264653;border:1px solid #2a9d8f;border-radius:4px;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;cursor:pointer;flex-shrink:0;white-space:nowrap}
+.ib:active{background:#2a9d8f}
+.ib .ib-icon{font-size:12px;margin-right:2px}
+#modelBanner{display:none;background:#2d6a4f;text-align:center;font-size:11px;padding:2px;font-weight:700;color:#fff;flex-shrink:0}
+#recentsBar{background:#2a2a2a;display:none;gap:2px;padding:2px 4px;flex-shrink:0;overflow-x:auto;border-bottom:1px solid #444;scrollbar-width:none}
+#recentsBar::-webkit-scrollbar{display:none}
+.rc{background:#3a3a3a;border-radius:4px;padding:1px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:40px;height:40px;flex-shrink:0;cursor:pointer}
+.rc img{width:22px;height:22px;object-fit:contain}.rc span{font-size:7px;color:#aaa;white-space:nowrap}
+.rc:active{opacity:.7}
+#board{flex:1;display:grid;gap:2px;padding:2px;overflow:hidden;background:#222}
+.c{border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;cursor:pointer;position:relative;overflow:hidden;border:2px solid rgba(255,255,255,.12);padding:2px 1px;min-width:0;min-height:0}
+.c:active{opacity:.8;transform:scale(.95)}
+.c.pulse{animation:pulse .3s}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(42,157,143,.7)}70%{box-shadow:0 0 0 8px rgba(42,157,143,0)}100%{box-shadow:0 0 0 0 rgba(42,157,143,0)}}
+.c img{width:clamp(22px,5.5vw,42px);height:clamp(22px,5.5vw,42px);object-fit:contain;flex-shrink:1}.c.phrase img{width:clamp(16px,3.2vw,26px);height:clamp(16px,3.2vw,26px)}
+.c .lb{font-size:clamp(9px,2.2vw,13px);font-weight:800;text-align:center;line-height:1.15;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);overflow-wrap:break-word;flex-shrink:0;max-width:100%}.c.phrase .lb{font-size:clamp(7px,1.6vw,11px);line-height:1.1}
+@media(max-width:500px),(max-height:500px) and (orientation:landscape){
+#board{gap:2px;padding:2px;overflow:hidden}
+.c{border-width:1.5px;border-radius:8px;padding:4px 2px;justify-content:center}
+.c img{width:22px;height:22px;flex-shrink:0}
+.c .lb{font-size:13px;font-weight:800}
+#strip{height:46px}#sW .sw{min-width:40px;height:40px}.sb{height:40px;min-width:38px;font-size:15px}
+#bSpk{font-size:12px;padding:0 8px}}
+.c.resp{background:#e76f51}.c.social{background:#e9c46a;color:#333}.c.prow_a{background:#2d6a4f}.c.prow_b{background:#e9c46a;color:#333}.c.prow_c{background:#457b9d}.c.prow_d{background:#b5838d}.c.folder{background:#555;border:2px solid #888}.c.util{background:#933}
+#backBtn{display:none;background:#2a9d8f;color:#fff;border:none;border-radius:0;padding:8px 16px;font-size:14px;font-weight:800;cursor:pointer;flex-shrink:0;width:100%;text-align:left}
+#gear{position:fixed;bottom:4px;right:4px;z-index:20;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;color:#999}
+#recToggle{position:fixed;bottom:4px;left:4px;z-index:20;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;color:#999}
+#phoneToggle{background:#264653;border:1px solid #2a9d8f;border-radius:4px;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;cursor:pointer;flex-shrink:0;white-space:nowrap;margin-left:auto;line-height:1.2;text-align:center}
+#phoneToggle:active{opacity:.7}
+#langPick{display:flex;gap:3px;background:rgba(0,0,0,.4);border-radius:999px;padding:2px;flex-shrink:0;margin-left:auto}
+#langPick a{padding:3px 10px;border-radius:999px;color:#ddd;text-decoration:none;font:600 11px system-ui;white-space:nowrap}
+#langPick a.on{background:#4a9;color:#fff}
+#phoneToggle{margin-left:6px !important}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:none;align-items:center;justify-content:center;padding:10px}
+.ov.open{display:flex}
+.md{background:#2d3748;border-radius:14px;padding:16px;max-width:380px;width:100%;max-height:85vh;overflow-y:auto;color:#e2e8f0}
+.md h3{margin-bottom:8px;font-size:1em}.md label{display:block;font-size:.75em;margin:6px 0 2px;opacity:.7}
+.md select,.md input[type=range],.md input[type=text]{width:100%;padding:6px;border-radius:6px;border:1px solid #555;background:#1a202c;color:#fff;font-family:inherit;font-size:.85em}
+.md button{padding:8px 14px;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;margin:2px;font-size:.85em}
+.md .ok{background:#2a9d8f;color:#fff}.md .ca{background:#555;color:#fff}.md .dn{background:#e63946;color:#fff}
+.pin-ov{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center}
+.pin-ov.open{display:flex}
+.pin-dots{display:flex;gap:12px;margin:16px 0}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid #888;background:transparent}
+.pin-dot.filled{background:#2a9d8f;border-color:#2a9d8f}
+.pin-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.pin-err{color:#e63946;font-size:13px;min-height:20px;margin:4px 0}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:200px}
+.nk{padding:12px;border:none;border-radius:10px;font-size:1.2em;font-weight:700;cursor:pointer;background:#1a202c;color:#fff}
+.nk:active{background:#2a9d8f}
+.nk.empty{visibility:hidden}
+.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+#qpOv{z-index:150}
+#qpEditOv{z-index:200}
+.qp-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.qp-btn{background:#1a202c;border:1px solid #555;border-radius:8px;padding:10px;color:#fff;font-size:.85em;font-weight:600;cursor:pointer;text-align:center}
+.qp-btn:active{background:#2a9d8f}
+.stat-row{display:flex;justify-content:space-between;padding:4px 0;font-size:.8em;border-bottom:1px solid rgba(255,255,255,.05)}
+.cw-item{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+#splash{position:fixed;inset:0;background:linear-gradient(135deg,#2a9d8f,#264653);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s}
+#splash.gone{opacity:0;pointer-events:none}
+#splash .sn{font-size:36px;font-weight:900;color:#fff;margin-top:8px}
+#splash .ss{font-size:13px;color:rgba(255,255,255,.6)}
+.tut-ov{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:250;display:flex;align-items:center;justify-content:center;padding:16px}
+.tut-card{background:#2d3748;border-radius:16px;padding:24px;max-width:320px;text-align:center}
+.tut-emoji{font-size:48px;margin-bottom:8px}.tut-h{font-size:18px;font-weight:800;margin-bottom:8px}.tut-p{font-size:14px;color:rgba(255,255,255,.7);margin-bottom:16px;line-height:1.5}
+.tut-dots{display:flex;gap:6px;justify-content:center;margin-bottom:12px}
+.tut-d{width:8px;height:8px;border-radius:50%;background:#555}.tut-d.on{background:#2a9d8f}
+.tut-btn{background:#2a9d8f;color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:15px;font-weight:700;cursor:pointer}
+
+  /* Teaching walkthrough */
+  .teach-glow {
+    outline: 5px solid #ffd166 !important;
+    outline-offset: -5px;
+    box-shadow: 0 0 26px rgba(255,209,102,.85);
+    animation: teachPulse 1s ease-in-out infinite;
+    z-index: 5;
+  }
+  @keyframes teachPulse {
+    0%,100% { box-shadow: 0 0 20px rgba(255,209,102,.7); }
+    50%     { box-shadow: 0 0 38px rgba(255,209,102,1); }
+  }
+  #teachBanner {
+    display:none; position:fixed; left:0; right:0; bottom:0; z-index:300;
+    align-items:center; gap:14px; padding:14px 18px;
+    background:rgba(10,12,16,.95); border-top:2px solid #ffd166;
+    color:#fff; font-size:1.05rem;
+  }
+  #teachStep { color:#ffd166; font-weight:700; white-space:nowrap; }
+  #teachText { flex:1; }
+  #teachBanner button {
+    background:#2a3040; color:#fff; border:1px solid #3a4255;
+    border-radius:8px; padding:8px 14px; font:inherit; cursor:pointer;
+  }
+</style></head><body>
+
+<div id="splash"><div style="font-size:60px">🗣️</div><div class="sn">My Buddy</div><div class="ss">Communication for Everyone</div></div>
+<div id="modelBanner">👨‍🏫 MODELING MODE</div>
+<div id="strip">
+<button class="sb" id="bDel" onclick="sDel()">⌫</button>
+<div id="sW"></div>
+<button class="sb" id="bClr" onclick="sClr()">✕</button>
+<button class="sb" id="bSpk" onclick="sSpk()">SPEAK</button>
+<button class="sb" id="bQP" onclick="openQP()"><span style="font-size:12px;line-height:1">⚡<br><span style="font-size:7px;font-weight:700">QUICK</span></span></button>
+<button class="sb" id="bFind" onclick="openFinder()" title="Find where a word lives">FIND</button>
+<button class="sb" id="bEdit" onclick="toggleEditMode()">MENU</button>
+</div>
+
+<div id="infoBar">
+<button class="ib" onclick="sayInfo('name')"><span class="ib-icon">👤</span>My name</button>
+<button class="ib" onclick="sayInfo('phone')"><span class="ib-icon">📱</span>My phone</button>
+<button class="ib" onclick="sayInfo('address')"><span class="ib-icon">🏠</span>Address</button>
+<button class="ib" onclick="sayInfo('city')"><span class="ib-icon">📍</span>City</button>
+<button class="ib" onclick="sayInfo('state')"><span class="ib-icon">🏛️</span>State</button>
+<button class="ib" onclick="sayInfo('school')"><span class="ib-icon">🏫</span>School</button>
+<button class="ib" onclick="sayInfo('emergency')"><span class="ib-icon">🚨</span>Emergency</button>
+<div id="langPick"><a href="my-buddy-test.html" class="on">English</a><a href="my-buddy-demo-es.html">Espanol</a></div>
+<button id="phoneToggle" onclick="togglePhone()">FULL<br><span style="font-size:7px;opacity:.7">VIEW</span></button>
+</div>
+<button id="backBtn" onclick="goHome()">← Back</button>
+<div id="recentsBar"></div>
+<div id="board"></div>
+<button id="recToggle" onclick="toggleRec()">🕐</button>
+<button id="gear" onclick="openPin()">⚙</button>
+<button id="addBtn" onclick="openAddFromBoard()" style="position:fixed;bottom:4px;right:40px;z-index:20;background:rgba(42,157,143,.85);border:none;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;color:#fff;display:none">+</button>
+
+<!-- PIN OVERLAY -->
+<div class="pin-ov" id="pinOv">
+<div class="pin-title">Parent PIN</div>
+<div class="pin-dots" id="pinDots"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
+<div class="pin-err" id="pinErr"></div>
+<div class="numpad" id="pinPad"></div>
+<button style="margin-top:12px;background:none;border:none;color:#888;font-size:13px;cursor:pointer" onclick="closePin()">Cancel</button>
+</div>
+
+<!-- SETTINGS -->
+<div class="ov" id="setOv"><div class="md" id="setMd">
+<h3>⚙️ Settings</h3>
+<label>Voice</label><select id="vSel"></select>
+<label>Speed <span id="spV">0.9</span></label><input type="range" id="spR" min=".3" max="1.5" step=".1" value=".9" oninput="SP=+this.value;document.getElementById('spV').textContent=SP.toFixed(1);save()">
+<label>Pitch <span id="ptV">1.0</span></label><input type="range" id="ptR" min=".5" max="2" step=".1" value="1" oninput="PITCH=+this.value;document.getElementById('ptV').textContent=PITCH.toFixed(1);save();speak('this is my voice')">
+<label>Modeling Mode</label><select id="mmSel" onchange="MM=this.value==='1';document.getElementById('modelBanner').style.display=MM?'block':'none';save()"><option value="0">Off</option><option value="1">On - taps won't count in stats</option></select>
+<hr style="border-color:#444;margin:10px 0">
+<h3>🚨 My Info (Safety)</h3>
+<label>Child's Name</label><input type="text" id="infoName" placeholder="e.g. Alex" onchange="saveInfo()">
+<label>Home Address</label><input type="text" id="infoAddr" placeholder="e.g. 123 Main St" onchange="saveInfo()">
+<label>State</label><input type="text" id="infoState" placeholder="e.g. Arizona" onchange="saveInfo()">
+<label>City</label><input type="text" id="infoCity" placeholder="e.g. Prescott" onchange="saveInfo()">
+<label>School</label><input type="text" id="infoSchool" placeholder="e.g. Lincoln Elementary" onchange="saveInfo()">
+<label>My Phone</label><input type="text" id="infoPhone" placeholder="e.g. 555-123-4567" onchange="saveInfo()">
+<label>Emergency Info</label><input type="text" id="infoEmergency" placeholder="e.g. Allergies: dairy, wheat" onchange="saveInfo()">
+<hr style="border-color:#444;margin:10px 0">
+<h3>📊 Progress</h3>
+<div id="statsBox"></div>
+<hr style="border-color:#444;margin:10px 0">
+<h3>✏️ My Custom Words</h3>
+<div id="cwList"></div>
+<button class="ok" onclick="openAddCWFor('custom')" style="margin-top:6px">➕ Add Word</button>
+<hr style="border-color:#444;margin:10px 0">
+<button class="ok" onclick="speak('Hello, I am your buddy')">🔊 Test</button>
+<button class="ca" onclick="closeOv('setOv')">Close</button>
+<hr style="border-color:#444;margin:10px 0">
+<div style="font-size:.65em;opacity:.5;text-align:center;line-height:1.6">
+<p>My Buddy AAC v1.0 - BMC Luminary Ventures LLC</p>
+<p>Mulberry Symbols © 2008-2017 Garry Paxton, 2018-2026 Steve Lee<br>Licensed under <a href="https://creativecommons.org/licenses/by-sa/2.0/uk/" style="color:#2a9d8f" target="_blank">CC BY-SA 2.0 UK</a> - <a href="https://mulberrysymbols.org" style="color:#2a9d8f" target="_blank">mulberrysymbols.org</a></p>
+<p><a href="https://quantumneuroshift.com/apps/my-buddy-privacy.html" style="color:#2a9d8f" target="_blank">Privacy Policy</a></p>
+</div>
+</div></div>
+
+<!-- ADD CUSTOM WORD -->
+<div class="ov" id="cwOv"><div class="md">
+<h3>➕ Add Custom Word</h3>
+<label>Word</label><input type="text" id="cwWord" placeholder="e.g. Grandma">
+<label>Color Category</label><select id="cwCat"><option value="resp">Response (red-orange)</option><option value="social">Social (yellow)</option><option value="prow_a">Green</option><option value="prow_b">Yellow-green</option><option value="prow_c">Blue</option><option value="prow_d">Pink</option><option value="folder">Folder (dark)</option></select>
+<label>Photo (optional)</label>
+<div style="display:flex;gap:6px;align-items:center;margin:4px 0">
+<button class="ok" onclick="document.getElementById('cwCamera').click()" style="font-size:.8em">📷 Take Photo</button>
+<button class="ca" onclick="document.getElementById('cwFile').click()" style="font-size:.8em">🖼️ Choose Photo</button>
+<input type="file" id="cwCamera" accept="image/*" capture="environment" style="display:none" onchange="handleCWPhoto(this)">
+<input type="file" id="cwFile" accept="image/*" style="display:none" onchange="handleCWPhoto(this)">
+</div>
+<div id="cwPreview" style="text-align:center;margin:4px 0"></div>
+<label>Symbol ID (if no photo)</label><input type="text" id="cwAra" placeholder="e.g. 2458">
+<div style="margin-top:8px"><button class="ok" onclick="saveCW()">Save</button> <button class="ca" onclick="closeOv('cwOv')">Cancel</button></div>
+</div></div>
+
+<!-- EDIT CELL -->
+<div class="ov" id="editOv"><div class="md">
+<h3>✏️ Edit Button</h3>
+<label>Word</label><input type="text" id="editWord">
+<label>Color Category</label><select id="editCat"><option value="resp">Response (red-orange)</option><option value="social">Social (yellow)</option><option value="prow_a">Green</option><option value="prow_b">Yellow-green</option><option value="prow_c">Blue</option><option value="prow_d">Pink</option><option value="folder">Folder (dark)</option><option value="util">Utility (red)</option></select>
+<label>Image</label>
+<div id="editImgPreview" style="text-align:center;margin:6px 0"></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<button class="ok" onclick="document.getElementById('editCamera').click()" style="font-size:.8em">📷 Take Photo</button>
+<button class="ca" onclick="document.getElementById('editFile').click()" style="font-size:.8em">🖼️ Choose Photo</button>
+<button class="ca" onclick="clearEditPhoto()" style="font-size:.8em">❌ Reset to Default</button>
+<input type="file" id="editCamera" accept="image/*" capture="environment" style="display:none" onchange="handleEditPhoto(this)">
+<input type="file" id="editFile" accept="image/*" style="display:none" onchange="handleEditPhoto(this)">
+</div>
+<div style="margin-top:10px;display:flex;gap:6px">
+<button class="ok" onclick="saveEditCell()">Save</button>
+<button class="ca" onclick="closeOv('editOv')">Cancel</button>
+<button class="dn" onclick="resetEditCell()">Reset to Original</button>
+</div>
+</div></div>
+
+<!-- QUICK PHRASES -->
+<div class="ov" id="qpOv"><div class="md">
+<h3>⚡ Quick Phrases</h3>
+<div class="qp-grid" id="qpGrid"></div>
+<div id="qpEditArea" style="display:none;margin-top:8px">
+<div style="display:flex;gap:4px"><input type="text" id="qpInput" placeholder="Type a new phrase..." style="flex:1;padding:8px;border-radius:8px;border:1px solid #555;background:#1a202c;color:#fff;font-size:.9em"><button class="ok" onclick="addQP()" style="padding:8px 14px">Add</button></div>
+</div>
+<div style="display:flex;gap:6px;margin-top:8px"><button class="ca" onclick="closeOv('qpOv')" style="flex:1">Close</button><button class="ok" id="qpEditBtn" onclick="toggleQPEdit()" style="flex:1">✏️ Edit</button></div>
+</div></div>
+<!-- QUICK PHRASE EDIT MODAL -->
+<div class="ov" id="qpEditOv"><div class="md">
+<h3>✏️ Edit Phrase</h3>
+<input type="text" id="qpEditInput" style="width:100%;padding:8px;border-radius:8px;border:1px solid #555;background:#1a202c;color:#fff;font-size:.9em;margin-bottom:10px">
+<div style="display:flex;gap:6px"><button class="ok" onclick="saveQPEdit()" style="flex:1">Save</button><button class="dn" onclick="deleteQPEdit()" style="flex:1">Delete</button><button class="ca" onclick="closeOv('qpEditOv')" style="flex:1">Cancel</button></div>
+</div></div>
+
+<script>
+/*
+ * ██████  ROW ORDER IS LOCKED - DO NOT CHANGE  ██████
+ * Row 1 (p:0-11):   prow_a - I/we + verbs (green)
+ * Row 2 (p:12-23):  prow_b - you/they + verbs (yellow)
+ * Row 3 (p:24-35):  prow_c - he/she + verbs (blue)
+ * Row 4 (p:36-47):  prow_d - it + feelings (pink)
+ * Row 5 (p:48-59):  resp - yes/no/descriptors (red)
+ * Row 6 (p:60-71):  social - my/please/grammar (yellow)
+ * Row 7 (p:72-83):  folders (gray)
+ *
+ * Pronoun rows ALWAYS come first. This has been reverted
+ * by mistake 5 times. NEVER reorder these rows.
+ * If you are an AI editing this file: DO NOT CHANGE THE
+ * ROW ORDER. The p: values encode the visual position.
+ * Pronouns (prow_a through prow_d) MUST be rows 1-4.
+ * ████████████████████████████████████████████████████████
+ */
+const V=[
+{w:"I",t:"prow_a",i:6632,cat:"pn_I",p:0},{w:"we",t:"prow_a",i:36263,cat:"pn_we",p:1},{w:"want",t:"prow_a",i:5441,p:2},{w:"like",t:"prow_a",i:37826,p:3},{w:"go",t:"prow_a",i:8142,p:4},{w:"help",t:"prow_a",i:32648,p:5},{w:"is",t:"prow_a",i:36260,p:6},{w:"on",t:"prow_a",i:8014,p:7},{w:"in",t:"prow_a",i:8015,p:8},{w:"up",t:"prow_a",i:5469,p:9},{w:"feel",t:"prow_a",svgName:"feel",p:10},{w:"here",t:"prow_a",i:5382,p:11},{w:"you",t:"prow_b",i:6625,cat:"pn_you",p:12},{w:"they",t:"prow_b",i:36264,cat:"pn_they",p:13},{w:"play",t:"prow_b",i:23392,p:14},{w:"eat",t:"prow_b",i:6456,p:15},{w:"drink",t:"prow_b",i:6061,p:16},{w:"look",t:"prow_b",i:6872,p:17},{w:"come",t:"prow_b",i:6857,p:18},{w:"give",t:"prow_b",i:10044,p:19},{w:"do",t:"prow_b",svgName:"do",p:20},{w:"can",t:"prow_b",i:9124,p:21},{w:"+ed",t:"prow_b",svgName:"plus_ed",p:22},{w:"again",t:"prow_b",i:6952,p:23},{w:"he",t:"prow_c",i:6623,cat:"pn_he",p:24},{w:"she",t:"prow_c",i:6624,cat:"pn_she",p:25},{w:"make",t:"prow_c",i:9403,p:26},{w:"get",t:"prow_c",i:36512,p:27},{w:"put",t:"prow_c",i:5335,p:28},{w:"open",t:"prow_c",i:24825,p:29},{w:"turn",t:"prow_c",i:28485,p:30},{w:"read",t:"prow_c",i:6408,p:31},{w:"sit",t:"prow_c",i:5553,p:32},{w:"walk",t:"prow_c",i:6107,p:33},{w:"run",t:"prow_c",i:6108,p:34},{w:"down",t:"prow_c",i:5468,p:35},{w:"it",t:"prow_d",i:31670,cat:"pn_it",p:36},{w:"sleep",t:"prow_d",i:2436,p:37},{w:"need",t:"prow_d",svgName:"need",p:38},{w:"that",t:"prow_d",svgName:"that",p:39},{w:"love",t:"prow_d",svgName:"love",p:40},{w:"happy",t:"prow_d",i:35533,p:41},{w:"not",t:"prow_d",i:5526,p:42},{w:"out",t:"prow_d",i:5287,p:43},{w:"off",t:"prow_d",i:37236,p:44},{w:"sad",t:"prow_d",i:35535,p:45},{w:"+er",t:"prow_d",svgName:"plus_er",p:46},{w:"+est",t:"prow_d",svgName:"plus_est",p:47},{w:"yes",t:"resp",i:5584,p:48},{w:"more",t:"resp",i:5508,p:49},{w:"good",t:"resp",i:7040,p:50},{w:"big",t:"resp",i:2466,p:51},{w:"hot",t:"resp",i:2485,p:52},{w:"some",t:"resp",i:24971,p:53},{w:"all done",t:"resp",i:28429,p:54},{w:"little",t:"resp",i:2467,p:55},{w:"bad",t:"resp",i:7041,p:56},{w:"no",t:"resp",svgName:"no",p:57},{w:"stop",t:"resp",svgName:"stop",p:58},{w:"cold",t:"resp",i:2486,p:59},{w:"my",t:"social",i:12264,p:60},{w:"please",t:"social",i:5324,p:61},{w:"thank you",t:"social",i:5336,p:62},{w:"sorry",t:"social",i:7220,p:63},{w:"what",t:"social",i:5345,p:64},{w:"where",t:"social",i:5346,p:65},{w:"who",t:"social",i:5344,p:66},{w:"when",t:"social",svgName:"when",p:67},{w:"why",t:"social",svgName:"why",p:68},{w:"how",t:"social",svgName:"how",p:69},{w:"+s",t:"social",svgName:"plus_s",p:70},{w:"+ing",t:"social",svgName:"plus_ing",p:71},{w:"CLEAR",t:"folder",i:0,p:72},{w:"food",t:"folder",i:2452,cat:"food",p:73},{w:"people",t:"folder",i:7093,cat:"people",p:74},{w:"feelings",t:"folder",svgName:"feelings",cat:"feelings",p:75},{w:"places",t:"folder",i:36858,cat:"places",p:76},{w:"animals",t:"folder",i:2464,cat:"animals",p:77},{w:"things",t:"folder",i:37011,cat:"things",p:78},{w:"colors",t:"folder",i:38760,cat:"colors",p:79},{w:"body",t:"folder",i:2490,cat:"body",p:80},{w:"clothes",t:"folder",i:2509,cat:"clothes",p:81},{w:"my words",t:"folder",svgName:"spk_word",cat:"custom",p:82},{w:"ABC",t:"folder",i:99998,cat:"spell",p:83}
+];
+
+const SPELL_KEYS=[
+['q','w','e','r','t','y','u','i','o','p'],
+['a','s','d','f','g','h','j','k','l'],
+['z','x','c','v','b','n','m']
+];
+const FR={
+food:[["water","water"],["milk","milk"],["juice","juice"],["apple","apple"],["banana","banana"],["cookie","cookie"],["bread","bread"],["cheese","cheese"],["chicken","chicken"],["rice","rice"],["pizza","pizza"],["ice cream","ice_cream"],["cereal","cereal"],["soup","soup"],["crackers","crackers"],["yogurt","yogurt"],["eggs","eggs"],["fries","fries"],["grapes","grapes"],["strawberry","strawberry"],["sandwich","sandwich"],["cake","cake"],["candy","candy"],["popcorn","popcorn"],["hot dog","hot_dog"]],
+people:[["mom","mom"],["dad","dad"],["brother","brother"],["sister","sister"],["baby","baby"],["teacher","teacher"],["friend","friend"],["doctor","doctor"],["grandma","grandma"],["grandpa","grandpa"],["family","family"],["boy","boy"],["girl","girl"]],
+feelings:[["hug","hug"],["angry","angry"],["scared","scared"],["tired","tired"],["happy","happy"],["sad","sad"],["angry","angry"],["scared","scared"],["tired","tired"],["hurt","hurt"],["sick","sick"],["funny","funny"],["excited","excited"],["calm","calm"],["bored","bored"],["nervous","nervous"],["proud","proud"],["love","love"],["confused","confused"]],
+places:[["home","home"],["school","school"],["bathroom","bathroom"],["outside","outside"],["car","car"],["park","park"],["store","store"],["kitchen","kitchen"],["bedroom","bedroom"]],
+animals:[["dog","dog"],["cat","cat"],["fish","fish"],["bird","bird"],["horse","horse"],["bunny","bunny"],["bear","bear"],["turtle","turtle"],["duck","duck"],["elephant","elephant"],["lion","lion"],["monkey","monkey"],["cow","cow"],["pig","pig"],["frog","frog"]],
+things:[["toy","toy"],["book","book_g"],["ball","ball"],["phone","phone"],["blanket","blanket"],["shoes","shoes"],["cup","cup"],["door","door"],["light","light"],["music","music"]],
+colors:[["red","color_red"],["blue","color_blue"],["green","color_green"],["yellow","color_yellow"],["orange","color_orange"],["purple","color_purple"],["pink","color_pink"],["black","color_black"],["white","color_white"],["brown","color_brown"]],
+body:[["bathroom","toilet"],["poop","poop"],["pee","pee"],["I need to go","toilet"],["hurt","hurt"],["pain","pain"],["sick","nauseous"],["throw up","vomit"],["dizzy","dizzy"],["itchy","itchy"],["bleeding","bleeding"],["emergency","emergency"],["head","head"],["mouth","mouth"],["hand","hand"],["feet","feet"],["eyes","eyes"],["ears","ears"],["nose","nose"],["tummy","tummy"],["back","back_ache"],["chest","chest"],["leg","leg"],["arm","arm"],["medicine","medicine"],["doctor","doctor"],["nurse","nurse"],["wipe","wipe"],["diaper","diaper"],["accident","accident"],["wash","wash"],["all done","all done"]],
+clothes:[["shirt","shirt"],["pants","pants"],["shoes","shoes"],["socks","socks"],["hat","hat"],["jacket","jacket"],["diaper","diaper"]],
+pn_I:[["I","I"],["I want","want"],["I like","like"],["I go","go"],["I help","help"],["I eat","eat"],["I drink","drink"],["I play","play"],["I look","look"],["I see","see"],["I need","need"],["I make","make"],["I do","do"],["I can","can"],["I feel","feelings"],["I have","give"],["I am","is"]],
+pn_we:[["we","we"],["we want","want"],["we like","like"],["we go","go"],["we play","play"],["we eat","eat"],["we need","need"],["we can","can"],["we have","give"],["we are","is"]],
+pn_you:[["you","you"],["you want","want"],["you like","like"],["you go","go"],["you play","play"],["you eat","eat"],["you look","look"],["you need","need"],["you can","can"],["you have","give"],["you are","is"]],
+pn_they:[["they","they"],["they want","want"],["they like","like"],["they go","go"],["they play","play"],["they eat","eat"],["they need","need"],["they can","can"],["they have","give"],["they are","is"]],
+pn_he:[["he","he"],["he wants","want"],["he likes","like"],["he goes","go"],["he plays","play"],["he eats","eat"],["he looks","look"],["he needs","need"],["he can","can"],["he has","give"],["he is","is"]],
+pn_she:[["she","she"],["she wants","want"],["she likes","like"],["she goes","go"],["she plays","play"],["she eats","eat"],["she looks","look"],["she needs","need"],["she can","can"],["she has","give"],["she is","is"]],
+pn_it:[["it","it_pn"],["it is","is"],["it goes","go"],["it looks","look"],["it has","give"],["it can","can"]]
+};
+// DEFAULT quick phrases - user edits saved to localStorage
+const QP_DEFAULT=["I need help","I need bathroom","I feel sick","I want more","I don't like that","I'm all done","I love you","I'm hungry","I'm thirsty","I want to go"];
+let quickPhrases=JSON.parse(localStorage.getItem('mybuddy_qp'))||[...QP_DEFAULT];
+const FRM={'it_pn':'symbols/mybuddy/it.svg','back_ache':'symbols/mulberry/back_ache.svg','chest':'symbols/mulberry/chest_male.svg','leg':'symbols/mulberry/leg.svg','arm':'symbols/mulberry/arm.svg','poop':'symbols/mybuddy/poop.svg','pee':'symbols/mybuddy/pee.svg','hurt':'symbols/mybuddy/hurt.svg','dizzy':'symbols/mybuddy/dizzy.svg','diaper':'symbols/mybuddy/diaper.svg','bleeding':'symbols/mybuddy/bleeding.svg','pain':'symbols/mybuddy/pain.svg','nauseous':'symbols/mybuddy/nauseous.svg','itchy':'symbols/mybuddy/itchy.svg','wipe':'symbols/mybuddy/wipe.svg','accident':'symbols/mybuddy/accident.svg','emergency':'symbols/mybuddy/emergency.svg','toilet':'symbols/mulberry/toilet.svg','vomit':'symbols/mulberry/vomit_,_to.svg','medicine':'symbols/mulberry/medicine.svg','nurse':'symbols/mulberry/nurse_1a.svg','doctor':'symbols/mulberry/doctor_1a.svg','itch':'symbols/mulberry/itch.svg','potty':'symbols/mulberry/potty_chair.svg','wheelchair':'symbols/mulberry/wheelchair.svg','inhaler':'symbols/mulberry/inhaler.svg','tablets':'symbols/mulberry/tablets.svg','plaster':'symbols/mulberry/plaster.svg','bladder':'symbols/mulberry/bladder.svg','done':'symbols/mybuddy/done.svg','I':'symbols/mulberry/I.svg','TV':'symbols/mulberry/tv_drama.svg','a little':'symbols/mybuddy/a_little.svg','all done':'symbols/mybuddy/all_done.svg','alone':'symbols/mybuddy/alone.svg','another':'symbols/mulberry/more.svg','bath':'symbols/mulberry/bath.svg','broken':'symbols/mulberry/broken.svg','bug':'symbols/mybuddy/bug.svg','burning':'symbols/mulberry/fire.svg','buy':'symbols/mybuddy/buy.svg','careful':'symbols/mybuddy/careful.svg','choose':'symbols/mybuddy/choose.svg','coat':'symbols/mulberry/coat.svg','comfy':'symbols/mybuddy/comfy.svg','cool':'symbols/mybuddy/cool.svg','couch':'symbols/mybuddy/couch.svg','cry':'symbols/mybuddy/cry.svg','day':'symbols/mulberry/day.svg','easy':'symbols/mybuddy/easy.svg','extra':'symbols/mulberry/extra.svg','fair':'symbols/mybuddy/fair.svg','far':'symbols/mybuddy/far.svg','few':'symbols/mulberry/some.svg','fix':'symbols/mybuddy/fix.svg','follow':'symbols/mybuddy/follow.svg','freezing':'symbols/mybuddy/freezing.svg','game':'symbols/mybuddy/game.svg','goodbye':'symbols/mybuddy/goodbye.svg','great':'symbols/mulberry/great.svg','half':'symbols/mulberry/half.svg','hate':'symbols/mybuddy/hate.svg','have':'symbols/mybuddy/have.svg','heavy':'symbols/mulberry/heavy.svg','hide':'symbols/mybuddy/hide.svg','hill':'symbols/mybuddy/hill.svg','homework':'symbols/mybuddy/homework.svg','house':'symbols/mulberry/house.svg','huge':'symbols/mulberry/big_wheel.svg','ice':'symbols/mulberry/ice_cream.svg','idea':'symbols/mybuddy/idea.svg','kind':'symbols/mybuddy/kind.svg','ladder':'symbols/mybuddy/ladder.svg','learn':'symbols/mybuddy/learn.svg','lid':'symbols/mulberry/lid.svg','listen':'symbols/mybuddy/listen.svg','lock':'symbols/mybuddy/lock.svg','lonely':'symbols/mybuddy/lonely.svg','lose':'symbols/mybuddy/lose.svg','lots':'symbols/mulberry/lots_more.svg','mean':'symbols/mybuddy/mean.svg','mess':'symbols/mybuddy/mess.svg','part':'symbols/mulberry/part.svg','party':'symbols/mulberry/party_popper.svg','piece':'symbols/mybuddy/piece.svg','problem':'symbols/mybuddy/problem.svg','right':'symbols/mulberry/right.svg','room':'symbols/mulberry/room.svg','seem':'symbols/mulberry/look_,_to.svg','shelf':'symbols/mybuddy/shelf.svg','short':'symbols/mulberry/short.svg','silly':'symbols/mulberry/funny_laugh.svg','sleepy':'symbols/mybuddy/sleepy.svg','slide':'symbols/mulberry/slide.svg','small':'symbols/mybuddy/small.svg','smell':'symbols/mybuddy/smell.svg','snow':'symbols/mulberry/snow.svg','snowy':'symbols/mybuddy/snowy.svg','spicy':'symbols/mulberry/spicy.svg','stay':'symbols/mybuddy/stay.svg','stuck':'symbols/mybuddy/stuck.svg','sun':'symbols/mulberry/sun.svg','sunny':'symbols/mybuddy/sunny.svg','table':'symbols/mulberry/table.svg','tall':'symbols/mulberry/tall.svg','there':'symbols/mybuddy/there.svg','thin':'symbols/mulberry/thin.svg','thing':'symbols/mybuddy/thing.svg','tiny':'symbols/mybuddy/tiny.svg','top':'symbols/mulberry/top.svg','tree':'symbols/mulberry/tree.svg','truck':'symbols/mulberry/lorry.svg','try':'symbols/mybuddy/try.svg','upset':'symbols/mulberry/sad_man.svg','warm':'symbols/mulberry/warm_fire.svg','where':'symbols/mulberry/where.svg','wide':'symbols/mybuddy/wide.svg','wind':'symbols/mybuddy/wind.svg','word':'symbols/mybuddy/word.svg','wrong':'symbols/mulberry/wrong_thought.svg','yucky':'symbols/mulberry/yucky.svg','am':'symbols/mulberry/I.svg','around':'symbols/mulberry/around.svg','ask':'symbols/mulberry/ask_,_to.svg','away':'symbols/mulberry/away.svg','back':'symbols/mulberry/back.svg','bag':'symbols/mulberry/school_bag.svg','bed':'symbols/mulberry/bed_time.svg','bite':'symbols/mulberry/bite_,_to.svg','book':'symbols/mulberry/book_end.svg','box':'symbols/mulberry/box_,_to.svg','break':'symbols/mulberry/break_2.svg','bright':'symbols/mulberry/bright.svg','bring':'symbols/mulberry/bring_,_to.svg','brush':'symbols/mulberry/brush_hair_,_to.svg','build':'symbols/mulberry/build_,_to.svg','bus':'symbols/mulberry/bus.svg','busy':'symbols/mulberry/busy.svg','care':'symbols/mulberry/care_assistant_1a.svg','carry':'symbols/mulberry/carry_,_to.svg','chair':'symbols/mulberry/chair.svg','chase':'symbols/mulberry/chase_,_to.svg','clean':'symbols/mulberry/clean_room.svg','climb':'symbols/mulberry/climb_up_,_to.svg','close':'symbols/mulberry/close_,_to.svg','cook':'symbols/mulberry/cook_,_to.svg','corner':'symbols/mulberry/corner_cabinet.svg','dark':'symbols/mulberry/night.svg','dinner':'symbols/mulberry/dinner.svg','dirty':'symbols/mulberry/dirty.svg','dishes':'symbols/mulberry/dishes.svg','draw':'symbols/mulberry/draw_,_to.svg','dream':'symbols/mulberry/dream_,_to.svg','drop':'symbols/mulberry/fall_off_,_to.svg','dry':'symbols/mulberry/dry.svg','empty':'symbols/mulberry/empty.svg','enjoy':'symbols/mulberry/happy_man.svg','face':'symbols/mulberry/face_neutral_3.svg','fast':'symbols/mulberry/fast_2.svg','fill':'symbols/mulberry/fill_2_,_to.svg','find':'symbols/mulberry/find_,_to.svg','finish':'symbols/mulberry/finish.svg','flip':'symbols/mulberry/flip_,_to.svg','floor':'symbols/mulberry/floor.svg','full':'symbols/mulberry/full.svg','fun':'symbols/mulberry/funny_laugh.svg','gentle':'symbols/mulberry/soft.svg','gift':'symbols/mulberry/present.svg','hair':'symbols/mulberry/hair_dye.svg','hands':'symbols/mulberry/hand_bag.svg','hard':'symbols/mulberry/hard.svg','heart':'symbols/mulberry/heart.svg','help_':'symbols/mulberry/help_,_to.svg','here':'symbols/mulberry/this_week.svg','hold':'symbols/mulberry/hold_,_to.svg','hug':'symbols/mulberry/hug_,_to.svg','hungry':'symbols/mulberry/hungry.svg','inside':'symbols/mulberry/inside_out.svg','it':'symbols/mulberry/IT_room.svg','job':'symbols/mulberry/work_,_to.svg','jump':'symbols/mulberry/jump_,_to.svg','keep':'symbols/mulberry/keep_,_to.svg','leave':'symbols/mulberry/leaves.svg','lie':'symbols/mulberry/lie_on_back_,_to.svg','long':'symbols/mulberry/long.svg','loud':'symbols/mulberry/loud.svg','lunch':'symbols/mulberry/lunch_1.svg','mad':'symbols/mulberry/angry_man.svg','messy':'symbols/mulberry/messy_room.svg','mine':'symbols/mulberry/my_computer_icon.svg','miss':'symbols/mulberry/miss_bus_,_to.svg','money':'symbols/mulberry/money.svg','move':'symbols/mulberry/move_,_to.svg','nap':'symbols/mulberry/sleep_male_,_to.svg','near':'symbols/mulberry/near.svg','need':'symbols/mulberry/need_toilet.svg','new':'symbols/mulberry/new_document.svg','nice':'symbols/mulberry/good.svg','night':'symbols/mulberry/night.svg','noise':'symbols/mulberry/loud.svg','now':'symbols/mulberry/now.svg','one':'symbols/mulberry/one.svg','page':'symbols/mulberry/book_end.svg','pet':'symbols/mulberry/pet_comb.svg','pick':'symbols/mulberry/pick_,_to.svg','picture':'symbols/mulberry/picture.svg','pillow':'symbols/mulberry/cushion_2.svg','plate':'symbols/mulberry/plate.svg','point':'symbols/mulberry/point_,_to.svg','pour':'symbols/mulberry/pour_,_to.svg','prefer':'symbols/mulberry/favourite.svg','pretty':'symbols/mulberry/pretty.svg','pull':'symbols/mulberry/pull_,_to.svg','push':'symbols/mulberry/push_,_to.svg','quiet':'symbols/mulberry/quiet.svg','race':'symbols/mulberry/race_athletics.svg','ready':'symbols/mulberry/ready.svg','rest':'symbols/mulberry/rest_,_to.svg','ride':'symbols/mulberry/ride_car_,_to.svg','run':'symbols/mulberry/run_,_to.svg','safe':'symbols/mulberry/safety_pin.svg','scary':'symbols/mulberry/scary.svg','scrub':'symbols/mulberry/scrub_,_to.svg','seat':'symbols/mulberry/seat_belt.svg','see':'symbols/mulberry/see_saw.svg','send':'symbols/mulberry/post-it.svg','share':'symbols/mulberry/share_,_to.svg','show':'symbols/mulberry/show_me_,_to.svg','shut':'symbols/mulberry/close_,_to.svg','sit':'symbols/mulberry/sit_,_to.svg','snack':'symbols/mulberry/biscuits.svg','song':'symbols/mulberry/music.svg','spin':'symbols/mulberry/spin_,_to.svg','stairs':'symbols/mulberry/stairs.svg','stand':'symbols/mulberry/stand_,_to.svg','start':'symbols/mulberry/begin_start.svg','still':'symbols/mulberry/quiet.svg','story':'symbols/mulberry/book_end.svg','take':'symbols/mulberry/take_,_to.svg','taste':'symbols/mulberry/taste_,_to.svg','tell':'symbols/mulberry/talk_1_,_to.svg','thirsty':'symbols/mulberry/thirsty.svg','throw':'symbols/mulberry/throw_away_,_to.svg','tight':'symbols/mulberry/tights.svg','time':'symbols/mulberry/time_out.svg','wait':'symbols/mulberry/wait_,_to.svg','wake':'symbols/mulberry/wake_up_,_to.svg','walk':'symbols/mulberry/walk_,_to.svg','watch':'symbols/mulberry/watch.svg','wet':'symbols/mulberry/wet.svg','win':'symbols/mulberry/winner.svg','window':'symbols/mulberry/window.svg','wish':'symbols/mulberry/want_,_to.svg','work':'symbols/mulberry/work_,_to.svg','write':'symbols/mulberry/write_,_to.svg','yummy':'symbols/mulberry/yummy.svg','eat':'symbols/mulberry/eat_,_to.svg','angry':'symbols/mulberry/angry_man.svg','apple':'symbols/mulberry/apple.svg','baby':'symbols/mulberry/baby.svg','bad':'symbols/mulberry/bad.svg','ball':'symbols/mulberry/ball.svg','banana':'symbols/mulberry/banana.svg','bathroom':'symbols/mulberry/toilet.svg','bear':'symbols/mulberry/bear.svg','bedroom':'symbols/mulberry/single_bed.svg','big':'symbols/mulberry/large.svg','bird':'symbols/mulberry/bird.svg','blanket':'symbols/mulberry/blanket.svg','body':'symbols/mulberry/body_outline.svg','bread':'symbols/mulberry/bread.svg','brother':'symbols/mulberry/brother.svg','bunny':'symbols/mulberry/rabbit.svg','cake':'symbols/mulberry/cake.svg','calm':'symbols/mulberry/relax_,_to.svg','candy':'symbols/mulberry/sweet.svg','car':'symbols/mulberry/car.svg','cat':'symbols/mulberry/cat.svg','cereal':'symbols/mulberry/cereal.svg','cheese':'symbols/mulberry/cheese.svg','chicken':'symbols/mulberry/chicken.svg','come':'symbols/mulberry/come_,_to.svg','confused':'symbols/mulberry/confused_man.svg','cookie':'symbols/mulberry/biscuit_chocolate_chip.svg','cow':'symbols/mulberry/cow.svg','crackers':'symbols/mulberry/cracker.svg','cup':'symbols/mulberry/mug_2.svg','dad':'symbols/mulberry/dad_parent.svg','diaper':'symbols/mulberry/nappy.svg','doctor':'symbols/mulberry/doctor_1a.svg','dog':'symbols/mulberry/dog.svg','door':'symbols/mulberry/door.svg','down':'symbols/mulberry/down.svg','drink':'symbols/mulberry/drink_,_to.svg','duck':'symbols/mulberry/duck.svg','ears':'symbols/mulberry/ear.svg','eggs':'symbols/mulberry/eggs.svg','elephant':'symbols/mulberry/elephant.svg','excited':'symbols/mulberry/excited_man.svg','eyes':'symbols/mulberry/eyes.svg','family':'symbols/mulberry/family.svg','feet':'symbols/mulberry/feet.svg','fish':'symbols/mulberry/fish.svg','food':'symbols/mulberry/food.svg','friend':'symbols/mulberry/group_work.svg','fries':'symbols/mulberry/chips.svg','frog':'symbols/mulberry/frog.svg','funny':'symbols/mulberry/funny_laugh.svg','get':'symbols/mulberry/get_,_to.svg','give':'symbols/mulberry/give_,_to.svg','go':'symbols/mulberry/go_,_to.svg','good':'symbols/mulberry/good.svg','grandma':'symbols/mulberry/grandmother.svg','grandpa':'symbols/mulberry/grandfather.svg','grapes':'symbols/mulberry/grapes.svg','hand':'symbols/mulberry/right_hand.svg','happy':'symbols/mulberry/happy_man.svg','hat':'symbols/mulberry/hat_-_mans.svg','head':'symbols/mulberry/man_-_face.svg','help':'symbols/mulberry/help_,_to.svg','home':'symbols/mulberry/house.svg','horse':'symbols/mulberry/horse.svg','hot':'symbols/mulberry/hot.svg','hot_dog':'symbols/mulberry/hot_dog.svg','hurt':'symbols/mulberry/headache.svg','i':'symbols/mulberry/I.svg','ice_cream':'symbols/mulberry/ice_cream.svg','in':'symbols/mulberry/in.svg','jacket':'symbols/mulberry/jacket.svg','juice':'symbols/mulberry/orange_juice.svg','kitchen':'symbols/mulberry/cooker.svg','light':'symbols/mulberry/lamp.svg','lion':'symbols/mulberry/lion.svg','little':'symbols/mulberry/little.svg','look':'symbols/mulberry/look_,_to.svg','love':'symbols/mulberry/heart.svg','make':'symbols/mulberry/make_,_to.svg','milk':'symbols/mulberry/milk.svg','mom':'symbols/mulberry/mum_parent.svg','monkey':'symbols/mulberry/chimpanzee.svg','more':'symbols/mulberry/more.svg','mouth':'symbols/mulberry/mouth.svg','music':'symbols/mulberry/music.svg','nervous':'symbols/mulberry/worried_man.svg','off':'symbols/mulberry/off.svg','on':'symbols/mulberry/on.svg','open':'symbols/mulberry/open_,_to.svg','out':'symbols/mulberry/out.svg','outside':'symbols/mulberry/outside.svg','pants':'symbols/mulberry/trousers.svg','park':'symbols/mulberry/play_area.svg','phone':'symbols/mulberry/mobile_phone.svg','pig':'symbols/mulberry/piglet.svg','pizza':'symbols/mulberry/pizza.svg','play':'symbols/mulberry/play_,_to.svg','proud':'symbols/mulberry/medal.svg','put':'symbols/mulberry/put_,_to.svg','read':'symbols/mulberry/read_book_,_to.svg','rice':'symbols/mulberry/rice.svg','sad':'symbols/mulberry/sad_man.svg','sandwich':'symbols/mulberry/sandwich.svg','scared':'symbols/mulberry/afraid_man.svg','school':'symbols/mulberry/school.svg','shirt':'symbols/mulberry/shirt.svg','shoes':'symbols/mulberry/shoe_-_mans.svg','sick':'symbols/mulberry/headache.svg','sister':'symbols/mulberry/sister.svg','sleep':'symbols/mulberry/sleep_male_,_to.svg','socks':'symbols/mulberry/socks.svg','some':'symbols/mulberry/some.svg','soup':'symbols/mulberry/soup.svg','spk_word':'symbols/mulberry/talk_2_,_to.svg','stop':'symbols/mybuddy/stop.svg','store':'symbols/mulberry/shop.svg','strawberry':'symbols/mulberry/strawberry.svg','teacher':'symbols/mulberry/teacher_1a.svg','tired':'symbols/mulberry/yawn_,_to.svg','toy':'symbols/mulberry/teddy_bear.svg','tummy':'symbols/mulberry/stomach.svg','turn':'symbols/mulberry/turn_,_to.svg','turtle':'symbols/mulberry/turtle.svg','tv':'symbols/mulberry/flatscreen_tv.svg','up':'symbols/mulberry/up.svg','want':'symbols/mulberry/want_,_to.svg','wash':'symbols/mulberry/wash_hands_,_to.svg','water':'symbols/mulberry/water.svg','what':'symbols/mulberry/what.svg','who':'symbols/mulberry/who.svg','yes':'symbols/mulberry/correct.svg','yogurt':'symbols/mulberry/yogurt.svg'};
+const SYM={2436:'symbols/mulberry/sleep_male_,_to.svg',2452:'symbols/mulberry/food.svg',2464:'symbols/mulberry/paw.svg',2466:'symbols/mulberry/large.svg',2467:'symbols/mulberry/little.svg',2485:'symbols/mulberry/hot.svg',2486:'symbols/mulberry/snow.svg',2490:'symbols/mulberry/body_outline.svg',2509:'symbols/mulberry/clothes_generic.svg',3204:'symbols/mulberry/wash_hands_,_to.svg',5287:'symbols/mulberry/out.svg',5324:'symbols/mybuddy/please.svg',5335:'symbols/mulberry/put_,_to.svg',5336:'symbols/mybuddy/thank_you.svg',5344:'symbols/mulberry/who.svg',5345:'symbols/mulberry/what.svg',5346:'symbols/mulberry/where.svg',5373:'symbols/mulberry/wait_,_to.svg',5382:'symbols/mybuddy/here.svg',5441:'symbols/mulberry/want_,_to.svg',5468:'symbols/mulberry/down.svg',5469:'symbols/mulberry/up.svg',5508:'symbols/mulberry/more.svg',5526:'symbols/mulberry/mistake_no_wrong.svg',5553:'symbols/mulberry/sit_,_to.svg',5584:'symbols/mulberry/correct.svg',6061:'symbols/mulberry/drink_,_to.svg',6107:'symbols/mulberry/walk_,_to.svg',6108:'symbols/mulberry/run_,_to.svg',6408:'symbols/mulberry/talk_2_,_to.svg',6408:'symbols/mulberry/read_book_,_to.svg',6456:'symbols/mulberry/eat_,_to.svg',6623:'symbols/mybuddy/he.svg',6624:'symbols/mybuddy/she.svg',6625:'symbols/mybuddy/you.svg',6632:'symbols/mulberry/I.svg',6857:'symbols/mulberry/come_,_to.svg',6872:'symbols/mulberry/look_,_to.svg',6872:'symbols/mulberry/look_,_to.svg',6906:'symbols/mybuddy/that.svg',6952:'symbols/mybuddy/again.svg',7040:'symbols/mulberry/good.svg',7041:'symbols/mulberry/bad.svg',7074:'symbols/mulberry/headache.svg',7086:'symbols/mulberry/headache.svg',7093:'symbols/mulberry/family_2.svg',7196:'symbols/mybuddy/stop.svg',7220:'symbols/mybuddy/sorry.svg',8014:'symbols/mulberry/on.svg',8015:'symbols/mulberry/in.svg',8142:'symbols/mulberry/go_,_to.svg',9124:'symbols/mybuddy/can.svg',9261:'symbols/mulberry/hear_,_to.svg',9403:'symbols/mulberry/make_,_to.svg',10044:'symbols/mulberry/give_,_to.svg',12264:'symbols/mybuddy/my.svg',23392:'symbols/mulberry/play_,_to.svg',24825:'symbols/mulberry/open_,_to.svg',24971:'symbols/mulberry/some.svg',28429:'symbols/mulberry/finish.svg',28485:'symbols/mulberry/turn_,_to.svg',31670:'symbols/mybuddy/it.svg',32648:'symbols/mulberry/help_,_to.svg',35533:'symbols/mybuddy/feelings.svg',35533:'symbols/mulberry/happy_man.svg',35534:'symbols/mulberry/angry_man.svg',35535:'symbols/mulberry/sad_man.svg',35536:'symbols/mulberry/afraid_man.svg',35537:'symbols/mulberry/yawn_,_to.svg',36260:'symbols/mybuddy/is.svg',36263:'symbols/mybuddy/we.svg',36264:'symbols/mybuddy/they.svg',36512:'symbols/mybuddy/do.svg',36512:'symbols/mulberry/get_,_to.svg',36858:'symbols/mulberry/point_,_to.svg',37011:'symbols/mulberry/place_setting.svg',37236:'symbols/mulberry/off.svg',37824:'symbols/mulberry/hug_,_to.svg',37826:'symbols/mulberry/thumb.svg',38760:'symbols/mulberry/colour.svg',99998:'symbols/mulberry/computer_keyboard.svg'};
+const IM=p=>SYM[p]||FRM[p]||'symbols/mybuddy/'+p+'.svg';
+const isMul=s=>s&&s.includes('/mulberry/');
+
+// Every word keeps the SAME grid position everywhere it appears. Opening a
+// pronoun must not rearrange the board: "want" has to sit in the exact cell
+// it occupies on Home, or the child is learning two motor plans for one word,
+// which defeats the whole point of a fixed layout.
+const HOME_POS={};
+V.forEach(function(c){ HOME_POS[c.w]=c.p; });
+const SK='mb4';
+const isPhone=window.innerWidth<=600;
+let SP=.9,PITCH=1,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=isPhone;
+const PHONE_CORE=[0,1,24,36,26,28,29,4,2,22,7,39,40,41,27,6,73,74,75];
+const PRONOUNS=[
+{w:'I',i:6632,t:'prow_a',conj:v=>v},
+{w:'we',i:36263,t:'prow_a',conj:v=>v},
+{w:'you',i:6625,t:'prow_b',conj:v=>v},
+{w:'they',i:36264,t:'prow_b',conj:v=>v},
+{w:'he',i:6623,t:'prow_c',conj:v=>{if(v==='go')return'goes';if(v==='do')return'does';if(v==='have')return'has';if(v.endsWith('ch')||v.endsWith('sh')||v.endsWith('x')||v.endsWith('ss'))return v+'es';return v+'s'}},
+{w:'she',i:6624,t:'prow_c',conj:v=>{if(v==='go')return'goes';if(v==='do')return'does';if(v==='have')return'has';if(v.endsWith('ch')||v.endsWith('sh')||v.endsWith('x')||v.endsWith('ss'))return v+'es';return v+'s'}},
+{w:'it',i:31670,t:'prow_d',conj:v=>{if(v==='go')return'goes';if(v==='do')return'does';if(v==='have')return'has';if(v.endsWith('ch')||v.endsWith('sh')||v.endsWith('x')||v.endsWith('ss'))return v+'es';return v+'s'}}
+];
+function sidebarPronouns(){
+  // Pronoun folders show only their own pronoun; everything else shows all.
+  if(curView.indexOf('pn_')===0){
+    const only=PRONOUNS.filter(p=>'pn_'+p.w===curView);
+    return only.length?only:PRONOUNS;
+  }
+  return PRONOUNS;
+}
+let myInfo={name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};
+let editMode=false,editTarget=null,editPhotoData=null,cellOverrides={};
+
+// === EDIT MODE ===
+function toggleEditMode(){
+if(!editMode){
+// Require PIN first
+openPin();pinCallback=()=>{editMode=true;document.getElementById('bEdit').classList.add('active');document.getElementById('bEdit').textContent='DONE';render();};
+}else{
+editMode=false;document.getElementById('bEdit').classList.remove('active');document.getElementById('bEdit').textContent='MENU';render();
+}
+}
+let pinCallback=null;
+function openEditCell(item,viewType){
+editTarget={item,viewType};
+editPhotoData=null;
+document.getElementById('editWord').value=item.w;
+const override=cellOverrides[viewType+'_'+item.w];
+if(override){
+document.getElementById('editCat').value=override.t||item.t;
+if(override.photo){editPhotoData=override.photo;document.getElementById('editImgPreview').innerHTML=`<img src="${override.photo}" style="width:60px;height:60px;border-radius:8px;object-fit:cover;border:2px solid #2a9d8f">`;}else{showEditDefaultImg(item);}
+}else{
+document.getElementById('editCat').value=item.t||'resp';
+showEditDefaultImg(item);
+}
+document.getElementById('editOv').classList.add('open');
+}
+function showEditDefaultImg(item){
+const src=item.svgName?(FRM[item.svgName]||'symbols/mybuddy/'+item.svgName+'.svg'):(item.i?IM(item.i):null);
+if(src){const ef=isMul(src)?'':'filter:brightness(0) invert(1);';document.getElementById('editImgPreview').innerHTML=`<img src="${src}" style="width:60px;height:60px;${ef}background:#555;border-radius:8px;padding:4px">`;}else{document.getElementById('editImgPreview').innerHTML='<span style="color:#888">No image</span>';}
+}
+function handleEditPhoto(input){
+if(!input.files||!input.files[0])return;
+const file=input.files[0];
+const reader=new FileReader();
+reader.onload=function(e){
+const img=new Image();
+img.onload=function(){
+const MAX=120;let w=img.width,h=img.height;
+if(w>h){if(w>MAX){h=h*(MAX/w);w=MAX}}else{if(h>MAX){w=w*(MAX/h);h=MAX}}
+const canvas=document.createElement('canvas');
+canvas.width=w;canvas.height=h;
+const ctx=canvas.getContext('2d');
+ctx.drawImage(img,0,0,w,h);
+editPhotoData=canvas.toDataURL('image/jpeg',0.8);
+document.getElementById('editImgPreview').innerHTML=`<img src="${editPhotoData}" style="width:60px;height:60px;border-radius:8px;object-fit:cover;border:2px solid #2a9d8f">`;
+};
+img.src=e.target.result;
+};
+reader.readAsDataURL(file);
+}
+function clearEditPhoto(){editPhotoData=null;if(editTarget)showEditDefaultImg(editTarget.item);}
+function saveEditCell(){
+if(!editTarget)return;
+const key=editTarget.viewType+'_'+editTarget.item.w;
+cellOverrides[key]={w:document.getElementById('editWord').value.trim()||editTarget.item.w,t:document.getElementById('editCat').value,photo:editPhotoData||null};
+save();closeOv('editOv');render();
+}
+function resetEditCell(){
+if(!editTarget)return;
+const key=editTarget.viewType+'_'+editTarget.item.w;
+delete cellOverrides[key];
+save();closeOv('editOv');render();
+}
+
+function saveInfo(){
+myInfo.name=document.getElementById('infoName').value;
+myInfo.address=document.getElementById('infoAddr').value;
+myInfo.state=document.getElementById('infoState').value;
+myInfo.city=document.getElementById('infoCity').value;
+myInfo.school=document.getElementById('infoSchool').value;
+myInfo.phone=document.getElementById('infoPhone').value;
+myInfo.emergency=document.getElementById('infoEmergency').value;
+save();
+}
+function loadInfo(){
+document.getElementById('infoName').value=myInfo.name||'';
+document.getElementById('infoAddr').value=myInfo.address||'';
+document.getElementById('infoState').value=myInfo.state||'';
+document.getElementById('infoCity').value=myInfo.city||'';
+document.getElementById('infoSchool').value=myInfo.school||'';
+document.getElementById('infoPhone').value=myInfo.phone||'';
+document.getElementById('infoEmergency').value=myInfo.emergency||'';
+}
+function sayInfo(field){
+const phrases={
+name: myInfo.name ? 'My name is '+myInfo.name : 'My name is not set yet',
+address: myInfo.address ? 'I live at '+myInfo.address : 'My address is not set yet',
+state: myInfo.state ? 'I live in '+myInfo.state : 'My state is not set yet',
+city: myInfo.city ? 'I live in '+myInfo.city : 'My city is not set yet',
+school: myInfo.school ? 'I go to '+myInfo.school : 'My school is not set yet',
+phone: myInfo.phone ? 'My phone number is '+myInfo.phone.split('').join(' ') : 'My phone number is not set yet',
+emergency: myInfo.emergency ? myInfo.emergency : 'No emergency info set'
+};
+const text=phrases[field]||'';
+if(text){
+sentence=text.split(' ').map(w=>({w,i:0}));
+rStrip();
+speak(text);
+}
+}
+
+function save(){try{localStorage.setItem(SK,JSON.stringify({PITCH,SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,phoneMode,tutDone:true}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=d.SP||.9;PITCH=d.PITCH||1;VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;return d.tutDone}catch(e){return false}}
+
+function speak(text){text=(text+'').toLowerCase();if(!text)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=SP;u.lang=APP_LANG;u.pitch=PITCH;if(VU){const v=speechSynthesis.getVoices().find(v=>v.voiceURI===VU);if(v)u.voice=v}speechSynthesis.speak(u)}
+// A cell can carry a spoken form that differs from its label, so a short
+// label like "quiero" can say the full "yo quiero". No say means say the label.
+function addWord(w,i,say){if(spellBuf){const sw=spellBuf.trim();if(sw){sentence.push({w:sw,i:0});speak(sw)}spellBuf=''}sentence.push({w,i,s:say||null});rStrip();speak(say||w);if(!MM){usage[w]=(usage[w]||0)+1;recents=recents.filter(r=>r.w!==w);recents.unshift({w,i,s:say||null});if(recents.length>20)recents.length=20}save();renderRec()}
+function rStrip(){const c=document.getElementById('sW');c.innerHTML='';sentence.forEach(s=>{const d=document.createElement('div');d.className='sw';if(s.i){d.innerHTML=`<img src="${IM(s.i)}" style="${isMul(IM(s.i))?'':'filter:brightness(0) invert(1)'}" onerror="this.style.display='none'"><span>${s.w}</span>`}else{d.innerHTML=`<span style="font-size:11px;color:#fff">${s.w}</span>`}d.onclick=()=>speak(s.s||s.w);c.appendChild(d)});if(spellBuf){const sb=document.createElement('div');sb.className='sw';sb.style.background='#2a6f97';sb.innerHTML=`<span style="font-size:12px;color:#fff;font-weight:700">${spellBuf}▌</span>`;c.appendChild(sb)}c.scrollLeft=c.scrollWidth}
+function sDel(){if(spellBuf){spellBuf=spellBuf.slice(0,-1);rStrip();return}if(sentence.length){sentence.pop();rStrip()}}
+function sClr(){sentence=[];spellBuf='';rStrip()}
+function sSpk(){if(spellBuf.trim()){sentence.push({w:spellBuf.trim(),i:0});spellBuf='';rStrip()}if(sentence.length)speak(sentence.map(s=>s.s||s.w).join(' '))}
+function gram(sfx){if(!sentence.length)return;const last=sentence[sentence.length-1];last.w=last.w+sfx;if(last.s)last.s=last.s+sfx;rStrip();speak(last.s||last.w)}
+
+
+function render(){
+const b=document.getElementById('board');
+const addBtn=document.getElementById('addBtn');
+if(addBtn)addBtn.style.display=(curView!=='home'&&curView!=='spell')?'block':'none';
+// Clear the board first. Without this every render appends another full set
+// of cells on top of the last one, which stacks duplicate grids and squashes
+// the rows until labels and icons are clipped away.
+b.innerHTML='';
+if(curView==='spell'){renderSpell(b);return}
+let items;
+if(curView==='home'){
+items=getHome();
+}else if(curView.indexOf('anchor_')===0){
+items=anchorItems(curView.slice(7)).filter(Boolean);
+}else if(curView==='custom'){
+items=getCustom();
+}else{
+items=getFringe(curView);
+}
+const isHome=(curView==='home');
+const isPron=curView.indexOf('pn_')===0;
+const isAnchor=curView.indexOf('anchor_')===0;
+const isFringe=!isHome&&curView!=='custom'&&!isPron&&!isAnchor;
+let cols,rows;
+if(isHome&&phoneMode){cols=Math.min(items.length,4);rows=Math.ceil(items.length/cols);
+}else if(isHome){cols=12;rows=7;
+}else if(isAnchor){
+// Anchor pages keep the full 84-cell grid so a word is always in the same
+// place. Blank slots stay blank; that is the point.
+cols=12;rows=7;
+}else{
+// Pronoun folders, category folders and custom all render as a plain grid
+// sized to their contents. No pronoun sidebar anywhere: grammar comes from
+// the verb anchor pages now.
+cols=Math.min(items.length,7)||1;
+rows=Math.ceil(items.length/cols)||1;
+}
+
+b.style.gridTemplateColumns=`repeat(${cols},minmax(0,1fr))`;
+if(isHome){
+  b.style.gridTemplateRows=`repeat(${rows},1fr)`;
+  b.style.alignContent='stretch';
+  b.style.overflowY='hidden';
+}else{
+  const rowH=Math.max(64,Math.floor((b.clientHeight||window.innerHeight)/7));
+  b.style.gridTemplateRows=`repeat(${rows},${rowH}px)`;
+  b.style.alignContent='start';
+  // Fixed pixel rows can total more than the board height. Allow scrolling on
+  // non-home views so nothing is silently cut off.
+  b.style.overflowY='auto';
+}
+
+if(isAnchor){
+  const slots=anchorItems(curView.slice(7));
+  for(let i=0;i<84;i++){
+    if(slots[i]){ renderCell(b,slots[i]); }
+    else { const e=document.createElement('div'); e.style.visibility='hidden'; b.appendChild(e); }
+  }
+}else{
+  items.forEach(s=>renderCell(b,s));
+}
+}
+function renderCell(b,s){
+const d=document.createElement('div');
+const ovKey=curView+'_'+s.w;
+const ov=cellOverrides[ovKey];
+const displayW=ov?ov.w:s.w;
+const displayT=ov?ov.t:s.t;
+const displayPhoto=ov?ov.photo:s.photo;
+d.className='c '+(displayT||'resp');
+// Multi-word labels need smaller type and a smaller image, or a phrase like
+// "nosotros estamos felices" overflows a cell built for one word.
+const _wc=String(displayW||'').trim().split(/\s+/).length;
+if(_wc>1) d.classList.add('phrase');
+if(editMode)d.classList.add('edit-mode');
+const imgSrc=displayPhoto?displayPhoto:(s.svgName?(FRM[s.svgName]||'symbols/mybuddy/'+s.svgName+'.svg'):(s.i?IM(s.i):null));
+const isColorCat=(curView==='colors');
+const isGram=s.w&&s.w.startsWith('+');
+if(imgSrc){
+d.innerHTML=`<img src="${imgSrc}" style="${displayPhoto?'border-radius:6px;object-fit:cover;':(isColorCat||isMul(imgSrc)?'background:rgba(255,255,255,0.85);border-radius:6px;padding:1px;':'filter:brightness(0) invert(1);')}"
+ onerror="this.style.filter='';this.onerror=null"><div class="lb">${displayW}</div>`;
+}else{
+d.innerHTML=`<div class="lb" style="font-size:${_wc>2?'clamp(9px,1.9vw,13px)':'clamp(12px,3vw,18px)'}">${displayW}</div>`;
+}
+d.onclick=()=>{
+if(editMode){openEditCell(s,curView);return}
+if(s.w==='CLEAR'){sClr();d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);return}
+if(isGram){gram(s.w.replace('+',''));d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);return}
+if(s.cat){curView=s.cat;render();document.getElementById('backBtn').style.display='block';return}
+if(curView==='home'&&hasAnchor(s.w)){curView='anchor_'+s.w;render();document.getElementById('backBtn').style.display='block';d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);return}
+addWord(displayW,s.i,s.say);d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);
+if(curView!=='home'&&curView!=='custom'&&curView!=='spell'){setTimeout(()=>goHome(),350)}};b.appendChild(d)}
+function renderSpell(b){
+b.style.gridTemplateColumns='repeat(10,1fr)';b.style.gridTemplateRows='repeat(5,1fr)';b.innerHTML='';
+SPELL_KEYS.forEach(row=>{row.forEach(k=>{const d=document.createElement('div');d.className='c';
+d.style.background='#3d405b';d.innerHTML=`<div style="font-size:clamp(16px,5vw,28px);font-weight:900">${k.toUpperCase()}</div><div class="lb">${k}</div>`;
+d.onclick=()=>{spellBuf+=k;speak(k);rStrip();d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300)};b.appendChild(d)});
+for(let p=row.length;p<10;p++){if(row.length===9&&p===9){const sp=document.createElement('div');sp.className='c';sp.style.background='#2a6f97';sp.innerHTML='<div class="lb">⌫</div>';sp.onclick=()=>{spellBuf=spellBuf.slice(0,-1);rStrip()};b.appendChild(sp)}
+else if(row.length===7){if(p===7){const sp=document.createElement('div');sp.className='c';sp.style.background='#2a9d8f';sp.innerHTML='<div class="lb">SPACE</div>';sp.onclick=()=>{const w=spellBuf.trim();if(w){sentence.push({w,i:0});speak(w)}spellBuf='';rStrip()};b.appendChild(sp)}
+else if(p===8){const sp=document.createElement('div');sp.className='c';sp.style.background='#e9c46a';sp.style.color='#333';sp.innerHTML='<div class="lb" style="color:#333">SPEAK</div>';sp.onclick=()=>{if(spellBuf.trim())speak(spellBuf.trim())};b.appendChild(sp)}
+else if(p===9){const sp=document.createElement('div');sp.className='c util';sp.innerHTML='<div class="lb">CLEAR</div>';sp.onclick=()=>{spellBuf='';rStrip()};b.appendChild(sp)}}
+else{const e=document.createElement('div');e.className='c';e.style.visibility='hidden';b.appendChild(e)}}});
+// number row
+'1234567890'.split('').forEach(k=>{const d=document.createElement('div');d.className='c';d.style.background='#4a4e69';
+d.innerHTML=`<div style="font-size:clamp(14px,4vw,24px);font-weight:900">${k}</div><div class="lb">${k}</div>`;
+d.onclick=()=>{spellBuf+=k;speak(k);rStrip();d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300)};b.appendChild(d)});
+}
+function getHome(){const all=V.sort((a,b)=>a.p-b.p);if(!phoneMode)return all;return PHONE_CORE.map(p=>all.find(v=>v.p===p)).filter(Boolean)}
+
+/* ==================================================================
+   ANCHOR PAGES
+   Second-level vocabulary. Pressing a verb on Home opens a page whose
+   slots are ALWAYS in the same places, so the motor plan for a word is
+   the same no matter which anchor you came from. The anchor's own word
+   sits in the first cell, because Home only navigates.
+
+   Word endings are GENERATED, not authored. That is how a few dozen
+   anchors reach thousands of words without thousands of hand-placed
+   cells.
+   ================================================================== */
+
+// Verbs English refuses to inflect politely.
+const IRREGULAR = {
+  go:{frames_en:['where do you go','when do we go','why do we go','how do we get there','who is going'], s:'goes',ing:'going',ed:'went'},        do:{s:'does',ing:'doing',ed:'did'},
+  make:{frames_en:['what do you want to make','how do you make it','can you help me make it','look what I made'], s:'makes',ing:'making',ed:'made'},    get:{s:'gets',ing:'getting',ed:'got'},
+  eat:{frames_en:['what do you want to eat','when do we eat','are you hungry','do you want more'], s:'eats',ing:'eating',ed:'ate'},       drink:{s:'drinks',ing:'drinking',ed:'drank'},
+  come:{frames_en:['come here please','who is coming','when are you coming','where do we go'], s:'comes',ing:'coming',ed:'came'},    give:{s:'gives',ing:'giving',ed:'gave'},
+  put:{frames_en:['where does it go','put it here','put it away','can you put it down'], s:'puts',ing:'putting',ed:'put'},      run:{s:'runs',ing:'running',ed:'ran'},
+  sit:{frames_en:['sit with me','where do I sit','can I get up','I want to stand'], s:'sits',ing:'sitting',ed:'sat'},      read:{s:'reads',ing:'reading',ed:'read'},
+  sleep:{frames_en:['I am tired','I want to sleep','it is bedtime','I am not tired'], s:'sleeps',ing:'sleeping',ed:'slept'},feel:{s:'feels',ing:'feeling',ed:'felt'},
+  see:{s:'sees',ing:'seeing',ed:'saw'},       have:{s:'has',ing:'having',ed:'had'},
+  is:{s:'is',ing:'being',ed:'was'},           can:{s:'can',ing:'',ed:'could'},
+  hold:{s:'holds',ing:'holding',ed:'held'},   find:{s:'finds',ing:'finding',ed:'found'},
+  tell:{s:'tells',ing:'telling',ed:'told'},   take:{s:'takes',ing:'taking',ed:'took'},
+  write:{s:'writes',ing:'writing',ed:'wrote'},build:{s:'builds',ing:'building',ed:'built'},
+  hear:{s:'hears',ing:'hearing',ed:'heard'},  say:{s:'says',ing:'saying',ed:'said'},
+  buy:{s:'buys',ing:'buying',ed:'bought'},    bring:{s:'brings',ing:'bringing',ed:'brought'}
+};
+
+const DOUBLE = ['stop','put','run','sit','get','swim','hug','clap','dig','win','plan','drop','shop','cut','hit','pat','tap'];
+
+const DOUBLE_ADJ = ['big','hot','sad','mad','fat','thin','wet','red','fun'];
+const IRREG_ADJ = {
+  far:{er:'farther',est:'farthest'}, good:{er:'better',est:'best'},
+  bad:{er:'worse',est:'worst'},      little:{er:'less',est:'least'},
+  much:{er:'more',est:'most'},       many:{er:'more',est:'most'},
+  fun:{er:'more fun',est:'most fun'}
+};
+function syllables(w){
+  const m = w.toLowerCase().replace(/e$/,'').match(/[aeiouy]+/g);
+  return m ? m.length : 1;
+}
+function compare(adj, suffix){
+  if (IRREG_ADJ[adj]) return IRREG_ADJ[adj][suffix];
+  // Two syllables or more takes more/most, not -er/-est. Otherwise you get
+  // "scareder", which is not a word and teaches the wrong pattern.
+  if (syllables(adj) >= 2 && !/y$/.test(adj)) {
+    return (suffix === 'er' ? 'more ' : 'most ') + adj;
+  }
+  if (DOUBLE_ADJ.includes(adj)) return adj + adj.slice(-1) + suffix;
+  if (adj.slice(-1) === 'e')    return adj + suffix.slice(1);       // nice -> nicer
+  if (adj.slice(-1) === 'y')    return adj.slice(0,-1) + 'i' + suffix;
+  return adj + suffix;
+}
+
+function morph(base){
+  if (IRREGULAR[base]) return IRREGULAR[base];
+  const last = base.slice(-1), last2 = base.slice(-2);
+  let s;
+  if (/(s|x|z|ch|sh)$/.test(base)) s = base + 'es';
+  else if (last === 'y' && !'aeiou'.includes(base.slice(-2,-1))) s = base.slice(0,-1) + 'ies';
+  else s = base + 's';
+
+  let stem = base;
+  if (last === 'e' && base.length > 2) stem = base.slice(0,-1);
+  else if (DOUBLE.includes(base)) stem = base + last;
+
+  const ing = stem + 'ing';
+  let ed;
+  if (last === 'e') ed = base + 'd';
+  else if (last === 'y' && !'aeiou'.includes(base.slice(-2,-1))) ed = base.slice(0,-1) + 'ied';
+  else ed = stem + 'ed';
+  return {s:s, ing:ing, ed:ed};
+}
+
+// One row per anchor. This is where vocabulary grows: add related verbs,
+// nouns and describing words and the page fills itself out.
+const ANCHORS = {
+  want:  {frames_en:['what do you want','which one','how many','do you want this'], icon:'want',  related:['need','wish','pick','choose','ask'],
+          nouns:['toy','snack','drink','turn','break'], adjs:['more','big','little']},
+  like:  {frames_en:['what do you like','who do you like','why do you like it','do you like this'], icon:'like',  related:['love','enjoy','hate','prefer','miss'],
+          nouns:['show','song','game','friend','story'], adjs:['good','fun','nice']},
+  go:    {frames_en:['where do you go','when do we go','why do we go','how do we get there','who is going'], questions:['where','when','why','how','who'], icon:'go',    related:['come','leave','stay','walk','run','ride'],
+          nouns:['home','school','store','park','car','bus'], adjs:['fast','slow','far']},
+  help:  {frames_en:['can you help me','who can help','what do you need','help me please'], icon:'help',  related:['show','share','carry','fix','wait'],
+          nouns:['hand','turn','job','problem'], adjs:['hard','easy']},
+  play:  {frames_en:['what do you want to play','who wants to play','where do we play','can I play'], icon:'play',  related:['win','lose','share','build','hide','throw'],
+          nouns:['game','toy','ball','outside','friend','turn'], adjs:['fun','fair','loud']},
+  eat:   {frames_en:['what do you want to eat','when do we eat','are you hungry','do you want more'], icon:'eat',   related:['drink','taste','bite','cook','share'],
+          nouns:['food','snack','lunch','dinner','plate'], adjs:['hungry','full','yummy','hot']},
+  drink: {frames_en:['what do you want to drink','are you thirsty','do you want more','is it too cold'], icon:'drink', related:['eat','pour','taste','fill'],
+          nouns:['water','juice','milk','cup'], adjs:['thirsty','cold','empty']},
+  look:  {frames_en:['what do you see','look at this','where is it','did you see that'], icon:'look',  related:['see','watch','find','show','point'],
+          nouns:['book','picture','window','outside'], adjs:['pretty','dark','bright']},
+  come:  {frames_en:['come here please','who is coming','when are you coming','where do we go'], questions:['where','when','why','who'], icon:'come',  related:['go','bring','follow','wait','stay'],
+          nouns:['here','home','inside','outside'], adjs:['close','near']},
+  give:  {frames_en:['can I have it','who gets it','give it to me','whose turn is it'], icon:'give',  related:['take','share','get','send','show'],
+          nouns:['gift','turn','hug','money'], adjs:['nice','mine']},
+  make:  {frames_en:['what do you want to make','how do you make it','can you help me make it','look what I made'], icon:'make',  related:['build','draw','fix','cook','write'],
+          nouns:['picture','cake','mess','noise','thing'], adjs:['big','messy','new']},
+  get:   {frames_en:['what do you need','can you get it','where is it','I will get it'], icon:'get',   related:['take','find','bring','buy','keep'],
+          nouns:['thing','one','ready','help'], adjs:['ready','new','more']},
+  put:   {frames_en:['where does it go','put it here','put it away','can you put it down'], questions:['where','what','when','who'], icon:'put',   related:['take','move','drop','hold','keep'],
+          nouns:['it','there','away','down','back'], adjs:['careful','gentle']},
+  open:  {frames_en:['can you open it','what is inside','open it please','it will not open'], questions:['what','when','why','how','who'], icon:'open',  related:['close','lock','shut','pull','push'],
+          nouns:['door','box','window','book','bag'], adjs:['open','stuck','tight']},
+  turn:  {frames_en:['turn it on','turn it off','turn the page','which way'], questions:['what','when','why','how','who'], icon:'turn',  related:['move','spin','flip','stop','push'],
+          nouns:['page','light','music','corner'], adjs:['on','off','around']},
+  read:  {frames_en:['read this to me','what does it say','which book','read it again'], icon:'read',  related:['look','write','tell','listen','learn'],
+          nouns:['book','story','word','page'], adjs:['funny','scary','long']},
+  sit:   {frames_en:['sit with me','where do I sit','can I get up','I want to stand'], questions:['where','when','why','who'], icon:'sit',   related:['stand','rest','wait','stay','lie'],
+          nouns:['chair','floor','couch','seat'], adjs:['still','comfy','tired']},
+  walk:  {frames_en:['where are we walking','walk with me','can we go outside','I am tired'], questions:['where','when','why','how','who'], icon:'walk',  related:['run','go','stop','move','climb'],
+          nouns:['outside','park','dog','stairs'], adjs:['slow','far','careful']},
+  run:   {frames_en:['let us run','I want to run','not so fast','wait for me'], questions:['where','when','why','how','who'], icon:'run',   related:['walk','jump','chase','race','stop'],
+          nouns:['outside','race','game'], adjs:['fast','tired','fun']},
+  sleep: {frames_en:['I am tired','I want to sleep','it is bedtime','I am not tired'], questions:['where','when','why','who'], icon:'sleep', related:['rest','wake','dream','lie','nap'],
+          nouns:['bed','pillow','night','nap'], adjs:['tired','sleepy','quiet']},
+  wash:  {frames_en:['wash my hands','I am dirty','I need soap','all clean'], questions:['what','when','why','how','who'], icon:'wash',  related:['clean','dry','brush','scrub'],
+          nouns:['hands','face','hair','dishes'], adjs:['clean','dirty','wet']},
+  love:  {frames_en:['I love you','who do you love','I miss you','give me a hug'], questions:['who','what','why'], icon:'love',  related:['like','hug','miss','care','need'],
+          nouns:['mom','dad','friend','pet','family'], adjs:['happy','safe','kind']},
+  feel:  {frames_en:['how do you feel','what is wrong','are you okay','I feel bad'], questions:['how','what','why','when','who'], icon:'feel',  related:['am','look','seem','get'],
+          nouns:['tummy','head','heart'], adjs:['happy','sad','mad','scared','sick','tired']},
+  need:  {frames_en:['what do you need','I need help','I need it now','do you need this'], icon:'need',  related:['want','have','get','ask'],
+          nouns:['help','break','bathroom','water','time'], adjs:['now','more']},
+  do:    {frames_en:['what are you doing','what should I do','I am done','can I do it'], icon:'do',    related:['make','try','finish','start','work'],
+          nouns:['work','job','homework','thing'], adjs:['done','busy','hard']},
+  help_: {icon:'help',  related:[], nouns:[], adjs:[]}
+};
+
+
+/* Non-verb anchors. A describing word or a preposition does not conjugate,
+   so it gets its own slot template. Layout still fixed per TYPE, so every
+   describing word page looks the same as every other. */
+const ANCHORS2 = {
+  // ---- describing words -------------------------------------------------
+  happy:{type:'adj', icon:'happy', opposite:'sad',
+         related:['excited','proud','silly','calm','love'],
+         things:['friend','music','party','game','pet']},
+  sad:  {type:'adj', icon:'sad', opposite:'happy',
+         related:['lonely','hurt','miss','cry','upset'],
+         things:['goodbye','alone','broken','hurt']},
+  good: {type:'adj', icon:'good', opposite:'bad',
+         related:['great','nice','kind','fun','right'],
+         things:['job','idea','day','friend','food']},
+  bad:  {type:'adj', icon:'bad', opposite:'good',
+         related:['mean','wrong','yucky','scary','sick'],
+         things:['day','dream','idea','smell']},
+  big:  {type:'adj', icon:'big', opposite:'little',
+         related:['tall','huge','wide','long','heavy'],
+         things:['dog','truck','house','tree']},
+  little:{type:'adj', icon:'little', opposite:'big',
+         related:['small','short','tiny','thin','light'],
+         things:['baby','bug','toy','piece']},
+  hot:  {type:'adj', icon:'hot', opposite:'cold',
+         related:['warm','burning','sunny','spicy'],
+         things:['sun','food','drink','bath']},
+  cold: {type:'adj', icon:'cold', opposite:'hot',
+         related:['cool','freezing','snowy','wet'],
+         things:['ice','snow','water','wind']},
+  more: {type:'adj', icon:'more', opposite:'some',
+         related:['another','again','lots','all','extra'],
+         things:['food','drink','time','turn','please']},
+  some: {type:'adj', icon:'some', opposite:'more',
+         related:['a little','part','half','few'],
+         things:['food','water','time','help']},
+
+  // ---- place words ------------------------------------------------------
+  on:   {type:'prep', icon:'on',   opposite:'off',
+         places:['table','chair','bed','floor','top']},
+  off:  {type:'prep', icon:'off',  opposite:'on',
+         places:['light','TV','shoes','coat','lid']},
+  in:   {type:'prep', icon:'in',   opposite:'out',
+         places:['box','car','house','bag','room']},
+  out:  {type:'prep', icon:'out',  opposite:'in',
+         places:['outside','car','door','box']},
+  up:   {type:'prep', icon:'up',   opposite:'down',
+         places:['stairs','ladder','tree','hill','slide']},
+  down: {type:'prep', icon:'down', opposite:'up',
+         places:['stairs','slide','hill','ladder']},
+  here: {type:'prep', icon:'here', opposite:'there',
+         places:['table','box','room','chair']},
+  that: {type:'prep', icon:'that', opposite:'this',
+         places:['table','box','shelf','chair']},
+
+  // ---- question words ---------------------------------------------------
+  what: {type:'question', icon:'what',
+         frames:['what is that','what do you want','what happened','what is this',
+                 'what time','what color','what next','what for']},
+  where:{type:'question', icon:'where',
+         frames:['where is it','where are you','where do we go','where is mom',
+                 'where is dad','where did it go','where do you hurt']},
+  who:  {type:'question', icon:'who',
+         frames:['who is that','who did it','who is coming','who can help',
+                 'who is next','who wants it']},
+  when: {type:'question', icon:'when',
+         frames:['when is it','when do we go','when will you come','when is lunch',
+                 'when can I','when is bedtime']},
+  why:  {type:'question', icon:'why',
+         frames:['why not','why did you','why is that','why me','why now',
+                 'why are you sad']},
+  how:  {type:'question', icon:'how',
+         frames:['how are you','how do I','how many','how much','how long',
+                 'how does it work']},
+
+  // ---- body and health --------------------------------------------------
+  // Urgent by nature. Toileting and pain must be fast to reach, and the
+  // frames are whole sentences so nothing has to be assembled under stress.
+  body: {type:'helper', icon:'body',
+         frames:['I need the bathroom','I need to poop','I need to pee',
+                 'I had an accident','it hurts','I am in pain',
+                 'I feel sick','I am going to throw up','I feel dizzy',
+                 'I am bleeding','I need medicine','I need a nurse']},
+
+  // ---- helper words -----------------------------------------------------
+  can:  {type:'helper', icon:'can',
+         frames:['can I','can you','can we','I can','I can not','you can',
+                 'can I have','can I go','can I play','can I try']},
+  is:   {type:'helper', icon:'is',
+         frames:['I am','you are','he is','she is','it is','we are','they are',
+                 'is it','are you','am I']},
+  not:  {type:'helper', icon:'not',
+         frames:['not now','not me','not that','I do not','do not','no more',
+                 'not yet','I am not','not fair','not this']},
+  again:{type:'helper', icon:'again',
+         frames:['do it again','one more time','play again','read again',
+                 'say it again','not again','again please']},
+  my:   {type:'helper', icon:'my',
+         frames:['my turn','my name','mine','my mom','my dad','my house',
+                 'my toy','my friend','my room','my bag']}
+};
+
+function anchorType(w){
+  if (ANCHORS2[w]) return ANCHORS2[w].type;
+  if (ANCHORS[w]) return 'verb';
+  return null;
+}
+
+function anchorItems(word){
+  return ANCHORS2[word] ? buildTypedItems(word) : buildAnchorItems(word);
+}
+
+function buildTypedItems(word){
+  const a = ANCHORS2[word]; if(!a) return [];
+  const out = new Array(84).fill(null);
+  const put=(p,w,icon,t)=>{ if(p<84&&!out[p]) out[p]={w:w,svgName:icon||null,i:0,t:t}; };
+  put(0, word, a.icon, 'prow_a');
+
+  if (a.type === 'adj') {
+    // Row 1: the word and its degrees, same shape on every describing page.
+    put(1, compare(word,'er'), a.icon,'prow_a');
+    put(2, compare(word,'est'),a.icon,'prow_a');
+    put(3, 'very '+word,       a.icon,'prow_a');
+    put(4, 'not '+word,        'not', 'prow_a');
+    if(a.opposite) put(5, a.opposite, a.opposite, 'prow_a');
+    // Row 2: who is it. Fixed pronoun order, as everywhere else.
+    [['I am',''],['you are',''],['he is',''],['she is',''],['we are',''],
+     ['they are',''],['it is','']].forEach(function(p,i){
+      put(12+i, p[0]+' '+word, a.icon, 'prow_b'); });
+    (a.related||[]).forEach((r,i)=>put(24+i, r, r, 'prow_c'));
+    (a.things||[]).forEach((n,i)=>put(36+i, n, n, 'prow_d'));
+    put(48,'I feel '+word,'feel','resp'); put(49,'are you '+word+'?','what','resp');
+    put(50,'why '+word+'?','why','resp'); put(51,'too '+word,'more','resp');
+    put(52,'a little '+word,'little','resp'); put(53,'so '+word,'more','resp');
+  }
+  else if (a.type === 'prep') {
+    put(1,'put it '+word, 'put','prow_a');
+    put(2,'go '+word,     'go', 'prow_a');
+    put(3,'get '+word,    'get','prow_a');
+    put(4,'look '+word,   'look','prow_a');
+    if(a.opposite) put(5, a.opposite, a.opposite,'prow_a');
+    ['I want','you','we','it is','put it','come','take it'].forEach(function(p,i){
+      put(12+i, p+' '+word, a.icon,'prow_b'); });
+    (a.places||[]).forEach((pl,i)=>put(24+i, word+' the '+pl, pl,'prow_c'));
+    (a.places||[]).forEach((pl,i)=>put(36+i, pl, pl,'prow_d'));
+  }
+  else if (a.type === 'question' || a.type === 'helper') {
+    (a.frames||[]).forEach(function(f,i){
+      // Two fixed rows of frames, so position stays predictable.
+      const p = i < 6 ? 12+i : 24+(i-6);
+      put(p, f, a.icon, a.type==='question'?'social':'prow_b');
+    });
+  }
+  return out;
+}
+
+function hasAnchor(w){ return Object.prototype.hasOwnProperty.call(ANCHORS, w)
+                          || Object.prototype.hasOwnProperty.call(ANCHORS2, w); }
+
+/* Fixed slot map, 12 columns. Every anchor page puts the same KIND of
+   word in the same place, which is the entire point. */
+function buildAnchorItems(word){
+  const a = ANCHORS[word]; if(!a) return [];
+  const m = morph(word);
+  const out = new Array(84).fill(null);
+  const put = (p,w,icon,t) => { if(p<84 && !out[p]) out[p] = {w:w, svgName:icon||null, i:0, t:t}; };
+
+  // Row 1: the word itself and its endings. Always here.
+  put(0,  word,        a.icon, 'prow_a');
+  put(1,  m.s,         a.icon, 'prow_a');
+  put(2,  m.ing,       a.icon, 'prow_a');
+  put(3,  m.ed,        a.icon, 'prow_a');
+  put(4,  'to '+word,  a.icon, 'prow_a');
+  put(6,  "don't "+word, 'not', 'resp');
+  put(7,  'can '+word,   'can', 'resp');
+  put(8,  'will '+word,  a.icon, 'resp');
+
+  // Row 2: pronoun + this verb. Always here, always this order.
+  const PN = [['I',''],['you',''],['we',''],['they',''],['he','s'],['she','s'],['it','s']];
+  PN.forEach(function(p,i){
+    const form = p[1] === 's' ? m.s : word;
+    put(12+i, p[0]+' '+form, p[0], 'prow_b');
+  });
+
+  // Row 3: related verbs.
+  (a.related||[]).forEach(function(r,i){ put(24+i, r, r, 'prow_c'); });
+
+  // Row 4: things (nouns).
+  (a.nouns||[]).forEach(function(n,i){ put(36+i, n, n, 'prow_d'); });
+
+  // Row 5: describing words, with comparatives generated.
+  (a.adjs||[]).slice(0,4).forEach(function(adj,i){
+    const base = 48 + i*3;
+    put(base, adj, adj, 'resp');
+    if (!/^(more|now|mine|on|off|around|done|careful|gentle|comfy|hungry|thirsty|empty)$/.test(adj)) {
+      put(base+1, compare(adj,'er'),  adj, 'resp');
+      put(base+2, compare(adj,'est'), adj, 'resp');
+    }
+  });
+
+  // Row 6: question forms of this verb.
+  // Real question and control frames, one set per anchor. Generating these
+  // from a template produced things like "where do you want", which is not
+  // English. Where an anchor has no natural frames, the row is left empty.
+  const FRAMES = a.frames_en || [];
+  FRAMES.slice(0,6).forEach(function(f,i){ put(60+i, f, a.icon, 'social'); });
+  put(67, 'yes',      'yes',      'social');
+  put(68, 'no',       'no',       'social');
+  put(69, 'more',     'more',     'social');
+  put(70, 'stop',     'stop',     'social');
+  put(71, 'all done', 'all done', 'social');
+  return out;
+}
+
+function getFringe(cat){
+const catColors={food:'resp',people:'prow_a',feelings:'prow_d',places:'prow_c',animals:'prow_a',things:'prow_c',colors:'social',body:'prow_d',clothes:'social',pn_I:'prow_a',pn_we:'prow_a',pn_you:'prow_b',pn_they:'prow_b',pn_he:'prow_c',pn_she:'prow_c',pn_it:'prow_d'};
+return(FR[cat]||[]).map(([w,svgName,say])=>({w,svgName,say:say||null,i:0,t:catColors[cat]||'resp'}));
+}
+function getCustom(){return customWords.map(c=>({w:c.w,i:c.i||0,t:c.t||'resp',photo:c.photo||null}))}
+
+function goHome(){curView='home';const w=spellBuf.trim();if(w){sentence.push({w,i:0});speak(w)}spellBuf='';render();rStrip();document.getElementById('backBtn').style.display='none'}
+
+
+// === WORD FINDER ===
+// Answers "where is that word?" for a communication partner without changing
+// anything on the board. It navigates to the word and highlights the cell, so
+// the motor path is taught rather than just the answer given.
+function buildWordIndex(){
+  // Every entry carries the FULL PATH to the word, not just where it lives.
+  // path = [{view, w}, ...] - the sequence of presses, in order.
+  const idx=[];
+
+  // Level 1: words on the home board.
+  V.forEach(function(c){
+    if(c.w==='CLEAR') return;
+    if(c.t==='folder'){
+      return;  // folders are doorways, not words
+    }
+    idx.push({w:c.w, where:'Home', hits:1,
+              path:[{view:'home', w:c.w}]});
+  });
+
+  // Level 2: anchor pages. Reached by pressing the anchor on Home.
+  [...Object.keys(ANCHORS), ...Object.keys(ANCHORS2)].forEach(function(a){
+    if(a.endsWith('_')) return;
+    anchorItems(a).filter(Boolean).forEach(function(it){
+      if(it.w===a) return;   // the anchor's own word is level 1
+      idx.push({w:it.w, where:a, hits:2,
+                path:[{view:'home', w:a}, {view:'anchor_'+a, w:it.w}]});
+    });
+  });
+
+  // Level 2: category and pronoun folders.
+  Object.keys(FR).forEach(function(cat){
+    const doorway = V.find(function(c){ return c.cat===cat; });
+    if(!doorway) return;
+    (FR[cat]||[]).forEach(function(pair){
+      idx.push({w:pair[0], where:doorway.w, hits:2,
+                path:[{view:'home', w:doorway.w}, {view:cat, w:pair[0]}]});
+    });
+  });
+
+  return idx;
+}
+
+/* ------------------------------------------------------------------
+   TEACH THE PATH
+   Rather than jumping straight to the word, walk the route: show Home,
+   highlight the cell to press, press it, then highlight the target on
+   the page that opens. The point is that the person LEARNS the motor
+   pattern and can find it themselves next time.
+   ------------------------------------------------------------------ */
+let teachTimers=[];
+function stopTeaching(){
+  teachTimers.forEach(clearTimeout); teachTimers=[];
+  document.querySelectorAll('.teach-glow').forEach(function(e){
+    e.classList.remove('teach-glow');
+  });
+  const b=document.getElementById('teachBanner');
+  if(b) b.style.display='none';
+}
+
+function findCellByLabel(label){
+  const cells=document.querySelectorAll('#board .c');
+  for(let i=0;i<cells.length;i++){
+    const lb=cells[i].querySelector('.lb');
+    if(lb && lb.textContent.trim().toLowerCase()===String(label).trim().toLowerCase())
+      return cells[i];
+  }
+  return null;
+}
+
+function showTeachBanner(text, step, total){
+  let b=document.getElementById('teachBanner');
+  b.style.display='flex';
+  document.getElementById('teachStep').textContent='Step '+step+' of '+total;
+  document.getElementById('teachText').textContent=text;
+}
+
+function teachPath(hit){
+  stopTeaching();
+  closeFinder();
+  const path=hit.path, total=path.length;
+
+  function step(i){
+    if(i>=total){
+      // Final word is highlighted and stays highlighted.
+      const cell=findCellByLabel(path[total-1].w);
+      if(cell){
+        cell.classList.add('teach-glow');
+        cell.scrollIntoView({block:'center', behavior:'smooth'});
+      }
+      showTeachBanner('"'+hit.w+'" is here. '+
+        (total===1?'One press from Home.':total+' presses from Home.'), total, total);
+      teachTimers.push(setTimeout(stopTeaching, 9000));
+      return;
+    }
+
+    const s=path[i];
+    curView=s.view;
+    render();
+    document.getElementById('backBtn').style.display=(s.view==='home'?'none':'block');
+
+    teachTimers.push(setTimeout(function(){
+      const cell=findCellByLabel(s.w);
+      if(cell){
+        cell.classList.add('teach-glow');
+        cell.scrollIntoView({block:'center', behavior:'smooth'});
+      }
+      const last=(i===total-1);
+      showTeachBanner(last ? 'Then press "'+s.w+'"'
+                           : 'Press "'+s.w+'"'+(i===0?' on the home board':''),
+                      i+1, total);
+      // Hold long enough to actually register the position, then move on.
+      if(!last) teachTimers.push(setTimeout(function(){ step(i+1); }, 1600));
+      else      teachTimers.push(setTimeout(function(){ step(i+1); }, 1400));
+    }, 120));
+  }
+  step(0);
+}
+
+function openFinder(){
+  document.getElementById('finderModal').style.display='flex';
+  const inp=document.getElementById('finderInput');
+  inp.value=''; document.getElementById('finderResults').innerHTML='';
+  setTimeout(function(){ inp.focus(); },50);
+}
+function closeFinder(){ document.getElementById('finderModal').style.display='none'; }
+
+function runFinder(){
+  const q=document.getElementById('finderInput').value.trim().toLowerCase();
+  const box=document.getElementById('finderResults');
+  if(!q){ box.innerHTML=''; return; }
+  const all=buildWordIndex();
+  // Exact match first, then starts-with, then contains. Fewest presses wins
+  // within each group, because that is the route worth teaching.
+  const score=function(e){
+    const w=e.w.toLowerCase();
+    if(w===q) return 0;
+    if(w.indexOf(q)===0) return 1;
+    return 2;
+  };
+  const hits=all.filter(function(e){ return e.w.toLowerCase().indexOf(q)!==-1; })
+                .sort(function(a,b){ return score(a)-score(b) || a.hits-b.hits
+                                            || a.w.length-b.w.length; })
+                .slice(0,40);
+  if(!hits.length){ box.innerHTML='<div style="padding:10px;opacity:.7;">No match for "'+q+'".</div>'; return; }
+  window._finderHits=hits;
+  box.innerHTML=hits.map(function(h,n){
+    const route=h.path.map(function(s){ return s.w; }).join('  \u2192  ');
+    return '<div class="find-hit" data-n="'+n+'" style="padding:11px 12px;'
+      +'border-bottom:1px solid rgba(255,255,255,.12);cursor:pointer;">'
+      +'<b>'+h.w+'</b>'
+      +'<span style="opacity:.55;font-size:.8em;margin-left:8px;">'
+      +h.hits+(h.hits===1?' press':' presses')+'</span>'
+      +'<div style="opacity:.7;font-size:.85em;margin-top:3px;">'+route+'</div>'
+      +'</div>';
+  }).join('');
+  Array.prototype.forEach.call(box.querySelectorAll('.find-hit'),function(el){
+    el.onclick=function(){ teachPath(window._finderHits[parseInt(el.dataset.n,10)]); };
+  });
+}
+
+function gotoWord(hit){
+  closeFinder();
+  curView=hit.view; render();
+  document.getElementById('backBtn').style.display=(hit.view==='home'?'none':'');
+  setTimeout(function(){
+    const cells=document.querySelectorAll('#board .c');
+    for(let i=0;i<cells.length;i++){
+      const lb=cells[i].querySelector('.lb');
+      if(lb&&lb.textContent.trim().toLowerCase()===hit.w.toLowerCase()){
+        cells[i].style.outline='4px solid #ffd166';
+        cells[i].style.outlineOffset='-4px';
+        cells[i].scrollIntoView({block:'center',behavior:'smooth'});
+        setTimeout(function(){ cells[i].style.outline=''; },2600);
+        break;
+      }
+    }
+  },80);
+}
+
+// === RECENTS ===
+function renderRec(){const rb=document.getElementById('recentsBar');if(!showRec){rb.style.display='none';return}rb.style.display='flex';rb.innerHTML='';recents.slice(0,8).forEach(s=>{const d=document.createElement('div');d.className='rc';d.innerHTML=`<img src="${IM(s.i)}" style="${isMul(IM(s.i))?'':'filter:brightness(0) invert(1)'}" onerror="this.style.display='none'"><span>${s.w}</span>`;d.onclick=()=>addWord(s.w,s.i,s.s);rb.appendChild(d)})}
+function toggleRec(){showRec=!showRec;renderRec()}
+function togglePhone(){phoneMode=!phoneMode;const btn=document.getElementById('phoneToggle');btn.innerHTML=phoneMode?'FULL<br><span style="font-size:7px;opacity:.7">VIEW</span>':'SIMPLE<br><span style="font-size:7px;opacity:.7">VIEW</span>';save();if(curView==='home')render()}
+
+// === PIN ===
+let pinBuf='';
+function openPin(){pinBuf='';pinCallback=null;document.getElementById('pinErr').textContent='';updDots();document.getElementById('pinOv').classList.add('open')}
+function closePin(){document.getElementById('pinOv').classList.remove('open');pinBuf=''}
+function pinKey(k){if(k==='⌫'){pinBuf=pinBuf.slice(0,-1);document.getElementById('pinErr').textContent=''}else if(pinBuf.length<4){pinBuf+=k;if(pinBuf.length===4){if(pinBuf===PIN){closePin();if(pinCallback){pinCallback();pinCallback=null}else{openSet()}}else{document.getElementById('pinErr').textContent='Wrong PIN';const d=document.getElementById('pinDots');d.classList.add('shake');setTimeout(()=>d.classList.remove('shake'),400);pinBuf=''}}}updDots()}
+function updDots(){document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinBuf.length))}
+
+// === SETTINGS ===
+function openSet(){document.getElementById('setOv').classList.add('open');populateVoices();document.getElementById('spR').value=SP;document.getElementById('mmSel').value=MM?'1':'0';document.getElementById('modelBanner').style.display=MM?'block':'none';loadInfo();renderStats();renderCWList()}
+function closeOv(id){document.getElementById(id).classList.remove('open')}
+const APP_LANG='en-US';
+
+function voiceQuality(v){
+  // Higher is better. iOS and Android both ship a wide range, from very good
+  // downloadable neural voices to old robotic fallbacks, and the raw list
+  // gives no hint which is which.
+  const n=(v.name||'').toLowerCase();
+  let q=0;
+  if(/premium|enhanced|neural|natural/.test(n)) q+=100;   // downloadable, best
+  if(/siri/.test(n))                            q+=60;
+  if(/google|microsoft/.test(n))                q+=40;
+  if(v.localService)                            q+=25;    // on device, no lag
+  if(/compact|espeak|pico|robot/.test(n))       q-=60;    // the old ones
+  return q;
+}
+
+function voiceLabel(v){
+  const n=(v.name||'').toLowerCase();
+  if(/premium|enhanced|neural|natural/.test(n)) return 'best';
+  if(/compact|espeak|pico/.test(n))             return 'basic';
+  return v.localService ? 'good' : 'online';
+}
+
+function populateVoices(){
+  const sel=document.getElementById('vSel');
+  const all=speechSynthesis.getVoices();
+  if(!all.length) return;
+
+  // Only voices that can actually pronounce this app's language. A Spanish
+  // voice reading English is worse than no choice at all.
+  const want=(APP_LANG||'en').slice(0,2);
+  let list=all.filter(v=>(v.lang||'').slice(0,2).toLowerCase()===want);
+  if(!list.length) list=all;
+
+  list.sort((a,b)=>voiceQuality(b)-voiceQuality(a) || a.name.localeCompare(b.name));
+
+  sel.innerHTML=list.map(v=>
+    '<option value="'+v.voiceURI+'"'+(v.voiceURI===VU?' selected':'')+'>'
+    +v.name+'  ('+voiceLabel(v)+')</option>').join('');
+
+  // If nothing has been chosen yet, take the best available rather than
+  // whatever the system happens to default to.
+  if(!VU && list.length){ VU=list[0].voiceURI; sel.value=VU; save(); }
+
+  sel.onchange=()=>{
+    VU=sel.value; save();
+    // Say something so the choice can be judged immediately.
+    const u=new SpeechSynthesisUtterance('Hello, this is my voice');
+    const v=speechSynthesis.getVoices().find(x=>x.voiceURI===VU);
+    if(v) u.voice=v;
+    u.rate=SP;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  };
+}
+function renderStats(){const box=document.getElementById('statsBox');const total=Object.values(usage).reduce((a,b)=>a+b,0);const sorted=Object.entries(usage).sort((a,b)=>b[1]-a[1]).slice(0,5);const allWords=V.filter(v=>!v.cat&&v.w!=='CLEAR'&&!v.w.startsWith('+'));const usedW=allWords.filter(v=>usage[v.w]>0).length;const pct=allWords.length?Math.round(usedW/allWords.length*100):0;
+box.innerHTML=`<div class="stat-row"><span>Total taps</span><b>${total}</b></div><div class="stat-row"><span>Unique words</span><b>${Object.keys(usage).length}</b></div><div class="stat-row"><span>Coverage</span><b>${pct}%</b></div>${sorted.map(([w,c])=>`<div class="stat-row"><span>${w}</span><b>${c}×</b></div>`).join('')}`}
+
+// === CUSTOM WORDS ===
+function renderCWList(){const el=document.getElementById('cwList');if(!customWords.length){el.innerHTML='<p style="font-size:.75em;opacity:.5">No custom words yet</p>';return}el.innerHTML=customWords.map((c,i)=>`<div class="cw-item"><span>${c.w}</span><button class="dn" onclick="delCW(${i})" style="padding:2px 8px;font-size:.7em">✕</button></div>`).join('')}
+let cwPhotoData=null;
+function handleCWPhoto(input){
+if(!input.files||!input.files[0])return;
+const file=input.files[0];
+const reader=new FileReader();
+reader.onload=function(e){
+// Resize to 120x120 max for localStorage efficiency
+const img=new Image();
+img.onload=function(){
+const MAX=120;
+let w=img.width,h=img.height;
+if(w>h){if(w>MAX){h=h*(MAX/w);w=MAX}}else{if(h>MAX){w=w*(MAX/h);h=MAX}}
+const canvas=document.createElement('canvas');
+canvas.width=w;canvas.height=h;
+const ctx=canvas.getContext('2d');
+ctx.drawImage(img,0,0,w,h);
+cwPhotoData=canvas.toDataURL('image/jpeg',0.8);
+document.getElementById('cwPreview').innerHTML=`<img src="${cwPhotoData}" style="width:60px;height:60px;border-radius:8px;object-fit:cover;border:2px solid #2a9d8f"><br><span style="font-size:.65em;color:#aaa">Photo added</span>`;
+};
+img.src=e.target.result;
+};
+reader.readAsDataURL(file);
+}
+function openAddFromBoard(){
+// If we're in settings PIN flow, skip PIN again - otherwise require PIN
+if(editMode){
+  openAddCWFor(curView);
+}else{
+  openPin();
+  pinCallback=()=>{ openAddCWFor(curView); };
+}
+}
+function openAddCWFor(view){
+document.getElementById('cwWord').value='';
+document.getElementById('cwAra').value='';
+cwPhotoData=null;
+document.getElementById('cwPreview').innerHTML='';
+// Pre-select color based on current category
+const catColors={food:'resp',people:'prow_a',feelings:'prow_d',places:'prow_c',animals:'prow_a',things:'prow_c',colors:'social',body:'prow_d',clothes:'social',home:'resp',custom:'resp'};
+const selCat=catColors[view]||'resp';
+document.getElementById('cwCat').value=selCat;
+document.getElementById('cwOv').classList.add('open');
+}
+function saveCW(){const w=document.getElementById('cwWord').value.trim();if(!w)return;const t=document.getElementById('cwCat').value;const ara=document.getElementById('cwAra').value.trim();
+const newWord={w,t,i:ara?parseInt(ara):0,photo:cwPhotoData||null};
+// If we're in a fringe category, add to that category's data too
+if(curView!=='home'&&curView!=='custom'&&curView!=='spell'&&FR[curView]){
+  FR[curView].push([w,w]);
+}
+customWords.push(newWord);cwPhotoData=null;save();closeOv('cwOv');renderCWList();render()}
+function delCW(i){customWords.splice(i,1);save();renderCWList()}
+
+// === QUICK PHRASES ===
+let qpEditing=false;let qpEditIdx=-1;
+function saveQP(){localStorage.setItem('mybuddy_qp',JSON.stringify(quickPhrases))}
+function openQP(){qpEditing=false;document.getElementById('qpEditBtn').textContent='✏️ Edit';document.getElementById('qpEditArea').style.display='none';renderQP();document.getElementById('qpOv').classList.add('open')}
+function renderQP(){const g=document.getElementById('qpGrid');g.innerHTML=quickPhrases.map((phrase,i)=>{
+if(qpEditing){return `<button class="qp-btn" style="border:1px solid #e9c46a" onclick="openQPEditModal(${i})">${phrase} ✏️</button>`}
+return `<button class="qp-btn" onclick="sayPhrase('${phrase.replace(/'/g,"\\'")}')">${phrase}</button>`}).join('')}
+function toggleQPEdit(){qpEditing=!qpEditing;document.getElementById('qpEditBtn').textContent=qpEditing?'✅ Done':'✏️ Edit';document.getElementById('qpEditArea').style.display=qpEditing?'block':'none';renderQP()}
+function addQP(){const inp=document.getElementById('qpInput');const txt=inp.value.trim();if(!txt)return;quickPhrases.push(txt);inp.value='';saveQP();renderQP()}
+function openQPEditModal(i){qpEditIdx=i;document.getElementById('qpEditInput').value=quickPhrases[i];document.getElementById('qpEditOv').classList.add('open')}
+function saveQPEdit(){const txt=document.getElementById('qpEditInput').value.trim();if(!txt||qpEditIdx<0)return;quickPhrases[qpEditIdx]=txt;saveQP();closeOv('qpEditOv');renderQP()}
+function deleteQPEdit(){if(qpEditIdx<0)return;quickPhrases.splice(qpEditIdx,1);saveQP();closeOv('qpEditOv');renderQP()}
+function sayPhrase(p){speak(p);closeOv('qpOv')}
+
+// === TUTORIAL ===
+const TUT=[{e:'🗣️',h:'Welcome to My Buddy!',p:'Tap any word to hear it spoken. Build your child\'s language one word at a time.'},{e:'📝',h:'Build Sentences',p:'Tap multiple words to build a sentence. Then press SPEAK to say it all together.'},{e:'⚙️',h:'Parents: Settings',p:'Tap ⚙️ to adjust voice, speed, and add custom words. Default PIN: 1234'}];
+let tutStep=0;
+function showTut(){tutStep=0;rTut();document.getElementById('tutOv').style.display='flex'}
+function rTut(){const s=TUT[tutStep];document.getElementById('tutE').textContent=s.e;document.getElementById('tutH').textContent=s.h;document.getElementById('tutP').textContent=s.p;document.getElementById('tutD').innerHTML=TUT.map((_,i)=>`<div class="tut-d ${i===tutStep?'on':''}"></div>`).join('');document.getElementById('tutBtn').textContent=tutStep===TUT.length-1?"Got it! 🚀":"Next"}
+function tutNext(){if(tutStep<TUT.length-1){tutStep++;rTut()}else{document.getElementById('tutOv').style.display='none';save()}}
+
+// === INIT ===
+function init(){
+// ROW ORDER ASSERTION - pronoun rows must be first (p:0-47)
+const sorted=V.slice().sort((a,b)=>a.p-b.p);
+if(sorted[0].t!=='prow_a'||sorted[12].t!=='prow_b'||sorted[24].t!=='prow_c'||sorted[36].t!=='prow_d'){
+console.error('ROW ORDER VIOLATION: Pronoun rows must be p:0-47. Someone changed the p: values. Fix immediately.');
+}
+const tutDone=load();
+const ptBtn=document.getElementById('phoneToggle');if(ptBtn){ptBtn.innerHTML=phoneMode?'FULL<br><span style="font-size:7px;opacity:.7">VIEW</span>':'SIMPLE<br><span style="font-size:7px;opacity:.7">VIEW</span>'}
+document.getElementById('pinPad').innerHTML=['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>k===''?'<button class="nk empty"></button>':k==='⌫'?`<button class="nk" onclick="pinKey('⌫')">⌫</button>`:`<button class="nk" onclick="pinKey('${k}')">${k}</button>`).join('');
+render();renderRec();
+window.addEventListener('resize',render);
+speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=populateVoices;
+setTimeout(()=>{const sp=document.getElementById('splash');sp.classList.add('gone');setTimeout(()=>{sp.remove();if(!tutDone)showTut()},500)},800);
+}
+
+// Tutorial overlay (added dynamically to keep HTML clean)
+document.body.insertAdjacentHTML('beforeend','<div class="tut-ov" id="tutOv" style="display:none"><div class="tut-card"><div class="tut-emoji" id="tutE"></div><div class="tut-h" id="tutH"></div><div class="tut-p" id="tutP"></div><div class="tut-dots" id="tutD"></div><button class="tut-btn" id="tutBtn" onclick="tutNext()">Next</button></div></div>');
+
+init();
+</script><div id="teachBanner">
+  <span id="teachStep"></span>
+  <span id="teachText"></span>
+  <button onclick="stopTeaching()">Done</button>
+</div>
+
+<div id="finderModal" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.65);align-items:center;justify-content:center;">
+ <div style="background:#1b1f2a;border:1px solid #3a4255;border-radius:14px;width:min(520px,92vw);max-height:80vh;display:flex;flex-direction:column;padding:16px;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+   <b style="font-size:1.05rem;">Find a word</b>
+   <button onclick="closeFinder()" style="margin-left:auto;background:#2a3040;color:#fff;border:1px solid #3a4255;border-radius:8px;padding:6px 12px;cursor:pointer;">Close</button>
+  </div>
+  <input id="finderInput" type="text" placeholder="Type a word, e.g. drink"
+    oninput="runFinder()" onkeydown="if(event.key==='Escape')closeFinder()"
+    style="width:100%;padding:11px 13px;border-radius:9px;border:1px solid #3a4255;background:#0f131c;color:#fff;font-size:1rem;">
+  <div style="font-size:.8rem;opacity:.6;margin:8px 2px 4px;">Tap a result and it will walk you through how to get there.</div>
+  <div id="finderResults" style="overflow:auto;border-top:1px solid rgba(255,255,255,.1);"></div>
+ </div>
+</div>
+</body></html>
