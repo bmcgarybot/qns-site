@@ -582,7 +582,11 @@ function conjugate(inf){
 }
 function gerund(inf){
   const I={ir:'yendo',dormir:'durmiendo',pedir:'pidiendo',decir:'diciendo',
-           venir:'viniendo',poder:'pudiendo',leer:'leyendo',servir:'sirviendo'};
+           venir:'viniendo',poder:'pudiendo',leer:'leyendo',servir:'sirviendo',
+           sentir:'sintiendo',preferir:'prefiriendo',competir:'compitiendo',
+           vestir:'vistiendo',repetir:'repitiendo',morir:'muriendo',
+           seguir:'siguiendo',conseguir:'consiguiendo',elegir:'eligiendo',
+           creer:'creyendo',oir:'oyendo',traer:'trayendo',caer:'cayendo'};
   if(I[inf]) return I[inf];
   return inf.slice(-2)==='ar'?inf.slice(0,-2)+'ando':inf.slice(0,-2)+'iendo';
 }
@@ -609,9 +613,18 @@ function agree(adj, opts){
   return w;
 }
 
+// Only bueno and malo are genuinely suppletive here. mayor/menor mean older
+// and younger, not bigger and smaller, so size keeps más grande.
+const IRREG_COMP={bueno:{er:'mejor',est:'el mejor'},
+                  malo:{er:'peor',est:'el peor'}};
+// Returns null when the word should not be compared at all, so the caller
+// can leave those cells empty instead of repeating the same word three times.
 function compare(adj,suffix){
-  // Words that are already comparative, or are not gradable, take no más.
-  if(/^(más|menos|ahora|mío|encendido|apagado|alrededor|terminado)$/.test(adj)) return adj;
+  if(IRREG_COMP[adj]) return IRREG_COMP[adj][suffix];
+  if(/^(más|menos|ahora|mío|encendido|apagado|alrededor|terminado|listo)$/.test(adj)) return null;
+  // hambre, sed and the rest are NOUNS taken with tener. They take mucha,
+  // not más, so the comparative cells are left empty.
+  if(/^(hambre|sed|frío|calor|sueño|miedo|razón|prisa)$/.test(adj)) return null;
   return (suffix==='er'?'más ':'el más ')+adj;
 }
 function morph(base){
@@ -633,9 +646,9 @@ const ANCHORS = {
   jugar: {icon:'play',  related:['ganar','perder','compartir','construir','esconder','lanzar'],
           nouns:['juego','juguete','pelota','afuera','amigo','turno'], adjs:['divertido','justo','ruidoso']},
   comer: {icon:'eat',   related:['beber','probar','morder','cocinar','compartir'],
-          nouns:['comida','merienda','almuerzo','cena','plato'], adjs:['hambriento','lleno','rico','caliente']},
+          nouns:['comida','merienda','almuerzo','cena','plato'], adjs:['hambre','lleno','rico','caliente']},
   beber: {icon:'drink', related:['comer','servir','probar','llenar'],
-          nouns:['agua','jugo','leche','taza'], adjs:['sediento','frío','vacío']},
+          nouns:['agua','jugo','leche','taza'], adjs:['sed','frío','vacío']},
   mirar: {icon:'look',  related:['ver','observar','encontrar','mostrar','señalar'],
           nouns:['libro','foto','ventana','afuera'], adjs:['bonito','oscuro','brillante']},
   venir: {questions:['where','when','why','who'], icon:'come',  related:['ir','traer','seguir','esperar','quedarse'],
@@ -795,22 +808,36 @@ function buildTypedItems(word){
 
   if (a.type === 'adj') {
     // Row 1: the word and its degrees, same shape on every describing page.
-    put(1, compare(word,'er'), a.icon,'prow_a');
-    put(2, compare(word,'est'),a.icon,'prow_a');
+    const c1=compare(word,'er'), c2=compare(word,'est');
+    if(c1) put(1, c1, a.icon,'prow_a');
+    if(c2) put(2, c2, a.icon,'prow_a');
     put(3, 'muy '+word,       a.icon,'prow_a');
     put(4, 'no '+word,        'not', 'prow_a');
     if(a.opposite) put(5, a.opposite, a.opposite, 'prow_a');
     // Row 2: who is it. Fixed pronoun order, as everywhere else.
     // Spanish adjectives agree with the subject, so each form is generated.
-    [['yo estoy',{}],['tú estás',{}],['él está',{}],['ella está',{fem:true}],
-     ['nosotros estamos',{plural:true}],['ellos están',{plural:true}],
-     ['eso está',{}]].forEach(function(p,i){
-      put(12+i, p[0]+' '+agree(word,p[1]), a.icon, 'prow_b'); });
+    // hambre, sed, frío, calor, sueño and miedo take TENER, not ESTAR.
+    const TENER=/^(hambre|sed|frío|calor|sueño|miedo|razón|prisa)$/.test(word);
+    // SER for lasting qualities (size, character), ESTAR for states you are
+    // temporarily in (mood, condition). "yo estoy grande" is wrong.
+    const SER=/^(grande|pequeño|bueno|malo|amable|divertido|bonito|gracioso|largo|rápido|lento|difícil|fácil|justo|nuevo|viejo|alto|bajo|fuerte)$/.test(word);
+    const SUBJ = TENER
+      ? [['yo tengo',{}],['tú tienes',{}],['él tiene',{}],['ella tiene',{}],
+         ['nosotros tenemos',{}],['ellos tienen',{}],['esto tiene',{}]]
+      : SER
+      ? [['yo soy',{}],['tú eres',{}],['él es',{}],['ella es',{fem:true}],
+         ['nosotros somos',{plural:true}],['ellos son',{plural:true}],['esto es',{}]]
+      : [['yo estoy',{}],['tú estás',{}],['él está',{}],['ella está',{fem:true}],
+         ['nosotros estamos',{plural:true}],['ellos están',{plural:true}],
+         ['esto está',{}]];
+    SUBJ.forEach(function(p,i){
+      put(12+i, p[0]+' '+(TENER?word:agree(word,p[1])), a.icon, 'prow_b'); });
     (a.related||[]).forEach((r,i)=>put(24+i, r, r, 'prow_c'));
     (a.things||[]).forEach((n,i)=>put(36+i, n, n, 'prow_d'));
-    put(48,'me siento '+word,'feel','resp'); put(49,'¿estás '+word+'?','what','resp');
+    put(48, TENER?('tengo mucha '+word):('me siento '+word), 'feel','resp');
+    put(49, TENER?('¿tienes '+word+'?'):(SER?('¿eres '+word+'?'):('¿estás '+word+'?')), 'what','resp');
     put(50,'¿por qué '+word+'?','why','resp'); put(51,'demasiado '+word,'more','resp');
-    put(52,'un poco '+word,'little','resp'); put(53,'tan '+word,'more','resp');
+    put(52, TENER?('un poco de '+word):('un poco '+word), 'little','resp'); put(53,'tan '+word,'more','resp');
   }
   else if (a.type === 'prep') {
     put(1,'ponlo '+word, 'put','prow_a');
@@ -849,16 +876,20 @@ function buildAnchorItems(word){
   put(1,  m.s,         a.icon, 'prow_a');
   put(2,  m.ing,       a.icon, 'prow_a');
   put(3,  m.ed,        a.icon, 'prow_a');
-  put(4,  word,  a.icon, 'prow_a');
-  put(6,  'no '+conjugate(word).yo, 'not', 'resp');
-  put(7,  'puedo '+word, 'can', 'resp');
-  put(8,  'voy a '+word, a.icon, 'resp');
+  put(4,  word+', por favor',  'please', 'prow_a');
+  put(6,  'no '+(conjugate(word).yo), 'not', 'resp');
+  if(!/^(gustar|encantar|doler|importar)$/.test(word)) put(7, 'puedo '+word, 'can', 'resp');
+  if(!/^(gustar|encantar|doler|importar)$/.test(word)) put(8, 'voy a '+word, a.icon, 'resp');
 
   // Row 2: pronoun + this verb. Always here, always this order.
-  const PN = [['yo','yo'],['tú','tu'],['nosotros','nosotros'],['ellos','ellos'],['él','el'],['ella','el'],['eso','el']];
+  const PN = [['yo','yo'],['tú','tu'],['nosotros','nosotros'],['ellos','ellos'],['él','el'],['ella','el'],['esto','el']];
   const C = conjugate(word);
+  // gustar and friends take an indirect object and no subject pronoun:
+  // "me gusta", not "yo me gusta".
+  const BACKWARDS = /^(gustar|encantar|doler|importar)$/.test(word);
   PN.forEach(function(p,i){
-    put(12+i, p[0]+' '+(C[p[1]]||word), p[0], 'prow_b');
+    const form = C[p[1]] || word;
+    put(12+i, BACKWARDS ? form : p[0]+' '+form, p[0], 'prow_b');
   });
 
   // Row 3: related verbs.
@@ -872,8 +903,9 @@ function buildAnchorItems(word){
     const base = 48 + i*3;
     put(base, adj, adj, 'resp');
     if (!/^(more|now|mine|on|off|around|done|careful|gentle|comfy|hungry|thirsty|empty)$/.test(adj)) {
-      put(base+1, compare(adj,'er'),  adj, 'resp');
-      put(base+2, compare(adj,'est'), adj, 'resp');
+      const cer=compare(adj,'er'), cest=compare(adj,'est');
+      if(cer)  put(base+1, cer,  adj, 'resp');
+      if(cest) put(base+2, cest, adj, 'resp');
     }
   });
 
@@ -891,10 +923,13 @@ function buildAnchorItems(word){
     if (qw === 'who') put(p, '¿quién '+C2.el+'?', 'who', 'social');
     else put(p, '¿'+QW[qw]+' '+C2.tu+'?', qw, 'social');
   });
-  if (word !== 'querer' && word !== 'necesitar') put(67, 'quiero '+word, 'want', 'social');
-  put(68, 'más '+word,        'more', 'social');
-  put(69, word+' otra vez',   'again','social');
-  put(70, 'parar de '+word,   'stop', 'social');
+  if(/^(gustar|encantar|doler|importar)$/.test(word)) put(67, 'me gusta mucho', 'want', 'social');
+  else if (word !== 'querer' && word !== 'necesitar') put(67, 'quiero '+word, 'want', 'social');
+  put(68, /^(gustar|encantar)$/.test(word) ? 'me gusta más' : word+' más', 'more', 'social');
+  put(69, /^(gustar|encantar|doler)$/.test(word) ? 'me gusta otra vez' : word+' otra vez',
+      'again','social');
+  put(70, /^(gustar|encantar|doler)$/.test(word) ? 'ya no me gusta' : 'dejar de '+word,
+      'stop', 'social');
   put(71, 'terminé',          'all done','social');
 
   return out;
