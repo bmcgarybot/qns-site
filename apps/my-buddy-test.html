@@ -1,6 +1,12 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="My Buddy">
+<meta name="theme-color" content="#2a9d8f">
+<link rel="manifest" href="my-buddy.webmanifest">
+<link rel="apple-touch-icon" href="icons/mybuddy-180.png">
 <title>My Buddy TEST</title>
 <meta name="robots" content="noindex,nofollow">
 <style>
@@ -120,6 +126,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 
 <div id="splash"><div style="font-size:60px">🗣️</div><div class="sn">My Buddy</div><div class="ss">Communication for Everyone</div></div>
 <div id="modelBanner">👨‍🏫 MODELING MODE</div>
+<div id="offlineReady" style="display:none;position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:900;background:#2a9d8f;color:#fff;font:600 13px system-ui;padding:7px 16px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.4)">Saved for offline use</div>
 <div id="strip">
 <button class="sb" id="bDel" onclick="sDel()">⌫</button>
 <div id="sW"></div>
@@ -544,7 +551,7 @@ const isColorCat=(curView==='colors');
 const isGram=s.w&&s.w.startsWith('+');
 if(imgSrc){
 d.innerHTML=`<img src="${imgSrc}" style="${displayPhoto?'border-radius:6px;object-fit:cover;':(isColorCat||isMul(imgSrc)?'background:rgba(255,255,255,0.85);border-radius:6px;padding:1px;':'filter:brightness(0) invert(1);')}"
- onerror="this.style.filter='';this.onerror=null"><div class="lb">${displayW}</div>`;
+ onerror="this.style.display='none';this.onerror=null"><div class="lb">${displayW}</div>`;
 }else{
 d.innerHTML=`<div class="lb" style="font-size:${_wc>2?'clamp(9px,1.9vw,13px)':'clamp(12px,3vw,18px)'}">${displayW}</div>`;
 }
@@ -769,7 +776,7 @@ const ANCHORS2 = {
          degrees:['that one','this one','not that','all of it'],
          frames:['I want that','I like that','give me that','look at that',
                  'I see that','do that','stop that'],
-         related:['here','there','mine','yours'],
+         related:['here','there','mine','thing'],
          things:['table','box','shelf','chair'],
          asks:['what is that?','can I have that?','not that one',
                'I do not like that']},
@@ -851,7 +858,7 @@ function buildTypedItems(word){
     (a.related||[]).forEach((r,i)=>put(24+i, r, r, 'prow_c'));
     (a.things||[]).forEach((n,i)=>put(36+i, n, n, 'prow_d'));
     put(48,'I feel '+word,'feel','resp'); put(49,'are you '+word+'?','what','resp');
-    put(50,'why '+word+'?','why','resp'); put(51,'too '+word,'more','resp');
+    put(50,'not too '+word,'not','resp'); put(51,'too '+word,'more','resp');
     put(52,'a little '+word,'little','resp'); put(53,'so '+word,'more','resp');
   }
   else if (a.type === 'quant' || a.type === 'demo') {
@@ -867,12 +874,11 @@ function buildTypedItems(word){
     (a.asks||[]).forEach((q,i)=>put(48+i, q, a.icon,'resp'));
   }
   else if (a.type === 'prep') {
-    put(1,'put it '+word, 'put','prow_a');
-    put(2,'go '+word,     'go', 'prow_a');
-    put(3,'get '+word,    'get','prow_a');
-    put(4,'look '+word,   'look','prow_a');
+    put(1,'not '+word, 'not','prow_a');
     if(a.opposite) put(5, a.opposite, a.opposite,'prow_a');
-    ['I want','you','we','it is','I see','come','take it'].forEach(function(p,i){
+    // Every frame has to be a real sentence with any preposition dropped in:
+    // "put it up", "get up", "sit up". "you on" and "we on" are not English.
+    ['put it','it is','get','go','climb','sit','look'].forEach(function(p,i){
       put(12+i, p+' '+word, a.icon,'prow_b'); });
     (a.places||[]).forEach((pl,i)=>put(24+i, word+' the '+pl, pl,'prow_c'));
     (a.places||[]).forEach((pl,i)=>put(36+i, pl, pl,'prow_d'));
@@ -1319,4 +1325,24 @@ init();
   <div id="finderResults" style="overflow:auto;border-top:1px solid rgba(255,255,255,.1);"></div>
  </div>
 </div>
+
+<script>
+/* Register the service worker so the board keeps working with no signal.
+   A child's voice must not depend on having bars. */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js', { scope: './' }).then(function (reg) {
+      var badge = document.getElementById('offlineReady');
+      function ready() { if (badge) { badge.textContent = 'Saved for offline use';
+                                      badge.style.display = 'block';
+                                      setTimeout(function(){ badge.style.display='none'; }, 4000); } }
+      if (navigator.serviceWorker.controller) ready();
+      reg.addEventListener('updatefound', function () {
+        var w = reg.installing;
+        if (w) w.addEventListener('statechange', function () { if (w.state === 'activated') ready(); });
+      });
+    }).catch(function (e) { console.warn('[sw] registration failed', e); });
+  });
+}
+</script>
 </body></html>
