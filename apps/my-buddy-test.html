@@ -162,7 +162,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <h3>⚙️ Settings</h3>
 <label>Voice</label><select id="vSel"></select>
 <label>Speed <span id="spV">0.9</span></label><input type="range" id="spR" min=".3" max="1.5" step=".1" value=".9" oninput="SP=+this.value;document.getElementById('spV').textContent=SP.toFixed(1);save()">
-<label>Pitch <span id="ptV">1.0</span></label><input type="range" id="ptR" min=".5" max="2" step=".1" value="1" oninput="PITCH=+this.value;document.getElementById('ptV').textContent=PITCH.toFixed(1);save();speak('this is my voice')">
+<label>Pitch <span id="ptV">1.0</span></label><input type="range" id="ptR" min="0" max="2" step=".05" value="1" oninput="PITCH=+this.value;document.getElementById('ptV').textContent=PITCH.toFixed(2);save();speak('this is my voice')">
 <label>Modeling Mode</label><select id="mmSel" onchange="MM=this.value==='1';document.getElementById('modelBanner').style.display=MM?'block':'none';save()"><option value="0">Off</option><option value="1">On - taps won't count in stats</option></select>
 <hr style="border-color:#444;margin:10px 0">
 <h3>🚨 My Info (Safety)</h3>
@@ -475,9 +475,15 @@ const isFringe=!isHome&&curView!=='custom'&&!isPron&&!isAnchor;
 let cols,rows;
 if(isHome&&phoneMode){cols=Math.min(items.length,6);rows=Math.ceil(items.length/cols);
 }else if(isHome){cols=12;rows=7;
+}else if(isAnchor&&phoneMode){
+// On a phone 12 columns is 32px per cell, which is unusable. Home already
+// compacts in simple view, so anchor pages compact the same way: drop the
+// empty slots and lay the words out six across.
+items=items.filter(Boolean);
+cols=Math.min(items.length,6)||1;rows=Math.ceil(items.length/cols)||1;
 }else if(isAnchor){
-// Anchor pages keep the full 84-cell grid so a word is always in the same
-// place. Blank slots stay blank; that is the point.
+// On a tablet or desktop anchor pages keep the full 84-cell grid so a word
+// is always in the same place. Blank slots stay blank; that is the point.
 cols=12;rows=7;
 }else{
 // Pronoun folders, category folders and custom all render as a plain grid
@@ -498,7 +504,11 @@ if(isHome){
   b.style.alignContent='stretch';
   b.style.overflowY='hidden';
 }else{
-  const rowH=Math.max(64,Math.floor((b.clientHeight||window.innerHeight)/7));
+  // Height was viewport/7 regardless of column width, which on a phone gave
+  // cells three times taller than wide. Cap it against the column width.
+  const bw=b.clientWidth||window.innerWidth, bh=b.clientHeight||window.innerHeight;
+  const colW=bw/cols;
+  const rowH=Math.max(64,Math.min(Math.floor(bh/7),Math.round(colW*1.35)));
   b.style.gridTemplateRows=`repeat(${rows},${rowH}px)`;
   b.style.alignContent='start';
   // Fixed pixel rows can total more than the board height. Allow scrolling on
@@ -706,7 +716,7 @@ const ANCHORS2 = {
          things:['friend','music','party','game','pet']},
   sad:  {type:'adj', icon:'sad', opposite:'happy',
          related:['lonely','hurt','miss','cry','upset'],
-         things:['goodbye','alone','broken','hurt']},
+         things:['goodbye','alone','broken','tired']},
   good: {type:'adj', icon:'good', opposite:'bad',
          related:['great','nice','kind','fun','right'],
          things:['job','idea','day','friend','food']},
@@ -725,12 +735,20 @@ const ANCHORS2 = {
   cold: {type:'adj', icon:'cold', opposite:'hot',
          related:['cool','freezing','snowy','wet'],
          things:['ice','snow','water','wind']},
-  more: {type:'adj', icon:'more', opposite:'some',
-         related:['another','again','lots','all','extra'],
-         things:['food','drink','time','turn','please']},
-  some: {type:'adj', icon:'some', opposite:'more',
-         related:['a little','part','half','few'],
-         things:['food','water','time','help']},
+  more: {type:'quant', icon:'more', opposite:'all done',
+         degrees:['a little more','some more','a lot more','no more','all'],
+         frames:['I want more','you want more','he wants more','she wants more',
+                 'we want more','they want more','can I have more'],
+         related:['another','again','lots','extra'],
+         things:['food','drink','time','turn','please'],
+         asks:['more please','can I have more?','that is enough']},
+  some: {type:'quant', icon:'some', opposite:'all done',
+         degrees:['a little','a bit','a lot','not any','all'],
+         frames:['I want some','you want some','he wants some','she wants some',
+                 'we want some','they want some','can I have some'],
+         related:['another','again','lots','part'],
+         things:['food','water','time','help'],
+         asks:['some please','can I have some?','that is enough']},
 
   // ---- place words ------------------------------------------------------
   on:   {type:'prep', icon:'on',   opposite:'off',
@@ -747,8 +765,14 @@ const ANCHORS2 = {
          places:['stairs','slide','hill','ladder']},
   here: {type:'prep', icon:'here', opposite:'there',
          places:['table','box','room','chair']},
-  that: {type:'prep', icon:'that', opposite:'this',
-         places:['table','box','shelf','chair']},
+  that: {type:'demo', icon:'that', opposite:'this',
+         degrees:['that one','this one','not that','all of it'],
+         frames:['I want that','I like that','give me that','look at that',
+                 'I see that','do that','stop that'],
+         related:['here','there','mine','yours'],
+         things:['table','box','shelf','chair'],
+         asks:['what is that?','can I have that?','not that one',
+               'I do not like that']},
 
   // ---- question words ---------------------------------------------------
   what: {type:'question', icon:'what',
@@ -830,13 +854,25 @@ function buildTypedItems(word){
     put(50,'why '+word+'?','why','resp'); put(51,'too '+word,'more','resp');
     put(52,'a little '+word,'little','resp'); put(53,'so '+word,'more','resp');
   }
+  else if (a.type === 'quant' || a.type === 'demo') {
+    // Quantity and pointing words are not gradable. "morer", "very more"
+    // and "I am more"
+    // are not English, so this type never touches compare() or the "I am X"
+    // frames that the adjective template uses.
+    (a.degrees||[]).forEach((d,i)=>put(1+i, d, a.icon,'prow_a'));
+    if(a.opposite) put(6, a.opposite, null, 'prow_a');
+    (a.frames||[]).forEach((f,i)=>put(12+i, f, a.icon,'prow_b'));
+    (a.related||[]).forEach((r,i)=>put(24+i, r, r, 'prow_c'));
+    (a.things||[]).forEach((n,i)=>put(36+i, n, n, 'prow_d'));
+    (a.asks||[]).forEach((q,i)=>put(48+i, q, a.icon,'resp'));
+  }
   else if (a.type === 'prep') {
     put(1,'put it '+word, 'put','prow_a');
     put(2,'go '+word,     'go', 'prow_a');
     put(3,'get '+word,    'get','prow_a');
     put(4,'look '+word,   'look','prow_a');
     if(a.opposite) put(5, a.opposite, a.opposite,'prow_a');
-    ['I want','you','we','it is','put it','come','take it'].forEach(function(p,i){
+    ['I want','you','we','it is','I see','come','take it'].forEach(function(p,i){
       put(12+i, p+' '+word, a.icon,'prow_b'); });
     (a.places||[]).forEach((pl,i)=>put(24+i, word+' the '+pl, pl,'prow_c'));
     (a.places||[]).forEach((pl,i)=>put(36+i, pl, pl,'prow_d'));
