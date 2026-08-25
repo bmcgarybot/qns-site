@@ -35,7 +35,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .c.pulse{animation:pulse .3s}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(42,157,143,.7)}70%{box-shadow:0 0 0 8px rgba(42,157,143,0)}100%{box-shadow:0 0 0 0 rgba(42,157,143,0)}}
 .c img{width:clamp(22px,5.5vw,42px);height:clamp(22px,5.5vw,42px);object-fit:contain;flex-shrink:1}.c.phrase img{width:clamp(16px,3.2vw,26px);height:clamp(16px,3.2vw,26px)}
-.c .lb{font-size:clamp(9px,2.2vw,13px);font-weight:800;text-align:center;line-height:1.12;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);overflow-wrap:break-word;hyphens:none;flex-shrink:1;min-width:0;max-width:100%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}.c .lb.len2{font-size:clamp(8px,1.8vw,11px)}.c .lb.len3{font-size:clamp(7px,1.5vw,10px);-webkit-line-clamp:4}.c .lb.len4{font-size:clamp(6px,1.3vw,9px);-webkit-line-clamp:4}
+.c .lb{font-size:clamp(9px,2.2vw,13px);font-weight:800;text-align:center;line-height:1.15;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);overflow-wrap:break-word;flex-shrink:0;max-width:100%}.c.phrase .lb{font-size:clamp(7px,1.6vw,11px);line-height:1.1}
 @media(max-width:500px),(max-height:500px) and (orientation:landscape){
 #board{gap:2px;padding:2px;overflow:hidden}
 .c{border-width:1.5px;border-radius:8px;padding:4px 2px;justify-content:center}
@@ -505,9 +505,9 @@ const isColorCat=(curView==='colors');
 const isGram=s.w&&s.w.startsWith('+');
 if(imgSrc){
 d.innerHTML=`<img src="${imgSrc}" style="${displayPhoto?'border-radius:6px;object-fit:cover;':(isColorCat||isMul(imgSrc)?'background:rgba(255,255,255,0.85);border-radius:6px;padding:1px;':'filter:brightness(0) invert(1);')}"
- onerror="this.style.filter='';this.onerror=null"><div class="lb${_wc>3?' len4':_wc===3?' len3':_wc===2?' len2':''}">${displayW}</div>`;
+ onerror="this.style.filter='';this.onerror=null"><div class="lb">${displayW}</div>`;
 }else{
-d.innerHTML=`<div class="lb${_wc>3?' len4':_wc===3?' len3':_wc===2?' len2':''}" style="font-size:${_wc>3?'clamp(8px,1.6vw,12px)':_wc===3?'clamp(9px,1.9vw,14px)':_wc===2?'clamp(10px,2.3vw,16px)':'clamp(12px,3vw,18px)'}">${displayW}</div>`;
+d.innerHTML=`<div class="lb" style="font-size:${_wc>2?'clamp(9px,1.9vw,13px)':'clamp(12px,3vw,18px)'}">${displayW}</div>`;
 }
 d.onclick=()=>{
 if(editMode){openEditCell(s,curView);return}
