@@ -1,0 +1,7 @@
+Staging is intentionally ahead of live.
+
+Pending: the pitch fix that silences the device. This one should go live
+quickly, since anyone who moved pitch above 1.5 currently has a permanently
+silent board.
+
+Delete this file when staging is promoted.
