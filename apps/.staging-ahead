@@ -1,9 +1,0 @@
-Staging is intentionally ahead of live right now.
-
-Pending on staging, not yet promoted:
-  - novelty and legacy voices removed from the picker
-  - voice quality labels corrected, "good" no longer applied to everything
-  - hint shown when no enhanced voice is installed, with the download path
-  - MENU and the gear both open Settings; Edit board moved inside Settings
-
-Delete this file when staging is promoted to the live demos.
