@@ -25,7 +25,12 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 @keyframes editPulse{0%,100%{opacity:1}50%{opacity:.6}}
 .c.edit-mode{cursor:crosshair}
 .c.edit-mode::after{content:'✏️';position:absolute;top:2px;right:2px;font-size:10px;opacity:.6}
-#infoBar{background:#1a3a4a;display:flex;gap:2px;padding:2px 4px;flex-shrink:0;border-bottom:1px solid #2a9d8f;overflow-x:auto;scrollbar-width:none}
+#infoBar{background:#1a3a4a;display:flex;gap:2px;padding:2px 4px;flex-shrink:0;border-bottom:1px solid #2a9d8f;overflow:hidden}
+/* Only the personal-info buttons scroll. The language picker and the view
+   toggle must not: on a phone in portrait they scrolled off the right edge
+   and looked like they were broken. */
+#infoScroll{display:flex;gap:2px;flex:1 1 auto;min-width:0;overflow-x:auto;scrollbar-width:none}
+#infoScroll::-webkit-scrollbar{display:none}
 #infoBar::-webkit-scrollbar{display:none}
 .ib{background:#264653;border:1px solid #2a9d8f;border-radius:4px;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;cursor:pointer;flex-shrink:0;white-space:nowrap}
 .ib:active{background:#2a9d8f}
@@ -56,10 +61,10 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 #recToggle{position:fixed;bottom:4px;left:4px;z-index:20;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;color:#999}
 #phoneToggle{background:#264653;border:1px solid #2a9d8f;border-radius:4px;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;cursor:pointer;flex-shrink:0;white-space:nowrap;margin-left:auto;line-height:1.2;text-align:center}
 #phoneToggle:active{opacity:.7}
-#langPick{display:flex;gap:3px;background:rgba(0,0,0,.4);border-radius:999px;padding:2px;flex-shrink:0;margin-left:auto}
+#langPick{display:flex;gap:3px;background:rgba(0,0,0,.4);border-radius:999px;padding:2px;flex-shrink:0;margin-left:4px;align-self:center}
 #langPick a{padding:3px 10px;border-radius:999px;color:#ddd;text-decoration:none;font:600 11px system-ui;white-space:nowrap}
 #langPick a.on{background:#4a9;color:#fff}
-#phoneToggle{margin-left:6px !important}
+#phoneToggle{margin-left:4px !important;align-self:center}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:none;align-items:center;justify-content:center;padding:10px}
 .ov.open{display:flex}
 .md{background:#2d3748;border-radius:14px;padding:16px;max-width:380px;width:100%;max-height:85vh;overflow-y:auto;color:#e2e8f0}
@@ -138,6 +143,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 </div>
 
 <div id="infoBar">
+<div id="infoScroll">
 <button class="ib" onclick="sayInfo('name')"><span class="ib-icon">👤</span>My name</button>
 <button class="ib" onclick="sayInfo('phone')"><span class="ib-icon">📱</span>My phone</button>
 <button class="ib" onclick="sayInfo('address')"><span class="ib-icon">🏠</span>Address</button>
@@ -145,6 +151,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="ib" onclick="sayInfo('state')"><span class="ib-icon">🏛️</span>State</button>
 <button class="ib" onclick="sayInfo('school')"><span class="ib-icon">🏫</span>School</button>
 <button class="ib" onclick="sayInfo('emergency')"><span class="ib-icon">🚨</span>Emergency</button>
+</div>
 <div id="langPick"><a href="my-buddy-test.html" class="on">English</a><a href="my-buddy-demo-es.html">Espanol</a></div>
 <button id="phoneToggle" onclick="togglePhone()">FULL<br><span style="font-size:7px;opacity:.7">VIEW</span></button>
 </div>
@@ -479,7 +486,7 @@ const isHome=(curView==='home');
 const isPron=curView.indexOf('pn_')===0;
 const isAnchor=curView.indexOf('anchor_')===0;
 const isFringe=!isHome&&curView!=='custom'&&!isPron&&!isAnchor;
-let cols,rows;
+let cols,rows,rowH;
 if(isHome&&phoneMode){cols=Math.min(items.length,6);rows=Math.ceil(items.length/cols);
 }else if(isHome){cols=12;rows=7;
 }else if(isAnchor&&phoneMode){
@@ -501,11 +508,7 @@ rows=Math.ceil(items.length/cols)||1;
 }
 
 b.style.gridTemplateColumns=`repeat(${cols},minmax(0,1fr))`;
-// Label and icon are sized from the column count so a word never has to
-// break mid-word to fit. Narrow grids get smaller type, not shredded type.
-{const w=(b.clientWidth||window.innerWidth)/cols;
- b.style.setProperty('--lb',Math.max(7,Math.min(14,Math.round(w*0.20)))+'px');
- b.style.setProperty('--ic',Math.max(12,Math.min(42,Math.round(w*0.42)))+'px');}
+
 if(isHome){
   b.style.gridTemplateRows=`repeat(${rows},1fr)`;
   b.style.alignContent='stretch';
@@ -515,13 +518,21 @@ if(isHome){
   // cells three times taller than wide. Cap it against the column width.
   const bw=b.clientWidth||window.innerWidth, bh=b.clientHeight||window.innerHeight;
   const colW=bw/cols;
-  const rowH=Math.max(64,Math.min(Math.floor(bh/7),Math.round(colW*1.35)));
+  rowH=Math.max(64,Math.min(Math.floor(bh/7),Math.round(colW*1.35)));
   b.style.gridTemplateRows=`repeat(${rows},${rowH}px)`;
   b.style.alignContent='start';
   // Fixed pixel rows can total more than the board height. Allow scrolling on
   // non-home views so nothing is silently cut off.
   b.style.overflowY='auto';
 }
+
+// Size icon and label against whichever cell dimension is smaller. Sizing from
+// column width alone clipped every label in landscape, where the cells are wide
+// but only about forty pixels tall.
+{const _bw=b.clientWidth||window.innerWidth, _bh=b.clientHeight||window.innerHeight;
+ const _m=Math.min(_bw/cols, rowH||(_bh/rows));
+ b.style.setProperty('--lb',Math.max(7,Math.min(14,Math.round(_m*0.22)))+'px');
+ b.style.setProperty('--ic',Math.max(10,Math.min(42,Math.round(_m*0.42)))+'px');}
 
 if(isAnchor){
   const slots=anchorItems(curView.slice(7));
