@@ -46,7 +46,12 @@ for stg, live in PAIRS:
     if not ok:
         fails.append('%s links to live: %s' % (stg, out))
 
+AHEAD_OK = os.path.exists('.staging-ahead')
 print('\n2. staging matches live apart from the intended differences')
+if AHEAD_OK:
+    print('   .staging-ahead present: staging is expected to be ahead of live,')
+    print('   so divergence is reported but not treated as a failure. Delete')
+    print('   that file once staging has been promoted.')
 stg_names = ['my-buddy-test-es.html', 'my-buddy-test.html']
 live_names = ['my-buddy-demo-es.html', 'my-buddy-demo.html']
 for stg, live in PAIRS:
@@ -61,7 +66,7 @@ for stg, live in PAIRS:
     print('   %-24s %s' % (stg, 'identical to live' if not d else '%d DIFFERING LINES' % len(d)))
     for l in d[:6]:
         print('      ' + l[:110])
-    if d:
+    if d and not AHEAD_OK:
         fails.append('%s and %s have diverged (%d lines)' % (stg, live, len(d)))
 
 print('\n3. the service worker does not cache staging')

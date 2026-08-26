@@ -5,9 +5,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mi Amigo">
 <meta name="theme-color" content="#2a9d8f">
+<meta name="robots" content="noindex,nofollow">
 <link rel="manifest" href="my-buddy-test-es.webmanifest">
 <link rel="apple-touch-icon" href="icons/mybuddy-180.png">
-<meta name="robots" content="noindex,nofollow">
 <title>My Buddy</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
@@ -138,7 +138,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="sb" id="bSpk" onclick="sSpk()">SPEAK</button>
 <button class="sb" id="bQP" onclick="openQP()"><span style="font-size:12px;line-height:1">⚡<br><span style="font-size:7px;font-weight:700">QUICK</span></span></button>
 <button class="sb" id="bFind" onclick="openFinder()" title="Find where a word lives">FIND</button>
-<button class="sb" id="bEdit" onclick="toggleEditMode()">MENU</button>
+<button class="sb" id="bEdit" onclick="openPin()">MENU</button>
 </div>
 
 <div id="infoBar">
@@ -157,7 +157,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div id="recentsBar"></div>
 <div id="board"></div>
 <button id="recToggle" onclick="toggleRec()">🕐</button>
-<button id="gear" onclick="openPin()">⚙</button>
+<button id="gear" onclick="openPin()" title="Settings">⚙</button>
 <button id="addBtn" onclick="openAddFromBoard()" style="position:fixed;bottom:4px;right:40px;z-index:20;background:rgba(42,157,143,.85);border:none;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;color:#fff;display:none">+</button>
 
 <!-- PIN OVERLAY -->
@@ -173,7 +173,12 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div class="ov" id="setOv"><div class="md" id="setMd">
 <h3>⚙️ Settings</h3>
 <label>Voice</label><select id="vSel"></select>
+<div id="vHint" style="display:none;font-size:.62em;line-height:1.5;opacity:.75;background:#3a2f1a;border-left:3px solid #e9c46a;padding:8px 10px;border-radius:6px;margin-top:6px"></div>
 <label>Speed <span id="spV">0.9</span></label><input type="range" id="spR" min=".3" max="1.5" step=".1" value=".9" oninput="SP=+this.value;document.getElementById('spV').textContent=SP.toFixed(1);save()">
+<div style="margin-bottom:14px">
+<button class="ok" style="width:100%" onclick="closeOv('setOv');startEdit()">Editar tablero</button>
+<div style="font-size:.62em;opacity:.6;margin-top:4px">Mover, anadir o quitar palabras</div>
+</div>
 <div style="margin-bottom:14px">
 <label style="display:block;margin-bottom:6px">Language and view</label>
 <div id="langPick"><a href="my-buddy-test.html">English</a><a href="my-buddy-test-es.html" class="on">Espanol</a></div>
@@ -365,14 +370,21 @@ let myInfo={name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''}
 let editMode=false,editTarget=null,editPhotoData=null,cellOverrides={};
 
 // === EDIT MODE ===
-function toggleEditMode(){
-if(!editMode){
-// Require PIN first
-openPin();pinCallback=()=>{editMode=true;document.getElementById('bEdit').classList.add('active');document.getElementById('bEdit').textContent='DONE';render();};
-}else{
-editMode=false;document.getElementById('bEdit').classList.remove('active');document.getElementById('bEdit').textContent='MENU';render();
+function startEdit(){
+  editMode=true;
+  const b=document.getElementById('bEdit');
+  b.classList.add('active'); b.textContent='LISTO';
+  b.setAttribute('onclick','stopEdit()');
+  render();
 }
+function stopEdit(){
+  editMode=false;
+  const b=document.getElementById('bEdit');
+  b.classList.remove('active'); b.textContent='MENU';
+  b.setAttribute('onclick','openPin()');
+  render();
 }
+function toggleEditMode(){ editMode?stopEdit():startEdit(); }
 let pinCallback=null;
 function openEditCell(item,viewType){
 editTarget={item,viewType};
@@ -1233,25 +1245,37 @@ function openSet(){document.getElementById('setOv').classList.add('open');popula
 function closeOv(id){document.getElementById(id).classList.remove('open')}
 const APP_LANG='es-ES';
 
+// Apple ships a set of joke and legacy voices alongside the real ones. They
+// are not options for a child's voice, so they are removed from the list
+// rather than merely ranked low. Alex is deliberately not here: it is an old
+// voice but a genuinely clear one.
+const NOVELTY=/^(albert|bad news|good news|bahh|bells|boing|bubbles|cellos|deranged|hysterical|jester|organ|superstar|trinoids|whisper|wobble|zarvox|bruce|fred|agnes|junior|kathy|princess|ralph|victoria|vicki)\b/;
+const ROBOTIC=/compact|espeak|pico|robot/;
+
+function isUsableVoice(v){
+  const n=(v.name||'').trim().toLowerCase();
+  return !NOVELTY.test(n);
+}
+
 function voiceQuality(v){
-  // Higher is better. iOS and Android both ship a wide range, from very good
-  // downloadable neural voices to old robotic fallbacks, and the raw list
-  // gives no hint which is which.
+  // Higher is better. The downloadable neural voices are far clearer than the
+  // compressed defaults, and the raw list gives no hint which is which.
   const n=(v.name||'').toLowerCase();
   let q=0;
-  if(/premium|enhanced|neural|natural/.test(n)) q+=100;   // downloadable, best
-  if(/siri/.test(n))                            q+=60;
+  if(/premium|enhanced|neural|natural/.test(n)) q+=100;
   if(/google|microsoft/.test(n))                q+=40;
-  if(v.localService)                            q+=25;    // on device, no lag
-  if(/compact|espeak|pico|robot/.test(n))       q-=60;    // the old ones
+  if(v.localService)                            q+=25;
+  if(ROBOTIC.test(n))                           q-=60;
   return q;
 }
 
 function voiceLabel(v){
+  // "good" was applied to every on-device voice that was not premium, which
+  // told a parent nothing and was simply wrong for the compressed defaults.
   const n=(v.name||'').toLowerCase();
-  if(/premium|enhanced|neural|natural/.test(n)) return 'best';
-  if(/compact|espeak|pico/.test(n))             return 'basic';
-  return v.localService ? 'good' : 'online';
+  if(/premium|enhanced|neural|natural/.test(n)) return 'la mejor calidad';
+  if(ROBOTIC.test(n))                           return 'basica, robotica';
+  return v.localService ? 'estandar' : 'necesita internet';
 }
 
 function populateVoices(){
@@ -1262,7 +1286,8 @@ function populateVoices(){
   // Only voices that can actually pronounce this app's language. A Spanish
   // voice reading English is worse than no choice at all.
   const want=(APP_LANG||'en').slice(0,2);
-  let list=all.filter(v=>(v.lang||'').slice(0,2).toLowerCase()===want);
+  let list=all.filter(v=>(v.lang||'').slice(0,2).toLowerCase()===want && isUsableVoice(v));
+  if(!list.length) list=all.filter(isUsableVoice);
   if(!list.length) list=all;
 
   list.sort((a,b)=>voiceQuality(b)-voiceQuality(a) || a.name.localeCompare(b.name));
@@ -1274,6 +1299,15 @@ function populateVoices(){
   // If nothing has been chosen yet, take the best available rather than
   // whatever the system happens to default to.
   if(!VU && list.length){ VU=list[0].voiceURI; sel.value=VU; save(); }
+
+  // If no enhanced voice is installed the app quietly picked the best of a bad
+  // set and the parent never learned a free download would fix it.
+  const hint=document.getElementById('vHint');
+  if(hint){
+    const hasGood=list.some(v=>/premium|enhanced|neural|natural/i.test(v.name||''));
+    hint.style.display=hasGood?'none':'block';
+    hint.textContent='Este dispositivo solo tiene las voces comprimidas. Se pueden descargar voces gratuitas de mejor calidad: en iPhone o iPad, Ajustes, Accesibilidad, Contenido hablado, Voces, Espanol, y toca una voz Premium o Mejorada. En Android, Ajustes, Accesibilidad, Salida de texto a voz.';
+  }
 
   sel.onchange=()=>{
     VU=sel.value; save();
