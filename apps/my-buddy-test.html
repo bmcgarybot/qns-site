@@ -178,7 +178,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <label>Speed <span id="spV">0.9</span></label><input type="range" id="spR" min=".3" max="1.5" step=".1" value=".9" oninput="SP=+this.value;document.getElementById('spV').textContent=SP.toFixed(1);save()">
 <div style="margin-bottom:14px">
 <label style="display:block;margin-bottom:6px">Language and view</label>
-<div id="langPick"><a href="my-buddy-test.html" class="on">English</a><a href="my-buddy-demo-es.html">Espanol</a></div>
+<div id="langPick"><a href="my-buddy-test.html" class="on">English</a><a href="my-buddy-test-es.html">Espanol</a></div>
 <button id="phoneToggle" onclick="togglePhone()">FULL<br><span style="font-size:7px;opacity:.7">VIEW</span></button>
 </div>
 <label>Pitch <span id="ptV">1.0</span></label><input type="range" id="ptR" min="0" max="2" step=".05" value="1" oninput="PITCH=+this.value;document.getElementById('ptV').textContent=PITCH.toFixed(2);save();speak('this is my voice')">
