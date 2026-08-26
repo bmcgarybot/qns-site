@@ -1,0 +1,9 @@
+Staging is intentionally ahead of live.
+
+Pending, not yet promoted:
+  - Remove from board moved to its own full-width row in the edit dialog
+  - the gear removed; MENU is the single way into Settings
+  - the recents clock and the add button moved off the board into the info bar
+  - touch-action:manipulation so the PIN pad no longer zooms on repeated taps
+
+Delete this file when staging is promoted.
