@@ -64,7 +64,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 #langPick{display:inline-flex;gap:3px;background:rgba(0,0,0,.4);border-radius:999px;padding:3px;vertical-align:middle}
 #langPick a{padding:5px 14px;border-radius:999px;color:#ddd;text-decoration:none;font:600 13px system-ui;white-space:nowrap}
 #langPick a.on{background:#4a9;color:#fff}
-#phoneToggle{margin-left:8px !important;font-size:11px !important;padding:5px 12px !important;vertical-align:middle}
+#phoneToggle{margin-left:4px !important;align-self:center;flex-shrink:0}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:none;align-items:center;justify-content:center;padding:10px}
 .ov.open{display:flex}
 .md{background:#2d3748;border-radius:14px;padding:16px;max-width:380px;width:100%;max-height:85vh;overflow-y:auto;color:#e2e8f0}
@@ -151,8 +151,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="ib" onclick="sayInfo('school')"><span class="ib-icon">🏫</span>School</button>
 <button class="ib" onclick="sayInfo('emergency')"><span class="ib-icon">🚨</span>Emergency</button>
 </div>
-
-
+<button id="phoneToggle" onclick="togglePhone()">FULL<br><span style="font-size:7px;opacity:.7">VIEW</span></button>
 </div>
 <button id="backBtn" onclick="goHome()">← Back</button>
 <div id="recentsBar"></div>
@@ -178,7 +177,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div style="margin-bottom:14px">
 <label style="display:block;margin-bottom:6px">Language and view</label>
 <div id="langPick"><a href="my-buddy-test.html">English</a><a href="my-buddy-test-es.html" class="on">Espanol</a></div>
-<button id="phoneToggle" onclick="togglePhone()">FULL<br><span style="font-size:7px;opacity:.7">VIEW</span></button>
+
 </div>
 <label>Pitch <span id="ptV">1.0</span></label><input type="range" id="ptR" min="0" max="2" step=".05" value="1" oninput="PITCH=+this.value;document.getElementById('ptV').textContent=PITCH.toFixed(2);save();speak('this is my voice')">
 <label>Modeling Mode</label><select id="mmSel" onchange="MM=this.value==='1';document.getElementById('modelBanner').style.display=MM?'block':'none';save()"><option value="0">Off</option><option value="1">On - taps won't count in stats</option></select>
@@ -478,6 +477,47 @@ function sSpk(){if(spellBuf.trim()){sentence.push({w:spellBuf.trim(),i:0});spell
 function gram(sfx){if(!sentence.length)return;const last=sentence[sentence.length-1];last.w=last.w+sfx;if(last.s)last.s=last.s+sfx;rStrip();speak(last.s||last.w)}
 
 
+
+// Row height used to be board height divided by a hardcoded 7, measured before
+// the board had been laid out. A folder with four rows got rows sized for
+// seven, overflowed, and had to be scrolled. It now divides by the number of
+// rows the page actually has, and re-runs on the next frame once the real
+// height is known.
+let _cols=12,_rows=7,_isHome=true;
+function fitBoard(){
+  const b=document.getElementById('board');
+  if(!b) return;
+  const bw=b.clientWidth, bh=b.clientHeight;
+  if(!bw||!bh) return;                 // not laid out yet, the rAF pass retries
+  const colW=bw/_cols;
+  let rowH;
+  if(_isHome){
+    b.style.gridTemplateRows=`repeat(${_rows},minmax(0,1fr))`;
+    b.style.alignContent='stretch';
+    b.style.overflowY='hidden';
+    rowH=bh/_rows;
+  }else{
+    // Fit every row in the visible board. Capped against column width so a
+    // two-row folder does not make each row half the screen.
+    rowH=Math.min(Math.round(colW*1.35), Math.floor(bh/_rows));
+    if(rowH<38) rowH=38;               // hard floor; below this a cell is unusable
+    b.style.gridTemplateRows=`repeat(${_rows},${rowH}px)`;
+    b.style.alignContent='start';
+    // Only scroll when the rows genuinely cannot fit, never by default.
+    b.style.overflowY=(rowH*_rows>bh+1)?'auto':'hidden';
+  }
+  // Size icon and label against whichever cell dimension is smaller, and budget
+  // for a label that wraps to two lines. Rows too short for two get one, so a
+  // landscape phone shows a smaller word rather than half a word.
+  const m=Math.min(colW,rowH);
+  const two=m>=56;
+  const lb=Math.max(7,Math.min(13,Math.round(m*(two?0.17:0.20))));
+  const lines=two?2:1;
+  b.style.setProperty('--lb',lb+'px');
+  b.style.setProperty('--lbmax',(lines*1.25)+'em');
+  b.style.setProperty('--ic',Math.max(10,Math.floor(Math.min(42,m-lines*lb*1.15-13)))+'px');
+}
+window.addEventListener('orientationchange',()=>requestAnimationFrame(fitBoard));
 function render(){
 const b=document.getElementById('board');
 const addBtn=document.getElementById('addBtn');
@@ -521,35 +561,10 @@ rows=Math.ceil(items.length/cols)||1;
 
 b.style.gridTemplateColumns=`repeat(${cols},minmax(0,1fr))`;
 
-if(isHome){
-  b.style.gridTemplateRows=`repeat(${rows},1fr)`;
-  b.style.alignContent='stretch';
-  b.style.overflowY='hidden';
-}else{
-  const bw=b.clientWidth||window.innerWidth, bh=b.clientHeight||window.innerHeight;
-  const colW=bw/cols;
-  rowH=Math.max(64,Math.min(Math.floor(bh/7),Math.round(colW*1.35)));
-  b.style.gridTemplateRows=`repeat(${rows},${rowH}px)`;
-  b.style.alignContent='start';
-  // Fixed pixel rows can total more than the board height. Allow scrolling on
-  // non-home views so nothing is silently cut off.
-  b.style.overflowY='auto';
-}
+_cols=cols; _rows=rows; _isHome=isHome;
 
-// Size icon and label against whichever cell dimension is smaller. Sizing from
-// column width alone clipped every label in landscape, where the cells are wide
-// but only about forty pixels tall.
-{const _bw=b.clientWidth||window.innerWidth, _bh=b.clientHeight||window.innerHeight;
- const _m=Math.min(_bw/cols, rowH||(_bh/rows));
- // Budget for a label that wraps to two lines, which is what clipped
- // 'thank you' and 'otra vez'. Rows too short for two lines get one, so a
- // landscape phone shows a smaller word rather than half a word.
- const _two=_m>=56;
- const _lb=Math.max(7,Math.min(13,Math.round(_m*(_two?0.17:0.20))));
- const _lines=_two?2:1;
- b.style.setProperty('--lb',_lb+'px');
- b.style.setProperty('--lbmax',(_lines*1.25)+'em');
- b.style.setProperty('--ic',Math.max(10,Math.floor(Math.min(42,_m-_lines*_lb*1.15-13)))+'px');}
+fitBoard();
+requestAnimationFrame(fitBoard);
 
 if(isAnchor){
   const slots=anchorItems(curView.slice(7));
