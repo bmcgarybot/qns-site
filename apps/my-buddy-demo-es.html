@@ -184,7 +184,9 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <label>Voice</label><select id="vSel"></select>
 <div id="vHint" style="display:none;font-size:.62em;line-height:1.5;opacity:.75;background:#3a2f1a;border-left:3px solid #e9c46a;padding:8px 10px;border-radius:6px;margin-top:6px"></div>
 <label>Speed <span id="spV">0.9</span></label><input type="range" id="spR" min=".3" max="1.5" step=".1" value=".9" oninput="SP=+this.value;document.getElementById('spV').textContent=SP.toFixed(1);save()">
-<label>Pitch <span id="ptV">1.0</span></label><input type="range" id="ptR" min="0" max="2" step=".05" value="1" oninput="PITCH=+this.value;document.getElementById('ptV').textContent=PITCH.toFixed(2);save();speak('this is my voice')">
+<label>Pitch <span id="ptV">1.0</span></label><input type="range" id="ptR" min="0.5" max="1.5" step=".05" value="1" oninput="PITCH=+this.value;document.getElementById('ptV').textContent=PITCH.toFixed(2);save();speak('this is my voice')">
+<button class="ca" style="width:100%;margin-top:6px" onclick="resetVoiceSettings()">Restablecer voz, tono y velocidad</button>
+<div style="font-size:.62em;opacity:.6;margin-top:4px">Usalo si la voz deja de sonar</div>
 <label>Modeling Mode</label><select id="mmSel" onchange="MM=this.value==='1';document.getElementById('modelBanner').style.display=MM?'block':'none';save()"><option value="0">Off</option><option value="1">On - taps won't count in stats</option></select>
 <hr style="border:0;border-top:1px solid #3a4a5a;margin:14px 0">
 <div style="margin-bottom:14px">
@@ -518,9 +520,32 @@ speak(text);
 }
 
 function save(){try{localStorage.setItem(SK,JSON.stringify({PITCH,SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,phoneMode,tutDone:true}))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=d.SP||.9;PITCH=d.PITCH||1;VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;return d.tutDone}catch(e){return false}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=clamp(d.SP,.5,1.6,.9);PITCH=clamp(d.PITCH,.5,1.5,1);VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;return d.tutDone}catch(e){return false}}
 
-function speak(text){text=(text+'').toLowerCase();if(!text)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=SP;u.lang=APP_LANG;u.pitch=PITCH;if(VU){const v=speechSynthesis.getVoices().find(v=>v.voiceURI===VU);if(v)u.voice=v}speechSynthesis.speak(u)}
+// Pitch and rate are clamped on the way out. A value above about 1.5 wedges
+// the speech engine on macOS: the utterance fails silently and every later one
+// fails too. Because the value was saved, every reload restored it and wedged
+// the engine again, so the device stayed silent permanently and only a private
+// window worked. Clamping here also repairs anyone already stuck, on their
+// next load, without them having to do anything.
+const PITCH_MIN=0.5, PITCH_MAX=1.5, RATE_MIN=0.5, RATE_MAX=1.6;
+const clamp=(v,lo,hi,dflt)=>{const n=parseFloat(v);return isFinite(n)?Math.min(hi,Math.max(lo,n)):dflt;};
+
+function speak(text){
+  text=(text+'').toLowerCase(); if(!text) return;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate  = clamp(SP,   RATE_MIN,  RATE_MAX,  0.9);
+  u.pitch = clamp(PITCH,PITCH_MIN, PITCH_MAX, 1);
+  u.lang=APP_LANG;
+  if(VU){ const v=speechSynthesis.getVoices().find(v=>v.voiceURI===VU); if(v) u.voice=v; }
+  try{
+    speechSynthesis.speak(u);
+  }catch(e){
+    // Last resort: retry once with plain defaults rather than stay silent.
+    try{ const f=new SpeechSynthesisUtterance(text); f.lang=APP_LANG; speechSynthesis.speak(f); }catch(e2){}
+  }
+}
 // A cell can carry a spoken form that differs from its label, so a short
 // label like "quiero" can say the full "yo quiero". No say means say the label.
 function addWord(w,i,say){if(spellBuf){const sw=spellBuf.trim();if(sw){sentence.push({w:sw,i:0});speak(sw)}spellBuf=''}sentence.push({w,i,s:say||null});rStrip();speak(say||w);if(!MM){usage[w]=(usage[w]||0)+1;recents=recents.filter(r=>r.w!==w);recents.unshift({w,i,s:say||null});if(recents.length>20)recents.length=20}save();renderRec()}
@@ -1399,7 +1424,22 @@ async function hardReset(){
   location.replace(location.pathname+'?u='+Date.now());
 }
 
-function openSet(){document.getElementById('setOv').classList.add('open');showBuild();populateVoices();document.getElementById('spR').value=SP;document.getElementById('mmSel').value=MM?'1':'0';document.getElementById('modelBanner').style.display=MM?'block':'none';loadInfo();renderStats();renderCWList()}
+
+function resetVoiceSettings(){
+  SP=0.9; PITCH=1; VU='';
+  save();
+  const ptR=document.getElementById('ptR'), spR=document.getElementById('spR');
+  if(ptR) ptR.value=PITCH;
+  if(spR) spR.value=SP;
+  const ptV=document.getElementById('ptV'), spV=document.getElementById('spV');
+  if(ptV) ptV.textContent=(+PITCH).toFixed(2);
+  if(spV) spV.textContent=(+SP).toFixed(1);
+  populateVoices();
+  try{ speechSynthesis.cancel(); }catch(e){}
+  speak('la voz funciona');
+}
+
+function openSet(){document.getElementById('setOv').classList.add('open');showBuild();populateVoices();document.getElementById('spR').value=SP;document.getElementById('ptR').value=PITCH;document.getElementById('ptV').textContent=(+PITCH).toFixed(2);document.getElementById('mmSel').value=MM?'1':'0';document.getElementById('modelBanner').style.display=MM?'block':'none';loadInfo();renderStats();renderCWList()}
 function closeOv(id){document.getElementById(id).classList.remove('open')}
 const APP_LANG='es-ES';
 
