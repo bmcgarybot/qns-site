@@ -182,7 +182,17 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 </div>
 <div style="margin-bottom:14px">
 <button class="ca" style="width:100%" onclick="forceUpdate()">Check for updates</button>
-<div style="font-size:.62em;opacity:.6;margin-top:4px">Fetches the newest version and clears the stored copy</div>
+<div style="font-size:.62em;opacity:.6;margin-top:4px">Fetches the newest version without deleting anything</div>
+</div>
+<div style="margin-bottom:14px">
+<button class="ok" style="width:100%" onclick="backupData()">Back up words and settings</button>
+<button class="ca" style="width:100%;margin-top:6px" onclick="document.getElementById('restoreFile').click()">Restore from a file</button>
+<input type="file" id="restoreFile" accept="application/json" style="display:none" onchange="restoreData(this)">
+<div style="font-size:.62em;opacity:.6;margin-top:4px">Saves your words, photos and settings to a file</div>
+</div>
+<div style="margin-bottom:14px">
+<button class="dn" style="width:100%;opacity:.8" onclick="hardReset()">Reinstall the app</button>
+<div style="font-size:.62em;opacity:.6;margin-top:4px">Only if it still will not update. Needs a connection.</div>
 </div>
 <div style="margin-bottom:14px">
 <label style="display:block;margin-bottom:6px">Language and view</label>
@@ -275,7 +285,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 </div></div>
 
 <!-- BUILD -->
-<script>const BUILD="2026-08-26 06:10 UTC";</script>
+<script>const BUILD="2026-08-26 06:12 UTC";</script>
 <!-- /BUILD -->
 <script>
 /*
@@ -1216,21 +1226,89 @@ function updDots(){document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=
 // There was no way to tell which build a device was running, so a cached copy
 // looked identical to a stale one. The stamp says, and this button clears
 // everything and refetches.
+
+// Custom words, photos and settings live in one localStorage key. A browser
+// can clear that under storage pressure, and reinstalling the app loses it.
+// There was no backup at all, which makes a child's personalised vocabulary a
+// single point of failure.
+function backupData(){
+  try{
+    const raw=localStorage.getItem(SK)||'{}';
+    const blob=new Blob([raw],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='my-buddy-backup-'+new Date().toISOString().slice(0,10)+'.json';
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  }catch(e){ alert('Could not save the backup.'); }
+}
+function restoreData(input){
+  const f=input.files&&input.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const d=JSON.parse(r.result);
+      if(typeof d!=='object'||d===null) throw new Error('bad file');
+      if(!confirm('This replaces your current words and settings with the ones in the file. Continue?')) return;
+      localStorage.setItem(SK,JSON.stringify(d));
+      location.replace(location.pathname);
+    }catch(e){ alert('That file is not a valid backup.'); }
+  };
+  r.readAsText(f);
+  input.value='';
+}
+
 function showBuild(){
   const el=document.getElementById('buildStamp');
   if(el) el.textContent='Build '+(typeof BUILD!=='undefined'?BUILD:'unknown');
 }
 async function forceUpdate(){
+  // Never delete caches to get an update. The install step of a new service
+  // worker precaches everything BEFORE it activates, so the old copy keeps
+  // serving until the new one is ready and the device is never left without
+  // an offline board. Wiping first would mean that a family who taps this on
+  // a weak connection loses the app entirely until they get signal, and this
+  // app is somebody's voice.
+  const btn=event&&event.target; if(btn) btn.disabled=true;
   try{
+    if('serviceWorker' in navigator){
+      const reg=await navigator.serviceWorker.getRegistration();
+      if(reg){
+        await reg.update();
+        const w=reg.waiting||reg.installing;
+        if(w){
+          await new Promise(res=>{
+            if(w.state==='installed'||w.state==='activated') return res();
+            w.addEventListener('statechange',()=>{
+              if(w.state==='installed'||w.state==='activated') res();
+            });
+            setTimeout(res,8000);
+          });
+          if(reg.waiting) reg.waiting.postMessage('skipWaiting');
+        }
+      }
+    }
+  }catch(e){ console.warn('[update]',e); }
+  location.replace(location.pathname+'?u='+Date.now());
+}
+
+async function hardReset(){
+  // Last resort only, and it needs a working connection: it removes the stored
+  // copy of the app. Words, photos and settings live in localStorage and are
+  // not touched by this.
+  if(!navigator.onLine){ alert('This needs an internet connection. Without one the app would not be able to load again.'); return; }
+  if(!confirm('This removes the stored copy of the app and downloads it again. Your words, photos and settings are NOT deleted. You need a connection. Continue?')) return;
+  try{
+    if(window.caches){
+      const keys=await caches.keys();
+      // only this app's caches, never anything else on the domain
+      await Promise.all(keys.filter(k=>k.indexOf('mybuddy-')===0).map(k=>caches.delete(k)));
+    }
     if('serviceWorker' in navigator){
       const regs=await navigator.serviceWorker.getRegistrations();
       await Promise.all(regs.map(r=>r.unregister()));
     }
-    if(window.caches){
-      const keys=await caches.keys();
-      await Promise.all(keys.map(k=>caches.delete(k)));
-    }
-  }catch(e){ console.warn('[update]',e); }
+  }catch(e){ console.warn('[reset]',e); }
   location.replace(location.pathname+'?u='+Date.now());
 }
 
