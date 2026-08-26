@@ -181,6 +181,10 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div style="font-size:.62em;opacity:.6;margin-top:4px">Move, add or remove words</div>
 </div>
 <div style="margin-bottom:14px">
+<button class="ca" style="width:100%" onclick="forceUpdate()">Check for updates</button>
+<div style="font-size:.62em;opacity:.6;margin-top:4px">Fetches the newest version and clears the stored copy</div>
+</div>
+<div style="margin-bottom:14px">
 <label style="display:block;margin-bottom:6px">Language and view</label>
 <div id="langPick"><a href="my-buddy-test.html" class="on">English</a><a href="my-buddy-test-es.html">Espanol</a></div>
 
@@ -209,6 +213,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <hr style="border-color:#444;margin:10px 0">
 <div style="font-size:.65em;opacity:.5;text-align:center;line-height:1.6">
 <p>My Buddy AAC v1.0 - BMC Luminary Ventures LLC</p>
+<p id="buildStamp" style="opacity:.55"></p>
 <p>Mulberry Symbols © 2008-2017 Garry Paxton, 2018-2026 Steve Lee<br>Licensed under <a href="https://creativecommons.org/licenses/by-sa/2.0/uk/" style="color:#2a9d8f" target="_blank">CC BY-SA 2.0 UK</a> - <a href="https://mulberrysymbols.org" style="color:#2a9d8f" target="_blank">mulberrysymbols.org</a></p>
 <p><a href="https://quantumneuroshift.com/apps/my-buddy-privacy.html" style="color:#2a9d8f" target="_blank">Privacy Policy</a> &middot; <a href="https://quantumneuroshift.com/apps/my-buddy-terms.html" style="color:#2a9d8f" target="_blank">Terms</a> &middot; <a href="https://quantumneuroshift.com/apps/my-buddy-licenses.html" style="color:#2a9d8f" target="_blank">Licenses</a></p>
 <p style="opacity:.8">Not a medical device. Not a substitute for a speech-language pathologist.<br>Do not rely on this app as the only way to call for help.</p>
@@ -269,6 +274,9 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div style="display:flex;gap:6px"><button class="ok" onclick="saveQPEdit()" style="flex:1">Save</button><button class="dn" onclick="deleteQPEdit()" style="flex:1">Delete</button><button class="ca" onclick="closeOv('qpEditOv')" style="flex:1">Cancel</button></div>
 </div></div>
 
+<!-- BUILD -->
+<script>const BUILD="2026-08-26 06:10 UTC";</script>
+<!-- /BUILD -->
 <script>
 /*
  * ██████  ROW ORDER IS LOCKED - DO NOT CHANGE  ██████
@@ -1204,7 +1212,29 @@ function pinKey(k){if(k==='⌫'){pinBuf=pinBuf.slice(0,-1);document.getElementBy
 function updDots(){document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinBuf.length))}
 
 // === SETTINGS ===
-function openSet(){document.getElementById('setOv').classList.add('open');populateVoices();document.getElementById('spR').value=SP;document.getElementById('mmSel').value=MM?'1':'0';document.getElementById('modelBanner').style.display=MM?'block':'none';loadInfo();renderStats();renderCWList()}
+
+// There was no way to tell which build a device was running, so a cached copy
+// looked identical to a stale one. The stamp says, and this button clears
+// everything and refetches.
+function showBuild(){
+  const el=document.getElementById('buildStamp');
+  if(el) el.textContent='Build '+(typeof BUILD!=='undefined'?BUILD:'unknown');
+}
+async function forceUpdate(){
+  try{
+    if('serviceWorker' in navigator){
+      const regs=await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r=>r.unregister()));
+    }
+    if(window.caches){
+      const keys=await caches.keys();
+      await Promise.all(keys.map(k=>caches.delete(k)));
+    }
+  }catch(e){ console.warn('[update]',e); }
+  location.replace(location.pathname+'?u='+Date.now());
+}
+
+function openSet(){document.getElementById('setOv').classList.add('open');showBuild();populateVoices();document.getElementById('spR').value=SP;document.getElementById('mmSel').value=MM?'1':'0';document.getElementById('modelBanner').style.display=MM?'block':'none';loadInfo();renderStats();renderCWList()}
 function closeOv(id){document.getElementById(id).classList.remove('open')}
 const APP_LANG='en-US';
 
