@@ -51,8 +51,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 @media(max-width:500px),(max-height:500px) and (orientation:landscape){
 #board{gap:2px;padding:2px;overflow:hidden}
 .c{border-width:1.5px;border-radius:8px;padding:4px 2px;justify-content:center}
-.c img{width:var(--ic,22px);height:var(--ic,22px);flex-shrink:0}
-.c .lb{font-size:var(--lb,13px);font-weight:800}
+.c img{width:var(--ic,22px);height:var(--ic,22px);flex-shrink:1;min-height:0;object-fit:contain}
+.c .lb{font-size:var(--lb,13px);font-weight:800;flex-shrink:0;max-height:var(--lbmax,2.4em);overflow:hidden}
 #strip{height:46px}#sW .sw{min-width:40px;height:40px}.sb{height:40px;min-width:38px;font-size:15px}
 #bSpk{font-size:12px;padding:0 8px}}
 .c.resp{background:#e76f51}.c.social{background:#e9c46a;color:#333}.c.prow_a{background:#2d6a4f}.c.prow_b{background:#e9c46a;color:#333}.c.prow_c{background:#457b9d}.c.prow_d{background:#b5838d}.c.folder{background:#555;border:2px solid #888}.c.util{background:#933}
@@ -61,10 +61,10 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 #recToggle{position:fixed;bottom:4px;left:4px;z-index:20;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;color:#999}
 #phoneToggle{background:#264653;border:1px solid #2a9d8f;border-radius:4px;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;cursor:pointer;flex-shrink:0;white-space:nowrap;margin-left:auto;line-height:1.2;text-align:center}
 #phoneToggle:active{opacity:.7}
-#langPick{display:flex;gap:3px;background:rgba(0,0,0,.4);border-radius:999px;padding:2px;flex-shrink:0;margin-left:4px;align-self:center}
-#langPick a{padding:3px 10px;border-radius:999px;color:#ddd;text-decoration:none;font:600 11px system-ui;white-space:nowrap}
+#langPick{display:inline-flex;gap:3px;background:rgba(0,0,0,.4);border-radius:999px;padding:3px;vertical-align:middle}
+#langPick a{padding:5px 14px;border-radius:999px;color:#ddd;text-decoration:none;font:600 13px system-ui;white-space:nowrap}
 #langPick a.on{background:#4a9;color:#fff}
-#phoneToggle{margin-left:4px !important;align-self:center}
+#phoneToggle{margin-left:8px !important;font-size:11px !important;padding:5px 12px !important;vertical-align:middle}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:none;align-items:center;justify-content:center;padding:10px}
 .ov.open{display:flex}
 .md{background:#2d3748;border-radius:14px;padding:16px;max-width:380px;width:100%;max-height:85vh;overflow-y:auto;color:#e2e8f0}
@@ -152,8 +152,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="ib" onclick="sayInfo('school')"><span class="ib-icon">🏫</span>School</button>
 <button class="ib" onclick="sayInfo('emergency')"><span class="ib-icon">🚨</span>Emergency</button>
 </div>
-<div id="langPick"><a href="my-buddy-test.html" class="on">English</a><a href="my-buddy-demo-es.html">Espanol</a></div>
-<button id="phoneToggle" onclick="togglePhone()">FULL<br><span style="font-size:7px;opacity:.7">VIEW</span></button>
+
+
 </div>
 <button id="backBtn" onclick="goHome()">← Back</button>
 <div id="recentsBar"></div>
@@ -176,6 +176,11 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <h3>⚙️ Settings</h3>
 <label>Voice</label><select id="vSel"></select>
 <label>Speed <span id="spV">0.9</span></label><input type="range" id="spR" min=".3" max="1.5" step=".1" value=".9" oninput="SP=+this.value;document.getElementById('spV').textContent=SP.toFixed(1);save()">
+<div style="margin-bottom:14px">
+<label style="display:block;margin-bottom:6px">Language and view</label>
+<div id="langPick"><a href="my-buddy-test.html" class="on">English</a><a href="my-buddy-demo-es.html">Espanol</a></div>
+<button id="phoneToggle" onclick="togglePhone()">FULL<br><span style="font-size:7px;opacity:.7">VIEW</span></button>
+</div>
 <label>Pitch <span id="ptV">1.0</span></label><input type="range" id="ptR" min="0" max="2" step=".05" value="1" oninput="PITCH=+this.value;document.getElementById('ptV').textContent=PITCH.toFixed(2);save();speak('this is my voice')">
 <label>Modeling Mode</label><select id="mmSel" onchange="MM=this.value==='1';document.getElementById('modelBanner').style.display=MM?'block':'none';save()"><option value="0">Off</option><option value="1">On - taps won't count in stats</option></select>
 <hr style="border-color:#444;margin:10px 0">
@@ -532,8 +537,15 @@ if(isHome){
 // but only about forty pixels tall.
 {const _bw=b.clientWidth||window.innerWidth, _bh=b.clientHeight||window.innerHeight;
  const _m=Math.min(_bw/cols, rowH||(_bh/rows));
- b.style.setProperty('--lb',Math.max(7,Math.min(14,Math.round(_m*0.22)))+'px');
- b.style.setProperty('--ic',Math.max(10,Math.min(42,Math.round(_m*0.42)))+'px');}
+ // Budget for a label that wraps to two lines, which is what clipped
+ // 'thank you' and 'otra vez'. Rows too short for two lines get one, so a
+ // landscape phone shows a smaller word rather than half a word.
+ const _two=_m>=56;
+ const _lb=Math.max(7,Math.min(13,Math.round(_m*(_two?0.17:0.20))));
+ const _lines=_two?2:1;
+ b.style.setProperty('--lb',_lb+'px');
+ b.style.setProperty('--lbmax',(_lines*1.25)+'em');
+ b.style.setProperty('--ic',Math.max(10,Math.floor(Math.min(42,_m-_lines*_lb*1.15-13)))+'px');}
 
 if(isAnchor){
   const slots=anchorItems(curView.slice(7));
