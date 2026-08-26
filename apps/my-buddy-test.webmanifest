@@ -1,8 +1,8 @@
 {
-  "name": "My Buddy",
-  "short_name": "My Buddy",
+  "name": "My Buddy TEST",
+  "short_name": "My Buddy TEST",
   "description": "Comunicación para todos. Funciona sin conexión a internet.",
-  "start_url": "./my-buddy-demo.html",
+  "start_url": "./my-buddy-test.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",

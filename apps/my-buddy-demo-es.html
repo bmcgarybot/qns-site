@@ -1,10 +1,16 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mi Amigo">
+<meta name="theme-color" content="#2a9d8f">
+<link rel="manifest" href="my-buddy-es.webmanifest">
+<link rel="apple-touch-icon" href="icons/mybuddy-180.png">
 <title>My Buddy</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
+body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
 #strip{background:#333;height:56px;display:flex;align-items:center;gap:2px;padding:2px 4px;border-bottom:2px solid #555;flex-shrink:0}
 #sW{display:flex;gap:2px;flex:1;overflow-x:auto;align-items:center;height:100%;scrollbar-width:none}
 #sW::-webkit-scrollbar{display:none}
@@ -18,7 +24,12 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 @keyframes editPulse{0%,100%{opacity:1}50%{opacity:.6}}
 .c.edit-mode{cursor:crosshair}
 .c.edit-mode::after{content:'✏️';position:absolute;top:2px;right:2px;font-size:10px;opacity:.6}
-#infoBar{background:#1a3a4a;display:flex;gap:2px;padding:2px 4px;flex-shrink:0;border-bottom:1px solid #2a9d8f;overflow-x:auto;scrollbar-width:none}
+#infoBar{background:#1a3a4a;display:flex;gap:2px;padding:2px 4px;flex-shrink:0;border-bottom:1px solid #2a9d8f;overflow:hidden}
+/* Only the personal-info buttons scroll. The language picker and the view
+   toggle must not: on a phone in portrait they scrolled off the right edge
+   and looked like they were broken. */
+#infoScroll{display:flex;gap:2px;flex:1 1 auto;min-width:0;overflow-x:auto;scrollbar-width:none}
+#infoScroll::-webkit-scrollbar{display:none}
 #infoBar::-webkit-scrollbar{display:none}
 .ib{background:#264653;border:1px solid #2a9d8f;border-radius:4px;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;cursor:pointer;flex-shrink:0;white-space:nowrap}
 .ib:active{background:#2a9d8f}
@@ -35,12 +46,12 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .c.pulse{animation:pulse .3s}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(42,157,143,.7)}70%{box-shadow:0 0 0 8px rgba(42,157,143,0)}100%{box-shadow:0 0 0 0 rgba(42,157,143,0)}}
 .c img{width:clamp(22px,5.5vw,42px);height:clamp(22px,5.5vw,42px);object-fit:contain;flex-shrink:1}.c.phrase img{width:clamp(16px,3.2vw,26px);height:clamp(16px,3.2vw,26px)}
-.c .lb{font-size:clamp(9px,2.2vw,13px);font-weight:800;text-align:center;line-height:1.15;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);overflow-wrap:break-word;flex-shrink:0;max-width:100%}.c.phrase .lb{font-size:clamp(7px,1.6vw,11px);line-height:1.1}
+.c .lb{font-size:clamp(9px,2.2vw,13px);font-weight:800;text-align:center;line-height:1.15;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);overflow-wrap:normal;word-break:keep-all;hyphens:none;flex-shrink:0;max-width:100%}.c.phrase .lb{font-size:clamp(7px,1.6vw,11px);line-height:1.1}
 @media(max-width:500px),(max-height:500px) and (orientation:landscape){
 #board{gap:2px;padding:2px;overflow:hidden}
 .c{border-width:1.5px;border-radius:8px;padding:4px 2px;justify-content:center}
-.c img{width:22px;height:22px;flex-shrink:0}
-.c .lb{font-size:13px;font-weight:800}
+.c img{width:var(--ic,22px);height:var(--ic,22px);flex-shrink:0}
+.c .lb{font-size:var(--lb,13px);font-weight:800}
 #strip{height:46px}#sW .sw{min-width:40px;height:40px}.sb{height:40px;min-width:38px;font-size:15px}
 #bSpk{font-size:12px;padding:0 8px}}
 .c.resp{background:#e76f51}.c.social{background:#e9c46a;color:#333}.c.prow_a{background:#2d6a4f}.c.prow_b{background:#e9c46a;color:#333}.c.prow_c{background:#457b9d}.c.prow_d{background:#b5838d}.c.folder{background:#555;border:2px solid #888}.c.util{background:#933}
@@ -49,6 +60,10 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 #recToggle{position:fixed;bottom:4px;left:4px;z-index:20;background:rgba(255,255,255,.1);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;color:#999}
 #phoneToggle{background:#264653;border:1px solid #2a9d8f;border-radius:4px;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;cursor:pointer;flex-shrink:0;white-space:nowrap;margin-left:auto;line-height:1.2;text-align:center}
 #phoneToggle:active{opacity:.7}
+#langPick{display:flex;gap:3px;background:rgba(0,0,0,.4);border-radius:999px;padding:2px;flex-shrink:0;margin-left:4px;align-self:center}
+#langPick a{padding:3px 10px;border-radius:999px;color:#ddd;text-decoration:none;font:600 11px system-ui;white-space:nowrap}
+#langPick a.on{background:#4a9;color:#fff}
+#phoneToggle{margin-left:4px !important;align-self:center}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:none;align-items:center;justify-content:center;padding:10px}
 .ov.open{display:flex}
 .md{background:#2d3748;border-radius:14px;padding:16px;max-width:380px;width:100%;max-height:85vh;overflow-y:auto;color:#e2e8f0}
@@ -112,7 +127,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
     border-radius:8px; padding:8px 14px; font:inherit; cursor:pointer;
   }
 </style></head><body>
-<div style="position:fixed;top:6px;left:50%;transform:translateX(-50%);z-index:500;display:flex;gap:6px;background:rgba(0,0,0,.55);padding:4px;border-radius:999px;"><a href="my-buddy-demo.html" style="padding:5px 14px;border-radius:999px;color:#ddd;text-decoration:none;font:600 13px system-ui;">English</a><a href="my-buddy-demo-es.html" style="padding:5px 14px;border-radius:999px;background:#4a9;color:#fff;text-decoration:none;font:600 13px system-ui;">Espanol</a></div>
+
 <div id="splash"><div style="font-size:60px">🗣️</div><div class="sn">My Buddy</div><div class="ss">Communication for Everyone</div></div>
 <div id="modelBanner">👨‍🏫 MODELING MODE</div>
 <div id="strip">
@@ -126,6 +141,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 </div>
 
 <div id="infoBar">
+<div id="infoScroll">
 <button class="ib" onclick="sayInfo('name')"><span class="ib-icon">👤</span>My name</button>
 <button class="ib" onclick="sayInfo('phone')"><span class="ib-icon">📱</span>My phone</button>
 <button class="ib" onclick="sayInfo('address')"><span class="ib-icon">🏠</span>Address</button>
@@ -133,6 +149,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="ib" onclick="sayInfo('state')"><span class="ib-icon">🏛️</span>State</button>
 <button class="ib" onclick="sayInfo('school')"><span class="ib-icon">🏫</span>School</button>
 <button class="ib" onclick="sayInfo('emergency')"><span class="ib-icon">🚨</span>Emergency</button>
+</div>
+<div id="langPick"><a href="my-buddy-demo.html">English</a><a href="my-buddy-demo-es.html" class="on">Espanol</a></div>
 <button id="phoneToggle" onclick="togglePhone()">FULL<br><span style="font-size:7px;opacity:.7">VIEW</span></button>
 </div>
 <button id="backBtn" onclick="goHome()">← Back</button>
@@ -156,7 +174,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <h3>⚙️ Settings</h3>
 <label>Voice</label><select id="vSel"></select>
 <label>Speed <span id="spV">0.9</span></label><input type="range" id="spR" min=".3" max="1.5" step=".1" value=".9" oninput="SP=+this.value;document.getElementById('spV').textContent=SP.toFixed(1);save()">
-<label>Pitch <span id="ptV">1.0</span></label><input type="range" id="ptR" min=".5" max="2" step=".1" value="1" oninput="PITCH=+this.value;document.getElementById('ptV').textContent=PITCH.toFixed(1);save();speak('this is my voice')">
+<label>Pitch <span id="ptV">1.0</span></label><input type="range" id="ptR" min="0" max="2" step=".05" value="1" oninput="PITCH=+this.value;document.getElementById('ptV').textContent=PITCH.toFixed(2);save();speak('this is my voice')">
 <label>Modeling Mode</label><select id="mmSel" onchange="MM=this.value==='1';document.getElementById('modelBanner').style.display=MM?'block':'none';save()"><option value="0">Off</option><option value="1">On - taps won't count in stats</option></select>
 <hr style="border-color:#444;margin:10px 0">
 <h3>🚨 My Info (Safety)</h3>
@@ -181,7 +199,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div style="font-size:.65em;opacity:.5;text-align:center;line-height:1.6">
 <p>My Buddy AAC v1.0 - BMC Luminary Ventures LLC</p>
 <p>Mulberry Symbols © 2008-2017 Garry Paxton, 2018-2026 Steve Lee<br>Licensed under <a href="https://creativecommons.org/licenses/by-sa/2.0/uk/" style="color:#2a9d8f" target="_blank">CC BY-SA 2.0 UK</a> - <a href="https://mulberrysymbols.org" style="color:#2a9d8f" target="_blank">mulberrysymbols.org</a></p>
-<p><a href="https://quantumneuroshift.com/apps/my-buddy-privacy.html" style="color:#2a9d8f" target="_blank">Privacy Policy</a></p>
+<p><a href="https://quantumneuroshift.com/apps/my-buddy-privacy.html" style="color:#2a9d8f" target="_blank">Privacy Policy</a> &middot; <a href="https://quantumneuroshift.com/apps/my-buddy-terms.html" style="color:#2a9d8f" target="_blank">Terms</a> &middot; <a href="https://quantumneuroshift.com/apps/my-buddy-licenses.html" style="color:#2a9d8f" target="_blank">Licenses</a></p>
+<p style="opacity:.8">Not a medical device. Not a substitute for a speech-language pathologist.<br>Do not rely on this app as the only way to call for help.</p>
 </div>
 </div></div>
 
@@ -291,9 +310,15 @@ const FRM={'it_pn':'symbols/mybuddy/it.svg','back_ache':'symbols/mulberry/back_a
 // Spanish labels reuse the English symbol set. This maps a Spanish word to
 // the icon key that actually has a file, so anchor pages are not full of
 // broken images.
-const ES_ICON={'abajo':'down','abrazar':'hug','abrigo':'coat','abrir':'open','acostarse':'lie','adentro':'inside','afuera':'outside','agua':'water','ahora':'now','algo':'some','allí':'there','almohada':'pillow','almuerzo':'lunch','alrededor':'around','amable':'kind','amar':'love','amigo':'friend','apagado':'off','aprender':'learn','apretado':'tight','arreglar':'fix','arriba':'up','asiento':'seat','asustado':'scared','atascado':'stuck','aterrador':'scary','atrás':'back','autobús':'bus','ayudar':'help','barriga':'tummy','baño':'bathroom','beber':'drink','bolsa':'bag','bonito':'pretty','brillante':'bright','bueno':'good','cabeza':'head','caja':'box','caliente':'hot','cama':'bed','caminar':'walk','canción':'song','cansado':'tired','cara':'face','carro':'car','casa':'house','cena':'dinner','cepillar':'brush','cerca':'near','cerrar':'close','cerrar con llave':'lock','cocinar':'cook','comer':'eat','comida':'food','compartir':'share','competir':'race','comprar':'buy','conseguir':'get','construir':'build','corazón':'heart','correr':'run','cosa':'thing','crear':'make','cuento':'story','cuidadoso':'careful','cuidar':'care','cómodo':'comfy','dar':'give','decir':'tell','dentro':'in','descansar':'rest','descanso':'break','desear':'wish','desorden':'mess','desordenado':'messy','despertar':'wake','dibujar':'draw','difícil':'hard','dinero':'money','disfrutar':'enjoy','divertido':'fun','dormir':'sleep','el':'he','elegir':'choose','ella':'she','ellos':'they','empezar':'start','empujar':'push','encendido':'on','encontrar':'find','enfermo':'sick','enojado':'mad','enviar':'send','escaleras':'stairs','escoger':'pick','esconder':'hide','escribir':'write','escuchar':'listen','escuela':'school','eso':'that','esperar':'wait','esquina':'corner','estar':'is','esto':'that','extrañar':'miss','familia':'family','feliz':'happy','foto':'picture','fregar':'scrub','frío':'cool','fuera':'out','fácil':'easy','ganar':'win','girar':'turn','gracioso':'funny','grande':'big','guardar':'keep','gustar':'like','hablar':'tell','hacer':'do','hambriento':'hungry','intentar':'try','ir':'go','jalar':'pull','juego':'game','jugar':'play','jugo':'juice','juguete':'toy','justo':'fair','lanzar':'throw','largo':'long','leche':'milk','leer':'read','lejos':'far','lento':'slow','libro':'book','limpiar':'clean','listo':'ready','llenar':'fill','lleno':'full','llevar':'carry','luz':'light','malo':'bad','mamá':'mom','mano':'hand','manos':'hands','mascota':'pet','merienda':'snack','mirar':'look','mojado':'wet','montar':'ride','morder':'bite','mostrar':'show','mover':'move','más':'more','mío':'mine','música':'music','necesitar':'need','noche':'night','nosotros':'we','nuevo':'new','observar':'watch','ocupado':'busy','odiar':'hate','oscuro':'dark','palabra':'word','papá':'dad','pararse':'stand','parecer':'seem','parque':'park','pastel':'cake','pelo':'hair','pelota':'ball','pensar':'idea','pequeño':'little','perder':'lose','perro':'dog','perseguir':'chase','piso':'floor','plato':'plate','platos':'dishes','poder':'can','preferir':'prefer','preguntar':'ask','probar':'taste','problema':'problem','puerta':'door','página':'page','quedarse':'stay','querer':'want','quieto':'still','regalo':'gift','rico':'yummy','ruido':'noise','ruidoso':'loud','rápido':'fast','salir':'leave','saltar':'jump','secar':'dry','sediento':'thirsty','seguir':'follow','seguro':'safe','sentarse':'sit','sentir':'feelings','servir':'pour','señalar':'point','siesta':'nap','silencioso':'quiet','silla':'chair','sofá':'couch','soltar':'drop','sostener':'hold','soñar':'dream','soñoliento':'sleepy','suave':'gentle','subir':'climb','sucio':'dirty','tarea':'homework','taza':'cup','tener':'have','terminado':'done','terminar':'finish','tiempo':'time','tienda':'store','tomar':'take','trabajar':'work','trabajo':'job','traer':'bring','triste':'sad','tu':'you','tú':'you','uno':'one','vacío':'empty','venir':'come','ventana':'window','ver':'see','voltear':'flip','yo':'I','él':'he'};
+const ES_ICON={'abajo':'down','abrazar':'hug','abrigo':'coat','abrir':'open','acostarse':'lie','adentro':'inside','afuera':'outside','agua':'water','ahora':'now','algo':'some','allí':'there','almohada':'pillow','almuerzo':'lunch','alrededor':'around','amable':'kind','amar':'love','amigo':'friend','apagado':'off','aprender':'learn','apretado':'tight','arreglar':'fix','arriba':'up','asiento':'seat','asustado':'scared','atascado':'stuck','aterrador':'scary','atrás':'back','autobús':'bus','ayudar':'help','barriga':'tummy','baño':'bathroom','beber':'drink','bolsa':'bag','bonito':'pretty','brillante':'bright','bueno':'good','cabeza':'head','caja':'box','caliente':'hot','cama':'bed','caminar':'walk','canción':'song','cansado':'tired','cara':'face','carro':'car','casa':'house','cena':'dinner','cepillar':'brush','cerca':'near','cerrar':'close','cerrar con llave':'lock','cocinar':'cook','comer':'eat','comida':'food','compartir':'share','competir':'race','comprar':'buy','conseguir':'get','construir':'build','corazón':'heart','correr':'run','cosa':'thing','crear':'make','cuento':'story','cuidadoso':'careful','cuidar':'care','cómodo':'comfy','dar':'give','decir':'tell','dentro':'in','descansar':'rest','descanso':'break','desear':'wish','desorden':'mess','desordenado':'messy','despertar':'wake','dibujar':'draw','difícil':'hard','dinero':'money','disfrutar':'enjoy','divertido':'fun','dormir':'sleep','el':'he','elegir':'choose','ella':'she','ellos':'they','empezar':'start','empujar':'push','encendido':'on','encontrar':'find','enfermo':'sick','enojado':'mad','enviar':'send','escaleras':'stairs','escoger':'pick','esconder':'hide','escribir':'write','escuchar':'listen','escuela':'school','eso':'that','esperar':'wait','esquina':'corner','estar':'is','esto':'that','extrañar':'miss','familia':'family','feliz':'happy','foto':'picture','fregar':'scrub','frío':'cool','fuera':'out','fácil':'easy','ganar':'win','girar':'turn','gracioso':'funny','grande':'big','guardar':'keep','gustar':'like','hablar':'tell','hacer':'do','hambriento':'hungry','intentar':'try','ir':'go','jalar':'pull','juego':'game','jugar':'play','jugo':'juice','juguete':'toy','justo':'fair','lanzar':'throw','largo':'long','leche':'milk','leer':'read','lejos':'far','lento':'slow','libro':'book','limpiar':'clean','listo':'ready','llenar':'fill','lleno':'full','llevar':'carry','luz':'light','malo':'bad','mamá':'mom','mano':'hand','manos':'hands','mascota':'pet','merienda':'snack','mirar':'look','mojado':'wet','montar':'ride','morder':'bite','mostrar':'show','mover':'move','más':'more','mío':'mine','música':'music','necesitar':'need','noche':'night','nosotros':'we','nuevo':'new','observar':'watch','ocupado':'busy','odiar':'hate','oscuro':'dark','palabra':'word','papá':'dad','pararse':'stand','parecer':'seem','parque':'park','pastel':'cake','pelo':'hair','pelota':'ball','pensar':'idea','pequeño':'little','perder':'lose','perro':'dog','perseguir':'chase','piso':'floor','plato':'plate','platos':'dishes','poder':'can','preferir':'prefer','preguntar':'ask','probar':'taste','problema':'problem','puerta':'door','página':'page','quedarse':'stay','querer':'want','quieto':'still','regalo':'gift','rico':'yummy','ruido':'noise','ruidoso':'loud','rápido':'fast','salir':'leave','saltar':'jump','secar':'dry','sediento':'thirsty','seguir':'follow','seguro':'safe','sentarse':'sit','sentir':'feelings','servir':'pour','señalar':'point','siesta':'nap','silencioso':'quiet','silla':'chair','sofá':'couch','soltar':'drop','sostener':'hold','soñar':'dream','soñoliento':'sleepy','suave':'gentle','subir':'climb','sucio':'dirty','tarea':'homework','taza':'cup','tener':'have','terminado':'done','terminar':'finish','tiempo':'time','tienda':'store','tomar':'take','trabajar':'work','trabajo':'job','traer':'bring','triste':'sad','tu':'you','tú':'you','uno':'one','vacío':'empty','venir':'come','ventana':'window','ver':'see','voltear':'flip','yo':'I','él':'he','mesa':'table','árbol':'tree','colina':'hill','resbaladilla':'slide','estante':'shelf','tele':'tv','cima':'top','emocionado':'excited','orgulloso':'proud','tonto':'silly','tranquilo':'calm','fiesta':'party','solitario':'lonely','lastimado':'hurt','llorar':'cry','molesto':'upset','adiós':'goodbye','solo':'alone','roto':'broken','insecto':'bug','quemando':'burning','fresco':'cool','día':'day','pocos':'few','congelado':'freezing','genial':'great','mitad':'half','pesado':'heavy','enorme':'huge','hielo':'ice','idea':'idea','tapa':'lid','muchos':'lots','malvado':'mean','parte':'part','pedazo':'piece','por favor':'please','correcto':'right','cuarto':'room','zapatos':'shoes','corto':'short','chico':'small','oler':'smell','nieve':'snow','nevado':'snowy','picante':'spicy','sol':'sun','soleado':'sunny','alto':'tall','delgado':'thin','diminuto':'tiny','camión':'truck','tibio':'warm','ancho':'wide','viento':'wind','incorrecto':'wrong','asqueroso':'yucky','otro':'another','bebé':'baby','extra':'extra','un poco':'a little','un poquito':'a little','todo':'more','nada':'no','este':'that','ese':'that','otra vez':'again','menos':'little','mucho':'lots','escalera':'ladder','allí':'there','mío':'mine','aquí':'here'};
 const SYM={2436:'symbols/mulberry/sleep_male_,_to.svg',2452:'symbols/mulberry/food.svg',2464:'symbols/mulberry/paw.svg',2466:'symbols/mulberry/large.svg',2467:'symbols/mulberry/little.svg',2485:'symbols/mulberry/hot.svg',2486:'symbols/mulberry/snow.svg',2490:'symbols/mulberry/body_outline.svg',2509:'symbols/mulberry/clothes_generic.svg',3204:'symbols/mulberry/wash_hands_,_to.svg',5287:'symbols/mulberry/out.svg',5324:'symbols/mybuddy/please.svg',5335:'symbols/mulberry/put_,_to.svg',5336:'symbols/mybuddy/thank_you.svg',5344:'symbols/mulberry/who.svg',5345:'symbols/mulberry/what.svg',5346:'symbols/mulberry/where.svg',5373:'symbols/mulberry/wait_,_to.svg',5382:'symbols/mybuddy/here.svg',5441:'symbols/mulberry/want_,_to.svg',5468:'symbols/mulberry/down.svg',5469:'symbols/mulberry/up.svg',5508:'symbols/mulberry/more.svg',5526:'symbols/mulberry/mistake_no_wrong.svg',5553:'symbols/mulberry/sit_,_to.svg',5584:'symbols/mulberry/correct.svg',6061:'symbols/mulberry/drink_,_to.svg',6107:'symbols/mulberry/walk_,_to.svg',6108:'symbols/mulberry/run_,_to.svg',6408:'symbols/mulberry/talk_2_,_to.svg',6408:'symbols/mulberry/read_book_,_to.svg',6456:'symbols/mulberry/eat_,_to.svg',6623:'symbols/mybuddy/he.svg',6624:'symbols/mybuddy/she.svg',6625:'symbols/mybuddy/you.svg',6632:'symbols/mulberry/I.svg',6857:'symbols/mulberry/come_,_to.svg',6872:'symbols/mulberry/look_,_to.svg',6872:'symbols/mulberry/look_,_to.svg',6906:'symbols/mybuddy/that.svg',6952:'symbols/mybuddy/again.svg',7040:'symbols/mulberry/good.svg',7041:'symbols/mulberry/bad.svg',7074:'symbols/mulberry/headache.svg',7086:'symbols/mulberry/headache.svg',7093:'symbols/mulberry/family_2.svg',7196:'symbols/mybuddy/stop.svg',7220:'symbols/mybuddy/sorry.svg',8014:'symbols/mulberry/on.svg',8015:'symbols/mulberry/in.svg',8142:'symbols/mulberry/go_,_to.svg',9124:'symbols/mybuddy/can.svg',9261:'symbols/mulberry/hear_,_to.svg',9403:'symbols/mulberry/make_,_to.svg',10044:'symbols/mulberry/give_,_to.svg',12264:'symbols/mybuddy/my.svg',23392:'symbols/mulberry/play_,_to.svg',24825:'symbols/mulberry/open_,_to.svg',24971:'symbols/mulberry/some.svg',28429:'symbols/mulberry/finish.svg',28485:'symbols/mulberry/turn_,_to.svg',31670:'symbols/mybuddy/it.svg',32648:'symbols/mulberry/help_,_to.svg',35533:'symbols/mybuddy/feelings.svg',35533:'symbols/mulberry/happy_man.svg',35534:'symbols/mulberry/angry_man.svg',35535:'symbols/mulberry/sad_man.svg',35536:'symbols/mulberry/afraid_man.svg',35537:'symbols/mulberry/yawn_,_to.svg',36260:'symbols/mybuddy/is.svg',36263:'symbols/mybuddy/we.svg',36264:'symbols/mybuddy/they.svg',36512:'symbols/mybuddy/do.svg',36512:'symbols/mulberry/get_,_to.svg',36858:'symbols/mulberry/point_,_to.svg',37011:'symbols/mulberry/place_setting.svg',37236:'symbols/mulberry/off.svg',37824:'symbols/mulberry/hug_,_to.svg',37826:'symbols/mulberry/thumb.svg',38760:'symbols/mulberry/colour.svg',99998:'symbols/mulberry/computer_keyboard.svg'};
-const IM=p=>SYM[p]||FRM[p]||'symbols/mybuddy/'+p+'.svg';
+// ES_ICON maps Spanish labels to the English-keyed symbol tables. It was
+// already here but IM never used it, so every Spanish word fell through to
+// a mybuddy/<spanish word>.svg that does not exist. Articles are stripped
+// so 'la mesa' still finds 'mesa'.
+const esKey=p=>ES_ICON[p]||ES_ICON[String(p).replace(/^(el|la|los|las|un|una) /,'')];
+const IM=p=>SYM[p]||FRM[p]||SYM[esKey(p)]||FRM[esKey(p)]||
+  (esKey(p)?'symbols/mybuddy/'+esKey(p)+'.svg':'symbols/mybuddy/'+p+'.svg');
 const isMul=s=>s&&s.includes('/mulberry/');
 
 // Every word keeps the SAME grid position everywhere it appears. Opening a
@@ -462,9 +487,12 @@ const isHome=(curView==='home');
 const isPron=curView.indexOf('pn_')===0;
 const isAnchor=curView.indexOf('anchor_')===0;
 const isFringe=!isHome&&curView!=='custom'&&!isPron&&!isAnchor;
-let cols,rows;
-if(isHome&&phoneMode){cols=Math.min(items.length,4);rows=Math.ceil(items.length/cols);
+let cols,rows,rowH;
+if(isHome&&phoneMode){cols=Math.min(items.length,6);rows=Math.ceil(items.length/cols);
 }else if(isHome){cols=12;rows=7;
+}else if(isAnchor&&phoneMode){
+items=items.filter(Boolean);
+cols=Math.min(items.length,6)||1;rows=Math.ceil(items.length/cols)||1;
 }else if(isAnchor){
 // Anchor pages keep the full 84-cell grid so a word is always in the same
 // place. Blank slots stay blank; that is the point.
@@ -478,18 +506,29 @@ rows=Math.ceil(items.length/cols)||1;
 }
 
 b.style.gridTemplateColumns=`repeat(${cols},minmax(0,1fr))`;
+
 if(isHome){
   b.style.gridTemplateRows=`repeat(${rows},1fr)`;
   b.style.alignContent='stretch';
   b.style.overflowY='hidden';
 }else{
-  const rowH=Math.max(64,Math.floor((b.clientHeight||window.innerHeight)/7));
+  const bw=b.clientWidth||window.innerWidth, bh=b.clientHeight||window.innerHeight;
+  const colW=bw/cols;
+  rowH=Math.max(64,Math.min(Math.floor(bh/7),Math.round(colW*1.35)));
   b.style.gridTemplateRows=`repeat(${rows},${rowH}px)`;
   b.style.alignContent='start';
   // Fixed pixel rows can total more than the board height. Allow scrolling on
   // non-home views so nothing is silently cut off.
   b.style.overflowY='auto';
 }
+
+// Size icon and label against whichever cell dimension is smaller. Sizing from
+// column width alone clipped every label in landscape, where the cells are wide
+// but only about forty pixels tall.
+{const _bw=b.clientWidth||window.innerWidth, _bh=b.clientHeight||window.innerHeight;
+ const _m=Math.min(_bw/cols, rowH||(_bh/rows));
+ b.style.setProperty('--lb',Math.max(7,Math.min(14,Math.round(_m*0.22)))+'px');
+ b.style.setProperty('--ic',Math.max(10,Math.min(42,Math.round(_m*0.42)))+'px');}
 
 if(isAnchor){
   const slots=anchorItems(curView.slice(7));
@@ -712,54 +751,70 @@ const ANCHORS = {
    describing word page looks the same as every other. */
 const ANCHORS2 = {
   // ---- describing words -------------------------------------------------
-  feliz:{type:'adj', icon:'happy', opposite:'triste',
-         related:['excited','proud','silly','calm','amar'],
-         things:['amigo','música','party','juego','mascota']},
-  triste:  {type:'adj', icon:'sad', opposite:'feliz',
-         related:['lonely','hurt','extrañar','cry','upset'],
-         things:['goodbye','alone','broken','hurt']},
-  bueno: {type:'adj', icon:'good', opposite:'malo',
-         related:['great','amable','amable','divertido','right'],
-         things:['trabajo','idea','day','amigo','comida']},
-  malo:  {type:'adj', icon:'bad', opposite:'bueno',
-         related:['mean','wrong','yucky','aterrador','enfermo'],
-         things:['day','soñar','idea','smell']},
-  grande:  {type:'adj', icon:'big', opposite:'pequeño',
-         related:['tall','huge','wide','largo','heavy'],
-         things:['perro','truck','house','tree']},
-  pequeño:{type:'adj', icon:'little', opposite:'grande',
-         related:['small','short','tiny','thin','luz'],
-         things:['baby','bug','juguete','piece']},
-  caliente:  {type:'adj', icon:'hot', opposite:'frío',
-         related:['warm','burning','sunny','spicy'],
-         things:['sun','comida','beber','bath']},
-  frío: {type:'adj', icon:'cold', opposite:'caliente',
-         related:['cool','freezing','snowy','mojado'],
-         things:['ice','snow','agua','wind']},
-  más: {type:'adj', icon:'more', opposite:'algo',
-         related:['another','again','lots','all','extra'],
-         things:['comida','beber','tiempo','girar','please']},
-  algo: {type:'adj', icon:'some', opposite:'más',
-         related:['a little','part','half','few'],
-         things:['comida','agua','tiempo','ayudar']},
+  feliz:{type:'adj', people:true, asks:['me siento feliz','¿estás feliz?','eso me hace feliz','estoy muy feliz','me alegro','ya no estoy feliz'], icon:'happy', opposite:'triste',
+         related:['emocionado','orgulloso','tonto','tranquilo','amar'],
+         things:['amigo','música','fiesta','juego','mascota']},
+  triste:  {type:'adj', people:true, asks:['me siento triste','¿estás triste?','eso me pone triste','quiero llorar','estoy muy triste','ya no estoy triste'], icon:'sad', opposite:'feliz',
+         related:['solitario','lastimado','extrañar','llorar','molesto'],
+         things:['adiós','solo','roto','enfermo']},
+  bueno: {type:'adj', asks:['eso es bueno','buen trabajo','¿está bueno?','me gusta','está bien','qué bueno'], icon:'good', opposite:'malo',
+         related:['genial','amable','feliz','divertido','correcto'],
+         things:['trabajo','idea','día','amigo','comida']},
+  malo:  {type:'adj', asks:['eso es malo','qué mal','¿está malo?','no me gusta','eso estuvo mal','me siento mal'], icon:'bad', opposite:'bueno',
+         related:['malvado','incorrecto','asqueroso','aterrador','enfermo'],
+         things:['día','soñar','idea','oler']},
+  grande:  {type:'adj', asks:['es muy grande','demasiado grande','¿es grande?','más grande por favor','no es tan grande','qué grande'], icon:'big', opposite:'pequeño',
+         related:['alto','enorme','ancho','largo','pesado'],
+         things:['perro','camión','casa','árbol']},
+  pequeño:{type:'adj', asks:['es muy pequeño','demasiado pequeño','¿es pequeño?','más pequeño por favor','no es tan pequeño','qué pequeño'], icon:'little', opposite:'grande',
+         related:['chico','corto','diminuto','delgado','luz'],
+         things:['bebé','insecto','juguete','pedazo']},
+  caliente:  {type:'adj', asks:['está caliente','demasiado caliente','¿está caliente?','tengo calor','cuidado','déjalo enfriar'], icon:'hot', opposite:'frío',
+         related:['tibio','quemando','soleado','picante'],
+         things:['sol','comida','beber','baño']},
+  frío: {type:'adj', asks:['está frío','demasiado frío','¿está frío?','tengo frío','quiero mi abrigo','está muy frío'], icon:'cold', opposite:'caliente',
+         related:['fresco','congelado','nevado','mojado'],
+         things:['hielo','nieve','agua','viento']},
+  más:  {type:'quant', icon:'more', opposite:'menos',
+         degrees:['un poco más','algo más','mucho más','no más'],
+         frames:['quiero más','quieres más','él quiere más','ella quiere más',
+                 'nosotros queremos más','ellos quieren más','¿puedo tener más?'],
+         related:['otro','otra vez','muchos','extra'],
+         things:['comida','beber','tiempo','girar','por favor'],
+         asks:['más por favor','¿me das más?','ya es suficiente']},
+  algo: {type:'quant', icon:'some', opposite:'todo',
+         degrees:['un poco','un poquito','mucho','nada'],
+         frames:['quiero algo','quieres algo','él quiere algo','ella quiere algo',
+                 'nosotros queremos algo','ellos quieren algo','¿puedo tener algo?'],
+         related:['otro','otra vez','muchos','parte'],
+         things:['comida','agua','tiempo','ayudar'],
+         asks:['algo por favor','¿me das algo?','ya es suficiente']},
 
   // ---- place words ------------------------------------------------------
-  encendido:   {type:'prep', icon:'on',   opposite:'apagado',
-         places:['table','silla','cama','piso','top']},
-  apagado:  {type:'prep', icon:'off',  opposite:'encendido',
-         places:['luz','TV','shoes','coat','lid']},
+  encendido: {type:'helper', icon:'on',
+         frames:['está encendido','ponlo encendido','enciéndelo','¿está encendido?',
+                 'déjalo encendido','ya está encendido']},
+  apagado: {type:'helper', icon:'off',
+         frames:['está apagado','ponlo apagado','apágalo','¿está apagado?',
+                 'déjalo apagado','ya está apagado']},
   dentro:   {type:'prep', icon:'in',   opposite:'fuera',
-         places:['caja','carro','house','bolsa','room']},
+         places:['caja','carro','casa','bolsa','cuarto']},
   fuera:  {type:'prep', icon:'out',  opposite:'dentro',
-         places:['afuera','carro','puerta','caja']},
+         places:['la afuera','la carro','la puerta','la caja']},
   arriba:   {type:'prep', icon:'up',   opposite:'abajo',
-         places:['escaleras','ladder','tree','hill','slide']},
+         places:['las escaleras','la escalera','el árbol','la colina','la resbaladilla']},
   abajo: {type:'prep', icon:'down', opposite:'arriba',
-         places:['escaleras','slide','hill','ladder']},
-  aquí: {type:'prep', icon:'here', opposite:'allí',
-         places:['table','caja','room','silla']},
-  eso: {type:'prep', icon:'that', opposite:'this',
-         places:['table','caja','shelf','silla']},
+         places:['la escaleras','la resbaladilla','la colina','la escalera']},
+  aquí: {type:'helper', icon:'here',
+         frames:['ven aquí','ponlo aquí','está aquí','quédate aquí',
+                 'no está aquí','aquí estoy']},
+  eso:  {type:'demo', icon:'that', opposite:'este',
+         degrees:['ese','no eso','todo'],
+         frames:['quiero eso','me gusta eso','dame eso','mira eso','veo eso',
+                 'haz eso','para eso'],
+         related:['aquí','allí','mío','cosa'],
+         things:['mesa','caja','estante','silla'],
+         asks:['¿qué es eso?','¿me das eso?','ese no','no me gusta eso']},
 
   // ---- question words ---------------------------------------------------
   qué: {frames:["¿qué es eso?","¿qué quieres?","¿qué pasó?","¿qué es esto?","¿qué hora es?","¿de qué color?","¿qué sigue?","¿para qué?"], type:'question', icon:'what',
@@ -788,7 +843,7 @@ const ANCHORS2 = {
          },
   no:  {frames:["ahora no","yo no","eso no","no quiero","no lo hagas","ya no","todavía no","no soy yo","no es justo","esto no"], type:'helper', icon:'not',
          },
-  'otra vez':{frames:["hazlo otra vez","una vez más","juguemos otra vez","léelo otra vez","dilo otra vez","otra vez no","otra vez por favor"], type:'helper', icon:'again',
+  'otra vez':{frames:["hazlo otra vez","una vez más","juguemos otra vez","léelo otra vez","dilo otra vez","otra vez no","otra vez por favor"], type:'helper', icon:'otra vez',
          },
   mi:   {frames:["me toca a mí","mi nombre","es mío","mi mamá","mi papá","mi casa","mi juguete","mi amigo","mi cuarto","mi mochila"], type:'helper', icon:'my',
          }
@@ -832,27 +887,38 @@ function buildTypedItems(word){
       : [['yo estoy',{}],['tú estás',{}],['él está',{}],['ella está',{fem:true}],
          ['nosotros estamos',{plural:true}],['ellos están',{plural:true}],
          ['esto está',{}]];
-    SUBJ.forEach(function(p,i){
+    // "esto está feliz" is not something anyone says. Adjectives that only
+    // describe people skip the impersonal subject.
+    SUBJ.filter(function(s){ return !(a.people && /^esto /.test(s[0])); })
+        .forEach(function(p,i){
       put(12+i, p[0]+' '+(TENER?word:agree(word,p[1])), a.icon, 'prow_b'); });
 
     (a.related||[]).forEach((r,i)=>put(24+i, r, r, 'prow_c'));
     (a.things||[]).forEach((n,i)=>put(36+i, n, n, 'prow_d'));
-    put(48, TENER?('tengo mucha '+word):('me siento '+word), 'feel','resp');
-    put(49, TENER?('¿tienes '+word+'?'):(SER?('¿eres '+word+'?'):('¿estás '+word+'?')), 'what','resp');
-    put(50,'¿por qué '+word+'?','why','resp');
-    put(51, TENER?('mucha '+word):('demasiado '+word), 'more','resp');
-    put(52, TENER?('un poco de '+word):('un poco '+word), 'little','resp');
-    put(53,'tan '+word,'more','resp');
+    // Per word. One template cannot make natural Spanish for every adjective,
+    // and "¿por qué feliz?" is what that produces.
+    (a.asks||[TENER?('tengo mucha '+word):('me siento '+word),
+              TENER?('¿tienes '+word+'?'):(SER?('¿eres '+word+'?'):('¿estás '+word+'?')),
+              TENER?('mucha '+word):('demasiado '+word),
+              'tan '+word]).forEach((q,i)=>put(48+i, q, a.icon,'resp'));
+  }
+  else if (a.type === 'quant' || a.type === 'demo') {
+    // Not gradable. "máses", "el más algo" and "ella está alga" are not
+    // Spanish, so this type never calls compare() and never uses the
+    // "yo estoy X" frames.
+    (a.degrees||[]).forEach((d,i)=>put(1+i, d, a.icon,'prow_a'));
+    if(a.opposite) put(6, a.opposite, null, 'prow_a');
+    (a.frames||[]).forEach((f,i)=>put(12+i, f, a.icon,'prow_b'));
+    (a.related||[]).forEach((r,i)=>put(24+i, r, r, 'prow_c'));
+    (a.things||[]).forEach((n,i)=>put(36+i, n, n, 'prow_d'));
+    (a.asks||[]).forEach((q,i)=>put(48+i, q, a.icon,'resp'));
   }
   else if (a.type === 'prep') {
-    put(1,'ponlo '+word, 'put','prow_a');
-    put(2,'ve '+word,    'go', 'prow_a');
-    put(3,'saca '+word,  'get','prow_a');
-    put(4,'mira '+word,  'look','prow_a');
+    put(1,'no '+word, 'not','prow_a');
     if(a.opposite) put(5, a.opposite, a.opposite,'prow_a');
-    ['yo quiero','tú','nosotros','esto está','ponlo','ven','tómalo'].forEach(function(p,i){
+    ['ponlo','está','ve','mira','quiero ir','vamos','déjalo'].forEach(function(p,i){
       put(12+i, p+' '+word, a.icon,'prow_b'); });
-    (a.places||[]).forEach((pl,i)=>put(24+i, word+' de '+pl, pl,'prow_c'));
+    (a.places||[]).forEach((pl,i)=>put(24+i, word+' '+(/^el /.test(pl)?'del '+pl.slice(3):'de '+pl), pl,'prow_c'));
     (a.places||[]).forEach((pl,i)=>put(36+i, pl, pl,'prow_d'));
   }
   else if (a.type === 'question' || a.type === 'helper') {
@@ -1300,4 +1366,13 @@ init();
   <div id="finderResults" style="overflow:auto;border-top:1px solid rgba(255,255,255,.1);"></div>
  </div>
 </div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js', { scope: './' }).catch(function (e) {
+      console.warn('[sw] registration failed', e); });
+  });
+}
+</script>
 </body></html>
