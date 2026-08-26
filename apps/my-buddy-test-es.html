@@ -3,12 +3,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="My Buddy">
+<meta name="apple-mobile-web-app-title" content="Mi Amigo">
 <meta name="theme-color" content="#2a9d8f">
-<link rel="manifest" href="my-buddy.webmanifest">
+<link rel="manifest" href="my-buddy-es.webmanifest">
 <link rel="apple-touch-icon" href="icons/mybuddy-180.png">
-<title>My Buddy TEST</title>
 <meta name="robots" content="noindex,nofollow">
+<title>My Buddy</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
@@ -126,7 +126,6 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 
 <div id="splash"><div style="font-size:60px">🗣️</div><div class="sn">My Buddy</div><div class="ss">Communication for Everyone</div></div>
 <div id="modelBanner">👨‍🏫 MODELING MODE</div>
-<div id="offlineReady" style="display:none;position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:900;background:#2a9d8f;color:#fff;font:600 13px system-ui;padding:7px 16px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.4)">Saved for offline use</div>
 <div id="strip">
 <button class="sb" id="bDel" onclick="sDel()">⌫</button>
 <div id="sW"></div>
@@ -145,7 +144,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="ib" onclick="sayInfo('state')"><span class="ib-icon">🏛️</span>State</button>
 <button class="ib" onclick="sayInfo('school')"><span class="ib-icon">🏫</span>School</button>
 <button class="ib" onclick="sayInfo('emergency')"><span class="ib-icon">🚨</span>Emergency</button>
-<div id="langPick"><a href="my-buddy-test.html" class="on">English</a><a href="my-buddy-demo-es.html">Espanol</a></div>
+<div id="langPick"><a href="my-buddy-test.html">English</a><a href="my-buddy-test-es.html" class="on">Espanol</a></div>
 <button id="phoneToggle" onclick="togglePhone()">FULL<br><span style="font-size:7px;opacity:.7">VIEW</span></button>
 </div>
 <button id="backBtn" onclick="goHome()">← Back</button>
@@ -271,7 +270,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
  * ████████████████████████████████████████████████████████
  */
 const V=[
-{w:"I",t:"prow_a",i:6632,cat:"pn_I",p:0},{w:"we",t:"prow_a",i:36263,cat:"pn_we",p:1},{w:"want",t:"prow_a",i:5441,p:2},{w:"like",t:"prow_a",i:37826,p:3},{w:"go",t:"prow_a",i:8142,p:4},{w:"help",t:"prow_a",i:32648,p:5},{w:"is",t:"prow_a",i:36260,p:6},{w:"on",t:"prow_a",i:8014,p:7},{w:"in",t:"prow_a",i:8015,p:8},{w:"up",t:"prow_a",i:5469,p:9},{w:"feel",t:"prow_a",svgName:"feel",p:10},{w:"here",t:"prow_a",i:5382,p:11},{w:"you",t:"prow_b",i:6625,cat:"pn_you",p:12},{w:"they",t:"prow_b",i:36264,cat:"pn_they",p:13},{w:"play",t:"prow_b",i:23392,p:14},{w:"eat",t:"prow_b",i:6456,p:15},{w:"drink",t:"prow_b",i:6061,p:16},{w:"look",t:"prow_b",i:6872,p:17},{w:"come",t:"prow_b",i:6857,p:18},{w:"give",t:"prow_b",i:10044,p:19},{w:"do",t:"prow_b",svgName:"do",p:20},{w:"can",t:"prow_b",i:9124,p:21},{w:"+ed",t:"prow_b",svgName:"plus_ed",p:22},{w:"again",t:"prow_b",i:6952,p:23},{w:"he",t:"prow_c",i:6623,cat:"pn_he",p:24},{w:"she",t:"prow_c",i:6624,cat:"pn_she",p:25},{w:"make",t:"prow_c",i:9403,p:26},{w:"get",t:"prow_c",i:36512,p:27},{w:"put",t:"prow_c",i:5335,p:28},{w:"open",t:"prow_c",i:24825,p:29},{w:"turn",t:"prow_c",i:28485,p:30},{w:"read",t:"prow_c",i:6408,p:31},{w:"sit",t:"prow_c",i:5553,p:32},{w:"walk",t:"prow_c",i:6107,p:33},{w:"run",t:"prow_c",i:6108,p:34},{w:"down",t:"prow_c",i:5468,p:35},{w:"it",t:"prow_d",i:31670,cat:"pn_it",p:36},{w:"sleep",t:"prow_d",i:2436,p:37},{w:"need",t:"prow_d",svgName:"need",p:38},{w:"that",t:"prow_d",svgName:"that",p:39},{w:"love",t:"prow_d",svgName:"love",p:40},{w:"happy",t:"prow_d",i:35533,p:41},{w:"not",t:"prow_d",i:5526,p:42},{w:"out",t:"prow_d",i:5287,p:43},{w:"off",t:"prow_d",i:37236,p:44},{w:"sad",t:"prow_d",i:35535,p:45},{w:"+er",t:"prow_d",svgName:"plus_er",p:46},{w:"+est",t:"prow_d",svgName:"plus_est",p:47},{w:"yes",t:"resp",i:5584,p:48},{w:"more",t:"resp",i:5508,p:49},{w:"good",t:"resp",i:7040,p:50},{w:"big",t:"resp",i:2466,p:51},{w:"hot",t:"resp",i:2485,p:52},{w:"some",t:"resp",i:24971,p:53},{w:"all done",t:"resp",i:28429,p:54},{w:"little",t:"resp",i:2467,p:55},{w:"bad",t:"resp",i:7041,p:56},{w:"no",t:"resp",svgName:"no",p:57},{w:"stop",t:"resp",svgName:"stop",p:58},{w:"cold",t:"resp",i:2486,p:59},{w:"my",t:"social",i:12264,p:60},{w:"please",t:"social",i:5324,p:61},{w:"thank you",t:"social",i:5336,p:62},{w:"sorry",t:"social",i:7220,p:63},{w:"what",t:"social",i:5345,p:64},{w:"where",t:"social",i:5346,p:65},{w:"who",t:"social",i:5344,p:66},{w:"when",t:"social",svgName:"when",p:67},{w:"why",t:"social",svgName:"why",p:68},{w:"how",t:"social",svgName:"how",p:69},{w:"+s",t:"social",svgName:"plus_s",p:70},{w:"+ing",t:"social",svgName:"plus_ing",p:71},{w:"CLEAR",t:"folder",i:0,p:72},{w:"food",t:"folder",i:2452,cat:"food",p:73},{w:"people",t:"folder",i:7093,cat:"people",p:74},{w:"feelings",t:"folder",svgName:"feelings",cat:"feelings",p:75},{w:"places",t:"folder",i:36858,cat:"places",p:76},{w:"animals",t:"folder",i:2464,cat:"animals",p:77},{w:"things",t:"folder",i:37011,cat:"things",p:78},{w:"colors",t:"folder",i:38760,cat:"colors",p:79},{w:"body",t:"folder",i:2490,cat:"body",p:80},{w:"clothes",t:"folder",i:2509,cat:"clothes",p:81},{w:"my words",t:"folder",svgName:"spk_word",cat:"custom",p:82},{w:"ABC",t:"folder",i:99998,cat:"spell",p:83}
+{w:"yo",t:"prow_a",i:6632,cat:"pn_I",p:0},{w:"nosotros",t:"prow_a",i:36263,cat:"pn_we",p:1},{w:"querer",t:"prow_a",i:5441,p:2},{w:"gustar",t:"prow_a",i:37826,p:3},{w:"ir",t:"prow_a",i:8142,p:4},{w:"ayudar",t:"prow_a",i:32648,p:5},{w:"ser",t:"prow_a",i:36260,p:6},{w:"en",t:"prow_a",i:8014,p:7},{w:"dentro",t:"prow_a",i:8015,p:8},{w:"arriba",t:"prow_a",i:5469,p:9},{w:"sentir",t:"prow_a",svgName:"feel",p:10},{w:"aquí",t:"prow_a",i:5382,p:11},{w:"tú",t:"prow_b",i:6625,cat:"pn_you",p:12},{w:"ellos",t:"prow_b",i:36264,cat:"pn_they",p:13},{w:"jugar",t:"prow_b",i:23392,p:14},{w:"comer",t:"prow_b",i:6456,p:15},{w:"beber",t:"prow_b",i:6061,p:16},{w:"mirar",t:"prow_b",i:6872,p:17},{w:"venir",t:"prow_b",i:6857,p:18},{w:"dar",t:"prow_b",i:10044,p:19},{w:"hacer",t:"prow_b",svgName:"do",p:20},{w:"poder",t:"prow_b",i:9124,p:21},{w:"+ó",t:"prow_b",svgName:"plus_ed",p:22},{w:"otra vez",t:"prow_b",i:6952,p:23},{w:"él",t:"prow_c",i:6623,cat:"pn_he",p:24},{w:"ella",t:"prow_c",i:6624,cat:"pn_she",p:25},{w:"hacer",t:"prow_c",i:9403,p:26},{w:"conseguir",t:"prow_c",i:36512,p:27},{w:"poner",t:"prow_c",i:5335,p:28},{w:"abrir",t:"prow_c",i:24825,p:29},{w:"girar",t:"prow_c",i:28485,p:30},{w:"leer",t:"prow_c",i:6408,p:31},{w:"sentarse",t:"prow_c",i:5553,p:32},{w:"caminar",t:"prow_c",i:6107,p:33},{w:"correr",t:"prow_c",i:6108,p:34},{w:"abajo",t:"prow_c",i:5468,p:35},{w:"eso",t:"prow_d",i:31670,cat:"pn_it",p:36},{w:"dormir",t:"prow_d",i:2436,p:37},{w:"necesitar",t:"prow_d",svgName:"need",p:38},{w:"eso",t:"prow_d",svgName:"that",p:39},{w:"amar",t:"prow_d",svgName:"love",p:40},{w:"feliz",t:"prow_d",i:35533,p:41},{w:"no",t:"prow_d",i:5526,p:42},{w:"fuera",t:"prow_d",i:5287,p:43},{w:"apagado",t:"prow_d",i:37236,p:44},{w:"triste",t:"prow_d",i:35535,p:45},{w:"más",t:"prow_d",svgName:"plus_er",p:46},{w:"el más",t:"prow_d",svgName:"plus_est",p:47},{w:"sí",t:"resp",i:5584,p:48},{w:"más",t:"resp",i:5508,p:49},{w:"bueno",t:"resp",i:7040,p:50},{w:"grande",t:"resp",i:2466,p:51},{w:"caliente",t:"resp",i:2485,p:52},{w:"algo",t:"resp",i:24971,p:53},{w:"terminé",t:"resp",i:28429,p:54},{w:"pequeño",t:"resp",i:2467,p:55},{w:"malo",t:"resp",i:7041,p:56},{w:"no",t:"resp",svgName:"no",p:57},{w:"parar",t:"resp",svgName:"stop",p:58},{w:"frío",t:"resp",i:2486,p:59},{w:"mi",t:"social",i:12264,p:60},{w:"por favor",t:"social",i:5324,p:61},{w:"gracias",t:"social",i:5336,p:62},{w:"perdón",t:"social",i:7220,p:63},{w:"qué",t:"social",i:5345,p:64},{w:"dónde",t:"social",i:5346,p:65},{w:"quién",t:"social",i:5344,p:66},{w:"cuándo",t:"social",svgName:"when",p:67},{w:"por qué",t:"social",svgName:"why",p:68},{w:"cómo",t:"social",svgName:"how",p:69},{w:"+s",t:"social",svgName:"plus_s",p:70},{w:"+ndo",t:"social",svgName:"plus_ing",p:71},{w:"BORRAR",t:"folder",i:0,p:72},{w:"comida",t:"folder",i:2452,cat:"food",p:73},{w:"gente",t:"folder",i:7093,cat:"people",p:74},{w:"sentimientos",t:"folder",svgName:"feelings",cat:"feelings",p:75},{w:"lugares",t:"folder",i:36858,cat:"places",p:76},{w:"animales",t:"folder",i:2464,cat:"animals",p:77},{w:"cosas",t:"folder",i:37011,cat:"things",p:78},{w:"colores",t:"folder",i:38760,cat:"colors",p:79},{w:"cuerpo",t:"folder",i:2490,cat:"body",p:80},{w:"ropa",t:"folder",i:2509,cat:"clothes",p:81},{w:"mis palabras",t:"folder",svgName:"spk_word",cat:"custom",p:82},{w:"ABC",t:"folder",i:99998,cat:"spell",p:83}
 ];
 
 const SPELL_KEYS=[
@@ -280,29 +279,39 @@ const SPELL_KEYS=[
 ['z','x','c','v','b','n','m']
 ];
 const FR={
-food:[["water","water"],["milk","milk"],["juice","juice"],["apple","apple"],["banana","banana"],["cookie","cookie"],["bread","bread"],["cheese","cheese"],["chicken","chicken"],["rice","rice"],["pizza","pizza"],["ice cream","ice_cream"],["cereal","cereal"],["soup","soup"],["crackers","crackers"],["yogurt","yogurt"],["eggs","eggs"],["fries","fries"],["grapes","grapes"],["strawberry","strawberry"],["sandwich","sandwich"],["cake","cake"],["candy","candy"],["popcorn","popcorn"],["hot dog","hot_dog"]],
-people:[["mom","mom"],["dad","dad"],["brother","brother"],["sister","sister"],["baby","baby"],["teacher","teacher"],["friend","friend"],["doctor","doctor"],["grandma","grandma"],["grandpa","grandpa"],["family","family"],["boy","boy"],["girl","girl"]],
-feelings:[["hug","hug"],["angry","angry"],["scared","scared"],["tired","tired"],["happy","happy"],["sad","sad"],["angry","angry"],["scared","scared"],["tired","tired"],["hurt","hurt"],["sick","sick"],["funny","funny"],["excited","excited"],["calm","calm"],["bored","bored"],["nervous","nervous"],["proud","proud"],["love","love"],["confused","confused"]],
-places:[["home","home"],["school","school"],["bathroom","bathroom"],["outside","outside"],["car","car"],["park","park"],["store","store"],["kitchen","kitchen"],["bedroom","bedroom"]],
-animals:[["dog","dog"],["cat","cat"],["fish","fish"],["bird","bird"],["horse","horse"],["bunny","bunny"],["bear","bear"],["turtle","turtle"],["duck","duck"],["elephant","elephant"],["lion","lion"],["monkey","monkey"],["cow","cow"],["pig","pig"],["frog","frog"]],
-things:[["toy","toy"],["book","book_g"],["ball","ball"],["phone","phone"],["blanket","blanket"],["shoes","shoes"],["cup","cup"],["door","door"],["light","light"],["music","music"]],
-colors:[["red","color_red"],["blue","color_blue"],["green","color_green"],["yellow","color_yellow"],["orange","color_orange"],["purple","color_purple"],["pink","color_pink"],["black","color_black"],["white","color_white"],["brown","color_brown"]],
-body:[["bathroom","toilet"],["poop","poop"],["pee","pee"],["I need to go","toilet"],["hurt","hurt"],["pain","pain"],["sick","nauseous"],["throw up","vomit"],["dizzy","dizzy"],["itchy","itchy"],["bleeding","bleeding"],["emergency","emergency"],["head","head"],["mouth","mouth"],["hand","hand"],["feet","feet"],["eyes","eyes"],["ears","ears"],["nose","nose"],["tummy","tummy"],["back","back_ache"],["chest","chest"],["leg","leg"],["arm","arm"],["medicine","medicine"],["doctor","doctor"],["nurse","nurse"],["wipe","wipe"],["diaper","diaper"],["accident","accident"],["wash","wash"],["all done","all done"]],
-clothes:[["shirt","shirt"],["pants","pants"],["shoes","shoes"],["socks","socks"],["hat","hat"],["jacket","jacket"],["diaper","diaper"]],
-pn_I:[["I","I"],["I want","want"],["I like","like"],["I go","go"],["I help","help"],["I eat","eat"],["I drink","drink"],["I play","play"],["I look","look"],["I see","see"],["I need","need"],["I make","make"],["I do","do"],["I can","can"],["I feel","feelings"],["I have","give"],["I am","is"]],
-pn_we:[["we","we"],["we want","want"],["we like","like"],["we go","go"],["we play","play"],["we eat","eat"],["we need","need"],["we can","can"],["we have","give"],["we are","is"]],
-pn_you:[["you","you"],["you want","want"],["you like","like"],["you go","go"],["you play","play"],["you eat","eat"],["you look","look"],["you need","need"],["you can","can"],["you have","give"],["you are","is"]],
-pn_they:[["they","they"],["they want","want"],["they like","like"],["they go","go"],["they play","play"],["they eat","eat"],["they need","need"],["they can","can"],["they have","give"],["they are","is"]],
-pn_he:[["he","he"],["he wants","want"],["he likes","like"],["he goes","go"],["he plays","play"],["he eats","eat"],["he looks","look"],["he needs","need"],["he can","can"],["he has","give"],["he is","is"]],
-pn_she:[["she","she"],["she wants","want"],["she likes","like"],["she goes","go"],["she plays","play"],["she eats","eat"],["she looks","look"],["she needs","need"],["she can","can"],["she has","give"],["she is","is"]],
-pn_it:[["it","it_pn"],["it is","is"],["it goes","go"],["it looks","look"],["it has","give"],["it can","can"]]
+food:[["agua","water"],["leche","milk"],["jugo","juice"],["manzana","apple"],["plátano","banana"],["galleta","cookie"],["pan","bread"],["queso","cheese"],["pollo","chicken"],["arroz","rice"],["pizza","pizza"],["helado","ice_cream"],["cereal","cereal"],["sopa","soup"],["galletas saladas","crackers"],["yogur","yogurt"],["huevos","eggs"],["papas fritas","fries"],["uvas","grapes"],["fresa","strawberry"],["sándwich","sandwich"],["pastel","cake"],["dulces","candy"],["palomitas","popcorn"],["hot dog","hot_dog"]],
+people:[["mamá","mom"],["papá","dad"],["hermano","brother"],["hermana","sister"],["bebé","baby"],["maestro","teacher"],["amigo","friend"],["doctor","doctor"],["abuela","grandma"],["abuelo","grandpa"],["familia","family"],["niño","boy"],["niña","girl"]],
+feelings:[["abrazo","hug"],["enojado","angry"],["asustado","scared"],["cansado","tired"],["feliz","happy"],["triste","sad"],["enojada","angry"],["asustada","scared"],["cansada","tired"],["lastimado","hurt"],["enfermo","sick"],["gracioso","funny"],["emocionado","excited"],["tranquilo","calm"],["aburrido","bored"],["nervioso","nervous"],["orgulloso","proud"],["amor","love"],["confundido","confused"]],
+places:[["casa","home"],["escuela","school"],["baño","bathroom"],["afuera","outside"],["carro","car"],["parque","park"],["tienda","store"],["cocina","kitchen"],["dormitorio","bedroom"]],
+animals:[["perro","dog"],["gato","cat"],["pez","fish"],["pájaro","bird"],["caballo","horse"],["conejo","bunny"],["oso","bear"],["tortuga","turtle"],["pato","duck"],["elefante","elephant"],["león","lion"],["mono","monkey"],["vaca","cow"],["cerdo","pig"],["rana","frog"]],
+things:[["juguete","toy"],["libro","book_g"],["pelota","ball"],["teléfono","phone"],["cobija","blanket"],["zapatos","shoes"],["taza","cup"],["puerta","door"],["luz","light"],["música","music"]],
+colors:[["rojo","color_red"],["azul","color_blue"],["verde","color_green"],["amarillo","color_yellow"],["naranja","color_orange"],["morado","color_purple"],["rosa","color_pink"],["negro","color_black"],["blanco","color_white"],["café","color_brown"]],
+body:[["baño","toilet"],["popó","poop"],["pipí","pee"],["necesito ir","toilet"],["me duele","hurt"],["dolor","pain"],["enfermo","nauseous"],["vomitar","vomit"],["mareado","dizzy"],["comezón","itchy"],["sangrando","bleeding"],["emergencia","emergency"],["cabeza","head"],["boca","mouth"],["mano","hand"],["pies","feet"],["ojos","eyes"],["orejas","ears"],["nariz","nose"],["barriga","tummy"],["espalda","back_ache"],["pecho","chest"],["pierna","leg"],["brazo","arm"],["medicina","medicine"],["doctor","doctor"],["enfermera","nurse"],["limpiar","wipe"],["pañal","diaper"],["accidente","accident"],["lavar","wash"],["terminé","all done"]],
+clothes:[["camisa","shirt"],["pantalones","pants"],["zapatos","shoes"],["calcetines","socks"],["gorra","hat"],["chaqueta","jacket"],["pañal","diaper"]],
+pn_I:[["yo","I"],["quiero","want","yo quiero"],["me gusta","like"],["voy","go","yo voy"],["ayudo","help","yo ayudo"],["como","eat","yo como"],["bebo","drink","yo bebo"],["juego","play","yo juego"],["miro","look","yo miro"],["veo","see","yo veo"],["necesito","need","yo necesito"],["hago","make","yo hago"],["lo hago","do","yo lo hago"],["puedo","can","yo puedo"],["siento","feelings","yo siento"],["tengo","give","yo tengo"],["soy","is","yo soy"]],
+pn_we:[["nosotros","we"],["queremos","want","nosotros queremos"],["nos gusta","like"],["vamos","go","nosotros vamos"],["jugamos","play","nosotros jugamos"],["comemos","eat","nosotros comemos"],["necesitamos","need","nosotros necesitamos"],["podemos","can","nosotros podemos"],["tenemos","give","nosotros tenemos"],["somos","is","nosotros somos"]],
+pn_you:[["tú","you"],["quieres","want","tú quieres"],["te gusta","like"],["vas","go","tú vas"],["juegas","play","tú juegas"],["comes","eat","tú comes"],["miras","look","tú miras"],["necesitas","need","tú necesitas"],["puedes","can","tú puedes"],["tienes","give","tú tienes"],["eres","is","tú eres"]],
+pn_they:[["ellos","they"],["quieren","want","ellos quieren"],["les gusta","like"],["van","go","ellos van"],["juegan","play","ellos juegan"],["comen","eat","ellos comen"],["necesitan","need","ellos necesitan"],["pueden","can","ellos pueden"],["tienen","give","ellos tienen"],["son","is","ellos son"]],
+pn_he:[["él","he"],["quiere","want","él quiere"],["le gusta","like"],["va","go","él va"],["juega","play","él juega"],["come","eat","él come"],["mira","look","él mira"],["necesita","need","él necesita"],["puede","can","él puede"],["tiene","give","él tiene"],["es","is","él es"]],
+pn_she:[["ella","she"],["quiere","want","ella quiere"],["le gusta","like"],["va","go","ella va"],["juega","play","ella juega"],["come","eat","ella come"],["mira","look","ella mira"],["necesita","need","ella necesita"],["puede","can","ella puede"],["tiene","give","ella tiene"],["es","is","ella es"]],
+pn_it:[["eso","it_pn"],["es","is","eso es"],["va","go","eso va"],["se ve","look","eso se ve"],["tiene","give","eso tiene"],["puede","can","eso puede"]]
 };
 // DEFAULT quick phrases - user edits saved to localStorage
-const QP_DEFAULT=["I need help","I need bathroom","I feel sick","I want more","I don't like that","I'm all done","I love you","I'm hungry","I'm thirsty","I want to go"];
+const QP_DEFAULT=["necesito ayuda","necesito el baño","me siento mal","quiero más","eso no me gusta","ya terminé","te quiero","tengo hambre","tengo sed","quiero ir"];
 let quickPhrases=JSON.parse(localStorage.getItem('mybuddy_qp'))||[...QP_DEFAULT];
 const FRM={'it_pn':'symbols/mybuddy/it.svg','back_ache':'symbols/mulberry/back_ache.svg','chest':'symbols/mulberry/chest_male.svg','leg':'symbols/mulberry/leg.svg','arm':'symbols/mulberry/arm.svg','poop':'symbols/mybuddy/poop.svg','pee':'symbols/mybuddy/pee.svg','hurt':'symbols/mybuddy/hurt.svg','dizzy':'symbols/mybuddy/dizzy.svg','diaper':'symbols/mybuddy/diaper.svg','bleeding':'symbols/mybuddy/bleeding.svg','pain':'symbols/mybuddy/pain.svg','nauseous':'symbols/mybuddy/nauseous.svg','itchy':'symbols/mybuddy/itchy.svg','wipe':'symbols/mybuddy/wipe.svg','accident':'symbols/mybuddy/accident.svg','emergency':'symbols/mybuddy/emergency.svg','toilet':'symbols/mulberry/toilet.svg','vomit':'symbols/mulberry/vomit_,_to.svg','medicine':'symbols/mulberry/medicine.svg','nurse':'symbols/mulberry/nurse_1a.svg','doctor':'symbols/mulberry/doctor_1a.svg','itch':'symbols/mulberry/itch.svg','potty':'symbols/mulberry/potty_chair.svg','wheelchair':'symbols/mulberry/wheelchair.svg','inhaler':'symbols/mulberry/inhaler.svg','tablets':'symbols/mulberry/tablets.svg','plaster':'symbols/mulberry/plaster.svg','bladder':'symbols/mulberry/bladder.svg','done':'symbols/mybuddy/done.svg','I':'symbols/mulberry/I.svg','TV':'symbols/mulberry/tv_drama.svg','a little':'symbols/mybuddy/a_little.svg','all done':'symbols/mybuddy/all_done.svg','alone':'symbols/mybuddy/alone.svg','another':'symbols/mulberry/more.svg','bath':'symbols/mulberry/bath.svg','broken':'symbols/mulberry/broken.svg','bug':'symbols/mybuddy/bug.svg','burning':'symbols/mulberry/fire.svg','buy':'symbols/mybuddy/buy.svg','careful':'symbols/mybuddy/careful.svg','choose':'symbols/mybuddy/choose.svg','coat':'symbols/mulberry/coat.svg','comfy':'symbols/mybuddy/comfy.svg','cool':'symbols/mybuddy/cool.svg','couch':'symbols/mybuddy/couch.svg','cry':'symbols/mybuddy/cry.svg','day':'symbols/mulberry/day.svg','easy':'symbols/mybuddy/easy.svg','extra':'symbols/mulberry/extra.svg','fair':'symbols/mybuddy/fair.svg','far':'symbols/mybuddy/far.svg','few':'symbols/mulberry/some.svg','fix':'symbols/mybuddy/fix.svg','follow':'symbols/mybuddy/follow.svg','freezing':'symbols/mybuddy/freezing.svg','game':'symbols/mybuddy/game.svg','goodbye':'symbols/mybuddy/goodbye.svg','great':'symbols/mulberry/great.svg','half':'symbols/mulberry/half.svg','hate':'symbols/mybuddy/hate.svg','have':'symbols/mybuddy/have.svg','heavy':'symbols/mulberry/heavy.svg','hide':'symbols/mybuddy/hide.svg','hill':'symbols/mybuddy/hill.svg','homework':'symbols/mybuddy/homework.svg','house':'symbols/mulberry/house.svg','huge':'symbols/mulberry/big_wheel.svg','ice':'symbols/mulberry/ice_cream.svg','idea':'symbols/mybuddy/idea.svg','kind':'symbols/mybuddy/kind.svg','ladder':'symbols/mybuddy/ladder.svg','learn':'symbols/mybuddy/learn.svg','lid':'symbols/mulberry/lid.svg','listen':'symbols/mybuddy/listen.svg','lock':'symbols/mybuddy/lock.svg','lonely':'symbols/mybuddy/lonely.svg','lose':'symbols/mybuddy/lose.svg','lots':'symbols/mulberry/lots_more.svg','mean':'symbols/mybuddy/mean.svg','mess':'symbols/mybuddy/mess.svg','part':'symbols/mulberry/part.svg','party':'symbols/mulberry/party_popper.svg','piece':'symbols/mybuddy/piece.svg','problem':'symbols/mybuddy/problem.svg','right':'symbols/mulberry/right.svg','room':'symbols/mulberry/room.svg','seem':'symbols/mulberry/look_,_to.svg','shelf':'symbols/mybuddy/shelf.svg','short':'symbols/mulberry/short.svg','silly':'symbols/mulberry/funny_laugh.svg','sleepy':'symbols/mybuddy/sleepy.svg','slide':'symbols/mulberry/slide.svg','small':'symbols/mybuddy/small.svg','smell':'symbols/mybuddy/smell.svg','snow':'symbols/mulberry/snow.svg','snowy':'symbols/mybuddy/snowy.svg','spicy':'symbols/mulberry/spicy.svg','stay':'symbols/mybuddy/stay.svg','stuck':'symbols/mybuddy/stuck.svg','sun':'symbols/mulberry/sun.svg','sunny':'symbols/mybuddy/sunny.svg','table':'symbols/mulberry/table.svg','tall':'symbols/mulberry/tall.svg','there':'symbols/mybuddy/there.svg','thin':'symbols/mulberry/thin.svg','thing':'symbols/mybuddy/thing.svg','tiny':'symbols/mybuddy/tiny.svg','top':'symbols/mulberry/top.svg','tree':'symbols/mulberry/tree.svg','truck':'symbols/mulberry/lorry.svg','try':'symbols/mybuddy/try.svg','upset':'symbols/mulberry/sad_man.svg','warm':'symbols/mulberry/warm_fire.svg','where':'symbols/mulberry/where.svg','wide':'symbols/mybuddy/wide.svg','wind':'symbols/mybuddy/wind.svg','word':'symbols/mybuddy/word.svg','wrong':'symbols/mulberry/wrong_thought.svg','yucky':'symbols/mulberry/yucky.svg','am':'symbols/mulberry/I.svg','around':'symbols/mulberry/around.svg','ask':'symbols/mulberry/ask_,_to.svg','away':'symbols/mulberry/away.svg','back':'symbols/mulberry/back.svg','bag':'symbols/mulberry/school_bag.svg','bed':'symbols/mulberry/bed_time.svg','bite':'symbols/mulberry/bite_,_to.svg','book':'symbols/mulberry/book_end.svg','box':'symbols/mulberry/box_,_to.svg','break':'symbols/mulberry/break_2.svg','bright':'symbols/mulberry/bright.svg','bring':'symbols/mulberry/bring_,_to.svg','brush':'symbols/mulberry/brush_hair_,_to.svg','build':'symbols/mulberry/build_,_to.svg','bus':'symbols/mulberry/bus.svg','busy':'symbols/mulberry/busy.svg','care':'symbols/mulberry/care_assistant_1a.svg','carry':'symbols/mulberry/carry_,_to.svg','chair':'symbols/mulberry/chair.svg','chase':'symbols/mulberry/chase_,_to.svg','clean':'symbols/mulberry/clean_room.svg','climb':'symbols/mulberry/climb_up_,_to.svg','close':'symbols/mulberry/close_,_to.svg','cook':'symbols/mulberry/cook_,_to.svg','corner':'symbols/mulberry/corner_cabinet.svg','dark':'symbols/mulberry/night.svg','dinner':'symbols/mulberry/dinner.svg','dirty':'symbols/mulberry/dirty.svg','dishes':'symbols/mulberry/dishes.svg','draw':'symbols/mulberry/draw_,_to.svg','dream':'symbols/mulberry/dream_,_to.svg','drop':'symbols/mulberry/fall_off_,_to.svg','dry':'symbols/mulberry/dry.svg','empty':'symbols/mulberry/empty.svg','enjoy':'symbols/mulberry/happy_man.svg','face':'symbols/mulberry/face_neutral_3.svg','fast':'symbols/mulberry/fast_2.svg','fill':'symbols/mulberry/fill_2_,_to.svg','find':'symbols/mulberry/find_,_to.svg','finish':'symbols/mulberry/finish.svg','flip':'symbols/mulberry/flip_,_to.svg','floor':'symbols/mulberry/floor.svg','full':'symbols/mulberry/full.svg','fun':'symbols/mulberry/funny_laugh.svg','gentle':'symbols/mulberry/soft.svg','gift':'symbols/mulberry/present.svg','hair':'symbols/mulberry/hair_dye.svg','hands':'symbols/mulberry/hand_bag.svg','hard':'symbols/mulberry/hard.svg','heart':'symbols/mulberry/heart.svg','help_':'symbols/mulberry/help_,_to.svg','here':'symbols/mulberry/this_week.svg','hold':'symbols/mulberry/hold_,_to.svg','hug':'symbols/mulberry/hug_,_to.svg','hungry':'symbols/mulberry/hungry.svg','inside':'symbols/mulberry/inside_out.svg','it':'symbols/mulberry/IT_room.svg','job':'symbols/mulberry/work_,_to.svg','jump':'symbols/mulberry/jump_,_to.svg','keep':'symbols/mulberry/keep_,_to.svg','leave':'symbols/mulberry/leaves.svg','lie':'symbols/mulberry/lie_on_back_,_to.svg','long':'symbols/mulberry/long.svg','loud':'symbols/mulberry/loud.svg','lunch':'symbols/mulberry/lunch_1.svg','mad':'symbols/mulberry/angry_man.svg','messy':'symbols/mulberry/messy_room.svg','mine':'symbols/mulberry/my_computer_icon.svg','miss':'symbols/mulberry/miss_bus_,_to.svg','money':'symbols/mulberry/money.svg','move':'symbols/mulberry/move_,_to.svg','nap':'symbols/mulberry/sleep_male_,_to.svg','near':'symbols/mulberry/near.svg','need':'symbols/mulberry/need_toilet.svg','new':'symbols/mulberry/new_document.svg','nice':'symbols/mulberry/good.svg','night':'symbols/mulberry/night.svg','noise':'symbols/mulberry/loud.svg','now':'symbols/mulberry/now.svg','one':'symbols/mulberry/one.svg','page':'symbols/mulberry/book_end.svg','pet':'symbols/mulberry/pet_comb.svg','pick':'symbols/mulberry/pick_,_to.svg','picture':'symbols/mulberry/picture.svg','pillow':'symbols/mulberry/cushion_2.svg','plate':'symbols/mulberry/plate.svg','point':'symbols/mulberry/point_,_to.svg','pour':'symbols/mulberry/pour_,_to.svg','prefer':'symbols/mulberry/favourite.svg','pretty':'symbols/mulberry/pretty.svg','pull':'symbols/mulberry/pull_,_to.svg','push':'symbols/mulberry/push_,_to.svg','quiet':'symbols/mulberry/quiet.svg','race':'symbols/mulberry/race_athletics.svg','ready':'symbols/mulberry/ready.svg','rest':'symbols/mulberry/rest_,_to.svg','ride':'symbols/mulberry/ride_car_,_to.svg','run':'symbols/mulberry/run_,_to.svg','safe':'symbols/mulberry/safety_pin.svg','scary':'symbols/mulberry/scary.svg','scrub':'symbols/mulberry/scrub_,_to.svg','seat':'symbols/mulberry/seat_belt.svg','see':'symbols/mulberry/see_saw.svg','send':'symbols/mulberry/post-it.svg','share':'symbols/mulberry/share_,_to.svg','show':'symbols/mulberry/show_me_,_to.svg','shut':'symbols/mulberry/close_,_to.svg','sit':'symbols/mulberry/sit_,_to.svg','snack':'symbols/mulberry/biscuits.svg','song':'symbols/mulberry/music.svg','spin':'symbols/mulberry/spin_,_to.svg','stairs':'symbols/mulberry/stairs.svg','stand':'symbols/mulberry/stand_,_to.svg','start':'symbols/mulberry/begin_start.svg','still':'symbols/mulberry/quiet.svg','story':'symbols/mulberry/book_end.svg','take':'symbols/mulberry/take_,_to.svg','taste':'symbols/mulberry/taste_,_to.svg','tell':'symbols/mulberry/talk_1_,_to.svg','thirsty':'symbols/mulberry/thirsty.svg','throw':'symbols/mulberry/throw_away_,_to.svg','tight':'symbols/mulberry/tights.svg','time':'symbols/mulberry/time_out.svg','wait':'symbols/mulberry/wait_,_to.svg','wake':'symbols/mulberry/wake_up_,_to.svg','walk':'symbols/mulberry/walk_,_to.svg','watch':'symbols/mulberry/watch.svg','wet':'symbols/mulberry/wet.svg','win':'symbols/mulberry/winner.svg','window':'symbols/mulberry/window.svg','wish':'symbols/mulberry/want_,_to.svg','work':'symbols/mulberry/work_,_to.svg','write':'symbols/mulberry/write_,_to.svg','yummy':'symbols/mulberry/yummy.svg','eat':'symbols/mulberry/eat_,_to.svg','angry':'symbols/mulberry/angry_man.svg','apple':'symbols/mulberry/apple.svg','baby':'symbols/mulberry/baby.svg','bad':'symbols/mulberry/bad.svg','ball':'symbols/mulberry/ball.svg','banana':'symbols/mulberry/banana.svg','bathroom':'symbols/mulberry/toilet.svg','bear':'symbols/mulberry/bear.svg','bedroom':'symbols/mulberry/single_bed.svg','big':'symbols/mulberry/large.svg','bird':'symbols/mulberry/bird.svg','blanket':'symbols/mulberry/blanket.svg','body':'symbols/mulberry/body_outline.svg','bread':'symbols/mulberry/bread.svg','brother':'symbols/mulberry/brother.svg','bunny':'symbols/mulberry/rabbit.svg','cake':'symbols/mulberry/cake.svg','calm':'symbols/mulberry/relax_,_to.svg','candy':'symbols/mulberry/sweet.svg','car':'symbols/mulberry/car.svg','cat':'symbols/mulberry/cat.svg','cereal':'symbols/mulberry/cereal.svg','cheese':'symbols/mulberry/cheese.svg','chicken':'symbols/mulberry/chicken.svg','come':'symbols/mulberry/come_,_to.svg','confused':'symbols/mulberry/confused_man.svg','cookie':'symbols/mulberry/biscuit_chocolate_chip.svg','cow':'symbols/mulberry/cow.svg','crackers':'symbols/mulberry/cracker.svg','cup':'symbols/mulberry/mug_2.svg','dad':'symbols/mulberry/dad_parent.svg','diaper':'symbols/mulberry/nappy.svg','doctor':'symbols/mulberry/doctor_1a.svg','dog':'symbols/mulberry/dog.svg','door':'symbols/mulberry/door.svg','down':'symbols/mulberry/down.svg','drink':'symbols/mulberry/drink_,_to.svg','duck':'symbols/mulberry/duck.svg','ears':'symbols/mulberry/ear.svg','eggs':'symbols/mulberry/eggs.svg','elephant':'symbols/mulberry/elephant.svg','excited':'symbols/mulberry/excited_man.svg','eyes':'symbols/mulberry/eyes.svg','family':'symbols/mulberry/family.svg','feet':'symbols/mulberry/feet.svg','fish':'symbols/mulberry/fish.svg','food':'symbols/mulberry/food.svg','friend':'symbols/mulberry/group_work.svg','fries':'symbols/mulberry/chips.svg','frog':'symbols/mulberry/frog.svg','funny':'symbols/mulberry/funny_laugh.svg','get':'symbols/mulberry/get_,_to.svg','give':'symbols/mulberry/give_,_to.svg','go':'symbols/mulberry/go_,_to.svg','good':'symbols/mulberry/good.svg','grandma':'symbols/mulberry/grandmother.svg','grandpa':'symbols/mulberry/grandfather.svg','grapes':'symbols/mulberry/grapes.svg','hand':'symbols/mulberry/right_hand.svg','happy':'symbols/mulberry/happy_man.svg','hat':'symbols/mulberry/hat_-_mans.svg','head':'symbols/mulberry/man_-_face.svg','help':'symbols/mulberry/help_,_to.svg','home':'symbols/mulberry/house.svg','horse':'symbols/mulberry/horse.svg','hot':'symbols/mulberry/hot.svg','hot_dog':'symbols/mulberry/hot_dog.svg','hurt':'symbols/mulberry/headache.svg','i':'symbols/mulberry/I.svg','ice_cream':'symbols/mulberry/ice_cream.svg','in':'symbols/mulberry/in.svg','jacket':'symbols/mulberry/jacket.svg','juice':'symbols/mulberry/orange_juice.svg','kitchen':'symbols/mulberry/cooker.svg','light':'symbols/mulberry/lamp.svg','lion':'symbols/mulberry/lion.svg','little':'symbols/mulberry/little.svg','look':'symbols/mulberry/look_,_to.svg','love':'symbols/mulberry/heart.svg','make':'symbols/mulberry/make_,_to.svg','milk':'symbols/mulberry/milk.svg','mom':'symbols/mulberry/mum_parent.svg','monkey':'symbols/mulberry/chimpanzee.svg','more':'symbols/mulberry/more.svg','mouth':'symbols/mulberry/mouth.svg','music':'symbols/mulberry/music.svg','nervous':'symbols/mulberry/worried_man.svg','off':'symbols/mulberry/off.svg','on':'symbols/mulberry/on.svg','open':'symbols/mulberry/open_,_to.svg','out':'symbols/mulberry/out.svg','outside':'symbols/mulberry/outside.svg','pants':'symbols/mulberry/trousers.svg','park':'symbols/mulberry/play_area.svg','phone':'symbols/mulberry/mobile_phone.svg','pig':'symbols/mulberry/piglet.svg','pizza':'symbols/mulberry/pizza.svg','play':'symbols/mulberry/play_,_to.svg','proud':'symbols/mulberry/medal.svg','put':'symbols/mulberry/put_,_to.svg','read':'symbols/mulberry/read_book_,_to.svg','rice':'symbols/mulberry/rice.svg','sad':'symbols/mulberry/sad_man.svg','sandwich':'symbols/mulberry/sandwich.svg','scared':'symbols/mulberry/afraid_man.svg','school':'symbols/mulberry/school.svg','shirt':'symbols/mulberry/shirt.svg','shoes':'symbols/mulberry/shoe_-_mans.svg','sick':'symbols/mulberry/headache.svg','sister':'symbols/mulberry/sister.svg','sleep':'symbols/mulberry/sleep_male_,_to.svg','socks':'symbols/mulberry/socks.svg','some':'symbols/mulberry/some.svg','soup':'symbols/mulberry/soup.svg','spk_word':'symbols/mulberry/talk_2_,_to.svg','stop':'symbols/mybuddy/stop.svg','store':'symbols/mulberry/shop.svg','strawberry':'symbols/mulberry/strawberry.svg','teacher':'symbols/mulberry/teacher_1a.svg','tired':'symbols/mulberry/yawn_,_to.svg','toy':'symbols/mulberry/teddy_bear.svg','tummy':'symbols/mulberry/stomach.svg','turn':'symbols/mulberry/turn_,_to.svg','turtle':'symbols/mulberry/turtle.svg','tv':'symbols/mulberry/flatscreen_tv.svg','up':'symbols/mulberry/up.svg','want':'symbols/mulberry/want_,_to.svg','wash':'symbols/mulberry/wash_hands_,_to.svg','water':'symbols/mulberry/water.svg','what':'symbols/mulberry/what.svg','who':'symbols/mulberry/who.svg','yes':'symbols/mulberry/correct.svg','yogurt':'symbols/mulberry/yogurt.svg'};
+// Spanish labels reuse the English symbol set. This maps a Spanish word to
+// the icon key that actually has a file, so anchor pages are not full of
+// broken images.
+const ES_ICON={'abajo':'down','abrazar':'hug','abrigo':'coat','abrir':'open','acostarse':'lie','adentro':'inside','afuera':'outside','agua':'water','ahora':'now','algo':'some','allí':'there','almohada':'pillow','almuerzo':'lunch','alrededor':'around','amable':'kind','amar':'love','amigo':'friend','apagado':'off','aprender':'learn','apretado':'tight','arreglar':'fix','arriba':'up','asiento':'seat','asustado':'scared','atascado':'stuck','aterrador':'scary','atrás':'back','autobús':'bus','ayudar':'help','barriga':'tummy','baño':'bathroom','beber':'drink','bolsa':'bag','bonito':'pretty','brillante':'bright','bueno':'good','cabeza':'head','caja':'box','caliente':'hot','cama':'bed','caminar':'walk','canción':'song','cansado':'tired','cara':'face','carro':'car','casa':'house','cena':'dinner','cepillar':'brush','cerca':'near','cerrar':'close','cerrar con llave':'lock','cocinar':'cook','comer':'eat','comida':'food','compartir':'share','competir':'race','comprar':'buy','conseguir':'get','construir':'build','corazón':'heart','correr':'run','cosa':'thing','crear':'make','cuento':'story','cuidadoso':'careful','cuidar':'care','cómodo':'comfy','dar':'give','decir':'tell','dentro':'in','descansar':'rest','descanso':'break','desear':'wish','desorden':'mess','desordenado':'messy','despertar':'wake','dibujar':'draw','difícil':'hard','dinero':'money','disfrutar':'enjoy','divertido':'fun','dormir':'sleep','el':'he','elegir':'choose','ella':'she','ellos':'they','empezar':'start','empujar':'push','encendido':'on','encontrar':'find','enfermo':'sick','enojado':'mad','enviar':'send','escaleras':'stairs','escoger':'pick','esconder':'hide','escribir':'write','escuchar':'listen','escuela':'school','eso':'that','esperar':'wait','esquina':'corner','estar':'is','esto':'that','extrañar':'miss','familia':'family','feliz':'happy','foto':'picture','fregar':'scrub','frío':'cool','fuera':'out','fácil':'easy','ganar':'win','girar':'turn','gracioso':'funny','grande':'big','guardar':'keep','gustar':'like','hablar':'tell','hacer':'do','hambriento':'hungry','intentar':'try','ir':'go','jalar':'pull','juego':'game','jugar':'play','jugo':'juice','juguete':'toy','justo':'fair','lanzar':'throw','largo':'long','leche':'milk','leer':'read','lejos':'far','lento':'slow','libro':'book','limpiar':'clean','listo':'ready','llenar':'fill','lleno':'full','llevar':'carry','luz':'light','malo':'bad','mamá':'mom','mano':'hand','manos':'hands','mascota':'pet','merienda':'snack','mirar':'look','mojado':'wet','montar':'ride','morder':'bite','mostrar':'show','mover':'move','más':'more','mío':'mine','música':'music','necesitar':'need','noche':'night','nosotros':'we','nuevo':'new','observar':'watch','ocupado':'busy','odiar':'hate','oscuro':'dark','palabra':'word','papá':'dad','pararse':'stand','parecer':'seem','parque':'park','pastel':'cake','pelo':'hair','pelota':'ball','pensar':'idea','pequeño':'little','perder':'lose','perro':'dog','perseguir':'chase','piso':'floor','plato':'plate','platos':'dishes','poder':'can','preferir':'prefer','preguntar':'ask','probar':'taste','problema':'problem','puerta':'door','página':'page','quedarse':'stay','querer':'want','quieto':'still','regalo':'gift','rico':'yummy','ruido':'noise','ruidoso':'loud','rápido':'fast','salir':'leave','saltar':'jump','secar':'dry','sediento':'thirsty','seguir':'follow','seguro':'safe','sentarse':'sit','sentir':'feelings','servir':'pour','señalar':'point','siesta':'nap','silencioso':'quiet','silla':'chair','sofá':'couch','soltar':'drop','sostener':'hold','soñar':'dream','soñoliento':'sleepy','suave':'gentle','subir':'climb','sucio':'dirty','tarea':'homework','taza':'cup','tener':'have','terminado':'done','terminar':'finish','tiempo':'time','tienda':'store','tomar':'take','trabajar':'work','trabajo':'job','traer':'bring','triste':'sad','tu':'you','tú':'you','uno':'one','vacío':'empty','venir':'come','ventana':'window','ver':'see','voltear':'flip','yo':'I','él':'he','mesa':'table','árbol':'tree','colina':'hill','resbaladilla':'slide','estante':'shelf','tele':'tv','cima':'top','emocionado':'excited','orgulloso':'proud','tonto':'silly','tranquilo':'calm','fiesta':'party','solitario':'lonely','lastimado':'hurt','llorar':'cry','molesto':'upset','adiós':'goodbye','solo':'alone','roto':'broken','insecto':'bug','quemando':'burning','fresco':'cool','día':'day','pocos':'few','congelado':'freezing','genial':'great','mitad':'half','pesado':'heavy','enorme':'huge','hielo':'ice','idea':'idea','tapa':'lid','muchos':'lots','malvado':'mean','parte':'part','pedazo':'piece','por favor':'please','correcto':'right','cuarto':'room','zapatos':'shoes','corto':'short','chico':'small','oler':'smell','nieve':'snow','nevado':'snowy','picante':'spicy','sol':'sun','soleado':'sunny','alto':'tall','delgado':'thin','diminuto':'tiny','camión':'truck','tibio':'warm','ancho':'wide','viento':'wind','incorrecto':'wrong','asqueroso':'yucky','otro':'another','bebé':'baby','extra':'extra','un poco':'a little','un poquito':'a little','todo':'more','nada':'no','este':'that','ese':'that','otra vez':'again','menos':'little','mucho':'lots','escalera':'ladder','allí':'there','mío':'mine','aquí':'here'};
 const SYM={2436:'symbols/mulberry/sleep_male_,_to.svg',2452:'symbols/mulberry/food.svg',2464:'symbols/mulberry/paw.svg',2466:'symbols/mulberry/large.svg',2467:'symbols/mulberry/little.svg',2485:'symbols/mulberry/hot.svg',2486:'symbols/mulberry/snow.svg',2490:'symbols/mulberry/body_outline.svg',2509:'symbols/mulberry/clothes_generic.svg',3204:'symbols/mulberry/wash_hands_,_to.svg',5287:'symbols/mulberry/out.svg',5324:'symbols/mybuddy/please.svg',5335:'symbols/mulberry/put_,_to.svg',5336:'symbols/mybuddy/thank_you.svg',5344:'symbols/mulberry/who.svg',5345:'symbols/mulberry/what.svg',5346:'symbols/mulberry/where.svg',5373:'symbols/mulberry/wait_,_to.svg',5382:'symbols/mybuddy/here.svg',5441:'symbols/mulberry/want_,_to.svg',5468:'symbols/mulberry/down.svg',5469:'symbols/mulberry/up.svg',5508:'symbols/mulberry/more.svg',5526:'symbols/mulberry/mistake_no_wrong.svg',5553:'symbols/mulberry/sit_,_to.svg',5584:'symbols/mulberry/correct.svg',6061:'symbols/mulberry/drink_,_to.svg',6107:'symbols/mulberry/walk_,_to.svg',6108:'symbols/mulberry/run_,_to.svg',6408:'symbols/mulberry/talk_2_,_to.svg',6408:'symbols/mulberry/read_book_,_to.svg',6456:'symbols/mulberry/eat_,_to.svg',6623:'symbols/mybuddy/he.svg',6624:'symbols/mybuddy/she.svg',6625:'symbols/mybuddy/you.svg',6632:'symbols/mulberry/I.svg',6857:'symbols/mulberry/come_,_to.svg',6872:'symbols/mulberry/look_,_to.svg',6872:'symbols/mulberry/look_,_to.svg',6906:'symbols/mybuddy/that.svg',6952:'symbols/mybuddy/again.svg',7040:'symbols/mulberry/good.svg',7041:'symbols/mulberry/bad.svg',7074:'symbols/mulberry/headache.svg',7086:'symbols/mulberry/headache.svg',7093:'symbols/mulberry/family_2.svg',7196:'symbols/mybuddy/stop.svg',7220:'symbols/mybuddy/sorry.svg',8014:'symbols/mulberry/on.svg',8015:'symbols/mulberry/in.svg',8142:'symbols/mulberry/go_,_to.svg',9124:'symbols/mybuddy/can.svg',9261:'symbols/mulberry/hear_,_to.svg',9403:'symbols/mulberry/make_,_to.svg',10044:'symbols/mulberry/give_,_to.svg',12264:'symbols/mybuddy/my.svg',23392:'symbols/mulberry/play_,_to.svg',24825:'symbols/mulberry/open_,_to.svg',24971:'symbols/mulberry/some.svg',28429:'symbols/mulberry/finish.svg',28485:'symbols/mulberry/turn_,_to.svg',31670:'symbols/mybuddy/it.svg',32648:'symbols/mulberry/help_,_to.svg',35533:'symbols/mybuddy/feelings.svg',35533:'symbols/mulberry/happy_man.svg',35534:'symbols/mulberry/angry_man.svg',35535:'symbols/mulberry/sad_man.svg',35536:'symbols/mulberry/afraid_man.svg',35537:'symbols/mulberry/yawn_,_to.svg',36260:'symbols/mybuddy/is.svg',36263:'symbols/mybuddy/we.svg',36264:'symbols/mybuddy/they.svg',36512:'symbols/mybuddy/do.svg',36512:'symbols/mulberry/get_,_to.svg',36858:'symbols/mulberry/point_,_to.svg',37011:'symbols/mulberry/place_setting.svg',37236:'symbols/mulberry/off.svg',37824:'symbols/mulberry/hug_,_to.svg',37826:'symbols/mulberry/thumb.svg',38760:'symbols/mulberry/colour.svg',99998:'symbols/mulberry/computer_keyboard.svg'};
-const IM=p=>SYM[p]||FRM[p]||'symbols/mybuddy/'+p+'.svg';
+// ES_ICON maps Spanish labels to the English-keyed symbol tables. It was
+// already here but IM never used it, so every Spanish word fell through to
+// a mybuddy/<spanish word>.svg that does not exist. Articles are stripped
+// so 'la mesa' still finds 'mesa'.
+const esKey=p=>ES_ICON[p]||ES_ICON[String(p).replace(/^(el|la|los|las|un|una) /,'')];
+const IM=p=>SYM[p]||FRM[p]||SYM[esKey(p)]||FRM[esKey(p)]||
+  (esKey(p)?'symbols/mybuddy/'+esKey(p)+'.svg':'symbols/mybuddy/'+p+'.svg');
 const isMul=s=>s&&s.includes('/mulberry/');
 
 // Every word keeps the SAME grid position everywhere it appears. Opening a
@@ -314,15 +323,7 @@ V.forEach(function(c){ HOME_POS[c.w]=c.p; });
 const SK='mb4';
 const isPhone=window.innerWidth<=600;
 let SP=.9,PITCH=1,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=isPhone;
-const PHONE_CORE=[
-  0, 1, 2, 3, 4, 5,        // I we want like go help
- 12,13,14,15,16,18,        // you they play eat drink come
- 24,25,26,27,28,29,        // he she make get put open
- 36,38,40,41,42,43,        // it need love happy not out
- 48,49,50,54,57,58,        // yes more good all-done no stop
- 60,61,62,64,65,66,        // my please thank-you what where who
- 72,73,74,75,76,77         // CLEAR food people feelings places animals
-];
+const PHONE_CORE=[0,1,24,36,26,28,29,4,2,22,7,39,40,41,27,6,73,74,75];
 const PRONOUNS=[
 {w:'I',i:6632,t:'prow_a',conj:v=>v},
 {w:'we',i:36263,t:'prow_a',conj:v=>v},
@@ -483,14 +484,11 @@ let cols,rows;
 if(isHome&&phoneMode){cols=Math.min(items.length,6);rows=Math.ceil(items.length/cols);
 }else if(isHome){cols=12;rows=7;
 }else if(isAnchor&&phoneMode){
-// On a phone 12 columns is 32px per cell, which is unusable. Home already
-// compacts in simple view, so anchor pages compact the same way: drop the
-// empty slots and lay the words out six across.
 items=items.filter(Boolean);
 cols=Math.min(items.length,6)||1;rows=Math.ceil(items.length/cols)||1;
 }else if(isAnchor){
-// On a tablet or desktop anchor pages keep the full 84-cell grid so a word
-// is always in the same place. Blank slots stay blank; that is the point.
+// Anchor pages keep the full 84-cell grid so a word is always in the same
+// place. Blank slots stay blank; that is the point.
 cols=12;rows=7;
 }else{
 // Pronoun folders, category folders and custom all render as a plain grid
@@ -501,8 +499,6 @@ rows=Math.ceil(items.length/cols)||1;
 }
 
 b.style.gridTemplateColumns=`repeat(${cols},minmax(0,1fr))`;
-// Label and icon are sized from the column count so a word never has to
-// break mid-word to fit. Narrow grids get smaller type, not shredded type.
 {const w=(b.clientWidth||window.innerWidth)/cols;
  b.style.setProperty('--lb',Math.max(7,Math.min(14,Math.round(w*0.20)))+'px');
  b.style.setProperty('--ic',Math.max(12,Math.min(42,Math.round(w*0.42)))+'px');}
@@ -511,8 +507,6 @@ if(isHome){
   b.style.alignContent='stretch';
   b.style.overflowY='hidden';
 }else{
-  // Height was viewport/7 regardless of column width, which on a phone gave
-  // cells three times taller than wide. Cap it against the column width.
   const bw=b.clientWidth||window.innerWidth, bh=b.clientHeight||window.innerHeight;
   const colW=bw/cols;
   const rowH=Math.max(64,Math.min(Math.floor(bh/7),Math.round(colW*1.35)));
@@ -546,7 +540,8 @@ d.className='c '+(displayT||'resp');
 const _wc=String(displayW||'').trim().split(/\s+/).length;
 if(_wc>1) d.classList.add('phrase');
 if(editMode)d.classList.add('edit-mode');
-const imgSrc=displayPhoto?displayPhoto:(s.svgName?(FRM[s.svgName]||'symbols/mybuddy/'+s.svgName+'.svg'):(s.i?IM(s.i):null));
+const _sv=s.svgName?(ES_ICON[s.svgName]||s.svgName):null;
+const imgSrc=displayPhoto?displayPhoto:(_sv?(FRM[_sv]||'symbols/mybuddy/'+_sv+'.svg'):(s.i?IM(s.i):null));
 const isColorCat=(curView==='colors');
 const isGram=s.w&&s.w.startsWith('+');
 if(imgSrc){
@@ -592,123 +587,148 @@ function getHome(){const all=V.sort((a,b)=>a.p-b.p);if(!phoneMode)return all;ret
    cells.
    ================================================================== */
 
-// Verbs English refuses to inflect politely.
-const IRREGULAR = {
-  go:{frames_en:['where do you go','when do we go','why do we go','how do we get there','who is going'], s:'goes',ing:'going',ed:'went'},        do:{s:'does',ing:'doing',ed:'did'},
-  make:{frames_en:['what do you want to make','how do you make it','can you help me make it','look what I made'], s:'makes',ing:'making',ed:'made'},    get:{s:'gets',ing:'getting',ed:'got'},
-  eat:{frames_en:['what do you want to eat','when do we eat','are you hungry','do you want more'], s:'eats',ing:'eating',ed:'ate'},       drink:{s:'drinks',ing:'drinking',ed:'drank'},
-  come:{frames_en:['come here please','who is coming','when are you coming','where do we go'], s:'comes',ing:'coming',ed:'came'},    give:{s:'gives',ing:'giving',ed:'gave'},
-  put:{frames_en:['where does it go','put it here','put it away','can you put it down'], s:'puts',ing:'putting',ed:'put'},      run:{s:'runs',ing:'running',ed:'ran'},
-  sit:{frames_en:['sit with me','where do I sit','can I get up','I want to stand'], s:'sits',ing:'sitting',ed:'sat'},      read:{s:'reads',ing:'reading',ed:'read'},
-  sleep:{frames_en:['I am tired','I want to sleep','it is bedtime','I am not tired'], s:'sleeps',ing:'sleeping',ed:'slept'},feel:{s:'feels',ing:'feeling',ed:'felt'},
-  see:{s:'sees',ing:'seeing',ed:'saw'},       have:{s:'has',ing:'having',ed:'had'},
-  is:{s:'is',ing:'being',ed:'was'},           can:{s:'can',ing:'',ed:'could'},
-  hold:{s:'holds',ing:'holding',ed:'held'},   find:{s:'finds',ing:'finding',ed:'found'},
-  tell:{s:'tells',ing:'telling',ed:'told'},   take:{s:'takes',ing:'taking',ed:'took'},
-  write:{s:'writes',ing:'writing',ed:'wrote'},build:{s:'builds',ing:'building',ed:'built'},
-  hear:{s:'hears',ing:'hearing',ed:'heard'},  say:{s:'says',ing:'saying',ed:'said'},
-  buy:{s:'buys',ing:'buying',ed:'bought'},    bring:{s:'brings',ing:'bringing',ed:'brought'}
+// Spanish conjugation. More regular than English once stem changes and the
+// true irregulars are handled, so most forms are generated.
+const IRREG_ES={
+ ser:{yo:'soy',tu:'eres',el:'es',nosotros:'somos',ellos:'son'},
+ estar:{yo:'estoy',tu:'estás',el:'está',nosotros:'estamos',ellos:'están'},
+ ir:{yo:'voy',tu:'vas',el:'va',nosotros:'vamos',ellos:'van'},
+ tener:{yo:'tengo',tu:'tienes',el:'tiene',nosotros:'tenemos',ellos:'tienen'},
+ hacer:{yo:'hago',tu:'haces',el:'hace',nosotros:'hacemos',ellos:'hacen'},
+ ver:{yo:'veo',tu:'ves',el:'ve',nosotros:'vemos',ellos:'ven'},
+ dar:{yo:'doy',tu:'das',el:'da',nosotros:'damos',ellos:'dan'},
+ poder:{yo:'puedo',tu:'puedes',el:'puede',nosotros:'podemos',ellos:'pueden'},
+ decir:{yo:'digo',tu:'dices',el:'dice',nosotros:'decimos',ellos:'dicen'},
+ venir:{yo:'vengo',tu:'vienes',el:'viene',nosotros:'venimos',ellos:'vienen'},
+ poner:{yo:'pongo',tu:'pones',el:'pone',nosotros:'ponemos',ellos:'ponen'},
+ salir:{yo:'salgo',tu:'sales',el:'sale',nosotros:'salimos',ellos:'salen'},
+ jugar:{yo:'juego',tu:'juegas',el:'juega',nosotros:'jugamos',ellos:'juegan'},
+ gustar:{yo:'me gusta',tu:'te gusta',el:'le gusta',nosotros:'nos gusta',ellos:'les gusta'},
+ conseguir:{yo:'consigo',tu:'consigues',el:'consigue',nosotros:'conseguimos',ellos:'consiguen'},
+ seguir:{yo:'sigo',tu:'sigues',el:'sigue',nosotros:'seguimos',ellos:'siguen'},
+ escoger:{yo:'escojo',tu:'escoges',el:'escoge',nosotros:'escogemos',ellos:'escogen'},
+ elegir:{yo:'elijo',tu:'eliges',el:'elige',nosotros:'elegimos',ellos:'eligen'}
 };
+const STEM_ES={querer:'quier',poder:'pued',dormir:'duerm',pedir:'pid',sentir:'sient',
+ cerrar:'cierr',pensar:'piens',volver:'vuelv',encontrar:'encuentr',contar:'cuent',
+ preferir:'prefier',entender:'entiend',perder:'pierd',despertar:'despiert',
+ empezar:'empiez',probar:'prueb',mostrar:'muestr',servir:'sirv',competir:'compit'};
 
-const DOUBLE = ['stop','put','run','sit','get','swim','hug','clap','dig','win','plan','drop','shop','cut','hit','pat','tap'];
-
-const DOUBLE_ADJ = ['big','hot','sad','mad','fat','thin','wet','red','fun'];
-const IRREG_ADJ = {
-  far:{er:'farther',est:'farthest'}, good:{er:'better',est:'best'},
-  bad:{er:'worse',est:'worst'},      little:{er:'less',est:'least'},
-  much:{er:'more',est:'most'},       many:{er:'more',est:'most'},
-  fun:{er:'more fun',est:'most fun'}
-};
-function syllables(w){
-  const m = w.toLowerCase().replace(/e$/,'').match(/[aeiouy]+/g);
-  return m ? m.length : 1;
+function conjugate(inf){
+  if(IRREG_ES[inf]) return IRREG_ES[inf];
+  const end=inf.slice(-2), root=inf.slice(0,-2), stem=STEM_ES[inf]||root;
+  const E={ar:{yo:'o',tu:'as',el:'a',nosotros:'amos',ellos:'an'},
+           er:{yo:'o',tu:'es',el:'e',nosotros:'emos',ellos:'en'},
+           ir:{yo:'o',tu:'es',el:'e',nosotros:'imos',ellos:'en'}}[end];
+  if(!E) return {yo:inf,tu:inf,el:inf,nosotros:inf,ellos:inf};
+  return {yo:stem+E.yo,tu:stem+E.tu,el:stem+E.el,
+          nosotros:root+E.nosotros,ellos:stem+E.ellos};
 }
-function compare(adj, suffix){
-  if (IRREG_ADJ[adj]) return IRREG_ADJ[adj][suffix];
-  // Two syllables or more takes more/most, not -er/-est. Otherwise you get
-  // "scareder", which is not a word and teaches the wrong pattern.
-  if (syllables(adj) >= 2 && !/y$/.test(adj)) {
-    return (suffix === 'er' ? 'more ' : 'most ') + adj;
+function gerund(inf){
+  const I={ir:'yendo',dormir:'durmiendo',pedir:'pidiendo',decir:'diciendo',
+           venir:'viniendo',poder:'pudiendo',leer:'leyendo',servir:'sirviendo',
+           sentir:'sintiendo',preferir:'prefiriendo',competir:'compitiendo',
+           vestir:'vistiendo',repetir:'repitiendo',morir:'muriendo',
+           seguir:'siguiendo',conseguir:'consiguiendo',elegir:'eligiendo',
+           creer:'creyendo',oir:'oyendo',traer:'trayendo',caer:'cayendo'};
+  if(I[inf]) return I[inf];
+  return inf.slice(-2)==='ar'?inf.slice(0,-2)+'ando':inf.slice(0,-2)+'iendo';
+}
+function participle(inf){
+  const I={hacer:'hecho',ver:'visto',decir:'dicho',poner:'puesto',
+           volver:'vuelto',abrir:'abierto',escribir:'escrito'};
+  if(I[inf]) return I[inf];
+  return inf.slice(-2)==='ar'?inf.slice(0,-2)+'ado':inf.slice(0,-2)+'ido';
+}
+// Spanish compares with más / el más, not with suffixes.
+function agree(adj, opts){
+  // opts: {plural:bool, fem:bool}. Spanish adjectives agree with the subject.
+  // -o/-a alternation, plus -s / -es for plural.
+  let w=adj;
+  if(opts && opts.fem){
+    if(/o$/.test(w)) w=w.slice(0,-1)+'a';
+    else if(/or$|ón$/.test(w)) w=w+'a';
   }
-  if (DOUBLE_ADJ.includes(adj)) return adj + adj.slice(-1) + suffix;
-  if (adj.slice(-1) === 'e')    return adj + suffix.slice(1);       // nice -> nicer
-  if (adj.slice(-1) === 'y')    return adj.slice(0,-1) + 'i' + suffix;
-  return adj + suffix;
+  if(opts && opts.plural){
+    if(/[aeiou]$/.test(w)) w=w+'s';
+    else if(/z$/.test(w))  w=w.slice(0,-1)+'ces';   // feliz -> felices
+    else w=w+'es';
+  }
+  return w;
 }
 
+// Only bueno and malo are genuinely suppletive here. mayor/menor mean older
+// and younger, not bigger and smaller, so size keeps más grande.
+const IRREG_COMP={bueno:{er:'mejor',est:'el mejor'},
+                  malo:{er:'peor',est:'el peor'}};
+// Returns null when the word should not be compared at all, so the caller
+// can leave those cells empty instead of repeating the same word three times.
+function compare(adj,suffix){
+  if(IRREG_COMP[adj]) return IRREG_COMP[adj][suffix];
+  if(/^(más|menos|ahora|mío|encendido|apagado|alrededor|terminado|listo)$/.test(adj)) return null;
+  // hambre, sed and the rest are NOUNS taken with tener. They take mucha,
+  // not más, so the comparative cells are left empty.
+  if(/^(hambre|sed|frío|calor|sueño|miedo|razón|prisa)$/.test(adj)) return null;
+  return (suffix==='er'?'más ':'el más ')+adj;
+}
 function morph(base){
-  if (IRREGULAR[base]) return IRREGULAR[base];
-  const last = base.slice(-1), last2 = base.slice(-2);
-  let s;
-  if (/(s|x|z|ch|sh)$/.test(base)) s = base + 'es';
-  else if (last === 'y' && !'aeiou'.includes(base.slice(-2,-1))) s = base.slice(0,-1) + 'ies';
-  else s = base + 's';
-
-  let stem = base;
-  if (last === 'e' && base.length > 2) stem = base.slice(0,-1);
-  else if (DOUBLE.includes(base)) stem = base + last;
-
-  const ing = stem + 'ing';
-  let ed;
-  if (last === 'e') ed = base + 'd';
-  else if (last === 'y' && !'aeiou'.includes(base.slice(-2,-1))) ed = base.slice(0,-1) + 'ied';
-  else ed = stem + 'ed';
-  return {s:s, ing:ing, ed:ed};
+  const c=conjugate(base);
+  return {s:c.el, ing:gerund(base), ed:participle(base)};
 }
 
 // One row per anchor. This is where vocabulary grows: add related verbs,
 // nouns and describing words and the page fills itself out.
 const ANCHORS = {
-  want:  {frames_en:['what do you want','which one','how many','do you want this'], icon:'want',  related:['need','wish','pick','choose','ask'],
-          nouns:['toy','snack','drink','turn','break'], adjs:['more','big','little']},
-  like:  {frames_en:['what do you like','who do you like','why do you like it','do you like this'], icon:'like',  related:['love','enjoy','hate','prefer','miss'],
-          nouns:['show','song','game','friend','story'], adjs:['good','fun','nice']},
-  go:    {frames_en:['where do you go','when do we go','why do we go','how do we get there','who is going'], questions:['where','when','why','how','who'], icon:'go',    related:['come','leave','stay','walk','run','ride'],
-          nouns:['home','school','store','park','car','bus'], adjs:['fast','slow','far']},
-  help:  {frames_en:['can you help me','who can help','what do you need','help me please'], icon:'help',  related:['show','share','carry','fix','wait'],
-          nouns:['hand','turn','job','problem'], adjs:['hard','easy']},
-  play:  {frames_en:['what do you want to play','who wants to play','where do we play','can I play'], icon:'play',  related:['win','lose','share','build','hide','throw'],
-          nouns:['game','toy','ball','outside','friend','turn'], adjs:['fun','fair','loud']},
-  eat:   {frames_en:['what do you want to eat','when do we eat','are you hungry','do you want more'], icon:'eat',   related:['drink','taste','bite','cook','share'],
-          nouns:['food','snack','lunch','dinner','plate'], adjs:['hungry','full','yummy','hot']},
-  drink: {frames_en:['what do you want to drink','are you thirsty','do you want more','is it too cold'], icon:'drink', related:['eat','pour','taste','fill'],
-          nouns:['water','juice','milk','cup'], adjs:['thirsty','cold','empty']},
-  look:  {frames_en:['what do you see','look at this','where is it','did you see that'], icon:'look',  related:['see','watch','find','show','point'],
-          nouns:['book','picture','window','outside'], adjs:['pretty','dark','bright']},
-  come:  {frames_en:['come here please','who is coming','when are you coming','where do we go'], questions:['where','when','why','who'], icon:'come',  related:['go','bring','follow','wait','stay'],
-          nouns:['here','home','inside','outside'], adjs:['close','near']},
-  give:  {frames_en:['can I have it','who gets it','give it to me','whose turn is it'], icon:'give',  related:['take','share','get','send','show'],
-          nouns:['gift','turn','hug','money'], adjs:['nice','mine']},
-  make:  {frames_en:['what do you want to make','how do you make it','can you help me make it','look what I made'], icon:'make',  related:['build','draw','fix','cook','write'],
-          nouns:['picture','cake','mess','noise','thing'], adjs:['big','messy','new']},
-  get:   {frames_en:['what do you need','can you get it','where is it','I will get it'], icon:'get',   related:['take','find','bring','buy','keep'],
-          nouns:['thing','one','ready','help'], adjs:['ready','new','more']},
-  put:   {frames_en:['where does it go','put it here','put it away','can you put it down'], questions:['where','what','when','who'], icon:'put',   related:['take','move','drop','hold','keep'],
-          nouns:['it','there','away','down','back'], adjs:['careful','gentle']},
-  open:  {frames_en:['can you open it','what is inside','open it please','it will not open'], questions:['what','when','why','how','who'], icon:'open',  related:['close','lock','shut','pull','push'],
-          nouns:['door','box','window','book','bag'], adjs:['open','stuck','tight']},
-  turn:  {frames_en:['turn it on','turn it off','turn the page','which way'], questions:['what','when','why','how','who'], icon:'turn',  related:['move','spin','flip','stop','push'],
-          nouns:['page','light','music','corner'], adjs:['on','off','around']},
-  read:  {frames_en:['read this to me','what does it say','which book','read it again'], icon:'read',  related:['look','write','tell','listen','learn'],
-          nouns:['book','story','word','page'], adjs:['funny','scary','long']},
-  sit:   {frames_en:['sit with me','where do I sit','can I get up','I want to stand'], questions:['where','when','why','who'], icon:'sit',   related:['stand','rest','wait','stay','lie'],
-          nouns:['chair','floor','couch','seat'], adjs:['still','comfy','tired']},
-  walk:  {frames_en:['where are we walking','walk with me','can we go outside','I am tired'], questions:['where','when','why','how','who'], icon:'walk',  related:['run','go','stop','move','climb'],
-          nouns:['outside','park','dog','stairs'], adjs:['slow','far','careful']},
-  run:   {frames_en:['let us run','I want to run','not so fast','wait for me'], questions:['where','when','why','how','who'], icon:'run',   related:['walk','jump','chase','race','stop'],
-          nouns:['outside','race','game'], adjs:['fast','tired','fun']},
-  sleep: {frames_en:['I am tired','I want to sleep','it is bedtime','I am not tired'], questions:['where','when','why','who'], icon:'sleep', related:['rest','wake','dream','lie','nap'],
-          nouns:['bed','pillow','night','nap'], adjs:['tired','sleepy','quiet']},
-  wash:  {frames_en:['wash my hands','I am dirty','I need soap','all clean'], questions:['what','when','why','how','who'], icon:'wash',  related:['clean','dry','brush','scrub'],
-          nouns:['hands','face','hair','dishes'], adjs:['clean','dirty','wet']},
-  love:  {frames_en:['I love you','who do you love','I miss you','give me a hug'], questions:['who','what','why'], icon:'love',  related:['like','hug','miss','care','need'],
-          nouns:['mom','dad','friend','pet','family'], adjs:['happy','safe','kind']},
-  feel:  {frames_en:['how do you feel','what is wrong','are you okay','I feel bad'], questions:['how','what','why','when','who'], icon:'feel',  related:['am','look','seem','get'],
-          nouns:['tummy','head','heart'], adjs:['happy','sad','mad','scared','sick','tired']},
-  need:  {frames_en:['what do you need','I need help','I need it now','do you need this'], icon:'need',  related:['want','have','get','ask'],
-          nouns:['help','break','bathroom','water','time'], adjs:['now','more']},
-  do:    {frames_en:['what are you doing','what should I do','I am done','can I do it'], icon:'do',    related:['make','try','finish','start','work'],
-          nouns:['work','job','homework','thing'], adjs:['done','busy','hard']},
+  querer:  {frames_en:['¿qué quieres?','¿cuál?','¿cuántos?','¿quieres esto?'], icon:'want',  related:['necesitar','desear','elegir','escoger','preguntar'],
+          nouns:['juguete','merienda','beber','girar','descanso'], adjs:['más','grande','pequeño']},
+  gustar:  {frames_en:['¿qué te gusta?','¿quién te gusta?','¿por qué te gusta?','me gusta mucho'], icon:'like',  related:['amar','disfrutar','odiar','preferir','extrañar'],
+          nouns:['mostrar','canción','juego','amigo','cuento'], adjs:['bueno','divertido','amable']},
+  ir:    {frames_en:['¿a dónde vamos?','¿cuándo vamos?','¿por qué vamos?','¿quién viene?'], questions:['where','when','why','how','who'], icon:'go',    related:['venir','salir','quedarse','caminar','correr','montar'],
+          nouns:['casa','escuela','tienda','parque','carro','autobús'], adjs:['rápido','lento','lejos']},
+  ayudar:  {frames_en:['¿me ayudas?','¿quién me ayuda?','¿qué necesitas?','ayúdame por favor'], icon:'help',  related:['mostrar','compartir','llevar','arreglar','esperar'],
+          nouns:['mano','girar','trabajo','problema'], adjs:['difícil','fácil']},
+  jugar:  {frames_en:['¿a qué jugamos?','¿quién quiere jugar?','¿dónde jugamos?','¿puedo jugar?'], icon:'play',  related:['ganar','perder','compartir','construir','esconder','lanzar'],
+          nouns:['juego','juguete','pelota','afuera','amigo','girar'], adjs:['divertido','justo','ruidoso']},
+  comer:   {frames_en:['¿qué quieres comer?','¿cuándo comemos?','¿tienes hambre?','¿quieres más?'], icon:'eat',   related:['beber','probar','morder','cocinar','compartir'],
+          nouns:['comida','merienda','almuerzo','cena','plato'], adjs:['hambriento','lleno','rico','caliente']},
+  beber: {frames_en:['¿qué quieres tomar?','¿tienes sed?','¿quieres más?','está muy frío'], icon:'drink', related:['comer','servir','probar','llenar'],
+          nouns:['agua','jugo','leche','taza'], adjs:['sediento','frío','vacío']},
+  mirar:  {frames_en:['¿qué ves?','mira esto','¿dónde está?','¿viste eso?'], icon:'look',  related:['ver','observar','encontrar','mostrar','señalar'],
+          nouns:['libro','foto','ventana','afuera'], adjs:['bonito','oscuro','brillante']},
+  venir:  {frames_en:['ven aquí por favor','¿quién viene?','¿cuándo vienes?','vamos'], questions:['where','when','why','who'], icon:'come',  related:['ir','traer','seguir','esperar','quedarse'],
+          nouns:['here','casa','adentro','afuera'], adjs:['cerrar','cerca']},
+  dar:  {frames_en:['¿me lo das?','¿de quién es?','dámelo','¿a quién le toca?'], icon:'give',  related:['tomar','compartir','conseguir','enviar','mostrar'],
+          nouns:['regalo','girar','abrazar','dinero'], adjs:['amable','mío']},
+  crear:  {frames_en:['¿qué quieres hacer?','¿cómo se hace?','¿me ayudas?','mira lo que hice'], icon:'make',  related:['construir','dibujar','arreglar','cocinar','escribir'],
+          nouns:['foto','pastel','desorden','ruido','cosa'], adjs:['grande','desordenado','nuevo']},
+  conseguir:   {frames_en:['¿qué necesitas?','¿lo puedes traer?','¿dónde está?','yo lo traigo'], icon:'get',   related:['tomar','encontrar','traer','comprar','guardar'],
+          nouns:['cosa','uno','listo','ayudar'], adjs:['listo','nuevo','más']},
+  poner:   {frames_en:['¿dónde va?','ponlo aquí','guárdalo','¿lo puedes bajar?'], questions:['where','what','when','who'], icon:'put',   related:['tomar','mover','soltar','sostener','guardar'],
+          nouns:['eso','allí','lejos','down','atrás'], adjs:['cuidadoso','suave']},
+  abrir:  {frames_en:['¿lo puedes abrir?','¿qué hay adentro?','ábrelo por favor','no se abre'], questions:['what','when','why','how','who'], icon:'open',  related:['cerrar','cerrar con llave','cerrar','jalar','empujar'],
+          nouns:['puerta','caja','ventana','libro','bolsa'], adjs:['abrir','atascado','apretado']},
+  girar:  {frames_en:['préndelo','apágalo','pasa la página','¿para qué lado?'], questions:['what','when','why','how','who'], icon:'turn',  related:['mover','girar','voltear','stop','empujar'],
+          nouns:['página','luz','música','esquina'], adjs:['encendido','apagado','alrededor']},
+  leer:  {frames_en:['léeme esto','¿qué dice?','¿cuál libro?','léelo otra vez'], icon:'read',  related:['mirar','escribir','decir','escuchar','aprender'],
+          nouns:['libro','cuento','palabra','página'], adjs:['gracioso','aterrador','largo']},
+  sentarse:   {frames_en:['siéntate conmigo','¿dónde me siento?','¿me puedo parar?','quiero pararme'], questions:['where','when','why','who'], icon:'sit',   related:['pararse','descansar','esperar','quedarse','acostarse'],
+          nouns:['silla','piso','sofá','asiento'], adjs:['quieto','cómodo','cansado']},
+  caminar:  {frames_en:['¿a dónde caminamos?','camina conmigo','¿vamos afuera?','estoy cansado'], questions:['where','when','why','how','who'], icon:'walk',  related:['correr','ir','stop','mover','subir'],
+          nouns:['afuera','parque','perro','escaleras'], adjs:['lento','lejos','cuidadoso']},
+  correr:   {frames_en:['vamos a correr','quiero correr','no tan rápido','espérame'], questions:['where','when','why','how','who'], icon:'run',   related:['caminar','saltar','perseguir','competir','stop'],
+          nouns:['afuera','competir','juego'], adjs:['rápido','cansado','divertido']},
+  dormir: {frames_en:['estoy cansado','quiero dormir','es hora de dormir','no tengo sueño'], questions:['where','when','why','who'], icon:'sleep', related:['descansar','despertar','soñar','acostarse','siesta'],
+          nouns:['cama','almohada','noche','siesta'], adjs:['cansado','soñoliento','silencioso']},
+  lavar:  {frames_en:['lávame las manos','estoy sucio','necesito jabón','ya está limpio'], questions:['what','when','why','how','who'], icon:'wash',  related:['limpiar','secar','cepillar','fregar'],
+          nouns:['manos','cara','pelo','platos'], adjs:['limpiar','sucio','mojado']},
+  amar:  {frames_en:['te quiero','¿a quién quieres?','te extraño','dame un abrazo'], questions:['who','what','why'], icon:'love',  related:['gustar','abrazar','extrañar','cuidar','necesitar'],
+          nouns:['mamá','papá','amigo','mascota','familia'], adjs:['feliz','seguro','amable']},
+  sentir:  {frames_en:['¿cómo te sientes?','¿qué te pasa?','¿estás bien?','me siento mal'], questions:['how','what','why','when','who'], icon:'feel',  related:['estar','mirar','parecer','conseguir'],
+          nouns:['barriga','cabeza','corazón'], adjs:['feliz','triste','enojado','asustado','enfermo','cansado']},
+  necesitar:  {frames_en:['¿qué necesitas?','necesito ayuda','lo necesito ahora','¿necesitas esto?'], icon:'need',  related:['querer','tener','conseguir','preguntar'],
+          nouns:['ayudar','descanso','baño','agua','tiempo'], adjs:['ahora','más']},
+  hacer:    {frames_en:['¿qué estás haciendo?','¿qué hago?','ya terminé','¿lo puedo hacer?'], icon:'do',    related:['crear','intentar','terminar','empezar','trabajar'],
+          nouns:['trabajar','trabajo','tarea','cosa'], adjs:['terminado','ocupado','difícil']},
   help_: {icon:'help',  related:[], nouns:[], adjs:[]}
 };
 
@@ -718,114 +738,102 @@ const ANCHORS = {
    describing word page looks the same as every other. */
 const ANCHORS2 = {
   // ---- describing words -------------------------------------------------
-  happy:{type:'adj', people:true, asks:['I feel happy','are you happy?','that makes me happy','I am so happy','happy to see you','I am not happy'], icon:'happy', opposite:'sad',
-         related:['excited','proud','silly','calm','love'],
-         things:['friend','music','party','game','pet']},
-  sad:  {type:'adj', people:true, asks:['I feel sad','are you sad?','that makes me sad','I want to cry','I am so sad','I am not sad'], icon:'sad', opposite:'happy',
-         related:['lonely','hurt','miss','cry','upset'],
-         things:['goodbye','alone','broken','tired']},
-  good: {type:'adj', asks:['I feel good','that is good','good job','that was good','is that good?','it is fine'], icon:'good', opposite:'bad',
-         related:['great','nice','kind','fun','right'],
-         things:['job','idea','day','friend','food']},
-  bad:  {type:'adj', asks:['I feel bad','that is bad','that was bad','too bad','is that bad?','I do not like it'], icon:'bad', opposite:'good',
-         related:['mean','wrong','yucky','scary','sick'],
-         things:['day','dream','idea','smell']},
-  big:  {type:'adj', asks:['that is big','too big','it is so big','is it big?','bigger please','not big enough'], icon:'big', opposite:'little',
-         related:['tall','huge','wide','long','heavy'],
-         things:['dog','truck','house','tree']},
-  little:{type:'adj', asks:['that is little','too little','it is so little','is it little?','a little bit','smaller please'], icon:'little', opposite:'big',
-         related:['small','short','tiny','thin','light'],
-         things:['baby','bug','toy','piece']},
-  hot:  {type:'adj', asks:['I feel hot','that is hot','too hot','is it hot?','it is so hot','let it cool down'], icon:'hot', opposite:'cold',
-         related:['warm','burning','sunny','spicy'],
-         things:['sun','food','drink','bath']},
-  cold: {type:'adj', asks:['I feel cold','that is cold','too cold','is it cold?','it is so cold','I want my coat'], icon:'cold', opposite:'hot',
-         related:['cool','freezing','snowy','wet'],
-         things:['ice','snow','water','wind']},
-  more: {type:'quant', icon:'more', opposite:'all done',
-         degrees:['a little more','some more','a lot more','no more','all'],
-         frames:['I want more','you want more','he wants more','she wants more',
-                 'we want more','they want more','can I have more'],
-         related:['another','again','lots','extra'],
-         things:['food','drink','time','turn','please'],
-         asks:['more please','can I have more?','that is enough']},
-  some: {type:'quant', icon:'some', opposite:'all done',
-         degrees:['a little','a bit','a lot','not any','all'],
-         frames:['I want some','you want some','he wants some','she wants some',
-                 'we want some','they want some','can I have some'],
-         related:['another','again','lots','part'],
-         things:['food','water','time','help'],
-         asks:['some please','can I have some?','that is enough']},
+  feliz:{type:'adj', people:true, asks:['me siento feliz','¿estás feliz?','eso me hace feliz','estoy muy feliz','me alegro','ya no estoy feliz'], icon:'happy', opposite:'triste',
+         related:['emocionado','orgulloso','tonto','tranquilo','amar'],
+         things:['amigo','música','fiesta','juego','mascota']},
+  triste:  {type:'adj', people:true, asks:['me siento triste','¿estás triste?','eso me pone triste','quiero llorar','estoy muy triste','ya no estoy triste'], icon:'sad', opposite:'feliz',
+         related:['solitario','lastimado','extrañar','llorar','molesto'],
+         things:['adiós','solo','roto','enfermo']},
+  bueno: {type:'adj', asks:['eso es bueno','buen trabajo','¿está bueno?','me gusta','está bien','qué bueno'], icon:'good', opposite:'malo',
+         related:['genial','amable','feliz','divertido','correcto'],
+         things:['trabajo','idea','día','amigo','comida']},
+  malo:  {type:'adj', asks:['eso es malo','qué mal','¿está malo?','no me gusta','eso estuvo mal','me siento mal'], icon:'bad', opposite:'bueno',
+         related:['malvado','incorrecto','asqueroso','aterrador','enfermo'],
+         things:['día','soñar','idea','oler']},
+  grande:  {type:'adj', asks:['es muy grande','demasiado grande','¿es grande?','más grande por favor','no es tan grande','qué grande'], icon:'big', opposite:'pequeño',
+         related:['alto','enorme','ancho','largo','pesado'],
+         things:['perro','camión','casa','árbol']},
+  pequeño:{type:'adj', asks:['es muy pequeño','demasiado pequeño','¿es pequeño?','más pequeño por favor','no es tan pequeño','qué pequeño'], icon:'little', opposite:'grande',
+         related:['chico','corto','diminuto','delgado','luz'],
+         things:['bebé','insecto','juguete','pedazo']},
+  caliente:  {type:'adj', asks:['está caliente','demasiado caliente','¿está caliente?','tengo calor','cuidado','déjalo enfriar'], icon:'hot', opposite:'frío',
+         related:['tibio','quemando','soleado','picante'],
+         things:['sol','comida','beber','baño']},
+  frío: {type:'adj', asks:['está frío','demasiado frío','¿está frío?','tengo frío','quiero mi abrigo','está muy frío'], icon:'cold', opposite:'caliente',
+         related:['fresco','congelado','nevado','mojado'],
+         things:['hielo','nieve','agua','viento']},
+  más:  {type:'quant', icon:'more', opposite:'menos',
+         degrees:['un poco más','algo más','mucho más','no más'],
+         frames:['quiero más','quieres más','él quiere más','ella quiere más',
+                 'nosotros queremos más','ellos quieren más','¿puedo tener más?'],
+         related:['otro','otra vez','muchos','extra'],
+         things:['comida','beber','tiempo','girar','por favor'],
+         asks:['más por favor','¿me das más?','ya es suficiente']},
+  algo: {type:'quant', icon:'some', opposite:'todo',
+         degrees:['un poco','un poquito','mucho','nada'],
+         frames:['quiero algo','quieres algo','él quiere algo','ella quiere algo',
+                 'nosotros queremos algo','ellos quieren algo','¿puedo tener algo?'],
+         related:['otro','otra vez','muchos','parte'],
+         things:['comida','agua','tiempo','ayudar'],
+         asks:['algo por favor','¿me das algo?','ya es suficiente']},
 
   // ---- place words ------------------------------------------------------
-  on:   {type:'prep', icon:'on',   opposite:'off',
-         places:['table','chair','bed','floor','top']},
-  off:  {type:'prep', icon:'off',  opposite:'on',
-         places:['light','TV','shoes','coat','lid']},
-  in:   {type:'prep', icon:'in',   opposite:'out',
-         places:['box','car','house','bag','room']},
-  out:  {type:'prep', icon:'out',  opposite:'in',
-         places:['outside','car','door','box']},
-  up:   {type:'prep', icon:'up',   opposite:'down',
-         places:['stairs','ladder','tree','hill','slide']},
-  down: {type:'prep', icon:'down', opposite:'up',
-         places:['stairs','slide','hill','ladder']},
-  here: {type:'prep', icon:'here', opposite:'there',
-         places:['table','box','room','chair']},
-  that: {type:'demo', icon:'that', opposite:'this',
-         degrees:['that one','this one','not that','all of it'],
-         frames:['I want that','I like that','give me that','look at that',
-                 'I see that','do that','stop that'],
-         related:['here','there','mine','thing'],
-         things:['table','box','shelf','chair'],
-         asks:['what is that?','can I have that?','not that one',
-               'I do not like that']},
+  encendido: {type:'helper', icon:'on',
+         frames:['está encendido','ponlo encendido','enciéndelo','¿está encendido?',
+                 'déjalo encendido','ya está encendido']},
+  apagado: {type:'helper', icon:'off',
+         frames:['está apagado','ponlo apagado','apágalo','¿está apagado?',
+                 'déjalo apagado','ya está apagado']},
+  dentro:   {type:'prep', icon:'in',   opposite:'fuera',
+         places:['caja','carro','casa','bolsa','cuarto']},
+  fuera:  {type:'prep', icon:'out',  opposite:'dentro',
+         places:['la afuera','la carro','la puerta','la caja']},
+  arriba:   {type:'prep', icon:'up',   opposite:'abajo',
+         places:['las escaleras','la escalera','el árbol','la colina','la resbaladilla']},
+  abajo: {type:'prep', icon:'down', opposite:'arriba',
+         places:['la escaleras','la resbaladilla','la colina','la escalera']},
+  aquí: {type:'helper', icon:'here',
+         frames:['ven aquí','ponlo aquí','está aquí','quédate aquí',
+                 'no está aquí','aquí estoy']},
+  eso:  {type:'demo', icon:'that', opposite:'este',
+         degrees:['ese','no eso','todo'],
+         frames:['quiero eso','me gusta eso','dame eso','mira eso','veo eso',
+                 'haz eso','para eso'],
+         related:['aquí','allí','mío','cosa'],
+         things:['mesa','caja','estante','silla'],
+         asks:['¿qué es eso?','¿me das eso?','ese no','no me gusta eso']},
 
   // ---- question words ---------------------------------------------------
-  what: {type:'question', icon:'what',
-         frames:['what is that','what do you want','what happened','what is this',
-                 'what time','what color','what next','what for']},
-  where:{type:'question', icon:'where',
-         frames:['where is it','where are you','where do we go','where is mom',
-                 'where is dad','where did it go','where do you hurt']},
-  who:  {type:'question', icon:'who',
-         frames:['who is that','who did it','who is coming','who can help',
-                 'who is next','who wants it']},
-  when: {type:'question', icon:'when',
-         frames:['when is it','when do we go','when will you come','when is lunch',
-                 'when can I','when is bedtime']},
-  why:  {type:'question', icon:'why',
-         frames:['why not','why did you','why is that','why me','why now',
-                 'why are you sad']},
-  how:  {type:'question', icon:'how',
-         frames:['how are you','how do I','how many','how much','how long',
-                 'how does it work']},
+  qué: {frames:["¿qué es eso?","¿qué quieres?","¿qué pasó?","¿qué es esto?","¿qué hora es?","¿de qué color?","¿qué sigue?","¿para qué?"], type:'question', icon:'what',
+         },
+  dónde:{frames:["¿dónde está?","¿dónde estás?","¿a dónde vamos?","¿dónde está mamá?","¿dónde está papá?","¿a dónde se fue?","¿dónde te duele?"], type:'question', icon:'where',
+         },
+  quién:  {frames:["¿quién es?","¿quién fue?","¿quién viene?","¿quién me ayuda?","¿a quién le toca?","¿quién lo quiere?"], type:'question', icon:'who',
+         },
+  cuándo: {frames:["¿cuándo es?","¿cuándo nos vamos?","¿cuándo vienes?","¿cuándo comemos?","¿cuándo puedo?","¿cuándo dormimos?"], type:'question', icon:'when',
+         },
+  'por qué':  {frames:["¿por qué no?","¿por qué lo hiciste?","¿por qué eso?","¿por qué yo?","¿por qué ahora?","¿por qué estás triste?"], type:'question', icon:'why',
+         },
+  cómo:  {frames:["¿cómo estás?","¿cómo lo hago?","¿cuántos?","¿cuánto?","¿cuánto falta?","¿cómo funciona?"], type:'question', icon:'how',
+         },
 
   // ---- body and health --------------------------------------------------
   // Urgent by nature. Toileting and pain must be fast to reach, and the
   // frames are whole sentences so nothing has to be assembled under stress.
-  body: {type:'helper', icon:'body',
-         frames:['I need the bathroom','I need to poop','I need to pee',
-                 'I had an accident','it hurts','I am in pain',
-                 'I feel sick','I am going to throw up','I feel dizzy',
-                 'I am bleeding','I need medicine','I need a nurse']},
+  cuerpo: {frames:["necesito ir al baño","tengo que hacer popó","tengo que hacer pipí","tuve un accidente","me duele","tengo dolor","me siento mal","voy a vomitar","estoy mareado","estoy sangrando","necesito medicina","necesito una enfermera"], type:'helper', icon:'body',
+         },
 
   // ---- helper words -----------------------------------------------------
-  can:  {type:'helper', icon:'can',
-         frames:['can I','can you','can we','I can','I can not','you can',
-                 'can I have','can I go','can I play','can I try']},
-  is:   {type:'helper', icon:'is',
-         frames:['I am','you are','he is','she is','it is','we are','they are',
-                 'is it','are you','am I']},
-  not:  {type:'helper', icon:'not',
-         frames:['not now','not me','not that','I do not','do not','no more',
-                 'not yet','I am not','not fair','not this']},
-  again:{type:'helper', icon:'again',
-         frames:['do it again','one more time','play again','read again',
-                 'say it again','not again','again please']},
-  my:   {type:'helper', icon:'my',
-         frames:['my turn','my name','mine','my mom','my dad','my house',
-                 'my toy','my friend','my room','my bag']}
+  poder:  {frames:["¿puedo?","¿puedes?","¿podemos?","yo puedo","no puedo","tú puedes","¿me lo das?","¿puedo ir?","¿puedo jugar?","¿puedo intentar?"], type:'helper', icon:'can',
+         },
+  ser:   {frames:["yo soy","tú eres","él es","ella es","esto es","nosotros somos","ellos son","¿eres tú?","¿es esto?","yo estoy"], type:'helper', icon:'is',
+         },
+  no:  {frames:["ahora no","yo no","eso no","no quiero","no lo hagas","ya no","todavía no","no soy yo","no es justo","esto no"], type:'helper', icon:'not',
+         },
+  'otra vez':{frames:["hazlo otra vez","una vez más","juguemos otra vez","léelo otra vez","dilo otra vez","otra vez no","otra vez por favor"], type:'helper', icon:'otra vez',
+         },
+  mi:   {frames:["me toca a mí","mi nombre","es mío","mi mamá","mi papá","mi casa","mi juguete","mi amigo","mi cuarto","mi mochila"], type:'helper', icon:'my',
+         }
 };
 
 function anchorType(w){
@@ -846,29 +854,45 @@ function buildTypedItems(word){
 
   if (a.type === 'adj') {
     // Row 1: the word and its degrees, same shape on every describing page.
-    put(1, compare(word,'er'), a.icon,'prow_a');
-    put(2, compare(word,'est'),a.icon,'prow_a');
-    put(3, 'very '+word,       a.icon,'prow_a');
-    put(4, 'not '+word,        'not', 'prow_a');
+    const c1=compare(word,'er'), c2=compare(word,'est');
+    if(c1) put(1, c1, a.icon,'prow_a');
+    if(c2) put(2, c2, a.icon,'prow_a');
+    put(3, 'muy '+word,       a.icon,'prow_a');
+    put(4, 'no '+word,        'not', 'prow_a');
     if(a.opposite) put(5, a.opposite, a.opposite, 'prow_a');
     // Row 2: who is it. Fixed pronoun order, as everywhere else.
-    // "it is happy" is not something anyone says. Adjectives that only
-    // describe people skip the impersonal frame.
-    var subj=['I am','you are','he is','she is','we are','they are'];
-    if(!a.people) subj.push('it is');
-    subj.forEach(function(s,i){ put(12+i, s+' '+word, a.icon, 'prow_b'); });
+    const TENER=/^(hambre|sed|frío|calor|sueño|miedo|razón|prisa)$/.test(word);
+    // SER for lasting qualities (size, character), ESTAR for states you are
+    // temporarily in (mood, condition). "yo estoy grande" is wrong.
+    const SER=/^(grande|pequeño|bueno|malo|amable|divertido|bonito|gracioso|largo|rápido|lento|difícil|fácil|justo|nuevo|viejo|alto|bajo|fuerte)$/.test(word);
+    const SUBJ = TENER
+      ? [['yo tengo',{}],['tú tienes',{}],['él tiene',{}],['ella tiene',{}],
+         ['nosotros tenemos',{}],['ellos tienen',{}],['esto tiene',{}]]
+      : SER
+      ? [['yo soy',{}],['tú eres',{}],['él es',{}],['ella es',{fem:true}],
+         ['nosotros somos',{plural:true}],['ellos son',{plural:true}],['esto es',{}]]
+      : [['yo estoy',{}],['tú estás',{}],['él está',{}],['ella está',{fem:true}],
+         ['nosotros estamos',{plural:true}],['ellos están',{plural:true}],
+         ['esto está',{}]];
+    // "esto está feliz" is not something anyone says. Adjectives that only
+    // describe people skip the impersonal subject.
+    SUBJ.filter(function(s){ return !(a.people && /^esto /.test(s[0])); })
+        .forEach(function(p,i){
+      put(12+i, p[0]+' '+(TENER?word:agree(word,p[1])), a.icon, 'prow_b'); });
+
     (a.related||[]).forEach((r,i)=>put(24+i, r, r, 'prow_c'));
     (a.things||[]).forEach((n,i)=>put(36+i, n, n, 'prow_d'));
-    // Per word, because one template cannot make natural English for every
-    // adjective. "why happy?" and "a little good" are what that produces.
-    (a.asks||['I feel '+word,'are you '+word+'?','too '+word,'so '+word]).
-      forEach((q,i)=>put(48+i, q, a.icon,'resp'));
+    // Per word. One template cannot make natural Spanish for every adjective,
+    // and "¿por qué feliz?" is what that produces.
+    (a.asks||[TENER?('tengo mucha '+word):('me siento '+word),
+              TENER?('¿tienes '+word+'?'):(SER?('¿eres '+word+'?'):('¿estás '+word+'?')),
+              TENER?('mucha '+word):('demasiado '+word),
+              'tan '+word]).forEach((q,i)=>put(48+i, q, a.icon,'resp'));
   }
   else if (a.type === 'quant' || a.type === 'demo') {
-    // Quantity and pointing words are not gradable. "morer", "very more"
-    // and "I am more"
-    // are not English, so this type never touches compare() or the "I am X"
-    // frames that the adjective template uses.
+    // Not gradable. "máses", "el más algo" and "ella está alga" are not
+    // Spanish, so this type never calls compare() and never uses the
+    // "yo estoy X" frames.
     (a.degrees||[]).forEach((d,i)=>put(1+i, d, a.icon,'prow_a'));
     if(a.opposite) put(6, a.opposite, null, 'prow_a');
     (a.frames||[]).forEach((f,i)=>put(12+i, f, a.icon,'prow_b'));
@@ -877,13 +901,11 @@ function buildTypedItems(word){
     (a.asks||[]).forEach((q,i)=>put(48+i, q, a.icon,'resp'));
   }
   else if (a.type === 'prep') {
-    put(1,'not '+word, 'not','prow_a');
+    put(1,'no '+word, 'not','prow_a');
     if(a.opposite) put(5, a.opposite, a.opposite,'prow_a');
-    // Every frame has to be a real sentence with any preposition dropped in:
-    // "put it up", "get up", "sit up". "you on" and "we on" are not English.
-    ['put it','it is','get','go','climb','sit','look'].forEach(function(p,i){
+    ['ponlo','está','ve','mira','quiero ir','vamos','déjalo'].forEach(function(p,i){
       put(12+i, p+' '+word, a.icon,'prow_b'); });
-    (a.places||[]).forEach((pl,i)=>put(24+i, word+' the '+pl, pl,'prow_c'));
+    (a.places||[]).forEach((pl,i)=>put(24+i, word+' '+(/^el /.test(pl)?'del '+pl.slice(3):'de '+pl), pl,'prow_c'));
     (a.places||[]).forEach((pl,i)=>put(36+i, pl, pl,'prow_d'));
   }
   else if (a.type === 'question' || a.type === 'helper') {
@@ -912,16 +934,18 @@ function buildAnchorItems(word){
   put(1,  m.s,         a.icon, 'prow_a');
   put(2,  m.ing,       a.icon, 'prow_a');
   put(3,  m.ed,        a.icon, 'prow_a');
-  put(4,  'to '+word,  a.icon, 'prow_a');
-  put(6,  "don't "+word, 'not', 'resp');
-  put(7,  'can '+word,   'can', 'resp');
-  put(8,  'will '+word,  a.icon, 'resp');
+  put(4,  word+', por favor',  'please', 'prow_a');
+  put(6,  'no '+conjugate(word).yo, 'not', 'resp');
+  if(!/^(gustar|encantar|doler|importar)$/.test(word)) put(7, 'puedo '+word, 'can', 'resp');
+  if(!/^(gustar|encantar|doler|importar)$/.test(word)) put(8, 'voy a '+word, a.icon, 'resp');
 
   // Row 2: pronoun + this verb. Always here, always this order.
-  const PN = [['I',''],['you',''],['we',''],['they',''],['he','s'],['she','s'],['it','s']];
+  const PN = [['yo','yo'],['tú','tu'],['nosotros','nosotros'],['ellos','ellos'],['él','el'],['ella','el'],['esto','el']];
+  const C = conjugate(word);
+  const BACKWARDS = /^(gustar|encantar|doler|importar)$/.test(word);
   PN.forEach(function(p,i){
-    const form = p[1] === 's' ? m.s : word;
-    put(12+i, p[0]+' '+form, p[0], 'prow_b');
+    const form = C[p[1]] || word;
+    put(12+i, BACKWARDS ? form : p[0]+' '+form, p[0], 'prow_b');
   });
 
   // Row 3: related verbs.
@@ -935,8 +959,9 @@ function buildAnchorItems(word){
     const base = 48 + i*3;
     put(base, adj, adj, 'resp');
     if (!/^(more|now|mine|on|off|around|done|careful|gentle|comfy|hungry|thirsty|empty)$/.test(adj)) {
-      put(base+1, compare(adj,'er'),  adj, 'resp');
-      put(base+2, compare(adj,'est'), adj, 'resp');
+      const cer=compare(adj,'er'), cest=compare(adj,'est');
+      if(cer)  put(base+1, cer,  adj, 'resp');
+      if(cest) put(base+2, cest, adj, 'resp');
     }
   });
 
@@ -946,11 +971,11 @@ function buildAnchorItems(word){
   // English. Where an anchor has no natural frames, the row is left empty.
   const FRAMES = a.frames_en || [];
   FRAMES.slice(0,6).forEach(function(f,i){ put(60+i, f, a.icon, 'social'); });
-  put(67, 'yes',      'yes',      'social');
-  put(68, 'no',       'no',       'social');
-  put(69, 'more',     'more',     'social');
-  put(70, 'stop',     'stop',     'social');
-  put(71, 'all done', 'all done', 'social');
+  put(67, 'sí',        'yes',      'social');
+  put(68, 'no',        'no',       'social');
+  put(69, 'más',       'more',     'social');
+  put(70, 'para',      'stop',     'social');
+  put(71, 'terminé',   'all done', 'social');
   return out;
 }
 
@@ -1157,7 +1182,7 @@ function updDots(){document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=
 // === SETTINGS ===
 function openSet(){document.getElementById('setOv').classList.add('open');populateVoices();document.getElementById('spR').value=SP;document.getElementById('mmSel').value=MM?'1':'0';document.getElementById('modelBanner').style.display=MM?'block':'none';loadInfo();renderStats();renderCWList()}
 function closeOv(id){document.getElementById(id).classList.remove('open')}
-const APP_LANG='en-US';
+const APP_LANG='es-ES';
 
 function voiceQuality(v){
   // Higher is better. iOS and Android both ship a wide range, from very good
@@ -1330,21 +1355,10 @@ init();
 </div>
 
 <script>
-/* Register the service worker so the board keeps working with no signal.
-   A child's voice must not depend on having bars. */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('sw.js', { scope: './' }).then(function (reg) {
-      var badge = document.getElementById('offlineReady');
-      function ready() { if (badge) { badge.textContent = 'Saved for offline use';
-                                      badge.style.display = 'block';
-                                      setTimeout(function(){ badge.style.display='none'; }, 4000); } }
-      if (navigator.serviceWorker.controller) ready();
-      reg.addEventListener('updatefound', function () {
-        var w = reg.installing;
-        if (w) w.addEventListener('statechange', function () { if (w.state === 'activated') ready(); });
-      });
-    }).catch(function (e) { console.warn('[sw] registration failed', e); });
+    navigator.serviceWorker.register('sw.js', { scope: './' }).catch(function (e) {
+      console.warn('[sw] registration failed', e); });
   });
 }
 </script>
