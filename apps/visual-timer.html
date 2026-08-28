@@ -106,6 +106,21 @@
     min-width: 0; background: var(--surface); border-radius: var(--radius);
     border: 2px solid var(--surface2); overflow: hidden; display: flex; flex-direction: column;
   }
+  /* Text scales with column count via --cw-scale, set by fitClassroomGrid. */
+  .classroom-container { --cw-scale: 1; }
+  .classroom-task .ct-time { font-size: calc(1.8rem * var(--cw-scale)); }
+  .classroom-header { font-size: calc(1rem * var(--cw-scale)); }
+  .classroom-header .student-emoji { font-size: calc(1.6rem * var(--cw-scale)); }
+  .classroom-task .ct-name { font-size: calc(0.9rem * var(--cw-scale)); }
+  .classroom-task .ct-controls button { font-size: calc(0.8rem * var(--cw-scale)); }
+
+  /* Five or more columns: tighten everything so ten students still fit. */
+  .classroom-container.dense { gap: 8px; padding: 8px; }
+  .classroom-container.dense .classroom-tasks { padding: 6px; gap: 6px; }
+  .classroom-container.dense .classroom-task { padding: 6px; }
+  .classroom-container.dense .classroom-header { padding: 6px 8px; }
+  .classroom-container.dense .ct-controls button { padding: 4px 6px; min-height: 30px; }
+
   /* Narrow phones: two students side by side beats one giant column. */
   @media (max-width: 560px) {
     .classroom-container { grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 10px; padding: 10px; }
@@ -1728,6 +1743,53 @@ function switchView(v){
 function switchLayout(l){currentLayout=l;const g=document.getElementById('taskGrid');g.classList.remove('layout-grid','layout-vertical','layout-horizontal');g.classList.add('layout-'+l);document.querySelectorAll('.layout-btn').forEach(b=>b.classList.toggle('active',b.dataset.layout===l));save();}
 
 // ===== CLASSROOM VIEW =====
+
+let _fitTimer=null;
+window.addEventListener('resize', function(){
+  if(currentView!=='classroom') return;
+  clearTimeout(_fitTimer);
+  _fitTimer=setTimeout(function(){
+    const vis=(profiles||[]).filter(p=>!((settings.classroomHidden)||[]).includes(p.id));
+    fitClassroomGrid(vis.length);
+  },120);
+});
+
+function fitClassroomGrid(n){
+  // Pick the column count that makes every student visible at once, keeping
+  // cells as close to a comfortable shape as possible. Tries every layout
+  // from 1 column up and takes the one with the largest resulting cell area
+  // that still fits N students in the visible area.
+  const el = document.getElementById('classroomContainer');
+  if(!el || !n) return;
+  const styles = getComputedStyle(el);
+  const padX = parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight);
+  const gap  = parseFloat(styles.columnGap) || 12;
+  const availW = Math.max(200, el.clientWidth - padX);
+  const availH = Math.max(200, window.innerHeight - el.getBoundingClientRect().top - 16);
+
+  const MIN_W = 120, MIN_H = 130;
+  let best = {cols:1, score:-1};
+  for(let cols=1; cols<=n; cols++){
+    const rows = Math.ceil(n/cols);
+    const w = (availW - gap*(cols-1)) / cols;
+    const h = (availH - gap*(rows-1)) / rows;
+    if(w < MIN_W || h < MIN_H) continue;
+    // Prefer bigger cells, and mildly prefer shapes that are not extreme.
+    const ratio = Math.min(w,h) / Math.max(w,h);
+    const score = w * h * (0.6 + 0.4*ratio);
+    if(score > best.score) best = {cols, score};
+  }
+  // If nothing fits the minimums, fall back to whatever fits the width and
+  // let the container scroll rather than squashing cells to nothing.
+  if(best.score < 0) best.cols = Math.max(1, Math.floor((availW+gap)/(MIN_W+gap)));
+
+  el.style.gridTemplateColumns = `repeat(${best.cols}, minmax(0, 1fr))`;
+  // Scale text with the number of columns so ten students stay readable.
+  const scale = best.cols >= 6 ? 0.72 : best.cols >= 4 ? 0.85 : 1;
+  el.style.setProperty('--cw-scale', scale);
+  el.classList.toggle('dense', best.cols >= 5);
+}
+
 function renderClassroom() {
   const container = document.getElementById('classroomContainer');
   const allTasks = JSON.parse(localStorage.getItem('tb_allTasks') || '{}');
@@ -1824,6 +1886,8 @@ function renderClassroom() {
       <button class="cols-arrow" onclick="scrollClassroomColumns(1)">›</button>
     </div>
   </div>`;
+  // Size the grid to the number of students so nobody is off screen.
+  fitClassroomGrid(visibleProfiles.length);
 }
 
 function toggleClassroomProfile(profileId) {
