@@ -6,8 +6,6 @@
 <title>TaskBuddy - Visual Task Timer</title>
 <meta name="description" content="Visual task timer designed for autism & special needs. Colorful timers, photo reveals, rewards, and accessibility features.">
 <meta name="theme-color" content="#1a1a2e">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #1a1a2e;
@@ -29,7 +27,17 @@
     --text: #000000;
     --text-dim: #444444;
   }
-  :root.dyslexic { --font-main: 'OpenDyslexic', sans-serif; }
+  :root.dyslexic {
+    /* No webfont: this app must work with no network. OpenDyslexic is used if
+       the family is installed on the device, otherwise it falls back through
+       faces that are genuinely present and are reasonable for dyslexic
+       readers: Comic Sans has real evidence behind it, and Verdana and Tahoma
+       have wide letter spacing and distinct shapes. */
+    --font-main: 'OpenDyslexic', 'OpenDyslexic3', 'Comic Sans MS', 'Chalkboard SE',
+                 Verdana, Tahoma, sans-serif;
+    letter-spacing: 0.02em;
+    word-spacing: 0.08em;
+  }
 
   /* Theme presets */
   :root.theme-ocean { --bg: #0a1628; --surface: #0d2137; --surface2: #163a5c; --accent: #00b4d8; --success: #06d6a0; --info: #48cae4; }
