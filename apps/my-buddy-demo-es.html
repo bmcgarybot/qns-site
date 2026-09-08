@@ -9,6 +9,20 @@
 <link rel="apple-touch-icon" href="icons/mybuddy-180.png">
 <title>My Buddy</title>
 <style>
+/* iPads that stop at iOS 12 run Safari 12, and Chrome on iOS is the same
+   engine with a different icon. Anything below is a fallback for that. */
+@supports not (width: clamp(1px, 1vw, 2px)) {
+  .c img { width: 28px !important; height: 28px !important; }
+  .c .lb { font-size: 12px !important; max-height: none !important; }
+  .c.phrase .lb { font-size: 11px !important; }
+  #board { grid-auto-rows: minmax(52px, auto); }
+}
+@supports not (gap: 1px) {
+  #infoScroll .ib { margin-right: 2px; }
+  #langPick a { margin-right: 3px; }
+  .sb { margin-right: 4px; }
+}
+
 /* Repeated taps on the PIN pad triggered double-tap-to-zoom. Nothing on a
    board like this should ever zoom on tap. */
 button,.c,.ib,#board,.numpad,.numpad *,.pin-ov{touch-action:manipulation}
@@ -50,8 +64,12 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .c:active{opacity:.8;transform:scale(.95)}
 .c.pulse{animation:pulse .3s}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(42,157,143,.7)}70%{box-shadow:0 0 0 8px rgba(42,157,143,0)}100%{box-shadow:0 0 0 0 rgba(42,157,143,0)}}
-.c img{width:clamp(22px,5.5vw,42px);height:clamp(22px,5.5vw,42px);object-fit:contain;flex-shrink:1}.c.phrase img{width:calc(var(--ic,22px)*0.8);height:calc(var(--ic,22px)*0.8)}
-.c .lb{font-size:clamp(9px,2.2vw,13px);font-weight:800;text-align:center;line-height:1.15;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);overflow-wrap:normal;word-break:keep-all;hyphens:none;flex-shrink:0;max-width:100%}.c.phrase .lb{font-size:calc(var(--lb,13px)*0.88);line-height:1.1}
+.c img{width:30px;height:30px;object-fit:contain;flex-shrink:1}
+.c img{width:clamp(22px,5.5vw,42px);height:clamp(22px,5.5vw,42px)}.c.phrase img{width:24px;height:24px}
+.c.phrase img{width:calc(var(--ic,22px)*0.8);height:calc(var(--ic,22px)*0.8)}
+.c .lb{font-size:12px}
+.c .lb{font-size:clamp(9px,2.2vw,13px);font-weight:800;text-align:center;line-height:1.15;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);overflow-wrap:normal;word-break:keep-all;hyphens:none;flex-shrink:0;max-width:100%}.c.phrase .lb{font-size:11px;line-height:1.1}
+.c.phrase .lb{font-size:calc(var(--lb,13px)*0.88)}
 /* Wide, short cells: icon beside the label rather than above it, so the width
    is actually used instead of wasted. */
 #board.wide .c{flex-direction:row;gap:5px;justify-content:center;padding:2px 6px}
@@ -60,7 +78,9 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 @media(max-width:500px),(max-height:500px) and (orientation:landscape){
 #board{gap:2px;padding:2px;overflow:hidden}
 .c{border-width:1.5px;border-radius:8px;padding:4px 2px;justify-content:center}
+.c img{width:22px;height:22px}
 .c img{width:var(--ic,22px);height:var(--ic,22px);flex-shrink:1;min-height:0;object-fit:contain}
+.c .lb{font-size:12px}
 .c .lb{font-size:var(--lb,13px);font-weight:800;flex-shrink:0;max-height:var(--lbmax,2.4em);overflow:hidden}
 #strip{height:46px}#sW .sw{min-width:40px;height:40px}.sb{height:40px;min-width:38px;font-size:15px}
 #bSpk{font-size:12px;padding:0 8px}}
@@ -139,6 +159,14 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 
 <div id="splash"><div style="font-size:60px">🗣️</div><div class="sn">My Buddy</div><div class="ss">Communication for Everyone</div></div>
 <div id="modelBanner">👨‍🏫 MODELING MODE</div>
+
+<div id="oldBrowser" style="display:none;background:#7a2e2e;color:#fff;font:600 13px system-ui;padding:10px 14px;line-height:1.5">
+Este navegador es de hace varios años, así que el tablero puede verse apretado
+y algunos símbolos pueden salir con un tamaño incorrecto. Aun así funciona y
+sigue hablando. En un iPad así de antiguo, todos los navegadores usan el mismo
+motor interno, así que cambiar de Safari a Chrome no lo va a arreglar.
+<button onclick="this.parentNode.style.display='none'" style="margin-left:8px;background:#fff;color:#7a2e2e;border:none;border-radius:5px;padding:4px 10px;font-weight:700">OK</button>
+</div>
 <div id="strip">
 <button class="sb" id="bDel" onclick="sDel()">⌫</button>
 <div id="sW"></div>
@@ -1642,5 +1670,19 @@ if ('serviceWorker' in navigator) {
       console.warn('[sw] registration failed', e); });
   });
 }
+</script>
+
+<script>
+/* Feature detection, not user-agent sniffing: the question is whether this
+   engine can size a cell, not what it calls itself. clamp() landed in Safari
+   13.1, so an iPad stuck on iOS 12 fails this and gets told why. */
+(function(){
+  var ok = window.CSS && CSS.supports && CSS.supports('width','clamp(1px,1vw,2px)');
+  if (!ok) {
+    var el = document.getElementById('oldBrowser');
+    if (el) el.style.display = 'block';
+    document.documentElement.className += ' legacy';
+  }
+})();
 </script>
 </body></html>
