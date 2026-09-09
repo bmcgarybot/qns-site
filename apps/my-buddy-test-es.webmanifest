@@ -1,6 +1,6 @@
 {
-  "name": "Mi Amigo TEST",
-  "short_name": "Mi Amigo TEST",
+  "name": "My Buddy TEST",
+  "short_name": "My Buddy TEST",
   "description": "Comunicación para todos. Funciona sin conexión a internet.",
   "start_url": "./my-buddy-test-es.html",
   "scope": "./",

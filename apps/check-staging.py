@@ -33,6 +33,8 @@ def normalise(t, stg_names, live_names):
     """Collapse the differences that are supposed to exist."""
     for s, l in zip(stg_names, live_names):
         t = t.replace(s, '@PAGE@').replace(l, '@PAGE@')
+    # Staging must remain visibly distinct when opened or installed as a PWA.
+    t = t.replace('My Buddy TEST', 'My Buddy')
     t = t.replace('<meta name="robots" content="noindex,nofollow">\n', '')
     t = re.sub(r'href="my-buddy(-test)?(-es)?\.webmanifest"', 'href="@MANIFEST@"', t)
     return t
