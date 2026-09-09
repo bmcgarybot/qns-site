@@ -30,6 +30,11 @@ button,.c,.ib,#board,.numpad,.numpad *,.pin-ov{touch-action:manipulation}
 .numpad,.numpad *,.c,.pin-dots{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+/* The rule above sets user-select:none on every element, inputs included.
+   Current Safari ignores that for form fields; Safari 12 does not, and it
+   stops the caret being placed at all. That is why typing failed in Find and
+   in the personal information fields on an older iPad. */
+input,textarea,select,[contenteditable]{-webkit-user-select:text !important;user-select:text !important;-webkit-touch-callout:default}
 body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
 #strip{background:#333;height:56px;display:flex;align-items:center;gap:2px;padding:2px 4px;border-bottom:2px solid #555;flex-shrink:0}
 #sW{display:flex;gap:2px;flex:1;overflow-x:auto;align-items:center;height:100%;scrollbar-width:none}
@@ -116,7 +121,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .stat-row{display:flex;justify-content:space-between;padding:4px 0;font-size:.8em;border-bottom:1px solid rgba(255,255,255,.05)}
 .cw-item{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05)}
 #splash{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;background:linear-gradient(135deg,#2a9d8f,#264653);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s}
-#splash.gone{opacity:0;pointer-events:none}
+#splash.gone{visibility:hidden;opacity:0;pointer-events:none}
 #splash .sn{font-size:36px;font-weight:900;color:#fff;margin-top:8px}
 #splash .ss{font-size:13px;color:rgba(255,255,255,.6)}
 .tut-ov{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;background:rgba(0,0,0,.9);z-index:250;display:flex;align-items:center;justify-content:center;padding:16px}
@@ -313,7 +318,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 </div></div>
 
 <!-- BUILD -->
-<script>const BUILD="2026-09-09 16:51 UTC";</script>
+<script>const BUILD="2026-09-09 17:01 UTC";</script>
 <!-- /BUILD -->
 <script>
 /*
