@@ -1,5 +1,9 @@
 English staging is ahead of live: stable semantic color coding; direct access
 to core grammar words; compositional sentence building; expanded school,
 calendar, holiday, clothing, animal, and media vocabulary; nested Find paths;
-past participles; interrogative frames; the full modal set; adverbs; and the
-seven pronoun pages rebuilt from one paradigm. Spanish not yet ported.
+past participles; interrogative frames; the full modal set; curated adverbs;
+and seven pronoun pages rebuilt from one paradigm. This pass also restores
+page-level add/edit/remove behavior, gives Simple View a complete compact core,
+moves Quick/Find/Menu beside the view controls, improves Find contrast, caches
+the staging PWA for offline use, and includes Quick phrases in backups. Spanish
+not yet ported.

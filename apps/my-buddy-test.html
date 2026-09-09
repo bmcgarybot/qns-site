@@ -44,7 +44,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .sw img{width:28px;height:28px;object-fit:contain}.sw span{font-size:8px;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46px;text-align:center}
 .sb{height:48px;min-width:42px;border:none;border-radius:6px;font-size:18px;cursor:pointer;flex-shrink:0;color:#fff}
 .sb:active{opacity:.7}
-#bDel{background:#666}#bClr{background:#933}#bSpk{background:#2a9d8f;font-size:14px;padding:0 10px;font-weight:800}#bQP{background:#e9c46a;color:#333;font-size:16px;padding:0 8px}
+#bDel{background:#666}#bClr{background:#933}#bSpk{background:#2a9d8f;font-size:14px;padding:0 10px;font-weight:800}#bQP{background:#e9c46a;color:#202020}
+#bFind{background:#075d6b;color:#fff}#bEdit{background:#7b3fc6;color:#fff}
 #bEdit{background:#9b5de5;font-size:14px;padding:0 8px;font-weight:800}
 #bEdit.active{background:#e63946;animation:editPulse 1.5s infinite}
 @keyframes editPulse{0%,100%{opacity:1}50%{opacity:.6}}
@@ -60,6 +61,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .ib{background:#264653;border:1px solid #2a9d8f;border-radius:4px;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;cursor:pointer;flex-shrink:0;white-space:nowrap}
 .ib:active{background:#2a9d8f}
 .ib .ib-icon{font-size:12px;margin-right:2px}
+.rail-btn{height:30px;min-width:34px;border:none;border-radius:5px;padding:2px 6px;font-size:9px;font-weight:800;line-height:1.05;cursor:pointer;flex-shrink:0;align-self:center}
+.rail-btn:active{opacity:.7}
 #modelBanner{display:none;background:#2d6a4f;text-align:center;font-size:11px;padding:2px;font-weight:700;color:#fff;flex-shrink:0}
 #recentsBar{background:#2a2a2a;display:none;gap:2px;padding:2px 4px;flex-shrink:0;overflow-x:auto;border-bottom:1px solid #444;scrollbar-width:none}
 #recentsBar::-webkit-scrollbar{display:none}
@@ -99,7 +102,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .c.social{background:#e8a4b8;color:#202020}.c.folder{background:#555;border:2px solid #aaa}
 .c.pronoun .lb,.c.grammar .lb,.c.social .lb{color:#202020;text-shadow:none}
 #backBtn{display:none;background:#2a9d8f;color:#fff;border:none;border-radius:0;padding:8px 16px;font-size:14px;font-weight:800;cursor:pointer;flex-shrink:0;width:100%;text-align:left}
-#recToggle{background:rgba(255,255,255,.1);border:none;border-radius:6px;width:30px;height:30px;font-size:15px;cursor:pointer;color:#bbb;flex-shrink:0;align-self:center;margin-left:4px}
+#recToggle{background:rgba(255,255,255,.1);border:none;border-radius:6px;width:30px;height:30px;font-size:15px;cursor:pointer;color:#fff;flex-shrink:0;align-self:center;margin-left:2px}
 #phoneToggle{background:#264653;border:1px solid #2a9d8f;border-radius:4px;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;cursor:pointer;flex-shrink:0;white-space:nowrap;margin-left:auto;line-height:1.2;text-align:center}
 #phoneToggle:active{opacity:.7}
 #langPick{display:inline-flex;gap:3px;background:rgba(0,0,0,.4);border-radius:999px;padding:3px;vertical-align:middle}
@@ -186,9 +189,6 @@ Safari to Chrome will not change it.
 <div id="sW"></div>
 <button class="sb" id="bClr" onclick="sClr()">✕</button>
 <button class="sb" id="bSpk" onclick="sSpk()">SPEAK</button>
-<button class="sb" id="bQP" onclick="openQP()"><span style="font-size:12px;line-height:1">⚡<br><span style="font-size:7px;font-weight:700">QUICK</span></span></button>
-<button class="sb" id="bFind" onclick="openFinder()" title="Find where a word lives">FIND</button>
-<button class="sb" id="bEdit" onclick="openPin()">MENU</button>
 </div>
 
 <div id="infoBar">
@@ -202,6 +202,9 @@ Safari to Chrome will not change it.
 <button class="ib" onclick="sayInfo('emergency')"><span class="ib-icon">🚨</span>Emergency</button>
 </div>
 <button id="addBtn" onclick="openAddFromBoard()" style="display:none;background:rgba(42,157,143,.9);border:none;border-radius:6px;width:30px;height:30px;font-size:18px;cursor:pointer;color:#fff;flex-shrink:0;align-self:center;margin-left:4px">+</button>
+<button class="rail-btn" id="bQP" onclick="openQP()">⚡<br>QUICK</button>
+<button class="rail-btn" id="bFind" onclick="openFinder()" title="Find where a word lives">FIND</button>
+<button class="rail-btn" id="bEdit" onclick="openPin()">MENU</button>
 <button id="recToggle" onclick="toggleRec()">🕐</button>
 <button id="phoneToggle" onclick="togglePhone()">FULL<br><span style="font-size:7px;opacity:.7">VIEW</span></button>
 </div>
@@ -238,7 +241,7 @@ Safari to Chrome will not change it.
 <hr style="border:0;border-top:1px solid #3a4a5a;margin:14px 0">
 <div style="margin-bottom:14px">
 <button class="ok" style="width:100%" onclick="closeOv('setOv');startEdit()">Edit board</button>
-<div style="font-size:.62em;opacity:.6;margin-top:4px">Move, add or remove words</div>
+<div style="font-size:.62em;opacity:.7;margin-top:4px">Open a folder, then tap a word to edit or remove it. Use + to add a word to that page.</div>
 </div>
 <div style="margin-bottom:14px">
 <button class="ok" style="width:100%" onclick="backupData()">Back up words and settings</button>
@@ -288,7 +291,7 @@ Safari to Chrome will not change it.
 <div class="ov" id="cwOv"><div class="md">
 <h3>➕ Add Custom Word</h3>
 <label>Word</label><input type="text" id="cwWord" placeholder="e.g. Grandma">
-<label>Color Category</label><select id="cwCat"><option value="resp">Response (red-orange)</option><option value="social">Social (yellow)</option><option value="prow_a">Green</option><option value="prow_b">Yellow-green</option><option value="prow_c">Blue</option><option value="prow_d">Pink</option><option value="folder">Folder (dark)</option></select>
+<label>Word Type / Color</label><select id="cwCat"><option value="noun">Thing or person (orange)</option><option value="verb">Action (green)</option><option value="adjective">Description (blue)</option><option value="pronoun">Pronoun (yellow)</option><option value="grammar">Grammar (white)</option><option value="social">Social (pink)</option><option value="folder">Folder (dark)</option></select>
 <label>Photo (optional)</label>
 <div style="display:flex;gap:6px;align-items:center;margin:4px 0">
 <button class="ok" onclick="document.getElementById('cwCamera').click()" style="font-size:.8em">📷 Take Photo</button>
@@ -305,7 +308,7 @@ Safari to Chrome will not change it.
 <div class="ov" id="editOv"><div class="md">
 <h3>✏️ Edit Button</h3>
 <label>Word</label><input type="text" id="editWord">
-<label>Color Category</label><select id="editCat"><option value="resp">Response (red-orange)</option><option value="social">Social (yellow)</option><option value="prow_a">Green</option><option value="prow_b">Yellow-green</option><option value="prow_c">Blue</option><option value="prow_d">Pink</option><option value="folder">Folder (dark)</option><option value="util">Utility (red)</option></select>
+<label>Word Type / Color</label><select id="editCat"><option value="noun">Thing or person (orange)</option><option value="verb">Action (green)</option><option value="adjective">Description (blue)</option><option value="pronoun">Pronoun (yellow)</option><option value="grammar">Grammar (white)</option><option value="social">Social (pink)</option><option value="folder">Folder (dark)</option><option value="util">Utility (red)</option></select>
 <label>Image</label>
 <div id="editImgPreview" style="text-align:center;margin:6px 0"></div>
 <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -340,7 +343,7 @@ Safari to Chrome will not change it.
 </div></div>
 
 <!-- BUILD -->
-<script>const BUILD="2026-09-09 21:56 UTC";</script>
+<script>const BUILD="2026-09-09 23:15 UTC";</script>
 <!-- /BUILD -->
 <script>
 /*
@@ -440,14 +443,19 @@ V.forEach(function(c){ HOME_POS[c.w]=c.p; });
 const SK='mb4';
 const isPhone=window.innerWidth<=600;
 let SP=.9,PITCH=1,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=isPhone;
-const PHONE_CORE=[
-  0, 1, 2, 3, 4, 5,        // I we want like go help
- 12,13,14,15,16,18,        // you they play eat drink come
- 24,25,26,27,28,29,        // he she make get put open
- 36,38,40,41,42,43,        // it need love happy not out
- 48,49,50,54,57,58,        // yes more good all-done no stop
- 60,61,62,64,65,66,        // my please thank-you what where who
- 72,73,74,75,76,77         // CLEAR food people feelings places animals
+// Simple View is a complete 6 x 8 communication board, not merely the first
+// few rows of the large board. It keeps urgent words and grammar available
+// directly while retaining doorways to the full vocabulary.
+const SIMPLE_CORE=[
+  {w:'I',t:'pronoun',i:6632,cat:'pn_I'},{w:'you',t:'pronoun',i:6625,cat:'pn_you'},
+  {w:'want',t:'verb',i:5441},{w:'need',t:'verb',svgName:'need'},{w:'help',t:'verb',i:32648},{w:'stop',t:'social',svgName:'stop'},
+  {w:'yes',t:'social',i:5584},{w:'no',t:'social',svgName:'no'},{w:'more',t:'adjective',i:5508},{w:'all done',t:'social',i:28429},{w:'please',t:'social',i:5324},{w:'sorry',t:'social',i:7220},
+  {w:'go',t:'verb',i:8142},{w:'come',t:'verb',i:6857},{w:'eat',t:'verb',i:6456},{w:'drink',t:'verb',i:6061},{w:'to',t:'grammar',i:0},{w:'bathroom',t:'noun',svgName:'toilet'},
+  {w:'happy',t:'adjective',i:35533},{w:'sad',t:'adjective',i:35535},{w:'angry',t:'adjective',i:35534},{w:'scared',t:'adjective',i:35536},{w:'tired',t:'adjective',i:35537},{w:'hurt',t:'adjective',svgName:'hurt'},
+  {w:'not',t:'grammar',i:5526},{w:'that',t:'grammar',svgName:'that'},{w:'in',t:'grammar',i:8015},{w:'out',t:'grammar',i:5287},{w:'what',t:'grammar',i:5345},{w:'where',t:'grammar',i:5346},
+  {w:'my',t:'pronoun',i:12264},{w:'people',t:'folder',i:7093,cat:'people'},{w:'food',t:'folder',i:2452,cat:'food'},{w:'feelings',t:'folder',svgName:'feelings',cat:'feelings'},{w:'places',t:'folder',i:36858,cat:'places'},{w:'body',t:'folder',i:2490,cat:'body'},
+  {w:'home',t:'noun',svgName:'home'},{w:'school',t:'noun',svgName:'school'},{w:'things',t:'folder',i:37011,cat:'things'},{w:'clothes',t:'folder',i:2509,cat:'clothes'},{w:'animals',t:'folder',i:2464,cat:'animals'},{w:'ABC',t:'folder',i:99998,cat:'spell'},
+  {w:'can',t:'grammar',i:9124},{w:'do',t:'verb',svgName:'do'},{w:'like',t:'verb',i:37826},{w:'play',t:'verb',i:23392},{w:'look',t:'verb',i:6872},{w:'read',t:'verb',i:6408}
 ];
 const PRONOUNS=[
 {w:'I',i:6632,t:'prow_a',conj:v=>v},
@@ -467,7 +475,7 @@ function sidebarPronouns(){
   return PRONOUNS;
 }
 let myInfo={name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};
-let editMode=false,editTarget=null,editPhotoData=null,cellOverrides={};
+let editMode=false,editTarget=null,editPhotoData=null,cellOverrides={},customTargetView='custom';
 
 // === EDIT MODE ===
 function startEdit(){
@@ -492,13 +500,18 @@ editPhotoData=null;
 document.getElementById('editWord').value=item.w;
 const override=cellOverrides[viewType+'_'+item.w];
 if(override){
-document.getElementById('editCat').value=override.t||item.t;
+document.getElementById('editCat').value=editableType(override.t||item.t,item);
 if(override.photo){editPhotoData=override.photo;document.getElementById('editImgPreview').innerHTML=`<img src="${override.photo}" style="width:60px;height:60px;border-radius:8px;object-fit:cover;border:2px solid #2a9d8f">`;}else{showEditDefaultImg(item);}
 }else{
-document.getElementById('editCat').value=item.t||'resp';
+document.getElementById('editCat').value=editableType(item.t,item);
 showEditDefaultImg(item);
 }
 document.getElementById('editOv').classList.add('open');
+}
+function editableType(type,item){
+  if(/^(noun|verb|adjective|pronoun|grammar|social|folder|util)$/.test(type||'')) return type;
+  const legacy={prow_a:'verb',prow_b:'pronoun',prow_c:'adjective',prow_d:'noun',resp:'social'};
+  return legacy[type]||semanticType(item,item.w,type)||'noun';
 }
 function showEditDefaultImg(item){
 const src=item.svgName?(FRM[item.svgName]||'symbols/mybuddy/'+item.svgName+'.svg'):(item.i?IM(item.i):null);
@@ -588,7 +601,7 @@ speak(text);
 }
 
 function save(){try{localStorage.setItem(SK,JSON.stringify({PITCH,SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,phoneMode,tutDone:true}))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=clamp(d.SP,.5,1.6,.9);PITCH=clamp(d.PITCH,.5,1.5,1);VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;return d.tutDone}catch(e){return false}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=clamp(d.SP,.5,1.6,.9);PITCH=clamp(d.PITCH,.5,1.5,1);VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=(d.customWords||[]).map(function(c){if(!c.view)c.view='custom';return c});myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;return d.tutDone}catch(e){return false}}
 
 // Pitch and rate are clamped on the way out. A value above about 1.5 wedges
 // the speech engine on macOS: the utterance fails silently and every later one
@@ -694,11 +707,11 @@ let items;
 if(curView==='home'){
 items=getHome();
 }else if(curView.indexOf('anchor_')===0){
-items=anchorItems(curView.slice(7)).filter(Boolean);
+items=mergeAnchorPage(anchorItems(curView.slice(7)),curView);
 }else if(curView==='custom'){
 items=getCustom();
 }else{
-items=getFringe(curView);
+items=getFringe(curView).concat(getPageWords(curView));
 }
 const isHome=(curView==='home');
 const isPron=curView.indexOf('pn_')===0;
@@ -733,7 +746,7 @@ fitBoard();
 requestAnimationFrame(fitBoard);
 
 if(isAnchor){
-  const slots=anchorItems(curView.slice(7));
+  const slots=items;
   for(let i=0;i<84;i++){
     if(slots[i]){ renderCell(b,slots[i]); }
     else { const e=document.createElement('div'); e.style.visibility='hidden'; b.appendChild(e); }
@@ -797,7 +810,13 @@ d.innerHTML=`<img src="${imgSrc}" style="${displayPhoto?'border-radius:6px;objec
 d.innerHTML=`<div class="lb" style="font-size:calc(var(--lb,13px)*${_wc>2?1.1:1.45});max-height:none">${displayW}</div>`;
 }
 d.onclick=()=>{
-if(editMode){openEditCell(s,curView);return}
+if(editMode){
+  // Doorways must still open during editing; otherwise an adult can never
+  // reach the page they intend to change. Words on that page open the editor.
+  if(s.cat){curView=s.cat;render();document.getElementById('backBtn').style.display='block';return}
+  if(curView==='home'&&hasAnchor(s.w)){curView='anchor_'+s.w;render();document.getElementById('backBtn').style.display='block';return}
+  openEditCell(s,curView);return
+}
 if(s.w==='CLEAR'){sClr();d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);return}
 if(isGram){gram(s.w.replace('+',''));d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);return}
 if(s.cat){curView=s.cat;render();document.getElementById('backBtn').style.display='block';return}
@@ -819,7 +838,22 @@ else{const e=document.createElement('div');e.className='c';e.style.visibility='h
 d.innerHTML=`<div style="font-size:clamp(14px,4vw,24px);font-weight:900">${k}</div><div class="lb">${k}</div>`;
 d.onclick=()=>{spellBuf+=k;speak(k);rStrip();d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300)};b.appendChild(d)});
 }
-function getHome(){const all=V.sort((a,b)=>a.p-b.p);if(!phoneMode)return all;return PHONE_CORE.map(p=>all.find(v=>v.p===p)).filter(Boolean)}
+function customItem(c){
+  const legacy={prow_a:'verb',prow_b:'pronoun',prow_c:'adjective',prow_d:'noun',resp:'social'};
+  return {w:c.w,i:c.i||0,t:legacy[c.t]||c.t||'noun',photo:c.photo||null,custom:true};
+}
+function getPageWords(view){return customWords.filter(function(c){return c.view===view}).map(customItem)}
+function mergeAnchorPage(slots,view){
+  const out=slots.slice();
+  getPageWords(view).forEach(function(item){
+    // Custom page words fill unused cells without moving any built-in word.
+    // Start at the bottom-right, where a communication partner can find them
+    // quickly while every established motor position remains unchanged.
+    for(let p=83;p>=0;p--){if(!out[p]){out[p]=item;break}}
+  });
+  return out;
+}
+function getHome(){const all=V.sort((a,b)=>a.p-b.p);return phoneMode?SIMPLE_CORE:all}
 
 /* ==================================================================
    ANCHOR PAGES
@@ -860,12 +894,14 @@ const IRREG_ADJ = {
   much:{er:'more',est:'most'},       many:{er:'more',est:'most'},
   fun:{er:'more fun',est:'most fun'}
 };
+const MORE_ADJ = ['open','stuck','tired','scared','careful'];
 function syllables(w){
   const m = w.toLowerCase().replace(/e$/,'').match(/[aeiouy]+/g);
   return m ? m.length : 1;
 }
 function compare(adj, suffix){
   if (IRREG_ADJ[adj]) return IRREG_ADJ[adj][suffix];
+  if (MORE_ADJ.includes(adj)) return (suffix === 'er' ? 'more ' : 'most ') + adj;
   // Two syllables or more takes more/most, not -er/-est. Otherwise you get
   // "scareder", which is not a word and teaches the wrong pattern.
   if (syllables(adj) >= 2 && !/y$/.test(adj)) {
@@ -957,6 +993,8 @@ const ANCHORS = {
           nouns:['help','break','bathroom','water','time'], adjs:['now','more']},
   do:    {frames_en:['what are you doing','what should I do','I am done','can I do it'], icon:'do',    related:['make','try','finish','start','work'],
           nouns:['work','job','homework','thing'], adjs:['done','busy','hard']},
+  talk:  {frames_en:['what do you want to talk about','I want to talk to you','can we talk','let me talk'], icon:'talk', related:['say','tell','ask','listen','speak'],
+          nouns:['word','story','idea','friend'], adjs:['loud','quiet','fast','slow']},
   help_: {icon:'help',  related:[], nouns:[], adjs:[]}
 };
 
@@ -1039,6 +1077,11 @@ const ANCHORS2 = {
          times:[['please','please'],['sorry','sorry'],['excuse me','sorry'],
                 ['yes please','yes'],['no thank you','no'],['my turn','my'],
                 ['your turn','you'],['help me','help']]},
+  sorry:{type:'helper', icon:'sorry',
+         frames:[['sorry','sorry'],["I'm sorry",'sorry'],['excuse me','sorry'],
+                 ['mistake','wrong'],['accident','accident'],['I did not mean to','not'],
+                 ['are you okay?','good'],['can I help?','help'],['I can fix it','fix'],
+                 ['please forgive me','please'],['I need a break','break'],['try again','try']]},
   what: {type:'question', icon:'what',
          frames:['what is that','what do you want','what happened','what is this',
                  'what time','what color','what next','what for']},
@@ -1192,19 +1235,16 @@ function hasAnchor(w){ return Object.prototype.hasOwnProperty.call(ANCHORS, w)
 
 /* Fixed slot map, 12 columns. Every anchor page puts the same KIND of
    word in the same place, which is the entire point. */
-// Every LAMP verb page carries a -ly adverb. Generating it from a rule
-// produced 'morely', 'bigly', 'funly' and 'stillly', so the forms are listed
-// instead. An adjective that has no natural -ly form simply leaves the slot
-// empty rather than inventing a word.
+// Adverbs are curated rather than generated. A form is omitted when it changes
+// meaning (open/openly, ready/readily, close/closely) or is not useful natural
+// language for this board (tiredly, thirstily).
 const ADVERBS = {
   nice:'nicely', slow:'slowly', quick:'quickly', quiet:'quietly', loud:'loudly',
   soft:'softly', careful:'carefully', gentle:'gently', happy:'happily',
-  sad:'sadly', good:'well', bad:'badly', clean:'cleanly', close:'closely',
-  pretty:'prettily', funny:'funnily', hungry:'hungrily', thirsty:'thirstily',
-  tired:'tiredly', ready:'readily', new:'newly', high:'highly', busy:'busily',
+  sad:'sadly', good:'well', bad:'badly', clean:'cleanly',
+  pretty:'prettily', funny:'funnily', new:'newly', high:'highly', busy:'busily',
   wrong:'wrongly', right:'rightly', full:'fully', warm:'warmly', cold:'coldly',
-  open:'openly', safe:'safely', gently:'gently', hard:'hard', fast:'fast',
-  late:'late', early:'early', straight:'straight', loudly:'loudly'
+  safe:'safely', hard:'hard', fast:'fast', late:'late', early:'early', straight:'straight'
 };
 function adverb(adj){ return ADVERBS[adj] || null; }
 
@@ -1288,7 +1328,7 @@ function getFringe(cat){
 const catColors={food:'noun',people:'noun',feelings:'adjective',places:'noun',animals:'noun',things:'noun',colors:'adjective',body:'noun',clothes:'noun',grammar:'grammar',school:'noun',media:'noun',pn_I:'pronoun',pn_we:'pronoun',pn_you:'pronoun',pn_they:'pronoun',pn_he:'pronoun',pn_she:'pronoun',pn_it:'pronoun'};
 return(FR[cat]||[]).map(([w,svgName,say,nextCat])=>({w,svgName,say:say||null,cat:nextCat||null,i:0,t:nextCat?'folder':(catColors[cat]||'noun')}));
 }
-function getCustom(){return customWords.map(c=>({w:c.w,i:c.i||0,t:c.t||'resp',photo:c.photo||null}))}
+function getCustom(){return customWords.map(customItem)}
 
 function goHome(){curView='home';const w=spellBuf.trim();if(w){sentence.push({w,i:0});speak(w)}spellBuf='';render();rStrip();document.getElementById('backBtn').style.display='none'}
 
@@ -1335,6 +1375,22 @@ function buildWordIndex(){
   }
   V.filter(function(c){return c.cat&&FR[c.cat]}).forEach(function(doorway){
     addFolder(doorway.cat,doorway.w,[{view:'home',w:doorway.w}],{});
+  });
+
+  // Added words are real members of the page where the adult placed them,
+  // so Find must teach that same route after a reload or while offline.
+  customWords.forEach(function(c){
+    const view=c.view||'custom';
+    let path;
+    if(view==='custom') path=[{view:'home',w:'my words'},{view:'custom',w:c.w}];
+    else if(view.indexOf('anchor_')===0){
+      const doorway=view.slice(7);
+      path=[{view:'home',w:doorway},{view:view,w:c.w}];
+    }else{
+      const sample=idx.find(function(e){return e.path.length&&e.path[e.path.length-1].view===view});
+      path=sample?sample.path.slice(0,-1).concat([{view:view,w:c.w}]):[{view:view,w:c.w}];
+    }
+    idx.push({w:c.w,where:pageName(view),hits:path.length,path:path});
   });
 
   return idx;
@@ -1503,8 +1559,9 @@ function updDots(){document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=
 // single point of failure.
 function backupData(){
   try{
-    const raw=localStorage.getItem(SK)||'{}';
-    const blob=new Blob([raw],{type:'application/json'});
+    const board=JSON.parse(localStorage.getItem(SK)||'{}');
+    const backup={version:2,board:board,quickPhrases:quickPhrases};
+    const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob);
     a.download='my-buddy-backup-'+new Date().toISOString().slice(0,10)+'.json';
@@ -1519,8 +1576,13 @@ function restoreData(input){
     try{
       const d=JSON.parse(r.result);
       if(typeof d!=='object'||d===null) throw new Error('bad file');
+      // Older backups contained the board object directly. Keep accepting
+      // them while version 2 also restores personalized Quick phrases.
+      const board=(d.version===2&&d.board&&typeof d.board==='object')?d.board:d;
+      const restoredQuick=(d.version===2&&Array.isArray(d.quickPhrases))?d.quickPhrases:null;
       if(!confirm('This replaces your current words and settings with the ones in the file. Continue?')) return;
-      localStorage.setItem(SK,JSON.stringify(d));
+      localStorage.setItem(SK,JSON.stringify(board));
+      if(restoredQuick) localStorage.setItem('mybuddy_qp',JSON.stringify(restoredQuick));
       location.replace(location.pathname);
     }catch(e){ alert('That file is not a valid backup.'); }
   };
@@ -1679,7 +1741,8 @@ function renderStats(){const box=document.getElementById('statsBox');const total
 box.innerHTML=`<div class="stat-row"><span>Total taps</span><b>${total}</b></div><div class="stat-row"><span>Unique words</span><b>${Object.keys(usage).length}</b></div><div class="stat-row"><span>Coverage</span><b>${pct}%</b></div>${sorted.map(([w,c])=>`<div class="stat-row"><span>${w}</span><b>${c}×</b></div>`).join('')}`}
 
 // === CUSTOM WORDS ===
-function renderCWList(){const el=document.getElementById('cwList');if(!customWords.length){el.innerHTML='<p style="font-size:.75em;opacity:.5">No custom words yet</p>';return}el.innerHTML=customWords.map((c,i)=>`<div class="cw-item"><span>${c.w}</span><button class="dn" onclick="delCW(${i})" style="padding:2px 8px;font-size:.7em">✕</button></div>`).join('')}
+function renderCWList(){const el=document.getElementById('cwList');if(!customWords.length){el.innerHTML='<p style="font-size:.75em;opacity:.5">No custom words yet</p>';return}el.innerHTML=customWords.map((c,i)=>`<div class="cw-item"><span>${c.w}<small style="display:block;opacity:.55">${pageName(c.view)}</small></span><button class="dn" onclick="delCW(${i})" style="padding:2px 8px;font-size:.7em">✕</button></div>`).join('')}
+function pageName(view){return view==='custom'?'My words':String(view||'custom').replace(/^anchor_/,'').replace(/_/g,' ')}
 let cwPhotoData=null;
 function handleCWPhoto(input){
 if(!input.files||!input.files[0])return;
@@ -1713,22 +1776,19 @@ if(editMode){
 }
 }
 function openAddCWFor(view){
+customTargetView=view||'custom';
 document.getElementById('cwWord').value='';
 document.getElementById('cwAra').value='';
 cwPhotoData=null;
 document.getElementById('cwPreview').innerHTML='';
 // Pre-select color based on current category
-const catColors={food:'resp',people:'prow_a',feelings:'prow_d',places:'prow_c',animals:'prow_a',things:'prow_c',colors:'social',body:'prow_d',clothes:'social',home:'resp',custom:'resp'};
-const selCat=catColors[view]||'resp';
+const catColors={food:'noun',people:'noun',feelings:'adjective',places:'noun',animals:'noun',things:'noun',colors:'adjective',body:'noun',clothes:'noun',grammar:'grammar',school:'noun',media:'noun',custom:'noun',anchor_sorry:'social'};
+const selCat=catColors[customTargetView]||'noun';
 document.getElementById('cwCat').value=selCat;
 document.getElementById('cwOv').classList.add('open');
 }
 function saveCW(){const w=document.getElementById('cwWord').value.trim();if(!w)return;const t=document.getElementById('cwCat').value;const ara=document.getElementById('cwAra').value.trim();
-const newWord={w,t,i:ara?parseInt(ara):0,photo:cwPhotoData||null};
-// If we're in a fringe category, add to that category's data too
-if(curView!=='home'&&curView!=='custom'&&curView!=='spell'&&FR[curView]){
-  FR[curView].push([w,w]);
-}
+const newWord={w,t,i:ara?parseInt(ara):0,photo:cwPhotoData||null,view:customTargetView};
 customWords.push(newWord);cwPhotoData=null;save();closeOv('cwOv');renderCWList();render()}
 function delCW(i){customWords.splice(i,1);save();renderCWList()}
 

@@ -12,6 +12,9 @@ Staging only means something if two things hold:
   2. Staging and live differ only in ways we intend. If they differ anywhere
      else, approving staging tells you nothing about what will go live.
 
+  3. Installable staging is cached with its own shell so it can be tested in
+     airplane mode without silently falling back to the live board.
+
 Exits non-zero on any failure.
 """
 import re, sys, os
@@ -71,18 +74,24 @@ for stg, live in PAIRS:
     if d and not AHEAD_OK:
         fails.append('%s and %s have diverged (%d lines)' % (stg, live, len(d)))
 
-print('\n3. the service worker does not cache staging')
+print('\n3. installable staging works offline as staging')
 sw = open('sw.js', encoding='utf-8').read()
 import json
 assets = json.loads(re.search(r"const ASSETS = (\[.*?\]);", sw, re.S).group(1))
 cached = [a for a in assets if 'my-buddy-test' in a]
-print('   staging entries in precache: %d %s' % (len(cached), 'ok' if not cached else 'SHOULD BE 0'))
-if cached:
-    fails.append('service worker precaches staging: %s' % cached)
-bypass = "req.url.indexOf('my-buddy-test')" in sw
-print('   staging bypasses the cache: %s' % ('yes' if bypass else 'NO'))
-if not bypass:
-    fails.append('service worker does not bypass cache for staging')
+expected = {'./my-buddy-test.html', './my-buddy-test-es.html',
+            './my-buddy-test.webmanifest', './my-buddy-test-es.webmanifest'}
+missing = sorted(expected.difference(assets))
+print('   staging entries in precache: %d' % len(cached))
+print('   staging shell complete: %s' % ('yes' if not missing else 'NO'))
+if missing:
+    fails.append('service worker misses staging shell: %s' % missing)
+if "req.url.indexOf('my-buddy-test')" in sw:
+    fails.append('service worker still bypasses staging cache')
+fallback = "'./my-buddy-test.html'" in sw and "'./my-buddy-test-es.html'" in sw
+print('   staging navigation fallback: %s' % ('yes' if fallback else 'NO'))
+if not fallback:
+    fails.append('service worker has no staging navigation fallback')
 
 print()
 if fails:
