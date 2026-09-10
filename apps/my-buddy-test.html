@@ -140,12 +140,17 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 #splash.gone{visibility:hidden;opacity:0;pointer-events:none}
 #splash .sn{font-size:36px;font-weight:900;color:#fff;margin-top:8px}
 #splash .ss{font-size:13px;color:rgba(255,255,255,.6)}
-.tut-ov{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;background:rgba(0,0,0,.9);z-index:250;display:flex;align-items:center;justify-content:center;padding:16px}
-.tut-card{background:#2d3748;border-radius:16px;padding:24px;max-width:320px;text-align:center}
-.tut-emoji{font-size:48px;margin-bottom:8px}.tut-h{font-size:18px;font-weight:800;margin-bottom:8px}.tut-p{font-size:14px;color:rgba(255,255,255,.7);margin-bottom:16px;line-height:1.5}
-.tut-dots{display:flex;gap:6px;justify-content:center;margin-bottom:12px}
-.tut-d{width:8px;height:8px;border-radius:50%;background:#555}.tut-d.on{background:#2a9d8f}
-.tut-btn{background:#2a9d8f;color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:15px;font-weight:700;cursor:pointer}
+.tut-ov{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;background:rgba(7,12,17,.92);z-index:950;display:flex;align-items:center;justify-content:center;padding:14px;color:#fff}
+.tut-card{background:#273440;border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:20px;width:96vw;max-width:660px;max-height:92vh;overflow:auto;box-shadow:0 18px 70px rgba(0,0,0,.55)}
+.tut-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}.tut-kicker{font-size:11px;letter-spacing:1.3px;text-transform:uppercase;color:#ffd166;font-weight:800}.tut-count{margin-left:auto;font-size:12px;color:rgba(255,255,255,.65)}
+.tut-progress{height:5px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;margin-bottom:18px}.tut-progress span{display:block;height:100%;background:#2a9d8f;transition:width .25s}
+.tut-emoji{font-size:38px;margin-bottom:4px}.tut-h{font-size:23px;font-weight:850;margin-bottom:8px;line-height:1.15}.tut-p{font-size:14px;color:rgba(255,255,255,.82);line-height:1.55}.tut-p p{margin:0 0 10px}.tut-p ul{margin:7px 0 12px;padding-left:21px}.tut-p li{margin:6px 0}
+.tut-key{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}.tut-key div{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border-radius:8px;padding:8px}.tut-swatch{width:25px;height:25px;border:1px solid rgba(255,255,255,.4);border-radius:5px;flex:none}
+.tut-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.tut-tools div{background:rgba(255,255,255,.07);border-radius:9px;padding:9px;font-size:12px}.tut-tools b{display:block;color:#ffd166;margin-bottom:2px}
+.tut-form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.tut-form label{font-size:11px;color:rgba(255,255,255,.7)}.tut-form input{display:block;width:100%;margin-top:3px;padding:9px;border-radius:7px;border:1px solid #687987;background:#121b22;color:#fff;font-size:14px}.tut-form .wide{grid-column:1/-1}
+.tut-practice{margin-top:12px}.tut-sentence{min-height:45px;background:#111a21;border:2px solid #ffd166;border-radius:10px;padding:9px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}.tut-sentence span{background:#fff;color:#17242b;border-radius:6px;padding:6px 9px;font-weight:800}.tut-words{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.tut-word{background:#fff;color:#17242b;border:0;border-radius:8px;padding:9px 12px;font-weight:800;cursor:pointer}.tut-word small{display:block;font-size:9px;font-weight:600;color:#65747a}.tut-feedback{min-height:21px;margin-top:8px;color:#ffd166;font-size:13px;font-weight:700}
+.tut-nav{display:flex;align-items:center;gap:8px;margin-top:18px}.tut-btn{background:#2a9d8f;color:#fff;border:none;border-radius:9px;padding:10px 17px;font-size:14px;font-weight:800;cursor:pointer}.tut-btn.secondary{background:#394957;border:1px solid rgba(255,255,255,.2)}.tut-btn.skip{margin-left:auto;background:transparent;color:rgba(255,255,255,.7);border:0;padding:9px}.tut-btn:disabled{opacity:.4;cursor:default}
+@media(max-width:560px){.tut-card{padding:16px}.tut-h{font-size:19px}.tut-key,.tut-form{grid-template-columns:1fr}.tut-form .wide{grid-column:auto}.tut-tools{grid-template-columns:1fr 1fr}.tut-btn{padding:9px 12px;font-size:13px}}
 
   /* Teaching walkthrough */
   .teach-glow {
@@ -251,6 +256,11 @@ Safari to Chrome will not change it.
 </div>
 <hr style="border:0;border-top:1px solid #3a4a5a;margin:14px 0">
 <div style="margin-bottom:14px">
+<button class="ok" style="width:100%" onclick="closeOv('setOv');showTut(true)">Start guided tour again</button>
+<div style="font-size:.62em;opacity:.6;margin-top:4px">Board layout, color key, tools, personal setup, and two sentence-building practices</div>
+</div>
+<hr style="border:0;border-top:1px solid #3a4a5a;margin:14px 0">
+<div style="margin-bottom:14px">
 <button class="ca" style="width:100%" onclick="forceUpdate()">Check for updates</button>
 <div style="font-size:.62em;opacity:.6;margin-top:4px">Fetches the newest version without deleting anything</div>
 </div>
@@ -343,7 +353,7 @@ Safari to Chrome will not change it.
 </div></div>
 
 <!-- BUILD -->
-<script>const BUILD="2026-09-10 05:46 UTC";</script>
+<script>const BUILD="2026-09-10 07:21 UTC";</script>
 <!-- /BUILD -->
 <script>
 /*
@@ -443,7 +453,7 @@ const HOME_POS={};
 V.forEach(function(c){ HOME_POS[c.w]=c.p; });
 const SK='mb4';
 const isPhone=window.innerWidth<=600;
-let SP=.9,PITCH=1,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=isPhone;
+let SP=.9,PITCH=1,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=isPhone,tutDone=false;
 // Simple View is a complete 6 x 8 communication board, not merely the first
 // few rows of the large board. It keeps urgent words and grammar available
 // directly while retaining doorways to the full vocabulary.
@@ -603,8 +613,8 @@ speak(text);
 }
 }
 
-function save(){try{localStorage.setItem(SK,JSON.stringify({PITCH,SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,phoneMode,tutDone:true}))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=clamp(d.SP,.5,1.6,.9);PITCH=clamp(d.PITCH,.5,1.5,1);VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=(d.customWords||[]).map(function(c){if(!c.view)c.view='custom';return c});myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;return d.tutDone}catch(e){return false}}
+function save(){try{localStorage.setItem(SK,JSON.stringify({PITCH,SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,phoneMode,tutDone:tutDone}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=clamp(d.SP,.5,1.6,.9);PITCH=clamp(d.PITCH,.5,1.5,1);VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=(d.customWords||[]).map(function(c){if(!c.view)c.view='custom';return c});myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;tutDone=!!d.tutDone;return tutDone}catch(e){tutDone=false;return false}}
 
 // Pitch and rate are clamped on the way out. A value above about 1.5 wedges
 // the speech engine on macOS: the utterance fails silently and every later one
@@ -1855,12 +1865,95 @@ function saveQPEdit(){const txt=document.getElementById('qpEditInput').value.tri
 function deleteQPEdit(){if(qpEditIdx<0)return;quickPhrases.splice(qpEditIdx,1);saveQP();closeOv('qpEditOv');renderQP()}
 function sayPhrase(p){speak(p);closeOv('qpOv')}
 
-// === TUTORIAL ===
-const TUT=[{e:'🗣️',h:'Welcome to My Buddy!',p:'Tap any word to hear it spoken. Build your child\'s language one word at a time.'},{e:'📝',h:'Build Sentences',p:'Tap multiple words to build a sentence. Then press SPEAK to say it all together.'},{e:'⚙️',h:'Parents: Settings',p:'Tap ⚙️ to adjust voice, speed, and add custom words. Default PIN: 1234'}];
-let tutStep=0;
-function showTut(){tutStep=0;rTut();document.getElementById('tutOv').style.display='flex'}
-function rTut(){const s=TUT[tutStep];document.getElementById('tutE').textContent=s.e;document.getElementById('tutH').textContent=s.h;document.getElementById('tutP').textContent=s.p;document.getElementById('tutD').innerHTML=TUT.map((_,i)=>`<div class="tut-d ${i===tutStep?'on':''}"></div>`).join('');document.getElementById('tutBtn').textContent=tutStep===TUT.length-1?"Got it! 🚀":"Next"}
-function tutNext(){if(tutStep<TUT.length-1){tutStep++;rTut()}else{document.getElementById('tutOv').style.display='none';save()}}
+// === GUIDED TOUR ===
+// The tour teaches the reason for the layout, not just which buttons to tap.
+// It can be skipped on first use and restarted from Menu at any time.
+const TUT=[
+  {e:'🗣️',h:'Welcome to My Buddy',p:'<p>This board helps a person build original messages, ask questions, refuse, comment, and repair misunderstandings.</p><p>The tour takes about five minutes. You can skip it now and restart it later from <b>Menu → Start guided tour again</b>.</p>'},
+  {e:'🧭',h:'Words stay where the body learns them',p:'<p>The main board is a fixed map. Frequently used words stay in the same place so the movement to reach them can become familiar.</p><ul><li><b>Full View</b> uses a 12 × 7 map.</li><li><b>Simple View</b> uses a stable 6 × 8 map with larger phone-friendly targets.</li><li>When a Level 1 word opens its word page, that word repeats in the same physical spot.</li></ul>'},
+  {e:'🎨',h:'Color is a location clue',p:'<div class="tut-key"><div><span class="tut-swatch" style="background:#f6d55c"></span><span><b>Yellow</b><br>pronouns</span></div><div><span class="tut-swatch" style="background:#7bc96f"></span><span><b>Green</b><br>actions</span></div><div><span class="tut-swatch" style="background:#8ec5e8"></span><span><b>Blue</b><br>descriptions</span></div><div><span class="tut-swatch" style="background:#f2a65a"></span><span><b>Orange</b><br>people and things</span></div><div><span class="tut-swatch" style="background:#e99aaa"></span><span><b>Pink</b><br>social words</span></div><div><span class="tut-swatch" style="background:#fff;color:#17242b"></span><span><b>White</b><br>grammar</span></div><div><span class="tut-swatch" style="background:#d9dee0"></span><span><b>Gray</b><br>folders</span></div></div><p>Color supports finding a word, but the picture, print, and fixed position are equally important.</p>'},
+  {e:'🧱',h:'Core words first, specific words through folders',p:'<p>The top six rows hold flexible words used all day: <b>I, want, go, not, help, where, to</b>, and many more.</p><p>The bottom row contains doorways such as Food, People, Places, Body, and ABC. Folders add specific vocabulary without moving the core map.</p><p>Example: build <b>I want to go to school</b> with core words first, then use Places for school when needed.</p>'},
+  {e:'📝',h:'The sentence strip holds the message',p:'<ul><li>Tap words to collect them across the top.</li><li><b>⌫</b> removes the last word.</li><li><b>✕</b> clears the message.</li><li><b>SPEAK</b> reads the whole message.</li></ul><p>The strip can hold complete grammar, but an incomplete or unexpected message still deserves a response.</p>'},
+  {e:'🧰',h:'Know the right-side tools',p:'<div class="tut-tools"><div><b>QUICK</b>Saved urgent or frequent phrases</div><div><b>FIND</b>Shows the exact path to a word</div><div><b>MENU</b>Voice, editing, backup, info, and this tour</div><div><b>HISTORY</b>Repeats recently used words</div><div><b>FULL / SIMPLE</b>Changes target size and board density</div><div><b>BACK</b>Returns from a word page or folder</div></div><p>Find is for teaching a route. It highlights every press instead of silently moving the word.</p>'},
+  {e:'🛟',h:'Set up My Info',p:''},
+  {e:'💬',h:'Practice sentence 1',p:''},
+  {e:'❤️',h:'Practice sentence 2',p:''},
+  {e:'🤝',h:'Model language without making it a test',p:'<ul><li>Tap a few words while speaking naturally. Copying is never required.</li><li>Wait. Silence may be planning time.</li><li>Model one word beyond the person’s current message.</li><li>Honor <b>no, stop, hurt, help</b>, and bathroom messages.</li><li>If a message is unclear, say so and offer another way to repair it.</li></ul>'},
+  {e:'✅',h:'The board is ready to explore',p:'<p>You practiced the layout, colors, tools, personal setup, and two complete messages.</p><p>Use the board during real activities. Communication succeeds when the person is understood—not when every sentence is perfect.</p><p>You can restart this tour from Menu whenever a new caregiver, teacher, or communication partner needs it.</p>'}
+];
+const TOUR_PRACTICE={
+  7:{words:['I','want','to','go','to','school'],routes:['Home','Home','Home','Home','Home','Places'],goal:'I want to go to school'},
+  8:{words:['I','feel','sick','and','need','help'],routes:['Home','Home','Feelings / health','Home','Home','Home'],goal:'I feel sick and need help'}
+};
+let tutStep=0,tourPractice=[];
+function tourEsc(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function tourInfoHtml(){
+  return '<p>These buttons can speak important information quickly. Everything stays in this browser on this device. Fill in what is useful now, or choose <b>Do this later</b>.</p>'+
+    '<div class="tut-form">'+
+    '<label>Name<input id="tInfoName" value="'+tourEsc(myInfo.name)+'" placeholder="e.g. Alex"></label>'+
+    '<label>Phone<input id="tInfoPhone" value="'+tourEsc(myInfo.phone)+'" placeholder="e.g. 555-123-4567"></label>'+
+    '<label>School<input id="tInfoSchool" value="'+tourEsc(myInfo.school)+'" placeholder="e.g. Lincoln Elementary"></label>'+
+    '<label>City / state<input id="tInfoPlace" value="'+tourEsc([myInfo.city,myInfo.state].filter(Boolean).join(', '))+'" placeholder="e.g. Prescott, Arizona"></label>'+
+    '<label class="wide">Home address<input id="tInfoAddr" value="'+tourEsc(myInfo.address)+'" placeholder="Optional"></label>'+
+    '<label class="wide">Emergency information<input id="tInfoEmergency" value="'+tourEsc(myInfo.emergency)+'" placeholder="Optional: allergies, support needs, emergency contact"></label></div>'+
+    '<button class="tut-btn secondary" style="margin-top:10px" onclick="tourLater()">Do this later</button>';
+}
+function tourPracticeHtml(def){
+  const choices=def.words.map(function(w,i){return {w:w,r:def.routes[i],n:i}});
+  return '<p>Tap the words in order. This is practice, not a test; the route under each word shows where it lives.</p>'+
+    '<div class="tut-practice"><div class="tut-sentence" id="tutSentence"><span style="opacity:.45">Build: '+def.goal+'</span></div>'+
+    '<div class="tut-words">'+choices.map(function(x){return '<button class="tut-word" onclick="tourWord('+x.n+')">'+x.w+'<small>'+x.r+'</small></button>'}).join('')+'</div>'+
+    '<div class="tut-feedback" id="tutFeedback"></div><button class="tut-btn secondary" onclick="tourClearPractice()">Clear practice</button></div>';
+}
+function showTut(){
+  tutStep=0; tourPractice=[]; rTut(); document.getElementById('tutOv').style.display='flex';
+}
+function rTut(){
+  const s=TUT[tutStep], def=TOUR_PRACTICE[tutStep];
+  document.getElementById('tutE').textContent=s.e;
+  document.getElementById('tutH').textContent=s.h;
+  document.getElementById('tutP').innerHTML=tutStep===6?tourInfoHtml():(def?tourPracticeHtml(def):s.p);
+  document.getElementById('tutCount').textContent=(tutStep+1)+' of '+TUT.length;
+  document.getElementById('tutProgress').style.width=((tutStep+1)/TUT.length*100)+'%';
+  const back=document.getElementById('tutBack'), next=document.getElementById('tutNext');
+  back.style.visibility=tutStep===0?'hidden':'visible';
+  next.textContent=tutStep===0?'Start tour':(tutStep===6?'Save & continue':(tutStep===TUT.length-1?'Finish':'Next'));
+  next.disabled=!!def;
+}
+function tourSaveInfo(){
+  myInfo.name=document.getElementById('tInfoName').value.trim();
+  myInfo.phone=document.getElementById('tInfoPhone').value.trim();
+  myInfo.school=document.getElementById('tInfoSchool').value.trim();
+  myInfo.address=document.getElementById('tInfoAddr').value.trim();
+  myInfo.emergency=document.getElementById('tInfoEmergency').value.trim();
+  const place=document.getElementById('tInfoPlace').value.split(',');
+  myInfo.city=(place.shift()||'').trim(); myInfo.state=place.join(',').trim();
+  save();
+}
+function tourLater(){tutStep++;tourPractice=[];rTut()}
+function tourWord(index){
+  const def=TOUR_PRACTICE[tutStep]; if(!def)return;
+  const expected=def.words[tourPractice.length];
+  if(index!==tourPractice.length){
+    document.getElementById('tutFeedback').textContent='Next, tap “'+expected+'”. Take your time.'; return;
+  }
+  tourPractice.push(def.words[index]);
+  document.getElementById('tutSentence').innerHTML=tourPractice.map(function(w){return '<span>'+w+'</span>'}).join('');
+  if(tourPractice.length===def.words.length){
+    document.getElementById('tutFeedback').textContent='Message complete. Press Next when you are ready.';
+    document.getElementById('tutNext').disabled=false;
+    sentence=def.words.map(function(w){return {w:w,i:0}}); rStrip(); speak(def.goal);
+  }else document.getElementById('tutFeedback').textContent='Good. Next: '+def.words[tourPractice.length];
+}
+function tourClearPractice(){tourPractice=[];rTut()}
+function tutBack(){if(tutStep>0){tutStep--;tourPractice=[];rTut()}}
+function tutNext(){
+  if(tutStep===6)tourSaveInfo();
+  if(tutStep===TUT.length-1){finishTut();return;}
+  tutStep++;tourPractice=[];rTut();
+}
+function skipTut(){tutDone=true;save();document.getElementById('tutOv').style.display='none'}
+function finishTut(){tutDone=true;save();document.getElementById('tutOv').style.display='none'}
 
 // === INIT ===
 function init(){
@@ -1869,17 +1962,17 @@ const rowStarts=[['I',0],['you',12],['he',24],['it',36]];
 if(rowStarts.some(function(x){const c=V.find(function(v){return v.w===x[0]});return !c||c.p!==x[1]})){
 console.error('ROW ORDER VIOLATION: fixed core rows moved. Restore I/you/he/it to p:0/12/24/36.');
 }
-const tutDone=load();
+load();
 const ptBtn=document.getElementById('phoneToggle');if(ptBtn){ptBtn.innerHTML=phoneMode?'FULL<br><span style="font-size:7px;opacity:.7">VIEW</span>':'SIMPLE<br><span style="font-size:7px;opacity:.7">VIEW</span>'}
 document.getElementById('pinPad').innerHTML=['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>k===''?'<button class="nk empty"></button>':k==='⌫'?`<button class="nk" onclick="pinKey('⌫')">⌫</button>`:`<button class="nk" onclick="pinKey('${k}')">${k}</button>`).join('');
 render();renderRec();
 window.addEventListener('resize',render);
 speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=populateVoices;
-setTimeout(()=>{const sp=document.getElementById('splash');sp.classList.add('gone');setTimeout(()=>{sp.remove();if(!tutDone)showTut()},500)},800);
+setTimeout(()=>{const sp=document.getElementById('splash');sp.classList.add('gone');setTimeout(()=>{sp.remove();if(!tutDone||location.search.indexOf('tour=1')!==-1)showTut()},500)},800);
 }
 
-// Tutorial overlay (added dynamically to keep HTML clean)
-document.body.insertAdjacentHTML('beforeend','<div class="tut-ov" id="tutOv" style="display:none"><div class="tut-card"><div class="tut-emoji" id="tutE"></div><div class="tut-h" id="tutH"></div><div class="tut-p" id="tutP"></div><div class="tut-dots" id="tutD"></div><button class="tut-btn" id="tutBtn" onclick="tutNext()">Next</button></div></div>');
+// Tour overlay is inserted before init so first-run setup can open after splash.
+document.body.insertAdjacentHTML('beforeend','<div class="tut-ov" id="tutOv" style="display:none"><div class="tut-card"><div class="tut-top"><span class="tut-kicker">Guided setup & training</span><span class="tut-count" id="tutCount"></span></div><div class="tut-progress"><span id="tutProgress"></span></div><div class="tut-emoji" id="tutE"></div><div class="tut-h" id="tutH"></div><div class="tut-p" id="tutP"></div><div class="tut-nav"><button class="tut-btn secondary" id="tutBack" onclick="tutBack()">Back</button><button class="tut-btn" id="tutNext" onclick="tutNext()">Next</button><button class="tut-btn skip" onclick="skipTut()">Skip tour</button></div></div></div>');
 
 init();
 </script><div id="teachBanner">
