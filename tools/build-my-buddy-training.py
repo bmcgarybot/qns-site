@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 """Build the public My Buddy AAC training PDF set."""
 
+from io import BytesIO
 from pathlib import Path
+import sys
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.lib.pagesizes import LETTER, landscape
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
+from reportlab.pdfgen import canvas
 from reportlab.platypus import (
     BaseDocTemplate, Frame, KeepTogether, PageBreak, PageTemplate, Paragraph,
     Spacer, Table, TableStyle,
 )
+from pypdf import PdfReader, PdfWriter
 
 try:
     from svglib.svglib import svg2rlg
@@ -480,7 +484,184 @@ def build_routines():
     return path
 
 
+def kit_page(title, subtitle="", label="MY BUDDY AAC COMPLETE TRAINING KIT", lines=None, pagesize=LETTER):
+    """Create one polished portrait or landscape binder page in memory."""
+    packet = BytesIO()
+    c = canvas.Canvas(packet, pagesize=pagesize)
+    width, height = pagesize
+    c.setFillColor(INK)
+    c.rect(0, 0, width, height, fill=1, stroke=0)
+    c.setFillColor(TEAL)
+    c.rect(0, height - 0.18 * inch, width, 0.18 * inch, fill=1, stroke=0)
+    c.setFillColor(GOLD)
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(0.72 * inch, height - 0.92 * inch, label)
+    c.setFillColor(WHITE)
+    c.setFont("Helvetica-Bold", 27)
+    c.drawString(0.72 * inch, height - 1.45 * inch, title)
+    if subtitle:
+        c.setFillColor(colors.HexColor("#D5E0E2"))
+        c.setFont("Helvetica", 11)
+        text = c.beginText(0.72 * inch, height - 1.78 * inch)
+        text.setLeading(15)
+        for line in subtitle.split("\n"):
+            text.textLine(line)
+        c.drawText(text)
+    if lines:
+        y = height - 2.45 * inch
+        for heading, detail in lines:
+            c.setFillColor(TEAL)
+            c.roundRect(0.72 * inch, y - 0.07 * inch, 0.31 * inch, 0.31 * inch, 4, fill=1, stroke=0)
+            c.setFillColor(WHITE)
+            c.setFont("Helvetica-Bold", 12)
+            c.drawString(1.18 * inch, y + 0.05 * inch, heading)
+            c.setFillColor(colors.HexColor("#CAD5D7"))
+            c.setFont("Helvetica", 9.2)
+            c.drawString(1.18 * inch, y - 0.13 * inch, detail)
+            y -= 0.7 * inch
+    c.setFillColor(colors.HexColor("#AFC1C5"))
+    c.setFont("Helvetica", 8)
+    c.drawString(0.72 * inch, 0.42 * inch, "Free to print and share for My Buddy AAC training")
+    c.save()
+    packet.seek(0)
+    return PdfReader(packet).pages[0]
+
+
+def kit_contents_page(section_rows, index_page):
+    packet = BytesIO()
+    c = canvas.Canvas(packet, pagesize=LETTER)
+    width, height = LETTER
+    c.setFillColor(PALE); c.rect(0, 0, width, height, fill=1, stroke=0)
+    c.setFillColor(TEAL); c.rect(0, height - 0.18*inch, width, 0.18*inch, fill=1, stroke=0)
+    c.setFillColor(GOLD); c.setFont("Helvetica-Bold", 9); c.drawString(.72*inch, height-.78*inch, "MY BUDDY AAC COMPLETE TRAINING KIT")
+    c.setFillColor(INK); c.setFont("Helvetica-Bold", 27); c.drawString(.72*inch, height-1.25*inch, "Table of Contents")
+    y = height - 1.86*inch
+    for number, title, detail, start, end in section_rows:
+        c.setFillColor(TEAL); c.circle(.91*inch, y+.04*inch, .18*inch, fill=1, stroke=0)
+        c.setFillColor(WHITE); c.setFont("Helvetica-Bold", 10); c.drawCentredString(.91*inch, y, str(number))
+        c.setFillColor(INK); c.setFont("Helvetica-Bold", 12); c.drawString(1.28*inch, y+.02*inch, title)
+        c.setFillColor(MUTED); c.setFont("Helvetica", 8.5); c.drawString(1.28*inch, y-.2*inch, detail)
+        c.setFillColor(INK); c.setFont("Helvetica-Bold", 10); c.drawRightString(width-.72*inch, y, str(start) if start == end else f"{start}-{end}")
+        c.setStrokeColor(GRAY); c.line(1.28*inch, y-.31*inch, width-.72*inch, y-.31*inch)
+        y -= .78*inch
+    c.setFillColor(INK); c.setFont("Helvetica-Bold", 12); c.drawString(1.28*inch, y, "Alphabetical index")
+    c.drawRightString(width-.72*inch, y, str(index_page))
+    c.setFillColor(MUTED); c.setFont("Helvetica", 8.5); c.drawString(1.28*inch, y-.2*inch, "Topics, routines, communication skills, and setup tasks")
+    c.setFont("Helvetica", 8); c.drawString(.72*inch, .42*inch, "Page numbers refer to this complete kit.")
+    c.save(); packet.seek(0)
+    return PdfReader(packet).pages[0]
+
+
+def kit_index_page(entries):
+    packet = BytesIO()
+    c = canvas.Canvas(packet, pagesize=LETTER)
+    width, height = LETTER
+    c.setFillColor(PALE); c.rect(0, 0, width, height, fill=1, stroke=0)
+    c.setFillColor(TEAL); c.rect(0, height-.18*inch, width, .18*inch, fill=1, stroke=0)
+    c.setFillColor(GOLD); c.setFont("Helvetica-Bold", 9); c.drawString(.72*inch, height-.78*inch, "MY BUDDY AAC COMPLETE TRAINING KIT")
+    c.setFillColor(INK); c.setFont("Helvetica-Bold", 27); c.drawString(.72*inch, height-1.25*inch, "Index")
+    half = (len(entries) + 1) // 2
+    for col, group in enumerate((entries[:half], entries[half:])):
+        x = .72*inch + col*3.65*inch
+        y = height - 1.75*inch
+        for term, page in group:
+            c.setFillColor(INK); c.setFont("Helvetica", 9.2); c.drawString(x, y, term)
+            c.setFillColor(MUTED); c.setFont("Helvetica-Bold", 9.2); c.drawRightString(x+3.08*inch, y, str(page))
+            c.setStrokeColor(colors.HexColor("#D5DCDD")); c.line(x, y-.07*inch, x+3.08*inch, y-.07*inch)
+            y -= .28*inch
+    c.setFillColor(MUTED); c.setFont("Helvetica", 8); c.drawString(.72*inch, .42*inch, "Use Find inside the app when a word is not shown in this printed index.")
+    c.save(); packet.seek(0)
+    return PdfReader(packet).pages[0]
+
+
+def add_kit_number(page, number):
+    packet = BytesIO()
+    width = float(page.mediabox.width); height = float(page.mediabox.height)
+    c = canvas.Canvas(packet, pagesize=(width, height))
+    c.setFillColor(INK); c.roundRect(width-62, height-25, 48, 16, 4, fill=1, stroke=0)
+    c.setFillColor(WHITE); c.setFont("Helvetica-Bold", 7.5)
+    c.drawCentredString(width-38, height-20, f"KIT {number}")
+    c.save(); packet.seek(0)
+    page.merge_page(PdfReader(packet).pages[0])
+
+
+def build_complete_kit(section_paths):
+    """Combine every printable into a tabbed, indexed binder-ready PDF."""
+    path = OUT / "my-buddy-complete-training-kit.pdf"
+    sections = [
+        ("Caregiver Getting Started", "Device setup, offline checks, personalization, and first-session support."),
+        ("Core Board Teaching Guide", "Exact board map, color key, motor planning, Find, and modeling routes."),
+        ("Communication Partner Guide", "Access, modeling, wait time, dignity, privacy, and message repair."),
+        ("Seven-Day Practice Pack", "One week of short communication activities and reflection pages."),
+        ("Low-Tech Backup Boards", "Printable Full View and Simple View boards for outages and travel."),
+        ("Everyday Routine Teaching Boards", "Sixteen real-life routines with messages and exact board paths."),
+    ]
+    counts = [len(PdfReader(str(p)).pages) for p in section_paths]
+    starts, cursor = [], 4
+    for count in counts:
+        starts.append(cursor); cursor += 1 + count
+    index_page = cursor
+    rows = [(i+1, title, detail, starts[i], starts[i]+counts[i]) for i,(title,detail) in enumerate(sections)]
+
+    writer = PdfWriter()
+    cover = kit_page("Complete Training Kit", "A binder-ready guide for setup, teaching, daily practice,\nlow-tech backup, and real-life communication routines.")
+    writer.add_page(cover)
+    writer.add_page(kit_contents_page(rows, index_page))
+    writer.add_page(kit_page("How to Use This Binder", "Start small, use the board during real life, and return to the sections you need.", lines=[
+        ("1. Prepare", "Complete the device and offline checklist in Section 1."),
+        ("2. Learn the layout", "Use the exact board map and color key in Section 2."),
+        ("3. Train partners", "Share the short partner guide with family, school, and care teams."),
+        ("4. Practice", "Choose one seven-day activity or one routine that is already happening."),
+        ("5. Keep a backup", "Print both low-tech boards and store them with the device."),
+        ("6. Record needs", "Write down vocabulary that should be added or practiced."),
+    ]))
+
+    for i, ((title, detail), source_path) in enumerate(zip(sections, section_paths)):
+        divider = kit_page(f"Section {i+1}", title + "\n" + detail, label="MY BUDDY AAC BINDER DIVIDER")
+        writer.add_page(divider)
+        for page in PdfReader(str(source_path)).pages:
+            writer.add_page(page)
+
+    index_entries = sorted([
+        ("AAC partner habits", starts[2]), ("Access to the board", starts[2]), ("Airplane-mode test", starts[0]),
+        ("Backup and restore", starts[0]), ("Bathroom routine", starts[5]), ("Bedtime", starts[5]),
+        ("Big feelings", starts[5]), ("Board colors", starts[1]), ("Board map - Full View", starts[1]),
+        ("Board map - Simple View", starts[4]), ("Caregiver setup", starts[0]), ("Charging plan", starts[0]),
+        ("Communication repair", starts[2]), ("Core words", starts[1]), ("Daily practice", starts[3]),
+        ("Device personalization", starts[0]), ("Dignity", starts[2]), ("Dressing", starts[5]),
+        ("Editing vocabulary", starts[0]), ("Emergency backup", starts[4]), ("Find tool", starts[1]),
+        ("Food and meals", starts[5]), ("Getting ready", starts[5]), ("Health and pain", starts[5]),
+        ("Home Screen installation", starts[0]), ("Honoring refusal", starts[2]), ("Kitchen", starts[5]),
+        ("Language modeling", starts[1]), ("Living room", starts[5]), ("Low-tech boards", starts[4]),
+        ("Message repair", starts[5]), ("Motor planning", starts[1]), ("Partner agreement", starts[2]),
+        ("Personal safety information", starts[0]), ("Playground", starts[5]), ("Privacy", starts[2]),
+        ("Quick phrases", starts[0]), ("Requests", starts[3]), ("School", starts[5]),
+        ("Sentence strip", starts[0]), ("Simple View", starts[1]), ("Store and community", starts[5]),
+        ("Teaching without testing", starts[0]), ("Voice and speech", starts[0]), ("Wait time", starts[2]),
+        ("Washing hands", starts[5]), ("Weekly practice plan", starts[3]), ("Word routes", starts[1]),
+    ], key=lambda item: item[0].lower())
+    writer.add_page(kit_index_page(index_entries))
+
+    for number, page in enumerate(writer.pages, start=1):
+        add_kit_number(page, number)
+    writer.add_metadata({"/Title":"My Buddy AAC Complete Training Kit", "/Author":"BMC Luminary Ventures LLC", "/Subject":"Binder-ready My Buddy AAC setup and training materials"})
+    with open(path, "wb") as output:
+        writer.write(output)
+    return path
+
+
 if __name__ == "__main__":
-    paths = [build_caregiver(), build_core(), build_partner(), build_practice(), build_backup_board(), build_routines()]
+    if "--kit-only" in sys.argv:
+        paths = [
+            OUT / "my-buddy-caregiver-guide.pdf",
+            OUT / "my-buddy-core-board-teaching-guide.pdf",
+            OUT / "my-buddy-communication-partner-guide.pdf",
+            OUT / "my-buddy-daily-practice-pack.pdf",
+            OUT / "my-buddy-low-tech-backup-board.pdf",
+            OUT / "my-buddy-routine-teaching-boards.pdf",
+        ]
+    else:
+        paths = [build_caregiver(), build_core(), build_partner(), build_practice(), build_backup_board(), build_routines()]
+    paths.append(build_complete_kit(paths))
     for path in paths:
         print(path.relative_to(ROOT))
