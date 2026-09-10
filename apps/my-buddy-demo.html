@@ -9,8 +9,8 @@
 <link rel="apple-touch-icon" href="icons/mybuddy-180.png">
 <title>My Buddy</title>
 <style>
-/* An iPad that stops at iOS 12 runs Safari 12, and every browser on iOS uses
-   that same engine, so Chrome there is Safari with a different icon. */
+/* iPads that stop at iOS 12 run Safari 12, and Chrome on iOS is the same
+   engine with a different icon. Anything below is a fallback for that. */
 @supports not (width: clamp(1px, 1vw, 2px)) {
   .c img { width: 28px !important; height: 28px !important; }
   .c .lb { font-size: 12px !important; max-height: none !important; }
@@ -43,7 +43,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .sw img{width:28px;height:28px;object-fit:contain}.sw span{font-size:8px;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46px;text-align:center}
 .sb{height:48px;min-width:42px;border:none;border-radius:6px;font-size:18px;cursor:pointer;flex-shrink:0;color:#fff}
 .sb:active{opacity:.7}
-#bDel{background:#666}#bClr{background:#933}#bSpk{background:#2a9d8f;font-size:14px;padding:0 10px;font-weight:800}#bQP{background:#e9c46a;color:#333;font-size:16px;padding:0 8px}
+#bDel{background:#666}#bClr{background:#933}#bSpk{background:#2a9d8f;font-size:14px;padding:0 10px;font-weight:800}#bQP{background:#e9c46a;color:#202020}
+#bFind{background:#075d6b;color:#fff}#bEdit{background:#7b3fc6;color:#fff}
 #bEdit{background:#9b5de5;font-size:14px;padding:0 8px;font-weight:800}
 #bEdit.active{background:#e63946;animation:editPulse 1.5s infinite}
 @keyframes editPulse{0%,100%{opacity:1}50%{opacity:.6}}
@@ -59,6 +60,8 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .ib{background:#264653;border:1px solid #2a9d8f;border-radius:4px;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;cursor:pointer;flex-shrink:0;white-space:nowrap}
 .ib:active{background:#2a9d8f}
 .ib .ib-icon{font-size:12px;margin-right:2px}
+.rail-btn{height:30px;min-width:34px;border:none;border-radius:5px;padding:2px 6px;font-size:9px;font-weight:800;line-height:1.05;cursor:pointer;flex-shrink:0;align-self:center}
+.rail-btn:active{opacity:.7}
 #modelBanner{display:none;background:#2d6a4f;text-align:center;font-size:11px;padding:2px;font-weight:700;color:#fff;flex-shrink:0}
 #recentsBar{background:#2a2a2a;display:none;gap:2px;padding:2px 4px;flex-shrink:0;overflow-x:auto;border-bottom:1px solid #444;scrollbar-width:none}
 #recentsBar::-webkit-scrollbar{display:none}
@@ -90,9 +93,15 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 .c .lb{font-size:var(--lb,13px);font-weight:800;flex-shrink:0;max-height:var(--lbmax,2.4em);overflow:hidden}
 #strip{height:46px}#sW .sw{min-width:40px;height:40px}.sb{height:40px;min-width:38px;font-size:15px}
 #bSpk{font-size:12px;padding:0 8px}}
-.c.resp{background:#e76f51}.c.social{background:#e9c46a;color:#333}.c.prow_a{background:#2d6a4f}.c.prow_b{background:#e9c46a;color:#333}.c.prow_c{background:#457b9d}.c.prow_d{background:#b5838d}.c.folder{background:#555;border:2px solid #888}.c.util{background:#933}
+.c.resp{background:#e76f51}.c.social{background:#e9c46a;color:#333}.c.prow_a{background:#2d6a4f}
+.c.pronoun{background:#e9c46a;color:#333}.c.prow_b{background:#e9c46a;color:#333}.c.prow_c{background:#457b9d}.c.prow_d{background:#b5838d}.c.folder{background:#555;border:2px solid #888}.c.util{background:#933}
+/* Word-class colors follow the AAC color key instead of coloring whole rows. */
+.c.verb{background:#2f9e44}.c.adjective{background:#3b82b8}.c.noun{background:#e58b2a}
+.c.pronoun{background:#f0d94f;color:#202020}.c.grammar{background:#f5f5f2;color:#202020}
+.c.social{background:#e8a4b8;color:#202020}.c.folder{background:#555;border:2px solid #aaa}
+.c.pronoun .lb,.c.grammar .lb,.c.social .lb{color:#202020;text-shadow:none}
 #backBtn{display:none;background:#2a9d8f;color:#fff;border:none;border-radius:0;padding:8px 16px;font-size:14px;font-weight:800;cursor:pointer;flex-shrink:0;width:100%;text-align:left}
-#recToggle{background:rgba(255,255,255,.1);border:none;border-radius:6px;width:30px;height:30px;font-size:15px;cursor:pointer;color:#bbb;flex-shrink:0;align-self:center;margin-left:4px}
+#recToggle{background:rgba(255,255,255,.1);border:none;border-radius:6px;width:30px;height:30px;font-size:15px;cursor:pointer;color:#fff;flex-shrink:0;align-self:center;margin-left:2px}
 #phoneToggle{background:#264653;border:1px solid #2a9d8f;border-radius:4px;color:#fff;font-size:8px;font-weight:700;padding:2px 6px;cursor:pointer;flex-shrink:0;white-space:nowrap;margin-left:auto;line-height:1.2;text-align:center}
 #phoneToggle:active{opacity:.7}
 #langPick{display:inline-flex;gap:3px;background:rgba(0,0,0,.4);border-radius:999px;padding:3px;vertical-align:middle}
@@ -167,15 +176,18 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div id="modelBanner">👨‍🏫 MODELING MODE</div>
 <div id="offlineReady" style="display:none;position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:900;background:#2a9d8f;color:#fff;font:600 13px system-ui;padding:7px 16px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.4)">Saved for offline use</div>
 
-<div id="oldBrowser" style="display:none;background:#7a2e2e;color:#fff;font:600 13px system-ui;padding:10px 14px;line-height:1.5">This device's browser is several years old, so the board may look cramped and some symbols may be the wrong size. It still works and it still speaks. On an iPad this old, every browser uses the same built-in engine, so switching from Safari to Chrome will not change it.<button onclick="this.parentNode.style.display='none'" style="margin-left:8px;background:#fff;color:#7a2e2e;border:none;border-radius:5px;padding:4px 10px;font-weight:700">OK</button></div>
+<div id="oldBrowser" style="display:none;background:#7a2e2e;color:#fff;font:600 13px system-ui;padding:10px 14px;line-height:1.5">
+This device's browser is several years old, so the board may look cramped and
+some symbols may be the wrong size. It still works and it still speaks. On an
+iPad this old, every browser uses the same built-in engine, so switching from
+Safari to Chrome will not change it.
+<button onclick="this.parentNode.style.display='none'" style="margin-left:8px;background:#fff;color:#7a2e2e;border:none;border-radius:5px;padding:4px 10px;font-weight:700">OK</button>
+</div>
 <div id="strip">
 <button class="sb" id="bDel" onclick="sDel()">⌫</button>
 <div id="sW"></div>
 <button class="sb" id="bClr" onclick="sClr()">✕</button>
 <button class="sb" id="bSpk" onclick="sSpk()">SPEAK</button>
-<button class="sb" id="bQP" onclick="openQP()"><span style="font-size:12px;line-height:1">⚡<br><span style="font-size:7px;font-weight:700">QUICK</span></span></button>
-<button class="sb" id="bFind" onclick="openFinder()" title="Find where a word lives">FIND</button>
-<button class="sb" id="bEdit" onclick="openPin()">MENU</button>
 </div>
 
 <div id="infoBar">
@@ -189,6 +201,9 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <button class="ib" onclick="sayInfo('emergency')"><span class="ib-icon">🚨</span>Emergency</button>
 </div>
 <button id="addBtn" onclick="openAddFromBoard()" style="display:none;background:rgba(42,157,143,.9);border:none;border-radius:6px;width:30px;height:30px;font-size:18px;cursor:pointer;color:#fff;flex-shrink:0;align-self:center;margin-left:4px">+</button>
+<button class="rail-btn" id="bQP" onclick="openQP()">⚡<br>QUICK</button>
+<button class="rail-btn" id="bFind" onclick="openFinder()" title="Find where a word lives">FIND</button>
+<button class="rail-btn" id="bEdit" onclick="openPin()">MENU</button>
 <button id="recToggle" onclick="toggleRec()">🕐</button>
 <button id="phoneToggle" onclick="togglePhone()">FULL<br><span style="font-size:7px;opacity:.7">VIEW</span></button>
 </div>
@@ -225,7 +240,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <hr style="border:0;border-top:1px solid #3a4a5a;margin:14px 0">
 <div style="margin-bottom:14px">
 <button class="ok" style="width:100%" onclick="closeOv('setOv');startEdit()">Edit board</button>
-<div style="font-size:.62em;opacity:.6;margin-top:4px">Move, add or remove words</div>
+<div style="font-size:.62em;opacity:.7;margin-top:4px">Open a folder, then tap a word to edit or remove it. Use + to add a word to that page.</div>
 </div>
 <div style="margin-bottom:14px">
 <button class="ok" style="width:100%" onclick="backupData()">Back up words and settings</button>
@@ -275,7 +290,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div class="ov" id="cwOv"><div class="md">
 <h3>➕ Add Custom Word</h3>
 <label>Word</label><input type="text" id="cwWord" placeholder="e.g. Grandma">
-<label>Color Category</label><select id="cwCat"><option value="resp">Response (red-orange)</option><option value="social">Social (yellow)</option><option value="prow_a">Green</option><option value="prow_b">Yellow-green</option><option value="prow_c">Blue</option><option value="prow_d">Pink</option><option value="folder">Folder (dark)</option></select>
+<label>Word Type / Color</label><select id="cwCat"><option value="noun">Thing or person (orange)</option><option value="verb">Action (green)</option><option value="adjective">Description (blue)</option><option value="pronoun">Pronoun (yellow)</option><option value="grammar">Grammar (white)</option><option value="social">Social (pink)</option><option value="folder">Folder (dark)</option></select>
 <label>Photo (optional)</label>
 <div style="display:flex;gap:6px;align-items:center;margin:4px 0">
 <button class="ok" onclick="document.getElementById('cwCamera').click()" style="font-size:.8em">📷 Take Photo</button>
@@ -292,7 +307,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 <div class="ov" id="editOv"><div class="md">
 <h3>✏️ Edit Button</h3>
 <label>Word</label><input type="text" id="editWord">
-<label>Color Category</label><select id="editCat"><option value="resp">Response (red-orange)</option><option value="social">Social (yellow)</option><option value="prow_a">Green</option><option value="prow_b">Yellow-green</option><option value="prow_c">Blue</option><option value="prow_d">Pink</option><option value="folder">Folder (dark)</option><option value="util">Utility (red)</option></select>
+<label>Word Type / Color</label><select id="editCat"><option value="noun">Thing or person (orange)</option><option value="verb">Action (green)</option><option value="adjective">Description (blue)</option><option value="pronoun">Pronoun (yellow)</option><option value="grammar">Grammar (white)</option><option value="social">Social (pink)</option><option value="folder">Folder (dark)</option><option value="util">Utility (red)</option></select>
 <label>Image</label>
 <div id="editImgPreview" style="text-align:center;margin:6px 0"></div>
 <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -327,17 +342,14 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
 </div></div>
 
 <!-- BUILD -->
-<script>const BUILD="2026-09-09 21:10 UTC";</script>
+<script>const BUILD="2026-09-09 23:15 UTC";</script>
 <!-- /BUILD -->
 <script>
 /*
  * ██████  ROW ORDER IS LOCKED - DO NOT CHANGE  ██████
- * Row 1 (p:0-11):   prow_a - I/we + verbs (green)
- * Row 2 (p:12-23):  prow_b - you/they + verbs (yellow)
- * Row 3 (p:24-35):  prow_c - he/she + verbs (blue)
- * Row 4 (p:36-47):  prow_d - it + feelings (pink)
- * Row 5 (p:48-59):  resp - yes/no/descriptors (red)
- * Row 6 (p:60-71):  social - my/please/grammar (yellow)
+ * Rows 1-4 (p:0-47): fixed core locations; colors describe word class.
+ * Row 5 (p:48-59): responses and descriptors.
+ * Row 6 (p:60-71): social, questions, "to", and grammar doorway.
  * Row 7 (p:72-83):  folders (gray)
  *
  * Pronoun rows ALWAYS come first. This has been reverted
@@ -348,7 +360,13 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
  * ████████████████████████████████████████████████████████
  */
 const V=[
-{w:"I",t:"prow_a",i:6632,cat:"pn_I",p:0},{w:"we",t:"prow_a",i:36263,cat:"pn_we",p:1},{w:"want",t:"prow_a",i:5441,p:2},{w:"like",t:"prow_a",i:37826,p:3},{w:"go",t:"prow_a",i:8142,p:4},{w:"help",t:"prow_a",i:32648,p:5},{w:"is",t:"prow_a",i:36260,p:6},{w:"on",t:"prow_a",i:8014,p:7},{w:"in",t:"prow_a",i:8015,p:8},{w:"up",t:"prow_a",i:5469,p:9},{w:"feel",t:"prow_a",svgName:"feel",p:10},{w:"here",t:"prow_a",i:5382,p:11},{w:"you",t:"prow_b",i:6625,cat:"pn_you",p:12},{w:"they",t:"prow_b",i:36264,cat:"pn_they",p:13},{w:"play",t:"prow_b",i:23392,p:14},{w:"eat",t:"prow_b",i:6456,p:15},{w:"drink",t:"prow_b",i:6061,p:16},{w:"look",t:"prow_b",i:6872,p:17},{w:"come",t:"prow_b",i:6857,p:18},{w:"give",t:"prow_b",i:10044,p:19},{w:"do",t:"prow_b",svgName:"do",p:20},{w:"can",t:"prow_b",i:9124,p:21},{w:"+ed",t:"prow_b",svgName:"plus_ed",p:22},{w:"again",t:"prow_b",i:6952,p:23},{w:"he",t:"prow_c",i:6623,cat:"pn_he",p:24},{w:"she",t:"prow_c",i:6624,cat:"pn_she",p:25},{w:"make",t:"prow_c",i:9403,p:26},{w:"get",t:"prow_c",i:36512,p:27},{w:"put",t:"prow_c",i:5335,p:28},{w:"open",t:"prow_c",i:24825,p:29},{w:"turn",t:"prow_c",i:28485,p:30},{w:"read",t:"prow_c",i:6408,p:31},{w:"sit",t:"prow_c",i:5553,p:32},{w:"walk",t:"prow_c",i:6107,p:33},{w:"run",t:"prow_c",i:6108,p:34},{w:"down",t:"prow_c",i:5468,p:35},{w:"it",t:"prow_d",i:31670,cat:"pn_it",p:36},{w:"sleep",t:"prow_d",i:2436,p:37},{w:"need",t:"prow_d",svgName:"need",p:38},{w:"that",t:"prow_d",svgName:"that",p:39},{w:"love",t:"prow_d",svgName:"love",p:40},{w:"happy",t:"prow_d",i:35533,p:41},{w:"not",t:"prow_d",i:5526,p:42},{w:"out",t:"prow_d",i:5287,p:43},{w:"off",t:"prow_d",i:37236,p:44},{w:"sad",t:"prow_d",i:35535,p:45},{w:"+er",t:"prow_d",svgName:"plus_er",p:46},{w:"+est",t:"prow_d",svgName:"plus_est",p:47},{w:"yes",t:"resp",i:5584,p:48},{w:"more",t:"resp",i:5508,p:49},{w:"good",t:"resp",i:7040,p:50},{w:"big",t:"resp",i:2466,p:51},{w:"hot",t:"resp",i:2485,p:52},{w:"some",t:"resp",i:24971,p:53},{w:"all done",t:"resp",i:28429,p:54},{w:"little",t:"resp",i:2467,p:55},{w:"bad",t:"resp",i:7041,p:56},{w:"no",t:"resp",svgName:"no",p:57},{w:"stop",t:"resp",svgName:"stop",p:58},{w:"cold",t:"resp",i:2486,p:59},{w:"my",t:"social",i:12264,p:60},{w:"please",t:"social",i:5324,p:61},{w:"thank you",t:"social",i:5336,p:62},{w:"sorry",t:"social",i:7220,p:63},{w:"what",t:"social",i:5345,p:64},{w:"where",t:"social",i:5346,p:65},{w:"who",t:"social",i:5344,p:66},{w:"when",t:"social",svgName:"when",p:67},{w:"why",t:"social",svgName:"why",p:68},{w:"how",t:"social",svgName:"how",p:69},{w:"+s",t:"social",svgName:"plus_s",p:70},{w:"+ing",t:"social",svgName:"plus_ing",p:71},{w:"CLEAR",t:"folder",i:0,p:72},{w:"food",t:"folder",i:2452,cat:"food",p:73},{w:"people",t:"folder",i:7093,cat:"people",p:74},{w:"feelings",t:"folder",svgName:"feelings",cat:"feelings",p:75},{w:"places",t:"folder",i:36858,cat:"places",p:76},{w:"animals",t:"folder",i:2464,cat:"animals",p:77},{w:"things",t:"folder",i:37011,cat:"things",p:78},{w:"colors",t:"folder",i:38760,cat:"colors",p:79},{w:"body",t:"folder",i:2490,cat:"body",p:80},{w:"clothes",t:"folder",i:2509,cat:"clothes",p:81},{w:"my words",t:"folder",svgName:"spk_word",cat:"custom",p:82},{w:"ABC",t:"folder",i:99998,cat:"spell",p:83}
+{w:"I",t:"pronoun",i:6632,cat:"pn_I",p:0},{w:"we",t:"pronoun",i:36263,cat:"pn_we",p:1},{w:"want",t:"verb",i:5441,p:2},{w:"like",t:"verb",i:37826,p:3},{w:"go",t:"verb",i:8142,p:4},{w:"help",t:"verb",i:32648,p:5},{w:"is",t:"verb",i:36260,p:6},{w:"on",t:"grammar",i:8014,p:7},{w:"in",t:"grammar",i:8015,p:8},{w:"up",t:"grammar",i:5469,p:9},{w:"feel",t:"verb",svgName:"feel",p:10},{w:"here",t:"grammar",i:5382,p:11},
+{w:"you",t:"pronoun",i:6625,cat:"pn_you",p:12},{w:"they",t:"pronoun",i:36264,cat:"pn_they",p:13},{w:"play",t:"verb",i:23392,p:14},{w:"eat",t:"verb",i:6456,p:15},{w:"drink",t:"verb",i:6061,p:16},{w:"look",t:"verb",i:6872,p:17},{w:"come",t:"verb",i:6857,p:18},{w:"give",t:"verb",i:10044,p:19},{w:"do",t:"verb",svgName:"do",p:20},{w:"can",t:"verb",i:9124,p:21},{w:"talk",t:"verb",svgName:"talk",p:22},{w:"again",t:"grammar",i:6952,p:23},
+{w:"he",t:"pronoun",i:6623,cat:"pn_he",p:24},{w:"she",t:"pronoun",i:6624,cat:"pn_she",p:25},{w:"make",t:"verb",i:9403,p:26},{w:"get",t:"verb",i:36512,p:27},{w:"put",t:"verb",i:5335,p:28},{w:"open",t:"verb",i:24825,p:29},{w:"turn",t:"verb",i:28485,p:30},{w:"read",t:"verb",i:6408,p:31},{w:"sit",t:"verb",i:5553,p:32},{w:"walk",t:"verb",i:6107,p:33},{w:"run",t:"verb",i:6108,p:34},{w:"down",t:"grammar",i:5468,p:35},
+{w:"it",t:"pronoun",i:31670,cat:"pn_it",p:36},{w:"sleep",t:"verb",i:2436,p:37},{w:"need",t:"verb",svgName:"need",p:38},{w:"that",t:"grammar",svgName:"that",p:39},{w:"love",t:"verb",svgName:"love",p:40},{w:"happy",t:"adjective",i:35533,p:41},{w:"not",t:"grammar",i:5526,p:42},{w:"out",t:"grammar",i:5287,p:43},{w:"off",t:"grammar",i:37236,p:44},{w:"sad",t:"adjective",i:35535,p:45},{w:"and",t:"grammar",i:0,p:46},{w:"the",t:"grammar",i:0,p:47},
+{w:"yes",t:"social",i:5584,p:48},{w:"more",t:"adjective",i:5508,p:49},{w:"good",t:"adjective",i:7040,p:50},{w:"big",t:"adjective",i:2466,p:51},{w:"hot",t:"adjective",i:2485,p:52},{w:"some",t:"adjective",i:24971,p:53},{w:"all done",t:"social",i:28429,p:54},{w:"little",t:"adjective",i:2467,p:55},{w:"bad",t:"adjective",i:7041,p:56},{w:"no",t:"social",svgName:"no",p:57},{w:"stop",t:"social",svgName:"stop",p:58},{w:"cold",t:"adjective",i:2486,p:59},
+{w:"my",t:"pronoun",i:12264,p:60},{w:"please",t:"social",i:5324,p:61},{w:"thank you",t:"social",i:5336,p:62},{w:"sorry",t:"social",i:7220,p:63},{w:"what",t:"grammar",i:5345,p:64},{w:"where",t:"grammar",i:5346,p:65},{w:"who",t:"grammar",i:5344,p:66},{w:"when",t:"grammar",svgName:"when",p:67},{w:"why",t:"grammar",svgName:"why",p:68},{w:"how",t:"grammar",svgName:"how",p:69},{w:"to",t:"grammar",i:0,p:70},{w:"grammar",t:"folder",svgName:"word",cat:"grammar",p:71},
+{w:"CLEAR",t:"folder",i:0,p:72},{w:"food",t:"folder",i:2452,cat:"food",p:73},{w:"people",t:"folder",i:7093,cat:"people",p:74},{w:"feelings",t:"folder",svgName:"feelings",cat:"feelings",p:75},{w:"places",t:"folder",i:36858,cat:"places",p:76},{w:"animals",t:"folder",i:2464,cat:"animals",p:77},{w:"things",t:"folder",i:37011,cat:"things",p:78},{w:"colors",t:"folder",i:38760,cat:"colors",p:79},{w:"body",t:"folder",i:2490,cat:"body",p:80},{w:"clothes",t:"folder",i:2509,cat:"clothes",p:81},{w:"my words",t:"folder",svgName:"spk_word",cat:"custom",p:82},{w:"ABC",t:"folder",i:99998,cat:"spell",p:83}
 ];
 
 const SPELL_KEYS=[
@@ -359,26 +377,59 @@ const SPELL_KEYS=[
 const FR={
 food:[["water","water"],["milk","milk"],["juice","juice"],["apple","apple"],["banana","banana"],["cookie","cookie"],["bread","bread"],["cheese","cheese"],["chicken","chicken"],["rice","rice"],["pizza","pizza"],["ice cream","ice_cream"],["cereal","cereal"],["soup","soup"],["crackers","crackers"],["yogurt","yogurt"],["eggs","eggs"],["fries","fries"],["grapes","grapes"],["strawberry","strawberry"],["sandwich","sandwich"],["cake","cake"],["candy","candy"],["popcorn","popcorn"],["hot dog","hot_dog"]],
 people:[["mom","mom"],["dad","dad"],["brother","brother"],["sister","sister"],["baby","baby"],["teacher","teacher"],["friend","friend"],["doctor","doctor"],["grandma","grandma"],["grandpa","grandpa"],["family","family"],["boy","boy"],["girl","girl"]],
-feelings:[["hug","hug"],["angry","angry"],["scared","scared"],["tired","tired"],["happy","happy"],["sad","sad"],["angry","angry"],["scared","scared"],["tired","tired"],["hurt","hurt"],["sick","sick"],["funny","funny"],["excited","excited"],["calm","calm"],["bored","bored"],["nervous","nervous"],["proud","proud"],["love","love"],["confused","confused"]],
-places:[["home","home"],["school","school"],["bathroom","bathroom"],["outside","outside"],["car","car"],["park","park"],["store","store"],["kitchen","kitchen"],["bedroom","bedroom"]],
-animals:[["dog","dog"],["cat","cat"],["fish","fish"],["bird","bird"],["horse","horse"],["bunny","bunny"],["bear","bear"],["turtle","turtle"],["duck","duck"],["elephant","elephant"],["lion","lion"],["monkey","monkey"],["cow","cow"],["pig","pig"],["frog","frog"]],
-things:[["toy","toy"],["book","book_g"],["ball","ball"],["phone","phone"],["blanket","blanket"],["shoes","shoes"],["cup","cup"],["door","door"],["light","light"],["music","music"]],
+feelings:[["hug","hug"],["angry","angry"],["scared","scared"],["tired","tired"],["happy","happy"],["sad","sad"],["hurt","hurt"],["sick","sick"],["funny","funny"],["excited","excited"],["calm","calm"],["bored","bored"],["nervous","nervous"],["proud","proud"],["love","love"],["confused","confused"],["worried","nervous"],["surprised","excited"],["frustrated","angry"],["lonely","lonely"]],
+places:[["home","home"],["school","school"],["bathroom","bathroom"],["outside","outside"],["car","car"],["park","park"],["store","store"],["kitchen","kitchen"],["bedroom","bedroom"],["hospital","hospital"],["library","library"],["restaurant","restaurant"],["playground","park"],["office","office"],["church","church"],["bus","bus"]],
+animals:[["dog","dog"],["cat","cat"],["fish","fish"],["bird","bird"],["horse","horse"],["bunny","bunny"],["bear","bear"],["turtle","turtle"],["duck","duck"],["elephant","elephant"],["lion","lion"],["monkey","monkey"],["cow","cow"],["pig","pig"],["frog","frog"],["chicken","chicken"],["goat","goat"],["sheep","sheep"],["mouse","mouse"],["hamster","hamster"],["guinea pig","guinea_pig"],["donkey","donkey"],["bee","bee"],["insect","insect"],["dinosaur","dinosaur"],["pet","pet"],["farm animal","farm"],["wild animal","wild"]],
+things:[["toy","toy"],["book","book_g"],["ball","ball"],["phone","phone"],["blanket","blanket"],["shoes","shoes"],["cup","cup"],["door","door"],["light","light"],["music","music"],["school words","school",null,"school"],["TV and media","tv",null,"media"],["computer","computer"],["tablet","tablet"],["game","game"],["paper","paper"],["pencil","pencil"],["money","money"]],
 colors:[["red","color_red"],["blue","color_blue"],["green","color_green"],["yellow","color_yellow"],["orange","color_orange"],["purple","color_purple"],["pink","color_pink"],["black","color_black"],["white","color_white"],["brown","color_brown"]],
 body:[["bathroom","toilet"],["poop","poop"],["pee","pee"],["I need to go","toilet"],["hurt","hurt"],["pain","pain"],["sick","nauseous"],["throw up","vomit"],["dizzy","dizzy"],["itchy","itchy"],["bleeding","bleeding"],["emergency","emergency"],["head","head"],["mouth","mouth"],["hand","hand"],["feet","feet"],["eyes","eyes"],["ears","ears"],["nose","nose"],["tummy","tummy"],["back","back_ache"],["chest","chest"],["leg","leg"],["arm","arm"],["medicine","medicine"],["doctor","doctor"],["nurse","nurse"],["wipe","wipe"],["diaper","diaper"],["accident","accident"],["wash","wash"],["all done","all done"]],
-clothes:[["shirt","shirt"],["pants","pants"],["shoes","shoes"],["socks","socks"],["hat","hat"],["jacket","jacket"],["diaper","diaper"]],
-pn_I:[["I","I"],["I want","want"],["I like","like"],["I go","go"],["I help","help"],["I eat","eat"],["I drink","drink"],["I play","play"],["I look","look"],["I see","see"],["I need","need"],["I make","make"],["I do","do"],["I can","can"],["I feel","feelings"],["I have","give"],["I am","is"]],
-pn_we:[["we","we"],["we want","want"],["we like","like"],["we go","go"],["we play","play"],["we eat","eat"],["we need","need"],["we can","can"],["we have","give"],["we are","is"]],
-pn_you:[["you","you"],["you want","want"],["you like","like"],["you go","go"],["you play","play"],["you eat","eat"],["you look","look"],["you need","need"],["you can","can"],["you have","give"],["you are","is"]],
-pn_they:[["they","they"],["they want","want"],["they like","like"],["they go","go"],["they play","play"],["they eat","eat"],["they need","need"],["they can","can"],["they have","give"],["they are","is"]],
-pn_he:[["he","he"],["he wants","want"],["he likes","like"],["he goes","go"],["he plays","play"],["he eats","eat"],["he looks","look"],["he needs","need"],["he can","can"],["he has","give"],["he is","is"]],
-pn_she:[["she","she"],["she wants","want"],["she likes","like"],["she goes","go"],["she plays","play"],["she eats","eat"],["she looks","look"],["she needs","need"],["she can","can"],["she has","give"],["she is","is"]],
-pn_it:[["it","it_pn"],["it is","is"],["it goes","go"],["it looks","look"],["it has","give"],["it can","can"]]
+clothes:[["shirt","shirt"],["pants","pants"],["shoes","shoes"],["socks","socks"],["hat","hat"],["jacket","jacket"],["diaper","diaper"],["sweater","sweater"],["coat","coat"],["dress","dress"],["shorts","shorts"],["underwear","underwear"],["pajamas","pajamas"],["belt","belt"],["tie","tie"],["button","button"],["zipper","zip"],["wear","wear"],["tight","tight"],["loose","loose"],["dirty","dirty"],["clean","clean"],["wet","wet"],["dry","dry"]],
+grammar:[["a",null],["an",null],["the",null],["this",null],["these",null],["those",null],["to",null],["of",null],["for",null],["with",null],["from",null],["at",null],["by",null],["about",null],["and",null],["or",null],["but",null],["because",null],["if",null],["so",null],["then",null],["than",null],["am",null],["are",null],["be",null],["been",null],["being",null],["was",null],["were",null],["have",null],["has",null],["had",null],["do",null],["does",null],["did",null],["can",null],["could",null],["will",null],["would",null],["shall",null],["should",null],["may",null],["might",null],["must",null],["mine",null],["yours",null],["ours",null],["theirs",null],["hers",null],["his",null],["+s","plus_s"],["+ed","plus_ed"],["+ing","plus_ing"],["+er","plus_er"],["+est","plus_est"]],
+school:[["school","school"],["class","class"],["teacher","teacher"],["student","student"],["learn","learn"],["study","study"],["read","read"],["write","write"],["math","math"],["science","science"],["language","language"],["history","history"],["art","art"],["music","music"],["grade","grade"],["homework","homework"],["test","test"],["question","question"],["answer","answer"],["recess","recess"],["therapy","therapy"],["computer","computer"],["paper","paper"],["pencil","pencil"],["book","book_g"],["break","break"]],
+media:[["TV","tv"],["computer","computer"],["tablet","tablet"],["movie","movie"],["video","video"],["music","music"],["game","game"],["news","news"],["cartoon","cartoon"],["show","show"],["channel","channel"],["remote","remote"],["volume","volume"],["loud","loud"],["quiet","quiet"],["watch","watch"],["listen","listen"],["play","play"],["pause","pause"],["stop","stop"]],
+pn_I:[["I","I"],["me","I"],["my","my"],["I am",null],["I'm",null],["I have",null],["I do",null],["I did",null],["I had",null],["I was",null],["I will",null],["I'll",null],["I would",null],["I'd",null],["I can",null],["I could",null],["I should",null],["I shall",null],["I may",null],["I might",null],["I must",null],["I want","want"],["I like","like"],["I need","need"],["I love","love"],["I feel","feel"],["I know","know"],["I think",null],["I hope","hope"],["I wish","wish"],["I go","go"],["I am going",null],["I say","say"],["I see","see"],["I get","get"],["I make","make"]],
+  pn_you:[["you","you"],["yourself","you"],["your","my"],["you are",null],["you're",null],["you have",null],["you do",null],["you did",null],["you had",null],["you were",null],["you will",null],["you'll",null],["you would",null],["you'd",null],["you can",null],["you could",null],["you should",null],["you shall",null],["you may",null],["you might",null],["you must",null],["you want","want"],["you like","like"],["you need","need"],["you love","love"],["you feel","feel"],["you know","know"],["you think",null],["you hope","hope"],["you wish","wish"],["you go","go"],["you are going",null],["you say","say"],["you see","see"],["you get","get"],["you make","make"]],
+  pn_he:[["he","he"],["him","he"],["his","my"],["he is",null],["he's",null],["he has",null],["he does",null],["he did",null],["he had",null],["he was",null],["he will",null],["he'll",null],["he would",null],["he'd",null],["he can",null],["he could",null],["he should",null],["he shall",null],["he may",null],["he might",null],["he must",null],["he wants","want"],["he likes","like"],["he needs","need"],["he loves","love"],["he feels","feel"],["he knows","know"],["he thinks",null],["he hopes","hope"],["he wishes","wish"],["he goes","go"],["he is going",null],["he says","say"],["he sees","see"],["he gets","get"],["he makes","make"]],
+  pn_she:[["she","she"],["her","she"],["hers","my"],["she is",null],["she's",null],["she has",null],["she does",null],["she did",null],["she had",null],["she was",null],["she will",null],["she'll",null],["she would",null],["she'd",null],["she can",null],["she could",null],["she should",null],["she shall",null],["she may",null],["she might",null],["she must",null],["she wants","want"],["she likes","like"],["she needs","need"],["she loves","love"],["she feels","feel"],["she knows","know"],["she thinks",null],["she hopes","hope"],["she wishes","wish"],["she goes","go"],["she is going",null],["she says","say"],["she sees","see"],["she gets","get"],["she makes","make"]],
+  pn_it:[["it","it_pn"],["itself","it_pn"],["its","my"],["it is",null],["it's",null],["it has",null],["it does",null],["it did",null],["it had",null],["it was",null],["it will",null],["it'll",null],["it would",null],["it'd",null],["it can",null],["it could",null],["it should",null],["it shall",null],["it may",null],["it might",null],["it must",null],["it wants","want"],["it likes","like"],["it needs","need"],["it loves","love"],["it feels","feel"],["it knows","know"],["it thinks",null],["it hopes","hope"],["it wishes","wish"],["it goes","go"],["it is going",null],["it says","say"],["it sees","see"],["it gets","get"],["it makes","make"]],
+  pn_we:[["we","we"],["us","we"],["our","my"],["we are",null],["we're",null],["we have",null],["we do",null],["we did",null],["we had",null],["we were",null],["we will",null],["we'll",null],["we would",null],["we'd",null],["we can",null],["we could",null],["we should",null],["we shall",null],["we may",null],["we might",null],["we must",null],["we want","want"],["we like","like"],["we need","need"],["we love","love"],["we feel","feel"],["we know","know"],["we think",null],["we hope","hope"],["we wish","wish"],["we go","go"],["we are going",null],["we say","say"],["we see","see"],["we get","get"],["we make","make"]],
+  pn_they:[["they","they"],["them","they"],["their","my"],["they are",null],["they're",null],["they have",null],["they do",null],["they did",null],["they had",null],["they were",null],["they will",null],["they'll",null],["they would",null],["they'd",null],["they can",null],["they could",null],["they should",null],["they shall",null],["they may",null],["they might",null],["they must",null],["they want","want"],["they like","like"],["they need","need"],["they love","love"],["they feel","feel"],["they know","know"],["they think",null],["they hope","hope"],["they wish","wish"],["they go","go"],["they are going",null],["they say","say"],["they see","see"],["they get","get"],["they make","make"]]
 };
 // DEFAULT quick phrases - user edits saved to localStorage
 const QP_DEFAULT=["I need help","I need bathroom","I feel sick","I want more","I don't like that","I'm all done","I love you","I'm hungry","I'm thirsty","I want to go"];
 let quickPhrases=JSON.parse(localStorage.getItem('mybuddy_qp'))||[...QP_DEFAULT];
-const FRM={'it_pn':'symbols/mybuddy/it.svg','back_ache':'symbols/mulberry/back_ache.svg','chest':'symbols/mulberry/chest_male.svg','leg':'symbols/mulberry/leg.svg','arm':'symbols/mulberry/arm.svg','poop':'symbols/mybuddy/poop.svg','pee':'symbols/mybuddy/pee.svg','hurt':'symbols/mybuddy/hurt.svg','dizzy':'symbols/mybuddy/dizzy.svg','diaper':'symbols/mybuddy/diaper.svg','bleeding':'symbols/mybuddy/bleeding.svg','pain':'symbols/mybuddy/pain.svg','nauseous':'symbols/mybuddy/nauseous.svg','itchy':'symbols/mybuddy/itchy.svg','wipe':'symbols/mybuddy/wipe.svg','accident':'symbols/mybuddy/accident.svg','emergency':'symbols/mybuddy/emergency.svg','toilet':'symbols/mulberry/toilet.svg','vomit':'symbols/mulberry/vomit_,_to.svg','medicine':'symbols/mulberry/medicine.svg','nurse':'symbols/mulberry/nurse_1a.svg','doctor':'symbols/mulberry/doctor_1a.svg','itch':'symbols/mulberry/itch.svg','potty':'symbols/mulberry/potty_chair.svg','wheelchair':'symbols/mulberry/wheelchair.svg','inhaler':'symbols/mulberry/inhaler.svg','tablets':'symbols/mulberry/tablets.svg','plaster':'symbols/mulberry/plaster.svg','bladder':'symbols/mulberry/bladder.svg','done':'symbols/mybuddy/done.svg','I':'symbols/mulberry/I.svg','TV':'symbols/mulberry/tv_drama.svg','a little':'symbols/mybuddy/a_little.svg','all done':'symbols/mybuddy/all_done.svg','alone':'symbols/mybuddy/alone.svg','another':'symbols/mulberry/more.svg','bath':'symbols/mulberry/bath.svg','broken':'symbols/mulberry/broken.svg','bug':'symbols/mybuddy/bug.svg','burning':'symbols/mulberry/fire.svg','buy':'symbols/mybuddy/buy.svg','careful':'symbols/mybuddy/careful.svg','choose':'symbols/mybuddy/choose.svg','coat':'symbols/mulberry/coat.svg','comfy':'symbols/mybuddy/comfy.svg','cool':'symbols/mybuddy/cool.svg','couch':'symbols/mybuddy/couch.svg','cry':'symbols/mybuddy/cry.svg','day':'symbols/mulberry/day.svg','easy':'symbols/mybuddy/easy.svg','extra':'symbols/mulberry/extra.svg','fair':'symbols/mybuddy/fair.svg','far':'symbols/mybuddy/far.svg','few':'symbols/mulberry/some.svg','fix':'symbols/mybuddy/fix.svg','follow':'symbols/mybuddy/follow.svg','freezing':'symbols/mybuddy/freezing.svg','game':'symbols/mybuddy/game.svg','goodbye':'symbols/mybuddy/goodbye.svg','great':'symbols/mulberry/great.svg','half':'symbols/mulberry/half.svg','hate':'symbols/mybuddy/hate.svg','have':'symbols/mybuddy/have.svg','heavy':'symbols/mulberry/heavy.svg','hide':'symbols/mybuddy/hide.svg','hill':'symbols/mybuddy/hill.svg','homework':'symbols/mybuddy/homework.svg','house':'symbols/mulberry/house.svg','huge':'symbols/mulberry/big_wheel.svg','ice':'symbols/mulberry/ice_cream.svg','idea':'symbols/mybuddy/idea.svg','kind':'symbols/mybuddy/kind.svg','ladder':'symbols/mybuddy/ladder.svg','learn':'symbols/mybuddy/learn.svg','lid':'symbols/mulberry/lid.svg','listen':'symbols/mybuddy/listen.svg','lock':'symbols/mybuddy/lock.svg','lonely':'symbols/mybuddy/lonely.svg','lose':'symbols/mybuddy/lose.svg','lots':'symbols/mulberry/lots_more.svg','mean':'symbols/mybuddy/mean.svg','mess':'symbols/mybuddy/mess.svg','part':'symbols/mulberry/part.svg','party':'symbols/mulberry/party_popper.svg','piece':'symbols/mybuddy/piece.svg','problem':'symbols/mybuddy/problem.svg','right':'symbols/mulberry/right.svg','room':'symbols/mulberry/room.svg','seem':'symbols/mulberry/look_,_to.svg','shelf':'symbols/mybuddy/shelf.svg','short':'symbols/mulberry/short.svg','silly':'symbols/mulberry/funny_laugh.svg','sleepy':'symbols/mybuddy/sleepy.svg','slide':'symbols/mulberry/slide.svg','small':'symbols/mybuddy/small.svg','smell':'symbols/mybuddy/smell.svg','snow':'symbols/mulberry/snow.svg','snowy':'symbols/mybuddy/snowy.svg','spicy':'symbols/mulberry/spicy.svg','stay':'symbols/mybuddy/stay.svg','stuck':'symbols/mybuddy/stuck.svg','sun':'symbols/mulberry/sun.svg','sunny':'symbols/mybuddy/sunny.svg','table':'symbols/mulberry/table.svg','tall':'symbols/mulberry/tall.svg','there':'symbols/mybuddy/there.svg','thin':'symbols/mulberry/thin.svg','thing':'symbols/mybuddy/thing.svg','tiny':'symbols/mybuddy/tiny.svg','top':'symbols/mulberry/top.svg','tree':'symbols/mulberry/tree.svg','truck':'symbols/mulberry/lorry.svg','try':'symbols/mybuddy/try.svg','upset':'symbols/mulberry/sad_man.svg','warm':'symbols/mulberry/warm_fire.svg','where':'symbols/mulberry/where.svg','wide':'symbols/mybuddy/wide.svg','wind':'symbols/mybuddy/wind.svg','word':'symbols/mybuddy/word.svg','wrong':'symbols/mulberry/wrong_thought.svg','yucky':'symbols/mulberry/yucky.svg','am':'symbols/mulberry/I.svg','around':'symbols/mulberry/around.svg','ask':'symbols/mulberry/ask_,_to.svg','away':'symbols/mulberry/away.svg','back':'symbols/mulberry/back.svg','bag':'symbols/mulberry/school_bag.svg','bed':'symbols/mulberry/bed_time.svg','bite':'symbols/mulberry/bite_,_to.svg','book':'symbols/mulberry/book_end.svg','box':'symbols/mulberry/box_,_to.svg','break':'symbols/mulberry/break_2.svg','bright':'symbols/mulberry/bright.svg','bring':'symbols/mulberry/bring_,_to.svg','brush':'symbols/mulberry/brush_hair_,_to.svg','build':'symbols/mulberry/build_,_to.svg','bus':'symbols/mulberry/bus.svg','busy':'symbols/mulberry/busy.svg','care':'symbols/mulberry/care_assistant_1a.svg','carry':'symbols/mulberry/carry_,_to.svg','chair':'symbols/mulberry/chair.svg','chase':'symbols/mulberry/chase_,_to.svg','clean':'symbols/mulberry/clean_room.svg','climb':'symbols/mulberry/climb_up_,_to.svg','close':'symbols/mulberry/close_,_to.svg','cook':'symbols/mulberry/cook_,_to.svg','corner':'symbols/mulberry/corner_cabinet.svg','dark':'symbols/mulberry/night.svg','dinner':'symbols/mulberry/dinner.svg','dirty':'symbols/mulberry/dirty.svg','dishes':'symbols/mulberry/dishes.svg','draw':'symbols/mulberry/draw_,_to.svg','dream':'symbols/mulberry/dream_,_to.svg','drop':'symbols/mulberry/fall_off_,_to.svg','dry':'symbols/mulberry/dry.svg','empty':'symbols/mulberry/empty.svg','enjoy':'symbols/mulberry/happy_man.svg','face':'symbols/mulberry/face_neutral_3.svg','fast':'symbols/mulberry/fast_2.svg','fill':'symbols/mulberry/fill_2_,_to.svg','find':'symbols/mulberry/find_,_to.svg','finish':'symbols/mulberry/finish.svg','flip':'symbols/mulberry/flip_,_to.svg','floor':'symbols/mulberry/floor.svg','full':'symbols/mulberry/full.svg','fun':'symbols/mulberry/funny_laugh.svg','gentle':'symbols/mulberry/soft.svg','gift':'symbols/mulberry/present.svg','hair':'symbols/mulberry/hair_dye.svg','hands':'symbols/mulberry/hand_bag.svg','hard':'symbols/mulberry/hard.svg','heart':'symbols/mulberry/heart.svg','help_':'symbols/mulberry/help_,_to.svg','here':'symbols/mulberry/this_week.svg','hold':'symbols/mulberry/hold_,_to.svg','hug':'symbols/mulberry/hug_,_to.svg','hungry':'symbols/mulberry/hungry.svg','inside':'symbols/mulberry/inside_out.svg','it':'symbols/mulberry/IT_room.svg','job':'symbols/mulberry/work_,_to.svg','jump':'symbols/mulberry/jump_,_to.svg','keep':'symbols/mulberry/keep_,_to.svg','leave':'symbols/mulberry/leaves.svg','lie':'symbols/mulberry/lie_on_back_,_to.svg','long':'symbols/mulberry/long.svg','loud':'symbols/mulberry/loud.svg','lunch':'symbols/mulberry/lunch_1.svg','mad':'symbols/mulberry/angry_man.svg','messy':'symbols/mulberry/messy_room.svg','mine':'symbols/mulberry/my_computer_icon.svg','miss':'symbols/mulberry/miss_bus_,_to.svg','money':'symbols/mulberry/money.svg','move':'symbols/mulberry/move_,_to.svg','nap':'symbols/mulberry/sleep_male_,_to.svg','near':'symbols/mulberry/near.svg','need':'symbols/mulberry/need_toilet.svg','new':'symbols/mulberry/new_document.svg','nice':'symbols/mulberry/good.svg','night':'symbols/mulberry/night.svg','noise':'symbols/mulberry/loud.svg','now':'symbols/mulberry/now.svg','one':'symbols/mulberry/one.svg','page':'symbols/mulberry/book_end.svg','pet':'symbols/mulberry/pet_comb.svg','pick':'symbols/mulberry/pick_,_to.svg','picture':'symbols/mulberry/picture.svg','pillow':'symbols/mulberry/cushion_2.svg','plate':'symbols/mulberry/plate.svg','point':'symbols/mulberry/point_,_to.svg','pour':'symbols/mulberry/pour_,_to.svg','prefer':'symbols/mulberry/favourite.svg','pretty':'symbols/mulberry/pretty.svg','pull':'symbols/mulberry/pull_,_to.svg','push':'symbols/mulberry/push_,_to.svg','quiet':'symbols/mulberry/quiet.svg','race':'symbols/mulberry/race_athletics.svg','ready':'symbols/mulberry/ready.svg','rest':'symbols/mulberry/rest_,_to.svg','ride':'symbols/mulberry/ride_car_,_to.svg','run':'symbols/mulberry/run_,_to.svg','safe':'symbols/mulberry/safety_pin.svg','scary':'symbols/mulberry/scary.svg','scrub':'symbols/mulberry/scrub_,_to.svg','seat':'symbols/mulberry/seat_belt.svg','see':'symbols/mulberry/see_saw.svg','send':'symbols/mulberry/post-it.svg','share':'symbols/mulberry/share_,_to.svg','show':'symbols/mulberry/show_me_,_to.svg','shut':'symbols/mulberry/close_,_to.svg','sit':'symbols/mulberry/sit_,_to.svg','snack':'symbols/mulberry/biscuits.svg','song':'symbols/mulberry/music.svg','spin':'symbols/mulberry/spin_,_to.svg','stairs':'symbols/mulberry/stairs.svg','stand':'symbols/mulberry/stand_,_to.svg','start':'symbols/mulberry/begin_start.svg','still':'symbols/mulberry/quiet.svg','story':'symbols/mulberry/book_end.svg','take':'symbols/mulberry/take_,_to.svg','taste':'symbols/mulberry/taste_,_to.svg','tell':'symbols/mulberry/talk_1_,_to.svg','thirsty':'symbols/mulberry/thirsty.svg','throw':'symbols/mulberry/throw_away_,_to.svg','tight':'symbols/mulberry/tights.svg','time':'symbols/mulberry/time_out.svg','wait':'symbols/mulberry/wait_,_to.svg','wake':'symbols/mulberry/wake_up_,_to.svg','walk':'symbols/mulberry/walk_,_to.svg','watch':'symbols/mulberry/watch.svg','wet':'symbols/mulberry/wet.svg','win':'symbols/mulberry/winner.svg','window':'symbols/mulberry/window.svg','wish':'symbols/mulberry/want_,_to.svg','work':'symbols/mulberry/work_,_to.svg','write':'symbols/mulberry/write_,_to.svg','yummy':'symbols/mulberry/yummy.svg','eat':'symbols/mulberry/eat_,_to.svg','angry':'symbols/mulberry/angry_man.svg','apple':'symbols/mulberry/apple.svg','baby':'symbols/mulberry/baby.svg','bad':'symbols/mulberry/bad.svg','ball':'symbols/mulberry/ball.svg','banana':'symbols/mulberry/banana.svg','bathroom':'symbols/mulberry/toilet.svg','bear':'symbols/mulberry/bear.svg','bedroom':'symbols/mulberry/single_bed.svg','big':'symbols/mulberry/large.svg','bird':'symbols/mulberry/bird.svg','blanket':'symbols/mulberry/blanket.svg','body':'symbols/mulberry/body_outline.svg','bread':'symbols/mulberry/bread.svg','brother':'symbols/mulberry/brother.svg','bunny':'symbols/mulberry/rabbit.svg','cake':'symbols/mulberry/cake.svg','calm':'symbols/mulberry/relax_,_to.svg','candy':'symbols/mulberry/sweet.svg','car':'symbols/mulberry/car.svg','cat':'symbols/mulberry/cat.svg','cereal':'symbols/mulberry/cereal.svg','cheese':'symbols/mulberry/cheese.svg','chicken':'symbols/mulberry/chicken.svg','come':'symbols/mulberry/come_,_to.svg','confused':'symbols/mulberry/confused_man.svg','cookie':'symbols/mulberry/biscuit_chocolate_chip.svg','cow':'symbols/mulberry/cow.svg','crackers':'symbols/mulberry/cracker.svg','cup':'symbols/mulberry/mug_2.svg','dad':'symbols/mulberry/dad_parent.svg','diaper':'symbols/mulberry/nappy.svg','doctor':'symbols/mulberry/doctor_1a.svg','dog':'symbols/mulberry/dog.svg','door':'symbols/mulberry/door.svg','down':'symbols/mulberry/down.svg','drink':'symbols/mulberry/drink_,_to.svg','duck':'symbols/mulberry/duck.svg','ears':'symbols/mulberry/ear.svg','eggs':'symbols/mulberry/eggs.svg','elephant':'symbols/mulberry/elephant.svg','excited':'symbols/mulberry/excited_man.svg','eyes':'symbols/mulberry/eyes.svg','family':'symbols/mulberry/family.svg','feet':'symbols/mulberry/feet.svg','fish':'symbols/mulberry/fish.svg','food':'symbols/mulberry/food.svg','friend':'symbols/mulberry/group_work.svg','fries':'symbols/mulberry/chips.svg','frog':'symbols/mulberry/frog.svg','funny':'symbols/mulberry/funny_laugh.svg','get':'symbols/mulberry/get_,_to.svg','give':'symbols/mulberry/give_,_to.svg','go':'symbols/mulberry/go_,_to.svg','good':'symbols/mulberry/good.svg','grandma':'symbols/mulberry/grandmother.svg','grandpa':'symbols/mulberry/grandfather.svg','grapes':'symbols/mulberry/grapes.svg','hand':'symbols/mulberry/right_hand.svg','happy':'symbols/mulberry/happy_man.svg','hat':'symbols/mulberry/hat_-_mans.svg','head':'symbols/mulberry/man_-_face.svg','help':'symbols/mulberry/help_,_to.svg','home':'symbols/mulberry/house.svg','horse':'symbols/mulberry/horse.svg','hot':'symbols/mulberry/hot.svg','hot_dog':'symbols/mulberry/hot_dog.svg','hurt':'symbols/mulberry/headache.svg','i':'symbols/mulberry/I.svg','ice_cream':'symbols/mulberry/ice_cream.svg','in':'symbols/mulberry/in.svg','jacket':'symbols/mulberry/jacket.svg','juice':'symbols/mulberry/orange_juice.svg','kitchen':'symbols/mulberry/cooker.svg','light':'symbols/mulberry/lamp.svg','lion':'symbols/mulberry/lion.svg','little':'symbols/mulberry/little.svg','look':'symbols/mulberry/look_,_to.svg','love':'symbols/mulberry/heart.svg','make':'symbols/mulberry/make_,_to.svg','milk':'symbols/mulberry/milk.svg','mom':'symbols/mulberry/mum_parent.svg','monkey':'symbols/mulberry/chimpanzee.svg','more':'symbols/mulberry/more.svg','mouth':'symbols/mulberry/mouth.svg','music':'symbols/mulberry/music.svg','nervous':'symbols/mulberry/worried_man.svg','off':'symbols/mulberry/off.svg','on':'symbols/mulberry/on.svg','open':'symbols/mulberry/open_,_to.svg','out':'symbols/mulberry/out.svg','outside':'symbols/mulberry/outside.svg','pants':'symbols/mulberry/trousers.svg','park':'symbols/mulberry/play_area.svg','phone':'symbols/mulberry/mobile_phone.svg','pig':'symbols/mulberry/piglet.svg','pizza':'symbols/mulberry/pizza.svg','play':'symbols/mulberry/play_,_to.svg','proud':'symbols/mulberry/medal.svg','put':'symbols/mulberry/put_,_to.svg','read':'symbols/mulberry/read_book_,_to.svg','rice':'symbols/mulberry/rice.svg','sad':'symbols/mulberry/sad_man.svg','sandwich':'symbols/mulberry/sandwich.svg','scared':'symbols/mulberry/afraid_man.svg','school':'symbols/mulberry/school.svg','shirt':'symbols/mulberry/shirt.svg','shoes':'symbols/mulberry/shoe_-_mans.svg','sick':'symbols/mulberry/headache.svg','sister':'symbols/mulberry/sister.svg','sleep':'symbols/mulberry/sleep_male_,_to.svg','socks':'symbols/mulberry/socks.svg','some':'symbols/mulberry/some.svg','soup':'symbols/mulberry/soup.svg','spk_word':'symbols/mulberry/talk_2_,_to.svg','stop':'symbols/mybuddy/stop.svg','store':'symbols/mulberry/shop.svg','strawberry':'symbols/mulberry/strawberry.svg','teacher':'symbols/mulberry/teacher_1a.svg','tired':'symbols/mulberry/yawn_,_to.svg','toy':'symbols/mulberry/teddy_bear.svg','tummy':'symbols/mulberry/stomach.svg','turn':'symbols/mulberry/turn_,_to.svg','turtle':'symbols/mulberry/turtle.svg','tv':'symbols/mulberry/flatscreen_tv.svg','up':'symbols/mulberry/up.svg','want':'symbols/mulberry/want_,_to.svg','wash':'symbols/mulberry/wash_hands_,_to.svg','water':'symbols/mulberry/water.svg','what':'symbols/mulberry/what.svg','who':'symbols/mulberry/who.svg','yes':'symbols/mulberry/correct.svg','yogurt':'symbols/mulberry/yogurt.svg'};
-const SYM={2436:'symbols/mulberry/sleep_male_,_to.svg',2452:'symbols/mulberry/food.svg',2464:'symbols/mulberry/paw.svg',2466:'symbols/mulberry/large.svg',2467:'symbols/mulberry/little.svg',2485:'symbols/mulberry/hot.svg',2486:'symbols/mulberry/snow.svg',2490:'symbols/mulberry/body_outline.svg',2509:'symbols/mulberry/clothes_generic.svg',3204:'symbols/mulberry/wash_hands_,_to.svg',5287:'symbols/mulberry/out.svg',5324:'symbols/mybuddy/please.svg',5335:'symbols/mulberry/put_,_to.svg',5336:'symbols/mybuddy/thank_you.svg',5344:'symbols/mulberry/who.svg',5345:'symbols/mulberry/what.svg',5346:'symbols/mulberry/where.svg',5373:'symbols/mulberry/wait_,_to.svg',5382:'symbols/mybuddy/here.svg',5441:'symbols/mulberry/want_,_to.svg',5468:'symbols/mulberry/down.svg',5469:'symbols/mulberry/up.svg',5508:'symbols/mulberry/more.svg',5526:'symbols/mulberry/mistake_no_wrong.svg',5553:'symbols/mulberry/sit_,_to.svg',5584:'symbols/mulberry/correct.svg',6061:'symbols/mulberry/drink_,_to.svg',6107:'symbols/mulberry/walk_,_to.svg',6108:'symbols/mulberry/run_,_to.svg',6408:'symbols/mulberry/talk_2_,_to.svg',6408:'symbols/mulberry/read_book_,_to.svg',6456:'symbols/mulberry/eat_,_to.svg',6623:'symbols/mybuddy/he.svg',6624:'symbols/mybuddy/she.svg',6625:'symbols/mybuddy/you.svg',6632:'symbols/mulberry/I.svg',6857:'symbols/mulberry/come_,_to.svg',6872:'symbols/mulberry/look_,_to.svg',6872:'symbols/mulberry/look_,_to.svg',6906:'symbols/mybuddy/that.svg',6952:'symbols/mybuddy/again.svg',7040:'symbols/mulberry/good.svg',7041:'symbols/mulberry/bad.svg',7074:'symbols/mulberry/headache.svg',7086:'symbols/mulberry/headache.svg',7093:'symbols/mulberry/family_2.svg',7196:'symbols/mybuddy/stop.svg',7220:'symbols/mybuddy/sorry.svg',8014:'symbols/mulberry/on.svg',8015:'symbols/mulberry/in.svg',8142:'symbols/mulberry/go_,_to.svg',9124:'symbols/mybuddy/can.svg',9261:'symbols/mulberry/hear_,_to.svg',9403:'symbols/mulberry/make_,_to.svg',10044:'symbols/mulberry/give_,_to.svg',12264:'symbols/mybuddy/my.svg',23392:'symbols/mulberry/play_,_to.svg',24825:'symbols/mulberry/open_,_to.svg',24971:'symbols/mulberry/some.svg',28429:'symbols/mulberry/finish.svg',28485:'symbols/mulberry/turn_,_to.svg',31670:'symbols/mybuddy/it.svg',32648:'symbols/mulberry/help_,_to.svg',35533:'symbols/mybuddy/feelings.svg',35533:'symbols/mulberry/happy_man.svg',35534:'symbols/mulberry/angry_man.svg',35535:'symbols/mulberry/sad_man.svg',35536:'symbols/mulberry/afraid_man.svg',35537:'symbols/mulberry/yawn_,_to.svg',36260:'symbols/mybuddy/is.svg',36263:'symbols/mybuddy/we.svg',36264:'symbols/mybuddy/they.svg',36512:'symbols/mybuddy/do.svg',36512:'symbols/mulberry/get_,_to.svg',36858:'symbols/mulberry/point_,_to.svg',37011:'symbols/mulberry/place_setting.svg',37236:'symbols/mulberry/off.svg',37824:'symbols/mulberry/hug_,_to.svg',37826:'symbols/mulberry/thumb.svg',38760:'symbols/mulberry/colour.svg',99998:'symbols/mulberry/computer_keyboard.svg'};
+const FRM={'it_pn':'symbols/mybuddy/it.svg','back_ache':'symbols/mulberry/back_ache.svg','chest':'symbols/mulberry/chest_male.svg','leg':'symbols/mulberry/leg.svg','arm':'symbols/mulberry/arm.svg','poop':'symbols/mybuddy/poop.svg','pee':'symbols/mybuddy/pee.svg','hurt':'symbols/mybuddy/hurt.svg','dizzy':'symbols/mybuddy/dizzy.svg','diaper':'symbols/mybuddy/diaper.svg','bleeding':'symbols/mybuddy/bleeding.svg','pain':'symbols/mybuddy/pain.svg','nauseous':'symbols/mybuddy/nauseous.svg','itchy':'symbols/mybuddy/itchy.svg','wipe':'symbols/mybuddy/wipe.svg','accident':'symbols/mybuddy/accident.svg','emergency':'symbols/mybuddy/emergency.svg','toilet':'symbols/mulberry/toilet.svg','vomit':'symbols/mulberry/vomit_,_to.svg','medicine':'symbols/mulberry/medicine.svg','nurse':'symbols/mulberry/nurse_1a.svg','doctor':'symbols/mulberry/doctor_1a.svg','itch':'symbols/mulberry/itch.svg','potty':'symbols/mulberry/potty_chair.svg','wheelchair':'symbols/mulberry/wheelchair.svg','inhaler':'symbols/mulberry/inhaler.svg','tablets':'symbols/mulberry/tablets.svg','plaster':'symbols/mulberry/plaster.svg','bladder':'symbols/mulberry/bladder.svg','done':'symbols/mybuddy/done.svg','I':'symbols/mulberry/I.svg','TV':'symbols/mulberry/tv_drama.svg','a little':'symbols/mybuddy/a_little.svg','all done':'symbols/mybuddy/all_done.svg','alone':'symbols/mybuddy/alone.svg','another':'symbols/mulberry/more.svg','bath':'symbols/mulberry/bath.svg','broken':'symbols/mulberry/broken.svg','bug':'symbols/mybuddy/bug.svg','burning':'symbols/mulberry/fire.svg','buy':'symbols/mybuddy/buy.svg','careful':'symbols/mybuddy/careful.svg','choose':'symbols/mybuddy/choose.svg','coat':'symbols/mulberry/coat.svg','comfy':'symbols/mybuddy/comfy.svg','cool':'symbols/mybuddy/cool.svg','couch':'symbols/mybuddy/couch.svg','cry':'symbols/mybuddy/cry.svg','day':'symbols/mulberry/day.svg','easy':'symbols/mybuddy/easy.svg','extra':'symbols/mulberry/extra.svg','fair':'symbols/mybuddy/fair.svg','far':'symbols/mybuddy/far.svg','few':'symbols/mulberry/some.svg','fix':'symbols/mybuddy/fix.svg','follow':'symbols/mybuddy/follow.svg','freezing':'symbols/mybuddy/freezing.svg','game':'symbols/mybuddy/game.svg','goodbye':'symbols/mybuddy/goodbye.svg','great':'symbols/mulberry/great.svg','half':'symbols/mulberry/half.svg','hate':'symbols/mybuddy/hate.svg','heavy':'symbols/mulberry/heavy.svg','hide':'symbols/mybuddy/hide.svg','hill':'symbols/mybuddy/hill.svg','homework':'symbols/mybuddy/homework.svg','house':'symbols/mulberry/house.svg','huge':'symbols/mulberry/big_wheel.svg','ice':'symbols/mulberry/ice_cream.svg','idea':'symbols/mybuddy/idea.svg','kind':'symbols/mybuddy/kind.svg','ladder':'symbols/mybuddy/ladder.svg','learn':'symbols/mybuddy/learn.svg','lid':'symbols/mulberry/lid.svg','listen':'symbols/mybuddy/listen.svg','lock':'symbols/mybuddy/lock.svg','lonely':'symbols/mybuddy/lonely.svg','lose':'symbols/mybuddy/lose.svg','lots':'symbols/mulberry/lots_more.svg','mean':'symbols/mybuddy/mean.svg','mess':'symbols/mybuddy/mess.svg','part':'symbols/mulberry/part.svg','party':'symbols/mulberry/party_popper.svg','piece':'symbols/mybuddy/piece.svg','problem':'symbols/mybuddy/problem.svg','right':'symbols/mulberry/right.svg','room':'symbols/mulberry/room.svg','seem':'symbols/mulberry/look_,_to.svg','shelf':'symbols/mybuddy/shelf.svg','short':'symbols/mulberry/short.svg','silly':'symbols/mulberry/funny_laugh.svg','sleepy':'symbols/mybuddy/sleepy.svg','slide':'symbols/mulberry/slide.svg','small':'symbols/mybuddy/small.svg','smell':'symbols/mybuddy/smell.svg','snow':'symbols/mulberry/snow.svg','snowy':'symbols/mybuddy/snowy.svg','spicy':'symbols/mulberry/spicy.svg','stay':'symbols/mybuddy/stay.svg','stuck':'symbols/mybuddy/stuck.svg','sun':'symbols/mulberry/sun.svg','sunny':'symbols/mybuddy/sunny.svg','table':'symbols/mulberry/table.svg','tall':'symbols/mulberry/tall.svg','there':'symbols/mybuddy/there.svg','thin':'symbols/mulberry/thin.svg','thing':'symbols/mybuddy/thing.svg','tiny':'symbols/mybuddy/tiny.svg','top':'symbols/mulberry/top.svg','tree':'symbols/mulberry/tree.svg','truck':'symbols/mulberry/lorry.svg','try':'symbols/mybuddy/try.svg','upset':'symbols/mulberry/sad_man.svg','warm':'symbols/mulberry/warm_fire.svg','where':'symbols/mulberry/where.svg','wide':'symbols/mybuddy/wide.svg','wind':'symbols/mybuddy/wind.svg','word':'symbols/mybuddy/word.svg','wrong':'symbols/mulberry/wrong_thought.svg','yucky':'symbols/mulberry/yucky.svg','around':'symbols/mulberry/around.svg','ask':'symbols/mulberry/ask_,_to.svg','away':'symbols/mulberry/away.svg','back':'symbols/mulberry/back.svg','bag':'symbols/mulberry/school_bag.svg','bed':'symbols/mulberry/bed_time.svg','bite':'symbols/mulberry/bite_,_to.svg','book':'symbols/mulberry/book_end.svg','box':'symbols/mulberry/box_,_to.svg','break':'symbols/mulberry/break_2.svg','bright':'symbols/mulberry/bright.svg','bring':'symbols/mulberry/bring_,_to.svg','brush':'symbols/mulberry/brush_hair_,_to.svg','build':'symbols/mulberry/build_,_to.svg','bus':'symbols/mulberry/bus.svg','busy':'symbols/mulberry/busy.svg','care':'symbols/mulberry/care_assistant_1a.svg','carry':'symbols/mulberry/carry_,_to.svg','chair':'symbols/mulberry/chair.svg','chase':'symbols/mulberry/chase_,_to.svg','clean':'symbols/mulberry/clean_room.svg','climb':'symbols/mulberry/climb_up_,_to.svg','close':'symbols/mulberry/close_,_to.svg','cook':'symbols/mulberry/cook_,_to.svg','corner':'symbols/mulberry/corner_cabinet.svg','dark':'symbols/mulberry/night.svg','dinner':'symbols/mulberry/dinner.svg','dirty':'symbols/mulberry/dirty.svg','dishes':'symbols/mulberry/dishes.svg','draw':'symbols/mulberry/draw_,_to.svg','dream':'symbols/mulberry/dream_,_to.svg','drop':'symbols/mulberry/fall_off_,_to.svg','dry':'symbols/mulberry/dry.svg','empty':'symbols/mulberry/empty.svg','enjoy':'symbols/mulberry/happy_man.svg','face':'symbols/mulberry/face_neutral_3.svg','fast':'symbols/mulberry/fast_2.svg','fill':'symbols/mulberry/fill_2_,_to.svg','find':'symbols/mulberry/find_,_to.svg','finish':'symbols/mulberry/finish.svg','flip':'symbols/mulberry/flip_,_to.svg','floor':'symbols/mulberry/floor.svg','full':'symbols/mulberry/full.svg','fun':'symbols/mulberry/funny_laugh.svg','gentle':'symbols/mulberry/soft.svg','gift':'symbols/mulberry/present.svg','hair':'symbols/mulberry/hair_dye.svg','hands':'symbols/mulberry/hand_bag.svg','hard':'symbols/mulberry/hard.svg','heart':'symbols/mulberry/heart.svg','help_':'symbols/mulberry/help_,_to.svg','here':'symbols/mulberry/this_week.svg','hold':'symbols/mulberry/hold_,_to.svg','hug':'symbols/mulberry/hug_,_to.svg','hungry':'symbols/mulberry/hungry.svg','inside':'symbols/mulberry/inside_out.svg','it':'symbols/mulberry/IT_room.svg','job':'symbols/mulberry/work_,_to.svg','jump':'symbols/mulberry/jump_,_to.svg','keep':'symbols/mulberry/keep_,_to.svg','leave':'symbols/mulberry/leaves.svg','lie':'symbols/mulberry/lie_on_back_,_to.svg','long':'symbols/mulberry/long.svg','loud':'symbols/mulberry/loud.svg','lunch':'symbols/mulberry/lunch_1.svg','mad':'symbols/mulberry/angry_man.svg','messy':'symbols/mulberry/messy_room.svg','mine':'symbols/mulberry/my_computer_icon.svg','miss':'symbols/mulberry/miss_bus_,_to.svg','money':'symbols/mulberry/money.svg','move':'symbols/mulberry/move_,_to.svg','nap':'symbols/mulberry/sleep_male_,_to.svg','near':'symbols/mulberry/near.svg','new':'symbols/mulberry/new_document.svg','nice':'symbols/mulberry/good.svg','night':'symbols/mulberry/night.svg','noise':'symbols/mulberry/loud.svg','now':'symbols/mulberry/now.svg','one':'symbols/mulberry/one.svg','page':'symbols/mulberry/book_end.svg','pet':'symbols/mulberry/pet_comb.svg','pick':'symbols/mulberry/pick_,_to.svg','picture':'symbols/mulberry/picture.svg','pillow':'symbols/mulberry/cushion_2.svg','plate':'symbols/mulberry/plate.svg','point':'symbols/mulberry/point_,_to.svg','pour':'symbols/mulberry/pour_,_to.svg','prefer':'symbols/mulberry/favourite.svg','pretty':'symbols/mulberry/pretty.svg','pull':'symbols/mulberry/pull_,_to.svg','push':'symbols/mulberry/push_,_to.svg','quiet':'symbols/mulberry/quiet.svg','race':'symbols/mulberry/race_athletics.svg','ready':'symbols/mulberry/ready.svg','rest':'symbols/mulberry/rest_,_to.svg','ride':'symbols/mulberry/ride_car_,_to.svg','run':'symbols/mulberry/run_,_to.svg','safe':'symbols/mulberry/safety_pin.svg','scary':'symbols/mulberry/scary.svg','scrub':'symbols/mulberry/scrub_,_to.svg','seat':'symbols/mulberry/seat_belt.svg','send':'symbols/mulberry/post-it.svg','share':'symbols/mulberry/share_,_to.svg','show':'symbols/mulberry/show_me_,_to.svg','shut':'symbols/mulberry/close_,_to.svg','sit':'symbols/mulberry/sit_,_to.svg','snack':'symbols/mulberry/biscuits.svg','song':'symbols/mulberry/music.svg','spin':'symbols/mulberry/spin_,_to.svg','stairs':'symbols/mulberry/stairs.svg','stand':'symbols/mulberry/stand_,_to.svg','start':'symbols/mulberry/begin_start.svg','still':'symbols/mulberry/quiet.svg','story':'symbols/mulberry/book_end.svg','take':'symbols/mulberry/take_,_to.svg','taste':'symbols/mulberry/taste_,_to.svg','tell':'symbols/mulberry/talk_1_,_to.svg','thirsty':'symbols/mulberry/thirsty.svg','throw':'symbols/mulberry/throw_away_,_to.svg','tight':'symbols/mulberry/tights.svg','time':'symbols/mulberry/time_out.svg','wait':'symbols/mulberry/wait_,_to.svg','wake':'symbols/mulberry/wake_up_,_to.svg','walk':'symbols/mulberry/walk_,_to.svg','watch':'symbols/mulberry/watch.svg','wet':'symbols/mulberry/wet.svg','win':'symbols/mulberry/winner.svg','window':'symbols/mulberry/window.svg','work':'symbols/mulberry/work_,_to.svg','write':'symbols/mulberry/write_,_to.svg','yummy':'symbols/mulberry/yummy.svg','eat':'symbols/mulberry/eat_,_to.svg','angry':'symbols/mulberry/angry_man.svg','apple':'symbols/mulberry/apple.svg','baby':'symbols/mulberry/baby.svg','bad':'symbols/mulberry/bad.svg','ball':'symbols/mulberry/ball.svg','banana':'symbols/mulberry/banana.svg','bathroom':'symbols/mulberry/toilet.svg','bear':'symbols/mulberry/bear.svg','bedroom':'symbols/mulberry/single_bed.svg','big':'symbols/mulberry/large.svg','bird':'symbols/mulberry/bird.svg','blanket':'symbols/mulberry/blanket.svg','body':'symbols/mulberry/body_outline.svg','bread':'symbols/mulberry/bread.svg','brother':'symbols/mulberry/brother.svg','bunny':'symbols/mulberry/rabbit.svg','cake':'symbols/mulberry/cake.svg','calm':'symbols/mulberry/relax_,_to.svg','candy':'symbols/mulberry/sweet.svg','car':'symbols/mulberry/car.svg','cat':'symbols/mulberry/cat.svg','cereal':'symbols/mulberry/cereal.svg','cheese':'symbols/mulberry/cheese.svg','chicken':'symbols/mulberry/chicken.svg','come':'symbols/mulberry/come_,_to.svg','confused':'symbols/mulberry/confused_man.svg','cookie':'symbols/mulberry/biscuit_chocolate_chip.svg','cow':'symbols/mulberry/cow.svg','crackers':'symbols/mulberry/cracker.svg','cup':'symbols/mulberry/mug_2.svg','dad':'symbols/mulberry/dad_parent.svg','diaper':'symbols/mulberry/nappy.svg','doctor':'symbols/mulberry/doctor_1a.svg','dog':'symbols/mulberry/dog.svg','door':'symbols/mulberry/door.svg','down':'symbols/mulberry/down.svg','drink':'symbols/mulberry/drink_,_to.svg','duck':'symbols/mulberry/duck.svg','ears':'symbols/mulberry/ear.svg','eggs':'symbols/mulberry/eggs.svg','elephant':'symbols/mulberry/elephant.svg','excited':'symbols/mulberry/excited_man.svg','eyes':'symbols/mulberry/eyes.svg','family':'symbols/mulberry/family.svg','feet':'symbols/mulberry/feet.svg','fish':'symbols/mulberry/fish.svg','food':'symbols/mulberry/food.svg','friend':'symbols/mulberry/group_work.svg','fries':'symbols/mulberry/chips.svg','frog':'symbols/mulberry/frog.svg','funny':'symbols/mulberry/funny_laugh.svg','get':'symbols/mulberry/get_,_to.svg','give':'symbols/mulberry/give_,_to.svg','go':'symbols/mulberry/go_,_to.svg','good':'symbols/mulberry/good.svg','grandma':'symbols/mulberry/grandmother.svg','grandpa':'symbols/mulberry/grandfather.svg','grapes':'symbols/mulberry/grapes.svg','hand':'symbols/mulberry/right_hand.svg','happy':'symbols/mulberry/happy_man.svg','hat':'symbols/mulberry/hat_-_mans.svg','head':'symbols/mulberry/man_-_face.svg','help':'symbols/mulberry/help_,_to.svg','home':'symbols/mulberry/house.svg','horse':'symbols/mulberry/horse.svg','hot':'symbols/mulberry/hot.svg','hot_dog':'symbols/mulberry/hot_dog.svg','hurt':'symbols/mulberry/headache.svg','i':'symbols/mulberry/I.svg','ice_cream':'symbols/mulberry/ice_cream.svg','in':'symbols/mulberry/in.svg','jacket':'symbols/mulberry/jacket.svg','juice':'symbols/mulberry/orange_juice.svg','kitchen':'symbols/mulberry/cooker.svg','light':'symbols/mulberry/lamp.svg','lion':'symbols/mulberry/lion.svg','little':'symbols/mulberry/little.svg','look':'symbols/mulberry/look_,_to.svg','love':'symbols/mulberry/heart.svg','make':'symbols/mulberry/make_,_to.svg','milk':'symbols/mulberry/milk.svg','mom':'symbols/mulberry/mum_parent.svg','monkey':'symbols/mulberry/chimpanzee.svg','more':'symbols/mulberry/more.svg','mouth':'symbols/mulberry/mouth.svg','music':'symbols/mulberry/music.svg','nervous':'symbols/mulberry/worried_man.svg','off':'symbols/mulberry/off.svg','on':'symbols/mulberry/on.svg','open':'symbols/mulberry/open_,_to.svg','out':'symbols/mulberry/out.svg','outside':'symbols/mulberry/outside.svg','pants':'symbols/mulberry/trousers.svg','park':'symbols/mulberry/play_area.svg','phone':'symbols/mulberry/mobile_phone.svg','pig':'symbols/mulberry/piglet.svg','pizza':'symbols/mulberry/pizza.svg','play':'symbols/mulberry/play_,_to.svg','proud':'symbols/mulberry/medal.svg','put':'symbols/mulberry/put_,_to.svg','read':'symbols/mulberry/read_book_,_to.svg','rice':'symbols/mulberry/rice.svg','sad':'symbols/mulberry/sad_man.svg','sandwich':'symbols/mulberry/sandwich.svg','scared':'symbols/mulberry/afraid_man.svg','school':'symbols/mulberry/school.svg','shirt':'symbols/mulberry/shirt.svg','shoes':'symbols/mulberry/shoe_-_mans.svg','sick':'symbols/mulberry/headache.svg','sister':'symbols/mulberry/sister.svg','sleep':'symbols/mulberry/sleep_male_,_to.svg','socks':'symbols/mulberry/socks.svg','some':'symbols/mulberry/some.svg','soup':'symbols/mulberry/soup.svg','spk_word':'symbols/mulberry/talk_2_,_to.svg','stop':'symbols/mybuddy/stop.svg','store':'symbols/mulberry/shop.svg','strawberry':'symbols/mulberry/strawberry.svg','teacher':'symbols/mulberry/teacher_1a.svg','tired':'symbols/mulberry/yawn_,_to.svg','toy':'symbols/mulberry/teddy_bear.svg','tummy':'symbols/mulberry/stomach.svg','turn':'symbols/mulberry/turn_,_to.svg','turtle':'symbols/mulberry/turtle.svg','tv':'symbols/mulberry/flatscreen_tv.svg','up':'symbols/mulberry/up.svg','want':'symbols/mulberry/want_,_to.svg','wash':'symbols/mulberry/wash_hands_,_to.svg','water':'symbols/mulberry/water.svg','what':'symbols/mulberry/what.svg','who':'symbols/mulberry/who.svg','yes':'symbols/mulberry/correct.svg','yogurt':'symbols/mulberry/yogurt.svg','am':'symbols/mulberry/bee_bumble.svg','have':'symbols/mulberry/money.svg','wish':'symbols/mulberry/star.svg','need':'symbols/mybuddy/need.svg','see':'symbols/mybuddy/see.svg','before':'symbols/mulberry/before.svg','after':'symbols/mulberry/after.svg','today':'symbols/mulberry/today.svg','tomorrow':'symbols/mulberry/tomorrow.svg','yesterday':'symbols/mulberry/yesterday.svg','morning':'symbols/mulberry/morning.svg','afternoon':'symbols/mulberry/afternoon.svg','first':'symbols/mulberry/first.svg','next':'symbols/mulberry/next.svg','last':'symbols/mulberry/last.svg','week':'symbols/mulberry/week.svg','weekend':'symbols/mulberry/weekend.svg','calendar':'symbols/mulberry/calendar.svg','Christmas':'symbols/mulberry/Christmas.svg','Halloween':'symbols/mulberry/Halloween.svg','birthday_cake':'symbols/mulberry/birthday_cake.svg','turkey':'symbols/mulberry/turkey.svg','egg':'symbols/mulberry/egg.svg','fireworks':'symbols/mulberry/fireworks.svg','present':'symbols/mulberry/present.svg','beach':'symbols/mulberry/beach.svg','hello':'symbols/mulberry/hello.svg','meet':'symbols/mulberry/meet_,_to.svg'};
+Object.assign(FRM,{
+  hospital:'symbols/mulberry/doctor_1a.svg', library:'symbols/mulberry/book_end.svg',
+  restaurant:'symbols/mulberry/place_setting.svg', office:'symbols/mulberry/office_block.svg',
+  church:'symbols/mulberry/church.svg', goat:'symbols/mulberry/paw.svg', sheep:'symbols/mulberry/sheep.svg',
+  mouse:'symbols/mulberry/mouse.svg', hamster:'symbols/mulberry/hamster.svg',
+  guinea_pig:'symbols/mulberry/guinea_pig.svg', donkey:'symbols/mulberry/donkey.svg',
+  bee:'symbols/mulberry/bee_bumble.svg', insect:'symbols/mulberry/beetle.svg',
+  dinosaur:'symbols/mulberry/dinosaur.svg', pet:'symbols/mulberry/pet_comb.svg',
+  farm:'symbols/mulberry/farmer_1b.svg', wild:'symbols/mulberry/paw.svg',
+  computer:'symbols/mulberry/computer_1.svg', tablet:'symbols/mulberry/laptop.svg',
+  paper:'symbols/mulberry/paper.svg', pencil:'symbols/mulberry/pencil_and_paper_2.svg',
+  sweater:'symbols/mulberry/jumper.svg', shorts:'symbols/mulberry/shorts.svg',
+  underwear:'symbols/mulberry/clothes_generic.svg', pajamas:'symbols/mulberry/pyjamas.svg',
+  belt:'symbols/mulberry/belt.svg', tie:'symbols/mulberry/tie.svg', button:'symbols/mulberry/button.svg',
+  zip:'symbols/mulberry/zip.svg', wear:'symbols/mulberry/wear_helmet_,_to.svg',
+  talk:'symbols/mulberry/talk_2_,_to.svg',
+  class:'symbols/mulberry/class_room.svg', student:'symbols/mulberry/pupil.svg',
+  study:'symbols/mulberry/study_,_to.svg', math:'symbols/mulberry/maths.svg',
+  science:'symbols/mulberry/science.svg', language:'symbols/mulberry/english.svg',
+  history:'symbols/mulberry/history.svg', art:'symbols/mulberry/art_class.svg',
+  grade:'symbols/mulberry/school_1.svg', test:'symbols/mulberry/new_document.svg',
+  question:'symbols/mulberry/ask_,_to.svg', answer:'symbols/mulberry/answer.svg',
+  recess:'symbols/mulberry/break_time_1.svg', therapy:'symbols/mulberry/speech_language_therapist_1a.svg',
+  movie:'symbols/mulberry/video_tape.svg', video:'symbols/mulberry/video_camera.svg',
+  news:'symbols/mulberry/newspaper.svg', cartoon:'symbols/mulberry/tv_drama.svg',
+  show:'symbols/mulberry/tv_drama.svg', channel:'symbols/mulberry/channel_bbc_1.svg',
+  remote:'symbols/mulberry/remote_control.svg', volume:'symbols/mulberry/computer_speaker.svg',
+  watch:'symbols/mulberry/watch.svg', listen:'symbols/mybuddy/listen.svg',
+  pause:'symbols/mulberry/time_out.svg', break:'symbols/mulberry/break_2.svg'
+});
+const SYM={2436:'symbols/mulberry/sleep_male_,_to.svg',2452:'symbols/mulberry/food.svg',2464:'symbols/mulberry/paw.svg',2466:'symbols/mulberry/large.svg',2467:'symbols/mulberry/little.svg',2485:'symbols/mulberry/hot.svg',2486:'symbols/mulberry/snow.svg',2490:'symbols/mulberry/body_outline.svg',2509:'symbols/mulberry/clothes_generic.svg',3204:'symbols/mulberry/wash_hands_,_to.svg',5287:'symbols/mulberry/out.svg',5324:'symbols/mybuddy/please.svg',5335:'symbols/mulberry/put_,_to.svg',5336:'symbols/mybuddy/thank_you.svg',5344:'symbols/mulberry/who.svg',5345:'symbols/mulberry/what.svg',5346:'symbols/mulberry/where.svg',5373:'symbols/mulberry/wait_,_to.svg',5382:'symbols/mybuddy/here.svg',5441:'symbols/mulberry/want_,_to.svg',5468:'symbols/mulberry/down.svg',5469:'symbols/mulberry/up.svg',5508:'symbols/mulberry/more.svg',5526:'symbols/mulberry/mistake_no_wrong.svg',5553:'symbols/mulberry/sit_,_to.svg',5584:'symbols/mulberry/correct.svg',6061:'symbols/mulberry/drink_,_to.svg',6107:'symbols/mulberry/walk_,_to.svg',6108:'symbols/mulberry/run_,_to.svg',6408:'symbols/mulberry/read_book_,_to.svg',6456:'symbols/mulberry/eat_,_to.svg',6623:'symbols/mybuddy/he.svg',6624:'symbols/mybuddy/she.svg',6625:'symbols/mybuddy/you.svg',6632:'symbols/mulberry/I.svg',6857:'symbols/mulberry/come_,_to.svg',6872:'symbols/mulberry/look_,_to.svg',6906:'symbols/mybuddy/that.svg',6952:'symbols/mybuddy/again.svg',7040:'symbols/mulberry/good.svg',7041:'symbols/mulberry/bad.svg',7074:'symbols/mulberry/headache.svg',7086:'symbols/mulberry/headache.svg',7093:'symbols/mulberry/family_2.svg',7196:'symbols/mybuddy/stop.svg',7220:'symbols/mybuddy/sorry.svg',8014:'symbols/mulberry/on.svg',8015:'symbols/mulberry/in.svg',8142:'symbols/mulberry/go_,_to.svg',9124:'symbols/mybuddy/can.svg',9261:'symbols/mulberry/hear_,_to.svg',9403:'symbols/mulberry/make_,_to.svg',10044:'symbols/mulberry/give_,_to.svg',12264:'symbols/mybuddy/my.svg',23392:'symbols/mulberry/play_,_to.svg',24825:'symbols/mulberry/open_,_to.svg',24971:'symbols/mulberry/some.svg',28429:'symbols/mulberry/finish.svg',28485:'symbols/mulberry/turn_,_to.svg',31670:'symbols/mybuddy/it.svg',32648:'symbols/mulberry/help_,_to.svg',35533:'symbols/mulberry/happy_man.svg',35534:'symbols/mulberry/angry_man.svg',35535:'symbols/mulberry/sad_man.svg',35536:'symbols/mulberry/afraid_man.svg',35537:'symbols/mulberry/yawn_,_to.svg',36260:'symbols/mybuddy/is.svg',36263:'symbols/mybuddy/we.svg',36264:'symbols/mybuddy/they.svg',36512:'symbols/mulberry/get_,_to.svg',36858:'symbols/mulberry/point_,_to.svg',37011:'symbols/mulberry/place_setting.svg',37236:'symbols/mulberry/off.svg',37824:'symbols/mulberry/hug_,_to.svg',37826:'symbols/mulberry/thumb.svg',38760:'symbols/mulberry/colour.svg',99998:'symbols/mulberry/computer_keyboard.svg'};
 const IM=p=>SYM[p]||FRM[p]||'symbols/mybuddy/'+p+'.svg';
 const isMul=s=>s&&s.includes('/mulberry/');
 
@@ -391,14 +442,19 @@ V.forEach(function(c){ HOME_POS[c.w]=c.p; });
 const SK='mb4';
 const isPhone=window.innerWidth<=600;
 let SP=.9,PITCH=1,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=isPhone;
-const PHONE_CORE=[
-  0, 1, 2, 3, 4, 5,        // I we want like go help
- 12,13,14,15,16,18,        // you they play eat drink come
- 24,25,26,27,28,29,        // he she make get put open
- 36,38,40,41,42,43,        // it need love happy not out
- 48,49,50,54,57,58,        // yes more good all-done no stop
- 60,61,62,64,65,66,        // my please thank-you what where who
- 72,73,74,75,76,77         // CLEAR food people feelings places animals
+// Simple View is a complete 6 x 8 communication board, not merely the first
+// few rows of the large board. It keeps urgent words and grammar available
+// directly while retaining doorways to the full vocabulary.
+const SIMPLE_CORE=[
+  {w:'I',t:'pronoun',i:6632,cat:'pn_I'},{w:'you',t:'pronoun',i:6625,cat:'pn_you'},
+  {w:'want',t:'verb',i:5441},{w:'need',t:'verb',svgName:'need'},{w:'help',t:'verb',i:32648},{w:'stop',t:'social',svgName:'stop'},
+  {w:'yes',t:'social',i:5584},{w:'no',t:'social',svgName:'no'},{w:'more',t:'adjective',i:5508},{w:'all done',t:'social',i:28429},{w:'please',t:'social',i:5324},{w:'sorry',t:'social',i:7220},
+  {w:'go',t:'verb',i:8142},{w:'come',t:'verb',i:6857},{w:'eat',t:'verb',i:6456},{w:'drink',t:'verb',i:6061},{w:'to',t:'grammar',i:0},{w:'bathroom',t:'noun',svgName:'toilet'},
+  {w:'happy',t:'adjective',i:35533},{w:'sad',t:'adjective',i:35535},{w:'angry',t:'adjective',i:35534},{w:'scared',t:'adjective',i:35536},{w:'tired',t:'adjective',i:35537},{w:'hurt',t:'adjective',svgName:'hurt'},
+  {w:'not',t:'grammar',i:5526},{w:'that',t:'grammar',svgName:'that'},{w:'in',t:'grammar',i:8015},{w:'out',t:'grammar',i:5287},{w:'what',t:'grammar',i:5345},{w:'where',t:'grammar',i:5346},
+  {w:'my',t:'pronoun',i:12264},{w:'people',t:'folder',i:7093,cat:'people'},{w:'food',t:'folder',i:2452,cat:'food'},{w:'feelings',t:'folder',svgName:'feelings',cat:'feelings'},{w:'places',t:'folder',i:36858,cat:'places'},{w:'body',t:'folder',i:2490,cat:'body'},
+  {w:'home',t:'noun',svgName:'home'},{w:'school',t:'noun',svgName:'school'},{w:'things',t:'folder',i:37011,cat:'things'},{w:'clothes',t:'folder',i:2509,cat:'clothes'},{w:'animals',t:'folder',i:2464,cat:'animals'},{w:'ABC',t:'folder',i:99998,cat:'spell'},
+  {w:'can',t:'grammar',i:9124},{w:'do',t:'verb',svgName:'do'},{w:'like',t:'verb',i:37826},{w:'play',t:'verb',i:23392},{w:'look',t:'verb',i:6872},{w:'read',t:'verb',i:6408}
 ];
 const PRONOUNS=[
 {w:'I',i:6632,t:'prow_a',conj:v=>v},
@@ -418,7 +474,7 @@ function sidebarPronouns(){
   return PRONOUNS;
 }
 let myInfo={name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};
-let editMode=false,editTarget=null,editPhotoData=null,cellOverrides={};
+let editMode=false,editTarget=null,editPhotoData=null,cellOverrides={},customTargetView='custom';
 
 // === EDIT MODE ===
 function startEdit(){
@@ -443,13 +499,18 @@ editPhotoData=null;
 document.getElementById('editWord').value=item.w;
 const override=cellOverrides[viewType+'_'+item.w];
 if(override){
-document.getElementById('editCat').value=override.t||item.t;
+document.getElementById('editCat').value=editableType(override.t||item.t,item);
 if(override.photo){editPhotoData=override.photo;document.getElementById('editImgPreview').innerHTML=`<img src="${override.photo}" style="width:60px;height:60px;border-radius:8px;object-fit:cover;border:2px solid #2a9d8f">`;}else{showEditDefaultImg(item);}
 }else{
-document.getElementById('editCat').value=item.t||'resp';
+document.getElementById('editCat').value=editableType(item.t,item);
 showEditDefaultImg(item);
 }
 document.getElementById('editOv').classList.add('open');
+}
+function editableType(type,item){
+  if(/^(noun|verb|adjective|pronoun|grammar|social|folder|util)$/.test(type||'')) return type;
+  const legacy={prow_a:'verb',prow_b:'pronoun',prow_c:'adjective',prow_d:'noun',resp:'social'};
+  return legacy[type]||semanticType(item,item.w,type)||'noun';
 }
 function showEditDefaultImg(item){
 const src=item.svgName?(FRM[item.svgName]||'symbols/mybuddy/'+item.svgName+'.svg'):(item.i?IM(item.i):null);
@@ -539,7 +600,7 @@ speak(text);
 }
 
 function save(){try{localStorage.setItem(SK,JSON.stringify({PITCH,SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,phoneMode,tutDone:true}))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=clamp(d.SP,.5,1.6,.9);PITCH=clamp(d.PITCH,.5,1.5,1);VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=d.customWords||[];myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;return d.tutDone}catch(e){return false}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=clamp(d.SP,.5,1.6,.9);PITCH=clamp(d.PITCH,.5,1.5,1);VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=(d.customWords||[]).map(function(c){if(!c.view)c.view='custom';return c});myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;return d.tutDone}catch(e){return false}}
 
 // Pitch and rate are clamped on the way out. A value above about 1.5 wedges
 // the speech engine on macOS: the utterance fails silently and every later one
@@ -645,11 +706,11 @@ let items;
 if(curView==='home'){
 items=getHome();
 }else if(curView.indexOf('anchor_')===0){
-items=anchorItems(curView.slice(7)).filter(Boolean);
+items=mergeAnchorPage(anchorItems(curView.slice(7)),curView);
 }else if(curView==='custom'){
 items=getCustom();
 }else{
-items=getFringe(curView);
+items=getFringe(curView).concat(getPageWords(curView));
 }
 const isHome=(curView==='home');
 const isPron=curView.indexOf('pn_')===0;
@@ -684,7 +745,7 @@ fitBoard();
 requestAnimationFrame(fitBoard);
 
 if(isAnchor){
-  const slots=anchorItems(curView.slice(7));
+  const slots=items;
   for(let i=0;i<84;i++){
     if(slots[i]){ renderCell(b,slots[i]); }
     else { const e=document.createElement('div'); e.style.visibility='hidden'; b.appendChild(e); }
@@ -693,12 +754,34 @@ if(isAnchor){
   items.forEach(s=>renderCell(b,s));
 }
 }
+function semanticType(s,displayW,rawType){
+  const type=rawType||s.t||'';
+  if(s.cat) return s.cat.indexOf('pn_')===0?'pronoun':'folder';
+  if(/^(verb|adjective|noun|pronoun|grammar|social|folder)$/.test(type)) return type;
+  if(curView.indexOf('pn_')===0) return 'pronoun';
+  if(curView.indexOf('anchor_')===0){
+    const anchor=curView.slice(7), a2=ANCHORS2[anchor];
+    if(ANCHORS[anchor]){
+      if(type==='prow_d') return 'noun';
+      if(type==='resp') return /^(can|will|would|should|could|might|must|shall|may)\b/i.test(displayW)?'grammar':'adjective';
+      if(type==='social') return 'grammar';
+      return 'verb';
+    }
+    if(a2){
+      if(anchor==='when'&&/^(prow_c|prow_d|resp)$/.test(type)) return 'noun';
+      if(a2.type==='adj') return type==='prow_d'?'noun':'adjective';
+      if(a2.type==='question'||a2.type==='helper'||a2.type==='prep') return 'grammar';
+      if(a2.type==='quant'||a2.type==='demo') return type==='prow_d'?'noun':'adjective';
+    }
+  }
+  return type||'noun';
+}
 function renderCell(b,s){
 const d=document.createElement('div');
 const ovKey=curView+'_'+s.w;
 const ov=cellOverrides[ovKey];
 const displayW=ov?ov.w:s.w;
-const displayT=ov?ov.t:s.t;
+const displayT=semanticType(s,displayW,ov?ov.t:s.t);
 const displayPhoto=ov?ov.photo:s.photo;
 d.className='c '+(displayT||'resp');
 if(ov&&ov.removed){
@@ -720,13 +803,19 @@ const imgSrc=displayPhoto?displayPhoto:(s.svgName?(FRM[s.svgName]||'symbols/mybu
 const isColorCat=(curView==='colors');
 const isGram=s.w&&s.w.startsWith('+');
 if(imgSrc){
-d.innerHTML=`<img src="${imgSrc}" style="${displayPhoto?'border-radius:6px;object-fit:cover;':(isColorCat||isMul(imgSrc)?'background:rgba(255,255,255,0.85);border-radius:6px;padding:1px;':'filter:brightness(0) invert(1);')}"
+d.innerHTML=`<img src="${imgSrc}" style="${displayPhoto?'border-radius:6px;object-fit:cover;':(isColorCat||isMul(imgSrc)||/^(grammar|pronoun|social)$/.test(displayT)?'background:rgba(255,255,255,0.85);border-radius:6px;padding:1px;':'filter:brightness(0) invert(1);')}"
  onerror="this.style.display='none';this.onerror=null"><div class="lb">${displayW}</div>`;
 }else{
 d.innerHTML=`<div class="lb" style="font-size:calc(var(--lb,13px)*${_wc>2?1.1:1.45});max-height:none">${displayW}</div>`;
 }
 d.onclick=()=>{
-if(editMode){openEditCell(s,curView);return}
+if(editMode){
+  // Doorways must still open during editing; otherwise an adult can never
+  // reach the page they intend to change. Words on that page open the editor.
+  if(s.cat){curView=s.cat;render();document.getElementById('backBtn').style.display='block';return}
+  if(curView==='home'&&hasAnchor(s.w)){curView='anchor_'+s.w;render();document.getElementById('backBtn').style.display='block';return}
+  openEditCell(s,curView);return
+}
 if(s.w==='CLEAR'){sClr();d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);return}
 if(isGram){gram(s.w.replace('+',''));d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300);return}
 if(s.cat){curView=s.cat;render();document.getElementById('backBtn').style.display='block';return}
@@ -748,7 +837,22 @@ else{const e=document.createElement('div');e.className='c';e.style.visibility='h
 d.innerHTML=`<div style="font-size:clamp(14px,4vw,24px);font-weight:900">${k}</div><div class="lb">${k}</div>`;
 d.onclick=()=>{spellBuf+=k;speak(k);rStrip();d.classList.add('pulse');setTimeout(()=>d.classList.remove('pulse'),300)};b.appendChild(d)});
 }
-function getHome(){const all=V.sort((a,b)=>a.p-b.p);if(!phoneMode)return all;return PHONE_CORE.map(p=>all.find(v=>v.p===p)).filter(Boolean)}
+function customItem(c){
+  const legacy={prow_a:'verb',prow_b:'pronoun',prow_c:'adjective',prow_d:'noun',resp:'social'};
+  return {w:c.w,i:c.i||0,t:legacy[c.t]||c.t||'noun',photo:c.photo||null,custom:true};
+}
+function getPageWords(view){return customWords.filter(function(c){return c.view===view}).map(customItem)}
+function mergeAnchorPage(slots,view){
+  const out=slots.slice();
+  getPageWords(view).forEach(function(item){
+    // Custom page words fill unused cells without moving any built-in word.
+    // Start at the bottom-right, where a communication partner can find them
+    // quickly while every established motor position remains unchanged.
+    for(let p=83;p>=0;p--){if(!out[p]){out[p]=item;break}}
+  });
+  return out;
+}
+function getHome(){const all=V.sort((a,b)=>a.p-b.p);return phoneMode?SIMPLE_CORE:all}
 
 /* ==================================================================
    ANCHOR PAGES
@@ -789,12 +893,14 @@ const IRREG_ADJ = {
   much:{er:'more',est:'most'},       many:{er:'more',est:'most'},
   fun:{er:'more fun',est:'most fun'}
 };
+const MORE_ADJ = ['open','stuck','tired','scared','careful'];
 function syllables(w){
   const m = w.toLowerCase().replace(/e$/,'').match(/[aeiouy]+/g);
   return m ? m.length : 1;
 }
 function compare(adj, suffix){
   if (IRREG_ADJ[adj]) return IRREG_ADJ[adj][suffix];
+  if (MORE_ADJ.includes(adj)) return (suffix === 'er' ? 'more ' : 'most ') + adj;
   // Two syllables or more takes more/most, not -er/-est. Otherwise you get
   // "scareder", which is not a word and teaches the wrong pattern.
   if (syllables(adj) >= 2 && !/y$/.test(adj)) {
@@ -806,8 +912,12 @@ function compare(adj, suffix){
   return adj + suffix;
 }
 
+// Past participles. Without these the board cannot say eaten, gone, given,
+// written or worn, and every LAMP verb page carries this as a fixed slot.
+const EN_FORMS = {"go": "gone", "do": "done", "make": "made", "get": "gotten", "eat": "eaten", "come": "come", "give": "given", "put": "put", "read": "read", "sit": "sat", "run": "run", "sleep": "slept", "feel": "felt", "see": "seen", "drink": "drunk", "know": "known", "write": "written", "wear": "worn", "take": "taken", "find": "found", "hear": "heard", "say": "said", "think": "thought", "buy": "bought", "bring": "brought", "teach": "taught", "catch": "caught", "build": "built", "send": "sent", "sing": "sung", "swim": "swum", "ride": "ridden", "drive": "driven", "break": "broken", "choose": "chosen", "wake": "woken", "throw": "thrown", "grow": "grown", "draw": "drawn", "fly": "flown", "fall": "fallen", "forget": "forgotten", "hide": "hidden", "speak": "spoken", "stand": "stood", "win": "won", "lose": "lost", "leave": "left", "meet": "met", "pay": "paid", "sell": "sold", "tell": "told", "hold": "held", "keep": "kept", "let": "let", "cut": "cut", "hurt": "hurt", "hit": "hit", "shut": "shut", "have": "had", "be": "been"};
+
 function morph(base){
-  if (IRREGULAR[base]) return IRREGULAR[base];
+  if (IRREGULAR[base]) return Object.assign({en: EN_FORMS[base] || IRREGULAR[base].ed}, IRREGULAR[base]);
   const last = base.slice(-1), last2 = base.slice(-2);
   let s;
   if (/(s|x|z|ch|sh)$/.test(base)) s = base + 'es';
@@ -823,7 +933,10 @@ function morph(base){
   if (last === 'e') ed = base + 'd';
   else if (last === 'y' && !'aeiou'.includes(base.slice(-2,-1))) ed = base.slice(0,-1) + 'ied';
   else ed = stem + 'ed';
-  return {s:s, ing:ing, ed:ed};
+  // Past participle. Regular verbs match the past tense; the irregulars that a
+  // child actually uses do not, and 'I have eat' is not English.
+  const en = EN_FORMS[base] || ed;
+  return {s:s, ing:ing, ed:ed, en:en};
 }
 
 // One row per anchor. This is where vocabulary grows: add related verbs,
@@ -879,6 +992,8 @@ const ANCHORS = {
           nouns:['help','break','bathroom','water','time'], adjs:['now','more']},
   do:    {frames_en:['what are you doing','what should I do','I am done','can I do it'], icon:'do',    related:['make','try','finish','start','work'],
           nouns:['work','job','homework','thing'], adjs:['done','busy','hard']},
+  talk:  {frames_en:['what do you want to talk about','I want to talk to you','can we talk','let me talk'], icon:'talk', related:['say','tell','ask','listen','speak'],
+          nouns:['word','story','idea','friend'], adjs:['loud','quiet','fast','slow']},
   help_: {icon:'help',  related:[], nouns:[], adjs:[]}
 };
 
@@ -952,6 +1067,20 @@ const ANCHORS2 = {
                'I do not like that']},
 
   // ---- question words ---------------------------------------------------
+  'thank you': {type:'helper', icon:null,
+         frames:[['hello','hello'],['hi','hello'],['goodbye','goodbye'],['bye','goodbye'],
+                 ['good morning','morning'],['good night','night'],
+                 ['see you later','goodbye'],['how are you?','what'],
+                 ['I am fine','good'],['nice to meet you','meet'],
+                 ['you are welcome',null]],
+         times:[['please','please'],['sorry','sorry'],['excuse me','sorry'],
+                ['yes please','yes'],['no thank you','no'],['my turn','my'],
+                ['your turn','you'],['help me','help']]},
+  sorry:{type:'helper', icon:'sorry',
+         frames:[['sorry','sorry'],["I'm sorry",'sorry'],['excuse me','sorry'],
+                 ['mistake','wrong'],['accident','accident'],['I did not mean to','not'],
+                 ['are you okay?','good'],['can I help?','help'],['I can fix it','fix'],
+                 ['please forgive me','please'],['I need a break','break'],['try again','try']]},
   what: {type:'question', icon:'what',
          frames:['what is that','what do you want','what happened','what is this',
                  'what time','what color','what next','what for']},
@@ -963,8 +1092,27 @@ const ANCHORS2 = {
                  'who is next','who wants it']},
   when: {type:'question', icon:'when',
          frames:['when is it','when do we go','when will you come','when is lunch',
-                 'when can I','when is bedtime']},
-  why:  {type:'question', icon:'why',
+                 'when can I','when is bedtime'],
+         // core time words, used many times a day, one hit from Home
+         times:[['now','now'],['later','later'],['soon','soon'],['wait','wait'],
+                ['before','before'],['after','after'],['first','first'],['next','next'],
+                ['last','last'],['early','early'],['late','late']],
+         spans:[['today','today'],['tomorrow','tomorrow'],['yesterday','yesterday'],
+                ['morning','morning'],['afternoon','afternoon'],['night','night']],
+         days:[['Monday','calendar'],['Tuesday','calendar'],['Wednesday','calendar'],
+               ['Thursday','calendar'],['Friday','calendar'],['Saturday','calendar'],
+               ['Sunday','calendar'],['day','day'],['week','week'],['weekend','weekend'],
+               ['month','calendar'],['year','calendar']],
+         months:[['January','calendar'],['February','calendar'],['March','calendar'],
+                 ['April','calendar'],['May','calendar'],['June','calendar'],
+                 ['July','calendar'],['August','calendar'],['September','calendar'],
+                 ['October','calendar'],['November','calendar'],['December','calendar']],
+         holidays:[['birthday','birthday_cake'],['Christmas','Christmas'],
+                   ['Halloween','Halloween'],['Thanksgiving','turkey'],
+                   ['Easter','egg'],['New Year','fireworks'],
+                   ['Fourth of July','fireworks'],["Valentine's Day",'heart'],
+                   ["Mother's Day",'heart'],["Father's Day",'present'],
+                   ['vacation','beach'],['school day','school']]},  why:  {type:'question', icon:'why',
          frames:['why not','why did you','why is that','why me','why now',
                  'why are you sad']},
   how:  {type:'question', icon:'how',
@@ -1058,9 +1206,24 @@ function buildTypedItems(word){
   }
   else if (a.type === 'question' || a.type === 'helper') {
     (a.frames||[]).forEach(function(f,i){
-      // Two fixed rows of frames, so position stays predictable.
+      // Two fixed rows of frames, so position stays predictable. A frame may
+      // be a plain string or a [word, icon] pair when it needs its own picture.
       const p = i < 6 ? 12+i : 24+(i-6);
-      put(p, f, a.icon, a.type==='question'?'social':'prow_b');
+      const w  = Array.isArray(f) ? f[0] : f;
+      const ic = Array.isArray(f) ? f[1] : a.icon;
+      put(p, w, ic, a.type==='question'?'social':'prow_b');
+    });
+    // Optional fixed rows, used by "when" for time and calendar vocabulary.
+    // Each row keeps its own colour so the kind of word is readable at a glance,
+    // and each word keeps one position, the same as everywhere else.
+    const rows = [['times',1,'prow_a'],['spans',18,'prow_b'],
+                  ['days',36,'prow_c'],['months',48,'prow_d'],['holidays',60,'resp']];
+    rows.forEach(function(r){
+      (a[r[0]]||[]).forEach(function(e,i){
+        const w = Array.isArray(e) ? e[0] : e;
+        const ic = Array.isArray(e) ? e[1] : w;
+        put(r[1]+i, w, ic, r[2]);
+      });
     });
   }
   return out;
@@ -1071,21 +1234,42 @@ function hasAnchor(w){ return Object.prototype.hasOwnProperty.call(ANCHORS, w)
 
 /* Fixed slot map, 12 columns. Every anchor page puts the same KIND of
    word in the same place, which is the entire point. */
+// Adverbs are curated rather than generated. A form is omitted when it changes
+// meaning (open/openly, ready/readily, close/closely) or is not useful natural
+// language for this board (tiredly, thirstily).
+const ADVERBS = {
+  nice:'nicely', slow:'slowly', quick:'quickly', quiet:'quietly', loud:'loudly',
+  soft:'softly', careful:'carefully', gentle:'gently', happy:'happily',
+  sad:'sadly', good:'well', bad:'badly', clean:'cleanly',
+  pretty:'prettily', funny:'funnily', new:'newly', high:'highly', busy:'busily',
+  wrong:'wrongly', right:'rightly', full:'fully', warm:'warmly', cold:'coldly',
+  safe:'safely', hard:'hard', fast:'fast', late:'late', early:'early', straight:'straight'
+};
+function adverb(adj){ return ADVERBS[adj] || null; }
+
 function buildAnchorItems(word){
   const a = ANCHORS[word]; if(!a) return [];
   const m = morph(word);
   const out = new Array(84).fill(null);
-  const put = (p,w,icon,t) => { if(p<84 && !out[p]) out[p] = {w:w, svgName:icon||null, i:0, t:t}; };
+  // One position per word, inside a page as well as on Home. A word that is
+  // already somewhere on this page is not repeated in another slot: regular
+  // verbs have the same past and participle, and the related lists sometimes
+  // name a word the page already carries.
+  const seen = new Set();
+  const put = (p,w,icon,t) => {
+    if (p>=84 || out[p] || !w || seen.has(w)) return;
+    seen.add(w);
+    out[p] = {w:w, svgName:icon||null, i:0, t:t};
+  };
 
   // Row 1: the word itself and its endings. Always here.
   put(0,  word,        a.icon, 'prow_a');
   put(1,  m.s,         a.icon, 'prow_a');
   put(2,  m.ing,       a.icon, 'prow_a');
   put(3,  m.ed,        a.icon, 'prow_a');
-  put(4,  'to '+word,  a.icon, 'prow_a');
+  put(4,  m.en,        a.icon, 'prow_a');
+  put(5,  'to '+word,  a.icon, 'prow_a');
   put(6,  "don't "+word, 'not', 'resp');
-  put(7,  'can '+word,   'can', 'resp');
-  put(8,  'will '+word,  a.icon, 'resp');
 
   // Row 2: pronoun + this verb. Always here, always this order.
   const PN = [['I',''],['you',''],['we',''],['they',''],['he','s'],['she','s'],['it','s']];
@@ -1094,20 +1278,35 @@ function buildAnchorItems(word){
     put(12+i, p[0]+' '+form, p[0], 'prow_b');
   });
 
+  // Row 2 continued: the interrogative. Without this a child can state a verb
+  // but never ask about it, which is half of what a verb is for.
+  const ASK = [['do I','do'],['do you','do'],['do we','do'],['do they','do'],
+               ['does he','does'],['does she','does'],['does it','does']];
+  ASK.forEach(function(q,i){ put(19+i, q[0]+' '+word, 'what', 'social'); });
+
+  // Row 3 left: the modals, on every verb page, same order every time.
+  ['can','will','would','should','could','might','must','shall','may']
+    .forEach(function(md,i){ put(31+i, md+' '+word, md, 'resp'); });
+
   // Row 3: related verbs.
-  (a.related||[]).forEach(function(r,i){ put(24+i, r, r, 'prow_c'); });
+  (a.related||[]).forEach(function(r,i){ put(40+i, r, r, 'prow_c'); });
 
   // Row 4: things (nouns).
-  (a.nouns||[]).forEach(function(n,i){ put(36+i, n, n, 'prow_d'); });
+  (a.nouns||[]).forEach(function(n,i){ put(48+i, n, n, 'prow_d'); });
 
   // Row 5: describing words, with comparatives generated.
   (a.adjs||[]).slice(0,4).forEach(function(adj,i){
-    const base = 48 + i*3;
+    const base = 60 + i*3;
     put(base, adj, adj, 'resp');
     if (!/^(more|now|mine|on|off|around|done|careful|gentle|comfy|hungry|thirsty|empty)$/.test(adj)) {
       put(base+1, compare(adj,'er'),  adj, 'resp');
       put(base+2, compare(adj,'est'), adj, 'resp');
     }
+    // The -ly form belongs to the describing word, not the verb: 'nicely',
+    // not 'eatly'.
+    // 'fast' and 'hard' are their own adverbs, so the slot would repeat the
+    // word that is already on the page.
+    if (i === 0 && adverb(adj) && adverb(adj) !== adj) put(59, adverb(adj), adj, 'resp');
   });
 
   // Row 6: question forms of this verb.
@@ -1115,20 +1314,20 @@ function buildAnchorItems(word){
   // from a template produced things like "where do you want", which is not
   // English. Where an anchor has no natural frames, the row is left empty.
   const FRAMES = a.frames_en || [];
-  FRAMES.slice(0,6).forEach(function(f,i){ put(60+i, f, a.icon, 'social'); });
-  put(67, 'yes',      'yes',      'social');
-  put(68, 'no',       'no',       'social');
-  put(69, 'more',     'more',     'social');
-  put(70, 'stop',     'stop',     'social');
-  put(71, 'all done', 'all done', 'social');
+  FRAMES.slice(0,5).forEach(function(f,i){ put(72+i, f, a.icon, 'social'); });
+  put(77, 'yes',      'yes',      'social');
+  put(78, 'no',       'no',       'social');
+  put(79, 'more',     'more',     'social');
+  put(80, 'stop',     'stop',     'social');
+  put(81, 'all done', 'all done', 'social');
   return out;
 }
 
 function getFringe(cat){
-const catColors={food:'resp',people:'prow_a',feelings:'prow_d',places:'prow_c',animals:'prow_a',things:'prow_c',colors:'social',body:'prow_d',clothes:'social',pn_I:'prow_a',pn_we:'prow_a',pn_you:'prow_b',pn_they:'prow_b',pn_he:'prow_c',pn_she:'prow_c',pn_it:'prow_d'};
-return(FR[cat]||[]).map(([w,svgName,say])=>({w,svgName,say:say||null,i:0,t:catColors[cat]||'resp'}));
+const catColors={food:'noun',people:'noun',feelings:'adjective',places:'noun',animals:'noun',things:'noun',colors:'adjective',body:'noun',clothes:'noun',grammar:'grammar',school:'noun',media:'noun',pn_I:'pronoun',pn_we:'pronoun',pn_you:'pronoun',pn_they:'pronoun',pn_he:'pronoun',pn_she:'pronoun',pn_it:'pronoun'};
+return(FR[cat]||[]).map(([w,svgName,say,nextCat])=>({w,svgName,say:say||null,cat:nextCat||null,i:0,t:nextCat?'folder':(catColors[cat]||'noun')}));
 }
-function getCustom(){return customWords.map(c=>({w:c.w,i:c.i||0,t:c.t||'resp',photo:c.photo||null}))}
+function getCustom(){return customWords.map(customItem)}
 
 function goHome(){curView='home';const w=spellBuf.trim();if(w){sentence.push({w,i:0});speak(w)}spellBuf='';render();rStrip();document.getElementById('backBtn').style.display='none'}
 
@@ -1162,14 +1361,35 @@ function buildWordIndex(){
     });
   });
 
-  // Level 2: category and pronoun folders.
-  Object.keys(FR).forEach(function(cat){
-    const doorway = V.find(function(c){ return c.cat===cat; });
-    if(!doorway) return;
+  // Category folders can contain another doorway (for example Things ->
+  // School words). Walk them recursively so Find teaches the complete route.
+  function addFolder(cat, doorway, path, seen){
+    if(seen[cat]) return;
+    const nextSeen=Object.assign({},seen); nextSeen[cat]=true;
     (FR[cat]||[]).forEach(function(pair){
-      idx.push({w:pair[0], where:doorway.w, hits:2,
-                path:[{view:'home', w:doorway.w}, {view:cat, w:pair[0]}]});
+      const itemPath=path.concat([{view:cat,w:pair[0]}]);
+      if(pair[3]) addFolder(pair[3],pair[0],itemPath,nextSeen);
+      else idx.push({w:pair[0],where:doorway,hits:itemPath.length,path:itemPath});
     });
+  }
+  V.filter(function(c){return c.cat&&FR[c.cat]}).forEach(function(doorway){
+    addFolder(doorway.cat,doorway.w,[{view:'home',w:doorway.w}],{});
+  });
+
+  // Added words are real members of the page where the adult placed them,
+  // so Find must teach that same route after a reload or while offline.
+  customWords.forEach(function(c){
+    const view=c.view||'custom';
+    let path;
+    if(view==='custom') path=[{view:'home',w:'my words'},{view:'custom',w:c.w}];
+    else if(view.indexOf('anchor_')===0){
+      const doorway=view.slice(7);
+      path=[{view:'home',w:doorway},{view:view,w:c.w}];
+    }else{
+      const sample=idx.find(function(e){return e.path.length&&e.path[e.path.length-1].view===view});
+      path=sample?sample.path.slice(0,-1).concat([{view:view,w:c.w}]):[{view:view,w:c.w}];
+    }
+    idx.push({w:c.w,where:pageName(view),hits:path.length,path:path});
   });
 
   return idx;
@@ -1278,7 +1498,9 @@ function runFinder(){
                 .slice(0,40);
   if(!hits.length){ box.innerHTML='<div style="padding:10px;opacity:.7;">No match for "'+q+'".</div>'; return; }
   window._finderHits=hits;
-  box.innerHTML=hits.map(function(h,n){
+  const hasExact=hits.some(function(h){return h.w.toLowerCase()===q;});
+  const note=hasExact?'':'<div style="padding:9px 12px;background:#5b3140;color:#fff;font-size:.85em;">No exact word yet. Related results:</div>';
+  box.innerHTML=note+hits.map(function(h,n){
     const route=h.path.map(function(s){ return s.w; }).join('  \u2192  ');
     return '<div class="find-hit" data-n="'+n+'" style="padding:11px 12px;'
       +'border-bottom:1px solid rgba(255,255,255,.12);cursor:pointer;">'
@@ -1336,8 +1558,9 @@ function updDots(){document.querySelectorAll('#pinDots .pin-dot').forEach((d,i)=
 // single point of failure.
 function backupData(){
   try{
-    const raw=localStorage.getItem(SK)||'{}';
-    const blob=new Blob([raw],{type:'application/json'});
+    const board=JSON.parse(localStorage.getItem(SK)||'{}');
+    const backup={version:2,board:board,quickPhrases:quickPhrases};
+    const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob);
     a.download='my-buddy-backup-'+new Date().toISOString().slice(0,10)+'.json';
@@ -1352,8 +1575,13 @@ function restoreData(input){
     try{
       const d=JSON.parse(r.result);
       if(typeof d!=='object'||d===null) throw new Error('bad file');
+      // Older backups contained the board object directly. Keep accepting
+      // them while version 2 also restores personalized Quick phrases.
+      const board=(d.version===2&&d.board&&typeof d.board==='object')?d.board:d;
+      const restoredQuick=(d.version===2&&Array.isArray(d.quickPhrases))?d.quickPhrases:null;
       if(!confirm('This replaces your current words and settings with the ones in the file. Continue?')) return;
-      localStorage.setItem(SK,JSON.stringify(d));
+      localStorage.setItem(SK,JSON.stringify(board));
+      if(restoredQuick) localStorage.setItem('mybuddy_qp',JSON.stringify(restoredQuick));
       location.replace(location.pathname);
     }catch(e){ alert('That file is not a valid backup.'); }
   };
@@ -1512,7 +1740,8 @@ function renderStats(){const box=document.getElementById('statsBox');const total
 box.innerHTML=`<div class="stat-row"><span>Total taps</span><b>${total}</b></div><div class="stat-row"><span>Unique words</span><b>${Object.keys(usage).length}</b></div><div class="stat-row"><span>Coverage</span><b>${pct}%</b></div>${sorted.map(([w,c])=>`<div class="stat-row"><span>${w}</span><b>${c}×</b></div>`).join('')}`}
 
 // === CUSTOM WORDS ===
-function renderCWList(){const el=document.getElementById('cwList');if(!customWords.length){el.innerHTML='<p style="font-size:.75em;opacity:.5">No custom words yet</p>';return}el.innerHTML=customWords.map((c,i)=>`<div class="cw-item"><span>${c.w}</span><button class="dn" onclick="delCW(${i})" style="padding:2px 8px;font-size:.7em">✕</button></div>`).join('')}
+function renderCWList(){const el=document.getElementById('cwList');if(!customWords.length){el.innerHTML='<p style="font-size:.75em;opacity:.5">No custom words yet</p>';return}el.innerHTML=customWords.map((c,i)=>`<div class="cw-item"><span>${c.w}<small style="display:block;opacity:.55">${pageName(c.view)}</small></span><button class="dn" onclick="delCW(${i})" style="padding:2px 8px;font-size:.7em">✕</button></div>`).join('')}
+function pageName(view){return view==='custom'?'My words':String(view||'custom').replace(/^anchor_/,'').replace(/_/g,' ')}
 let cwPhotoData=null;
 function handleCWPhoto(input){
 if(!input.files||!input.files[0])return;
@@ -1546,22 +1775,19 @@ if(editMode){
 }
 }
 function openAddCWFor(view){
+customTargetView=view||'custom';
 document.getElementById('cwWord').value='';
 document.getElementById('cwAra').value='';
 cwPhotoData=null;
 document.getElementById('cwPreview').innerHTML='';
 // Pre-select color based on current category
-const catColors={food:'resp',people:'prow_a',feelings:'prow_d',places:'prow_c',animals:'prow_a',things:'prow_c',colors:'social',body:'prow_d',clothes:'social',home:'resp',custom:'resp'};
-const selCat=catColors[view]||'resp';
+const catColors={food:'noun',people:'noun',feelings:'adjective',places:'noun',animals:'noun',things:'noun',colors:'adjective',body:'noun',clothes:'noun',grammar:'grammar',school:'noun',media:'noun',custom:'noun',anchor_sorry:'social'};
+const selCat=catColors[customTargetView]||'noun';
 document.getElementById('cwCat').value=selCat;
 document.getElementById('cwOv').classList.add('open');
 }
 function saveCW(){const w=document.getElementById('cwWord').value.trim();if(!w)return;const t=document.getElementById('cwCat').value;const ara=document.getElementById('cwAra').value.trim();
-const newWord={w,t,i:ara?parseInt(ara):0,photo:cwPhotoData||null};
-// If we're in a fringe category, add to that category's data too
-if(curView!=='home'&&curView!=='custom'&&curView!=='spell'&&FR[curView]){
-  FR[curView].push([w,w]);
-}
+const newWord={w,t,i:ara?parseInt(ara):0,photo:cwPhotoData||null,view:customTargetView};
 customWords.push(newWord);cwPhotoData=null;save();closeOv('cwOv');renderCWList();render()}
 function delCW(i){customWords.splice(i,1);save();renderCWList()}
 
@@ -1588,10 +1814,10 @@ function tutNext(){if(tutStep<TUT.length-1){tutStep++;rTut()}else{document.getEl
 
 // === INIT ===
 function init(){
-// ROW ORDER ASSERTION - pronoun rows must be first (p:0-47)
-const sorted=V.slice().sort((a,b)=>a.p-b.p);
-if(sorted[0].t!=='prow_a'||sorted[12].t!=='prow_b'||sorted[24].t!=='prow_c'||sorted[36].t!=='prow_d'){
-console.error('ROW ORDER VIOLATION: Pronoun rows must be p:0-47. Someone changed the p: values. Fix immediately.');
+// Motor-plan assertion: verify the first cell of each locked core row.
+const rowStarts=[['I',0],['you',12],['he',24],['it',36]];
+if(rowStarts.some(function(x){const c=V.find(function(v){return v.w===x[0]});return !c||c.p!==x[1]})){
+console.error('ROW ORDER VIOLATION: fixed core rows moved. Restore I/you/he/it to p:0/12/24/36.');
 }
 const tutDone=load();
 const ptBtn=document.getElementById('phoneToggle');if(ptBtn){ptBtn.innerHTML=phoneMode?'FULL<br><span style="font-size:7px;opacity:.7">VIEW</span>':'SIMPLE<br><span style="font-size:7px;opacity:.7">VIEW</span>'}
@@ -1648,7 +1874,8 @@ if ('serviceWorker' in navigator) {
 
 <script>
 /* Feature detection, not user-agent sniffing: the question is whether this
-   engine can size a cell. clamp() landed in Safari 13.1. */
+   engine can size a cell, not what it calls itself. clamp() landed in Safari
+   13.1, so an iPad stuck on iOS 12 fails this and gets told why. */
 (function(){
   var ok = window.CSS && CSS.supports && CSS.supports('width','clamp(1px,1vw,2px)');
   if (!ok) {
