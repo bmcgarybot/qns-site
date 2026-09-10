@@ -458,6 +458,8 @@ const SIMPLE_CORE=[
   {w:'home',t:'noun',svgName:'home'},{w:'school',t:'noun',svgName:'school'},{w:'things',t:'folder',i:37011,cat:'things'},{w:'clothes',t:'folder',i:2509,cat:'clothes'},{w:'animals',t:'folder',i:2464,cat:'animals'},{w:'ABC',t:'folder',i:99998,cat:'spell'},
   {w:'can',t:'grammar',i:9124},{w:'do',t:'verb',svgName:'do'},{w:'like',t:'verb',i:37826},{w:'play',t:'verb',i:23392},{w:'look',t:'verb',i:6872},{w:'read',t:'verb',i:6408}
 ];
+const SIMPLE_POS={};
+SIMPLE_CORE.forEach(function(item,index){SIMPLE_POS[item.w]=index;});
 const PRONOUNS=[
 {w:'I',i:6632,t:'prow_a',conj:v=>v},
 {w:'we',i:36263,t:'prow_a',conj:v=>v},
@@ -709,6 +711,8 @@ if(curView==='home'){
 items=getHome();
 }else if(curView.indexOf('anchor_')===0){
 items=mergeAnchorPage(anchorItems(curView.slice(7)),curView);
+}else if(curView.indexOf('pn_')===0){
+items=getPronounPage(curView);
 }else if(curView==='custom'){
 items=getCustom();
 }else{
@@ -722,15 +726,16 @@ let cols,rows,rowH;
 if(isHome&&phoneMode){cols=Math.min(items.length,6);rows=Math.ceil(items.length/cols);
 }else if(isHome){cols=12;rows=7;
 }else if(isAnchor&&phoneMode){
-// On a phone 12 columns is 32px per cell, which is unusable. Home already
-// compacts in simple view, so anchor pages compact the same way: drop the
-// empty slots and lay the words out six across.
-items=items.filter(Boolean);
-cols=Math.min(items.length,6)||1;rows=Math.ceil(items.length/cols)||1;
+// Simple View has its own fixed 6 x 8 motor map. Keep every Simple Home word
+// at that same position and use the remaining cells for page vocabulary.
+items=packFixedPage(items,SIMPLE_POS,48);
+cols=6;rows=8;
+}else if(isPron&&phoneMode){cols=6;rows=8;
 }else if(isAnchor){
 // On a tablet or desktop anchor pages keep the full 84-cell grid so a word
 // is always in the same place. Blank slots stay blank; that is the point.
 cols=12;rows=7;
+}else if(isPron){cols=12;rows=7;
 }else{
 // Pronoun folders, category folders and custom all render as a plain grid
 // sized to their contents. No pronoun sidebar anywhere: grammar comes from
@@ -746,9 +751,10 @@ _cols=cols; _rows=rows; _isHome=isHome;
 fitBoard();
 requestAnimationFrame(fitBoard);
 
-if(isAnchor){
+if(isAnchor||isPron){
   const slots=items;
-  for(let i=0;i<84;i++){
+  const slotCount=phoneMode?slots.length:84;
+  for(let i=0;i<slotCount;i++){
     if(slots[i]){ renderCell(b,slots[i]); }
     else { const e=document.createElement('div'); e.style.visibility='hidden'; b.appendChild(e); }
   }
@@ -844,6 +850,25 @@ function customItem(c){
   return {w:c.w,i:c.i||0,t:legacy[c.t]||c.t||'noun',photo:c.photo||null,custom:true};
 }
 function getPageWords(view){return customWords.filter(function(c){return c.view===view}).map(customItem)}
+function packFixedPage(words,positions,size){
+  const packed=words.filter(Boolean);
+  const slots=new Array(size).fill(null);
+  // Place every exact Home/Simple word first, then fill remaining cells in
+  // reading order. The pronoun doorway therefore stays under the same finger.
+  packed.forEach(function(item){
+    if(Object.prototype.hasOwnProperty.call(positions,item.w)) slots[positions[item.w]]=item;
+  });
+  let next=0;
+  packed.forEach(function(item){
+    if(Object.prototype.hasOwnProperty.call(positions,item.w)) return;
+    while(next<slots.length&&slots[next]) next++;
+    if(next<slots.length) slots[next++]=item;
+  });
+  return slots;
+}
+function getPronounPage(view){
+  return packFixedPage(getFringe(view),phoneMode?SIMPLE_POS:HOME_POS,phoneMode?48:84);
+}
 function mergeAnchorPage(slots,view){
   const out=slots.slice();
   getPageWords(view).forEach(function(item){

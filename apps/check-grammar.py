@@ -101,6 +101,12 @@ for form in required_text:
     if "'" + form + "'" not in HTML and '"' + form + '"' not in HTML:
         failures.append('required irregular or anchor form is not defined: ' + form)
 
+# Every generated level-one doorway page is passed through the same motor-plan
+# alignment routine. Keep this guard so a later template edit cannot fix one
+# word (such as make) while silently moving the others again.
+if HTML.count('return alignHomeWords(out);') < 2:
+    failures.append('all anchor page builders must align Home words')
+
 if failures:
     print('GRAMMAR CHECK FAILED')
     for failure in failures:
