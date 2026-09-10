@@ -13,6 +13,11 @@ from reportlab.platypus import (
     Spacer, Table, TableStyle,
 )
 
+try:
+    from svglib.svglib import svg2rlg
+except ImportError:
+    svg2rlg = None
+
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "output" / "pdf"
 OUT.mkdir(parents=True, exist_ok=True)
@@ -40,6 +45,42 @@ STYLES.add(ParagraphStyle(name="SmallMB", parent=STYLES["BodyText"], fontName="H
 STYLES.add(ParagraphStyle(name="CalloutMB", parent=STYLES["BodyText"], fontName="Helvetica-Bold", fontSize=10, leading=14, textColor=INK, leftIndent=10, rightIndent=10, spaceBefore=6, spaceAfter=8))
 STYLES.add(ParagraphStyle(name="CellMB", parent=STYLES["Normal"], fontName="Helvetica-Bold", fontSize=7.2, leading=8, alignment=TA_CENTER, textColor=INK))
 STYLES.add(ParagraphStyle(name="CheckMB", parent=STYLES["BodyText"], fontName="Helvetica", fontSize=10, leading=18, textColor=INK, leftIndent=4))
+STYLES.add(ParagraphStyle(name="BoardCellMB", parent=STYLES["Normal"], fontName="Helvetica-Bold", fontSize=6.6, leading=7.2, alignment=TA_CENTER, textColor=INK))
+STYLES.add(ParagraphStyle(name="RouteCellMB", parent=STYLES["Normal"], fontName="Helvetica-Bold", fontSize=8, leading=9, alignment=TA_CENTER, textColor=INK))
+
+HOME_BOARD = [
+    [("I",YELLOW),("we",YELLOW),("want",GREEN),("like",GREEN),("go",GREEN),("help",GREEN),("is",GREEN),("on",WHITE),("in",WHITE),("up",WHITE),("feel",GREEN),("here",WHITE)],
+    [("you",YELLOW),("they",YELLOW),("play",GREEN),("eat",GREEN),("drink",GREEN),("look",GREEN),("come",GREEN),("give",GREEN),("do",GREEN),("can",GREEN),("talk",GREEN),("again",WHITE)],
+    [("he",YELLOW),("she",YELLOW),("make",GREEN),("get",GREEN),("put",GREEN),("open",GREEN),("turn",GREEN),("read",GREEN),("sit",GREEN),("walk",GREEN),("run",GREEN),("down",WHITE)],
+    [("it",YELLOW),("sleep",GREEN),("need",GREEN),("that",WHITE),("love",GREEN),("happy",BLUE),("not",WHITE),("out",WHITE),("off",WHITE),("sad",BLUE),("and",WHITE),("the",WHITE)],
+    [("yes",PINK),("more",BLUE),("good",BLUE),("big",BLUE),("hot",BLUE),("some",BLUE),("all done",PINK),("little",BLUE),("bad",BLUE),("no",PINK),("stop",PINK),("cold",BLUE)],
+    [("my",YELLOW),("please",PINK),("thank you",PINK),("sorry",PINK),("what",WHITE),("where",WHITE),("who",WHITE),("when",WHITE),("why",WHITE),("how",WHITE),("to",WHITE),("grammar",GRAY)],
+    [("CLEAR",GRAY),("food",GRAY),("people",GRAY),("feelings",GRAY),("places",GRAY),("animals",GRAY),("things",GRAY),("colors",GRAY),("body",GRAY),("clothes",GRAY),("my words",GRAY),("ABC",GRAY)],
+]
+
+SIMPLE_BOARD = [
+    [("I",YELLOW),("you",YELLOW),("want",GREEN),("need",GREEN),("help",GREEN),("stop",PINK)],
+    [("yes",PINK),("no",PINK),("more",BLUE),("all done",PINK),("please",PINK),("sorry",PINK)],
+    [("go",GREEN),("come",GREEN),("eat",GREEN),("drink",GREEN),("to",WHITE),("bathroom",ORANGE)],
+    [("happy",BLUE),("sad",BLUE),("angry",BLUE),("scared",BLUE),("tired",BLUE),("hurt",BLUE)],
+    [("not",WHITE),("that",WHITE),("in",WHITE),("out",WHITE),("what",WHITE),("where",WHITE)],
+    [("my",YELLOW),("people",GRAY),("food",GRAY),("feelings",GRAY),("places",GRAY),("body",GRAY)],
+    [("home",ORANGE),("school",ORANGE),("things",GRAY),("clothes",GRAY),("animals",GRAY),("ABC",GRAY)],
+    [("can",WHITE),("do",GREEN),("like",GREEN),("play",GREEN),("look",GREEN),("read",GREEN)],
+]
+
+ICON = {
+    "I":"mulberry/I.svg","we":"mybuddy/we.svg","you":"mybuddy/you.svg","they":"mybuddy/they.svg","he":"mybuddy/he.svg","she":"mybuddy/she.svg","it":"mybuddy/it.svg","my":"mybuddy/my.svg",
+    "want":"mulberry/want_,_to.svg","like":"mulberry/thumb.svg","go":"mulberry/go_,_to.svg","help":"mulberry/help_,_to.svg","is":"mybuddy/is.svg","on":"mulberry/on.svg","in":"mulberry/in.svg","up":"mulberry/up.svg","feel":"mybuddy/feel.svg","here":"mybuddy/here.svg",
+    "play":"mulberry/play_,_to.svg","eat":"mulberry/eat_,_to.svg","drink":"mulberry/drink_,_to.svg","look":"mulberry/look_,_to.svg","come":"mulberry/come_,_to.svg","give":"mulberry/give_,_to.svg","do":"mybuddy/do.svg","can":"mybuddy/can.svg","talk":"mulberry/talk_1_,_to.svg","again":"mybuddy/again.svg",
+    "make":"mulberry/make_,_to.svg","get":"mulberry/get_,_to.svg","put":"mulberry/put_,_to.svg","open":"mulberry/open_,_to.svg","turn":"mulberry/turn_,_to.svg","read":"mulberry/read_book_,_to.svg","sit":"mulberry/sit_,_to.svg","walk":"mulberry/walk_,_to.svg","run":"mulberry/run_,_to.svg","down":"mulberry/down.svg",
+    "sleep":"mulberry/sleep_male_,_to.svg","need":"mybuddy/need.svg","that":"mybuddy/that.svg","love":"mulberry/heart.svg","happy":"mulberry/happy_man.svg","not":"mulberry/mistake_no_wrong.svg","out":"mulberry/out.svg","off":"mulberry/off.svg","sad":"mulberry/sad_man.svg",
+    "yes":"mulberry/correct.svg","more":"mulberry/more.svg","good":"mulberry/good.svg","big":"mulberry/large.svg","hot":"mulberry/hot.svg","some":"mulberry/some.svg","all done":"mybuddy/all_done.svg","little":"mulberry/little.svg","bad":"mulberry/bad.svg","no":"mybuddy/no.svg","stop":"mybuddy/stop.svg","cold":"mulberry/snow.svg",
+    "please":"mybuddy/please.svg","thank you":"mybuddy/thank_you.svg","sorry":"mybuddy/sorry.svg","what":"mulberry/what.svg","where":"mulberry/where.svg","who":"mulberry/who.svg","when":"mybuddy/when.svg","why":"mybuddy/why.svg","how":"mybuddy/how.svg","grammar":"mulberry/what.svg",
+    "food":"mulberry/food.svg","people":"mulberry/family_2.svg","feelings":"mybuddy/feelings.svg","places":"mulberry/place_setting.svg","animals":"mulberry/paw.svg","things":"mulberry/place_setting.svg","colors":"mulberry/colour.svg","body":"mulberry/body_outline.svg","clothes":"mulberry/clothes_generic.svg","my words":"mulberry/talk_2_,_to.svg","ABC":"mulberry/computer_keyboard.svg",
+    "bathroom":"mulberry/toilet.svg","home":"mulberry/house.svg","school":"mulberry/school.svg","angry":"mulberry/angry_man.svg","scared":"mulberry/afraid_man.svg","tired":"mulberry/yawn_,_to.svg","hurt":"mybuddy/hurt.svg",
+    "water":"mulberry/water.svg","wash":"mulberry/wash_hands_,_to.svg","hands":"mulberry/right_hand.svg","shirt":"mulberry/shirt.svg","pants":"mulberry/trousers.svg","shoes":"mulberry/shoe_-_mans.svg","bed":"mulberry/single_bed.svg","blanket":"mulberry/blanket.svg","light":"mulberry/lamp.svg","wake":"mulberry/wake_up_,_to.svg","cereal":"mulberry/cereal.svg","milk":"mulberry/milk.svg","food":"mulberry/food.svg","jacket":"mulberry/jacket.svg","bus":"mulberry/bus.svg","teacher":"mulberry/teacher_1a.svg","book":"mulberry/book_end.svg","break":"mulberry/break_2.svg","outside":"mulberry/outside.svg","ball":"mulberry/ball.svg","TV":"mulberry/flatscreen_tv.svg","watch":"mulberry/watch.svg","sick":"mulberry/headache.svg","pain":"mybuddy/pain.svg","doctor":"mulberry/doctor_1a.svg","store":"mulberry/shop.svg","money":"mulberry/money.svg","calm":"mulberry/relax_,_to.svg","different":"mulberry/change_,_to.svg","mean":"mybuddy/mean.svg","poop":"mybuddy/poop.svg","pee":"mybuddy/pee.svg",
+}
 
 
 def header_footer(canvas, doc):
@@ -93,6 +134,40 @@ def checkbox(text):
     return Paragraph("[  ]  " + text, STYLES["CheckMB"])
 
 
+def svg_icon(word, width=0.38*inch, height=0.31*inch):
+    if svg2rlg is None:
+        return Spacer(1, height)
+    rel = ICON.get(word)
+    path = ROOT / "apps" / "symbols" / rel if rel else None
+    if not path or not path.exists():
+        return Spacer(1, height)
+    drawing = svg2rlg(str(path))
+    if drawing is None or not drawing.width or not drawing.height:
+        return Spacer(1, height)
+    scale = min(width / drawing.width, height / drawing.height)
+    drawing.scale(scale, scale)
+    drawing.width *= scale
+    drawing.height *= scale
+    return drawing
+
+
+def symbol_cell(word, style="BoardCellMB", icon_h=0.29*inch):
+    if word == "CLEAR":
+        return [Spacer(1, icon_h), Paragraph(word, STYLES[style])]
+    return [svg_icon(word, 0.43*inch, icon_h), Paragraph(word, STYLES[style])]
+
+
+def board_table(board, col_width, row_height):
+    data = [[symbol_cell(word) for word, _ in row] for row in board]
+    table = Table(data, colWidths=[col_width]*len(board[0]), rowHeights=[row_height]*len(board))
+    styling = [("GRID",(0,0),(-1,-1),.55,INK),("VALIGN",(0,0),(-1,-1),"MIDDLE"),("ALIGN",(0,0),(-1,-1),"CENTER"),("TOPPADDING",(0,0),(-1,-1),2),("BOTTOMPADDING",(0,0),(-1,-1),2)]
+    for r, row in enumerate(board):
+        for c, (_, color) in enumerate(row):
+            styling.append(("BACKGROUND",(c,r),(c,r),color))
+    table.setStyle(TableStyle(styling))
+    return table
+
+
 def color_key():
     entries = [(YELLOW, "Pronouns", "I, you, he, she, we, they"),
                (GREEN, "Actions", "want, go, make, help, feel"),
@@ -138,7 +213,7 @@ def build_caregiver():
     path = OUT / "my-buddy-caregiver-guide.pdf"
     story = title_block("Caregiver Getting Started Guide",
         "Set up a dependable communication system, teach it without pressure, and keep it ready offline.")
-    story += [callout("The goal is not perfect tapping. The goal is for the communicator to be heard, believed, and given enough vocabulary to say something new."),
+    story += [callout("Give the communicator time, attention, and enough vocabulary to be heard, believed, and able to say something new."),
               Paragraph("1. Set up the device", STYLES["H1MB"])]
     for x in ["Open My Buddy while connected to the internet and wait for “Saved for offline use.”",
               "Add the page to the Home Screen if the browser offers that option.",
@@ -180,7 +255,7 @@ def build_core():
     story = title_block("Core Board Teaching Guide",
         "A visual map of the exact 12 x 7 Full View board, its color system, and repeatable paths for teaching language.", "EXACT BOARD TRAINING")
     story += [mini_board(), Spacer(1, 12),
-              callout("Motor planning rule: a Level 1 word stays in the same physical location when its related word page opens. Teach the movement, not just the picture."),
+              callout("A Level 1 word repeats in the same physical location when its related word page opens. Repeating that path helps the movement become familiar."),
               Paragraph("Why the board is organized this way", STYLES["H1MB"]),
               bullet("Rows 1-4 hold pronouns, actions, grammar, and descriptions used across many situations."),
               bullet("Row 5 adds responses and describing words."),
@@ -215,7 +290,7 @@ def build_core():
               bullet("If no exact word appears, add a useful personal word to the most meaningful folder."),
               Paragraph("Simple View", STYLES["H2MB"]),
               Paragraph("Simple View uses a 6 x 8 layout with larger targets for phones and smaller screens. It is a complete communication view, and repeated words keep stable Simple View positions.", STYLES["BodyMB"]),
-              callout("Communication is successful when the message is understood - even if the sentence is incomplete, unconventional, or made with several methods.")]
+              callout("Incomplete, unconventional, and multimodal messages still carry meaning. Respond to the message the communicator is trying to share.")]
     doc(path, "My Buddy AAC Core Board Teaching Guide").build(story)
     return path
 
@@ -258,7 +333,7 @@ def build_partner():
 def build_practice():
     path = OUT / "my-buddy-daily-practice-pack.pdf"
     story = title_block("Daily Practice Pack",
-        "Seven short, printable activities for learning the exact My Buddy AAC board without turning communication into a test.")
+        "Seven short printable activities for learning the exact My Buddy AAC board through ordinary communication.")
     story += [callout("Model each activity first. Participation can be watching, pointing, tapping, speaking, signing, or choosing not to continue."),
               Paragraph("Weekly plan", STYLES["H1MB"])]
     rows = [["Day", "Focus", "Model"], ["1", "Requests", "I want more"], ["2", "Actions", "we go / you help / I make"], ["3", "Comments", "I like that / it is good"], ["4", "Refusal", "no / stop / I do not want that"], ["5", "Questions", "where is my ___ / what is that"], ["6", "Feelings & health", "I feel ___ / I need help"], ["7", "Conversation", "Mix comments, questions, and repair"]]
@@ -287,7 +362,125 @@ def build_practice():
     return path
 
 
+def landscape_title(title, subtitle):
+    return [
+        Paragraph("MY BUDDY AAC PRINTABLE", ParagraphStyle("LandLabel", parent=STYLES["SmallMB"], fontName="Helvetica-Bold", textColor=GOLD, spaceAfter=4)),
+        Paragraph(title, ParagraphStyle("LandTitle", parent=STYLES["TitleMB"], fontSize=21, leading=23, spaceAfter=4)),
+        Paragraph(subtitle, ParagraphStyle("LandSub", parent=STYLES["SubMB"], fontSize=9.5, leading=12, spaceAfter=8)),
+    ]
+
+
+def build_backup_board():
+    if svg2rlg is None:
+        raise RuntimeError("Install tools/requirements-my-buddy-training.txt before building the symbol boards")
+    path = OUT / "my-buddy-low-tech-backup-board.pdf"
+    story = landscape_title("Full View Backup Board", "Print in color and keep it with the device. The cell order matches the English 12 x 7 Full View board.")
+    story += [Table([[Paragraph("MESSAGE", STYLES["SmallMB"]), ""]], colWidths=[0.75*inch,8.95*inch], rowHeights=[0.42*inch], style=[("BACKGROUND",(0,0),(0,0),INK),("TEXTCOLOR",(0,0),(0,0),WHITE),("BOX",(0,0),(-1,-1),.8,INK),("VALIGN",(0,0),(-1,-1),"MIDDLE"),("LEFTPADDING",(0,0),(-1,-1),8)]), Spacer(1,6), board_table(HOME_BOARD,0.81*inch,0.65*inch), Spacer(1,5), Paragraph("Point to words in order. A partner can repeat the message aloud and write it in the strip. Gray cells open a vocabulary group on the app.", STYLES["SmallMB"]), PageBreak()]
+    story += landscape_title("Simple View Backup Board", "Larger targets for phones, small screens, travel, and times when a reduced display is easier to access.")
+    story += [Table([[Paragraph("MESSAGE", STYLES["SmallMB"]), ""]], colWidths=[0.75*inch,8.95*inch], rowHeights=[0.42*inch], style=[("BACKGROUND",(0,0),(0,0),INK),("TEXTCOLOR",(0,0),(0,0),WHITE),("BOX",(0,0),(-1,-1),.8,INK),("VALIGN",(0,0),(-1,-1),"MIDDLE"),("LEFTPADDING",(0,0),(-1,-1),8)]), Spacer(1,6), board_table(SIMPLE_BOARD,1.45*inch,0.66*inch), Spacer(1,5), Paragraph("Keep this board available during charging, updates, travel, and device problems. Continue to honor pointing, gestures, signs, speech, and writing.", STYLES["SmallMB"])]
+    doc(path, "My Buddy AAC Low-Tech Backup Board", landscape(LETTER)).build(story)
+    return path
+
+
+HOME_WORDS = {word for row in HOME_BOARD for word, _ in row}
+ANCHOR_WORDS = {"I","we","you","they","he","she","it","want","like","go","help","feel","play","eat","drink","look","come","give","do","talk","make","get","put","open","turn","read","sit","walk","run","sleep","need","love"}
+SOCIAL_WORDS = {"yes","no","stop","please","sorry","thank you","all done"}
+GRAMMAR_WORDS = {"is","on","in","up","here","again","that","not","out","off","and","the","what","where","who","when","why","how","to","am","are","me","this","different"}
+DESCRIPTION_WORDS = {"more","good","big","hot","some","little","bad","cold","happy","sad","angry","scared","tired","hurt","sick","ready","quiet","calm"}
+FOLDER_FOR = {
+    "bathroom":"Places","home":"Places","school":"Places","store":"Places","outside":"Places",
+    "water":"Food","cereal":"Food","milk":"Food","food":"Food",
+    "shirt":"Clothes","pants":"Clothes","shoes":"Clothes","jacket":"Clothes",
+    "hands":"Body","poop":"Body","pee":"Body","pain":"Body","medicine":"Body","tummy":"Body",
+    "blanket":"Things","light":"Things","ball":"Things","TV":"TV and media","book":"School words","paper":"School words","teacher":"People","money":"Things","break":"School words",
+    "sick":"Feelings","angry":"Feelings","tired":"Feelings","calm":"Feelings","quiet":"describing word page",
+}
+
+
+def word_color(word):
+    if word in {"I","we","you","they","he","she","it","my","me"}: return YELLOW
+    if word in SOCIAL_WORDS: return PINK
+    if word in GRAMMAR_WORDS: return WHITE
+    if word in DESCRIPTION_WORDS: return BLUE
+    if word in HOME_WORDS and word not in {"CLEAR","grammar"}: return GREEN
+    return ORANGE
+
+
+def sentence_tokens(text):
+    raw = text.split()
+    out = []
+    i = 0
+    while i < len(raw):
+        pair = " ".join(raw[i:i+2])
+        if pair in {"all done","thank you"}:
+            out.append(pair); i += 2
+        else:
+            out.append(raw[i]); i += 1
+    return out
+
+
+def route_for(word):
+    if word == "me": return "Home I -> me"
+    if word in ANCHOR_WORDS: return f"Home {word} -> {word}"
+    if word in HOME_WORDS: return f"Home {word}"
+    if word in FOLDER_FOR: return f"Home {FOLDER_FOR[word]} -> {word}"
+    if word in GRAMMAR_WORDS: return f"Home Grammar -> {word}"
+    return f"Use Find for {word}"
+
+
+def route_strip(text):
+    tokens = sentence_tokens(text)
+    cells = [symbol_cell(w, "RouteCellMB", 0.31*inch) for w in tokens]
+    widths = [min(1.18, max(.72, .12*len(w)+.5))*inch for w in tokens]
+    strip = Table([cells], colWidths=widths, rowHeights=[0.61*inch])
+    styling = [("GRID",(0,0),(-1,-1),.55,INK),("VALIGN",(0,0),(-1,-1),"MIDDLE"),("ALIGN",(0,0),(-1,-1),"CENTER"),("TOPPADDING",(0,0),(-1,-1),2),("BOTTOMPADDING",(0,0),(-1,-1),2)]
+    for i, word in enumerate(tokens): styling.append(("BACKGROUND",(i,0),(i,0),word_color(word)))
+    strip.setStyle(TableStyle(styling))
+    route = "  |  ".join(route_for(w) for w in tokens)
+    return KeepTogether([strip, Spacer(1,3), Paragraph(route, STYLES["SmallMB"]), Spacer(1,9)])
+
+
+ROUTINES = [
+    ("Bathroom", "Keep the board within reach before urgency starts.", ["I need bathroom","I need to pee","I need to poop","help me please"]),
+    ("Wash hands", "Model the words during the real sequence at the sink.", ["turn on water","wash my hands","help me wash","turn off water"]),
+    ("Get dressed", "Offer choices and leave time for refusal or a request for help.", ["I need shirt","put on pants","where are my shoes","I need help"]),
+    ("Bedtime", "Use these words as choices and comments during the routine.", ["I feel tired","I want my blanket","turn off light","I need bathroom"]),
+    ("Morning", "Keep language available from waking through leaving home.", ["I need bathroom","put on clothes","I want cereal","I am ready"]),
+    ("Breakfast", "Pause naturally so there is room to request, comment, or finish.", ["I want cereal","I want milk","more please","all done"]),
+    ("Make food", "Model action words while preparing a real snack or meal.", ["I want to make food","put it in","help me open it","it is hot"]),
+    ("Leave home", "Post this near the door and model it during the actual routine.", ["put on shoes","I need my jacket","go to car","I am ready"]),
+    ("Go to school", "Practice the route during calm moments and use it again on school days.", ["I want to go to school","where is my teacher","I need a break","I need help"]),
+    ("In class", "Make room for questions, help, breaks, and finishing.", ["I want my book","I need paper","can you help","I am all done"]),
+    ("Playground", "Use the board for joining, directing, stopping, and leaving.", ["I want to play","go outside","I want ball","stop please"]),
+    ("Living room", "Model control of shared activities such as television and music.", ["I want to watch TV","turn it on","turn it up","turn it off"]),
+    ("Health and pain", "Respond promptly to health messages and confirm the body area.", ["I feel sick","my tummy hurts","I need medicine","I want doctor"]),
+    ("Store and community", "Use comments and choices during real trips.", ["I want to go to store","I want that","how much money","all done"]),
+    ("Big feelings", "Keep demands low and allow the communicator to use any reliable method.", ["I feel angry","I need a break","I want quiet","help me calm"]),
+    ("Fix a misunderstanding", "Pause and give the communicator time to change the message.", ["no not that","I mean different","I want this","please wait"]),
+]
+
+
+def build_routines():
+    path = OUT / "my-buddy-routine-teaching-boards.pdf"
+    story = landscape_title("Everyday Routine Teaching Boards", "Sixteen activity pages for modeling the exact My Buddy word paths during real life.")
+    story += [Paragraph("Choose one routine that is already happening. Model one useful message, pause, and respond to whatever the communicator does next. Pointing, tapping, speech, signs, gestures, and looking toward a choice can all carry meaning.", STYLES["BodyMB"]), Spacer(1,8), color_key(), Spacer(1,12), Paragraph("Included routines", STYLES["H1MB"])]
+    rows = []
+    for i in range(0, len(ROUTINES), 2):
+        left = [str(i+1), ROUTINES[i][0]]
+        right = [str(i+2), ROUTINES[i+1][0]] if i+1 < len(ROUTINES) else ["", ""]
+        rows.append(left + right)
+    story += [Table(rows, colWidths=[0.4*inch,4.2*inch,0.4*inch,4.2*inch], style=[("GRID",(0,0),(-1,-1),.4,GRAY),("BACKGROUND",(0,0),(0,-1),TEAL),("BACKGROUND",(2,0),(2,-1),TEAL),("TEXTCOLOR",(0,0),(0,-1),WHITE),("TEXTCOLOR",(2,0),(2,-1),WHITE),("FONTNAME",(0,0),(-1,-1),"Helvetica-Bold"),("FONTSIZE",(0,0),(-1,-1),8),("TOPPADDING",(0,0),(-1,-1),6),("BOTTOMPADDING",(0,0),(-1,-1),6)]), PageBreak()]
+    for index, (title, note, messages) in enumerate(ROUTINES):
+        story += landscape_title(title, note)
+        story += [Paragraph("Model these paths", STYLES["H2MB"])]
+        for message in messages: story.append(route_strip(message))
+        story += [Paragraph("Words the communicator wanted during this routine:", STYLES["SmallMB"]), Table([[""]], colWidths=[9.7*inch], rowHeights=[0.48*inch], style=[("BOX",(0,0),(-1,-1),.6,GRAY)])]
+        if index < len(ROUTINES)-1: story.append(PageBreak())
+    doc(path, "My Buddy AAC Everyday Routine Teaching Boards", landscape(LETTER)).build(story)
+    return path
+
+
 if __name__ == "__main__":
-    paths = [build_caregiver(), build_core(), build_partner(), build_practice()]
+    paths = [build_caregiver(), build_core(), build_partner(), build_practice(), build_backup_board(), build_routines()]
     for path in paths:
         print(path.relative_to(ROOT))
