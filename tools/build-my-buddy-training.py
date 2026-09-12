@@ -38,6 +38,9 @@ ORANGE = colors.HexColor("#F2A65A")
 PINK = colors.HexColor("#E99AAA")
 WHITE = colors.white
 GRAY = colors.HexColor("#D9DEE0")
+BW_MODE = False
+BASE_PRINT_FILLS = (YELLOW, GREEN, BLUE, ORANGE, PINK, WHITE, GRAY)
+BASE_PALE = PALE
 
 STYLES = getSampleStyleSheet()
 STYLES.add(ParagraphStyle(name="TitleMB", parent=STYLES["Title"], fontName="Helvetica-Bold", fontSize=26, leading=29, textColor=INK, spaceAfter=12))
@@ -51,6 +54,48 @@ STYLES.add(ParagraphStyle(name="CellMB", parent=STYLES["Normal"], fontName="Helv
 STYLES.add(ParagraphStyle(name="CheckMB", parent=STYLES["BodyText"], fontName="Helvetica", fontSize=10, leading=18, textColor=INK, leftIndent=4))
 STYLES.add(ParagraphStyle(name="BoardCellMB", parent=STYLES["Normal"], fontName="Helvetica-Bold", fontSize=6.6, leading=7.2, alignment=TA_CENTER, textColor=INK))
 STYLES.add(ParagraphStyle(name="RouteCellMB", parent=STYLES["Normal"], fontName="Helvetica-Bold", fontSize=8, leading=9, alignment=TA_CENTER, textColor=INK))
+
+
+def output_path(stem):
+    suffix = "-black-and-white" if BW_MODE else ""
+    return OUT / f"{stem}{suffix}.pdf"
+
+
+def enable_bw_theme():
+    """Use low-ink gray values that remain distinct without a color printer."""
+    global BW_MODE, INK, TEAL, GOLD, PALE, MUTED
+    global YELLOW, GREEN, BLUE, ORANGE, PINK, WHITE, GRAY
+    BW_MODE = True
+    INK = colors.black
+    TEAL = colors.HexColor("#666666")
+    GOLD = colors.HexColor("#888888")
+    PALE = colors.HexColor("#F7F7F7")
+    MUTED = colors.HexColor("#444444")
+    YELLOW = colors.HexColor("#EEEEEE")
+    GREEN = colors.HexColor("#D2D2D2")
+    BLUE = colors.HexColor("#E2E2E2")
+    ORANGE = colors.HexColor("#BDBDBD")
+    PINK = colors.HexColor("#DADADA")
+    WHITE = colors.white
+    GRAY = colors.HexColor("#A8A8A8")
+    for name in ("TitleMB", "H1MB", "BodyMB", "CalloutMB", "CellMB", "CheckMB", "BoardCellMB", "RouteCellMB"):
+        STYLES[name].textColor = INK
+    STYLES["H2MB"].textColor = INK
+    STYLES["SubMB"].textColor = MUTED
+    STYLES["SmallMB"].textColor = MUTED
+
+
+def printable_fill(color):
+    """Translate color-board fills to stable gray categories in print mode."""
+    if not BW_MODE:
+        return color
+    replacements = (YELLOW, GREEN, BLUE, ORANGE, PINK, WHITE, GRAY)
+    if color == BASE_PALE:
+        return PALE
+    for original, replacement in zip(BASE_PRINT_FILLS, replacements):
+        if color == original:
+            return replacement
+    return color
 
 HOME_BOARD = [
     [("I",YELLOW),("we",YELLOW),("want",GREEN),("like",GREEN),("go",GREEN),("help",GREEN),("is",GREEN),("on",WHITE),("in",WHITE),("up",WHITE),("feel",GREEN),("here",WHITE)],
@@ -94,7 +139,10 @@ def header_footer(canvas, doc):
     canvas.rect(0, height - 0.16 * inch, width, 0.16 * inch, fill=1, stroke=0)
     canvas.setFillColor(MUTED)
     canvas.setFont("Helvetica", 8)
-    canvas.drawString(0.55 * inch, 0.34 * inch, "My Buddy AAC - free, private, and device-based")
+    footer = "My Buddy AAC - free, private, and device-based"
+    if BW_MODE:
+        footer += " - black and white edition"
+    canvas.drawString(0.55 * inch, 0.34 * inch, footer)
     canvas.drawRightString(width - 0.55 * inch, 0.34 * inch, f"Page {doc.page}")
     canvas.restoreState()
 
@@ -109,6 +157,8 @@ def doc(path, title, pagesize=LETTER):
 
 
 def title_block(title, subtitle, label="MY BUDDY AAC TRAINING"):
+    if BW_MODE:
+        label += " - BLACK AND WHITE EDITION"
     return [
         Paragraph(label, ParagraphStyle("Label", parent=STYLES["SmallMB"], fontName="Helvetica-Bold", textColor=GOLD, spaceAfter=8)),
         Paragraph(title, STYLES["TitleMB"]),
@@ -124,7 +174,7 @@ def title_block(title, subtitle, label="MY BUDDY AAC TRAINING"):
 
 def callout(text, color=PALE):
     return Table([[Paragraph(text, STYLES["CalloutMB"])]], colWidths=[7.05*inch], style=[
-        ("BACKGROUND", (0,0), (-1,-1), color), ("BOX", (0,0), (-1,-1), 1, GOLD),
+        ("BACKGROUND", (0,0), (-1,-1), printable_fill(color)), ("BOX", (0,0), (-1,-1), 1, GOLD),
         ("LEFTPADDING", (0,0), (-1,-1), 8), ("RIGHTPADDING", (0,0), (-1,-1), 8),
         ("TOPPADDING", (0,0), (-1,-1), 5), ("BOTTOMPADDING", (0,0), (-1,-1), 5),
     ])
@@ -138,6 +188,19 @@ def checkbox(text):
     return Paragraph("[  ]  " + text, STYLES["CheckMB"])
 
 
+def grayscale_drawing(node):
+    """Convert symbol fills and strokes to grayscale for the print edition."""
+    for attr in ("fillColor", "strokeColor"):
+        value = getattr(node, attr, None)
+        if value is not None and hasattr(value, "red"):
+            level = 0.299 * value.red + 0.587 * value.green + 0.114 * value.blue
+            setattr(node, attr, colors.Color(level, level, level, alpha=getattr(value, "alpha", 1)))
+    children = getattr(node, "contents", None)
+    if children:
+        for child in children:
+            grayscale_drawing(child)
+
+
 def svg_icon(word, width=0.38*inch, height=0.31*inch):
     if svg2rlg is None:
         return Spacer(1, height)
@@ -148,6 +211,8 @@ def svg_icon(word, width=0.38*inch, height=0.31*inch):
     drawing = svg2rlg(str(path))
     if drawing is None or not drawing.width or not drawing.height:
         return Spacer(1, height)
+    if BW_MODE:
+        grayscale_drawing(drawing)
     scale = min(width / drawing.width, height / drawing.height)
     drawing.scale(scale, scale)
     drawing.width *= scale
@@ -167,7 +232,7 @@ def board_table(board, col_width, row_height):
     styling = [("GRID",(0,0),(-1,-1),.55,INK),("VALIGN",(0,0),(-1,-1),"MIDDLE"),("ALIGN",(0,0),(-1,-1),"CENTER"),("TOPPADDING",(0,0),(-1,-1),2),("BOTTOMPADDING",(0,0),(-1,-1),2)]
     for r, row in enumerate(board):
         for c, (_, color) in enumerate(row):
-            styling.append(("BACKGROUND",(c,r),(c,r),color))
+            styling.append(("BACKGROUND",(c,r),(c,r),printable_fill(color)))
     table.setStyle(TableStyle(styling))
     return table
 
@@ -184,7 +249,8 @@ def color_key():
     for color, name, examples in entries:
         rows.append(["", Paragraph(f"<b>{name}</b>", STYLES["BodyMB"]), Paragraph(examples, STYLES["SmallMB"])])
     t = Table(rows, colWidths=[0.32*inch, 1.6*inch, 4.85*inch], rowHeights=[0.34*inch]*len(rows))
-    style = [("GRID", (0,0), (-1,-1), .5, colors.HexColor("#BBC4C7")),
+    key_line = colors.HexColor("#BDBDBD") if BW_MODE else colors.HexColor("#BBC4C7")
+    style = [("GRID", (0,0), (-1,-1), .5, key_line),
              ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
              ("LEFTPADDING", (1,0), (-1,-1), 8)]
     for i, (color, _, _) in enumerate(entries):
@@ -214,7 +280,7 @@ def mini_board():
 
 
 def build_caregiver():
-    path = OUT / "my-buddy-caregiver-guide.pdf"
+    path = output_path("my-buddy-caregiver-guide")
     story = title_block("Caregiver Getting Started Guide",
         "Set up a dependable communication system, teach it without pressure, and keep it ready offline.")
     story += [callout("Give the communicator time, attention, and enough vocabulary to be heard, believed, and able to say something new."),
@@ -255,7 +321,7 @@ def build_caregiver():
 
 
 def build_core():
-    path = OUT / "my-buddy-core-board-teaching-guide.pdf"
+    path = output_path("my-buddy-core-board-teaching-guide")
     story = title_block("Core Board Teaching Guide",
         "A visual map of the exact 12 x 7 Full View board, its color system, and repeatable paths for teaching language.", "EXACT BOARD TRAINING")
     story += [mini_board(), Spacer(1, 12),
@@ -300,7 +366,7 @@ def build_core():
 
 
 def build_partner():
-    path = OUT / "my-buddy-communication-partner-guide.pdf"
+    path = output_path("my-buddy-communication-partner-guide")
     story = title_block("Communication Partner Guide",
         "A short training for family, school staff, respite providers, medical teams, and community partners.")
     story += [callout("Presume competence. The device is the person's voice, not a reward, lesson, or behavior-control tool."),
@@ -335,7 +401,7 @@ def build_partner():
 
 
 def build_practice():
-    path = OUT / "my-buddy-daily-practice-pack.pdf"
+    path = output_path("my-buddy-daily-practice-pack")
     story = title_block("Daily Practice Pack",
         "Seven short printable activities for learning the exact My Buddy AAC board through ordinary communication.")
     story += [callout("Model each activity first. Participation can be watching, pointing, tapping, speaking, signing, or choosing not to continue."),
@@ -368,7 +434,7 @@ def build_practice():
 
 def landscape_title(title, subtitle):
     return [
-        Paragraph("MY BUDDY AAC PRINTABLE", ParagraphStyle("LandLabel", parent=STYLES["SmallMB"], fontName="Helvetica-Bold", textColor=GOLD, spaceAfter=4)),
+        Paragraph("MY BUDDY AAC PRINTABLE" + (" - BLACK AND WHITE EDITION" if BW_MODE else ""), ParagraphStyle("LandLabel", parent=STYLES["SmallMB"], fontName="Helvetica-Bold", textColor=GOLD, spaceAfter=4)),
         Paragraph(title, ParagraphStyle("LandTitle", parent=STYLES["TitleMB"], fontSize=21, leading=23, spaceAfter=4)),
         Paragraph(subtitle, ParagraphStyle("LandSub", parent=STYLES["SubMB"], fontSize=9.5, leading=12, spaceAfter=8)),
     ]
@@ -377,9 +443,11 @@ def landscape_title(title, subtitle):
 def build_backup_board():
     if svg2rlg is None:
         raise RuntimeError("Install tools/requirements-my-buddy-training.txt before building the symbol boards")
-    path = OUT / "my-buddy-low-tech-backup-board.pdf"
-    story = landscape_title("Full View Backup Board", "Print in color and keep it with the device. The cell order matches the English 12 x 7 Full View board.")
-    story += [Table([[Paragraph("MESSAGE", STYLES["SmallMB"]), ""]], colWidths=[0.75*inch,8.95*inch], rowHeights=[0.42*inch], style=[("BACKGROUND",(0,0),(0,0),INK),("TEXTCOLOR",(0,0),(0,0),WHITE),("BOX",(0,0),(-1,-1),.8,INK),("VALIGN",(0,0),(-1,-1),"MIDDLE"),("LEFTPADDING",(0,0),(-1,-1),8)]), Spacer(1,6), board_table(HOME_BOARD,0.81*inch,0.65*inch), Spacer(1,5), Paragraph("Point to words in order. A partner can repeat the message aloud and write it in the strip. Gray cells open a vocabulary group on the app.", STYLES["SmallMB"]), PageBreak()]
+    path = output_path("my-buddy-low-tech-backup-board")
+    print_note = "Print in black and white" if BW_MODE else "Print in color"
+    folder_note = "Darker folder cells open a vocabulary group on the app." if BW_MODE else "Gray cells open a vocabulary group on the app."
+    story = landscape_title("Full View Backup Board", print_note + " and keep it with the device. The cell order matches the English 12 x 7 Full View board.")
+    story += [Table([[Paragraph("MESSAGE", STYLES["SmallMB"]), ""]], colWidths=[0.75*inch,8.95*inch], rowHeights=[0.42*inch], style=[("BACKGROUND",(0,0),(0,0),INK),("TEXTCOLOR",(0,0),(0,0),WHITE),("BOX",(0,0),(-1,-1),.8,INK),("VALIGN",(0,0),(-1,-1),"MIDDLE"),("LEFTPADDING",(0,0),(-1,-1),8)]), Spacer(1,6), board_table(HOME_BOARD,0.81*inch,0.65*inch), Spacer(1,5), Paragraph("Point to words in order. A partner can repeat the message aloud and write it in the strip. " + folder_note, STYLES["SmallMB"]), PageBreak()]
     story += landscape_title("Simple View Backup Board", "Larger targets for phones, small screens, travel, and times when a reduced display is easier to access.")
     story += [Table([[Paragraph("MESSAGE", STYLES["SmallMB"]), ""]], colWidths=[0.75*inch,8.95*inch], rowHeights=[0.42*inch], style=[("BACKGROUND",(0,0),(0,0),INK),("TEXTCOLOR",(0,0),(0,0),WHITE),("BOX",(0,0),(-1,-1),.8,INK),("VALIGN",(0,0),(-1,-1),"MIDDLE"),("LEFTPADDING",(0,0),(-1,-1),8)]), Spacer(1,6), board_table(SIMPLE_BOARD,1.45*inch,0.66*inch), Spacer(1,5), Paragraph("Keep this board available during charging, updates, travel, and device problems. Continue to honor pointing, gestures, signs, speech, and writing.", STYLES["SmallMB"])]
     doc(path, "My Buddy AAC Low-Tech Backup Board", landscape(LETTER)).build(story)
@@ -465,7 +533,7 @@ ROUTINES = [
 
 
 def build_routines():
-    path = OUT / "my-buddy-routine-teaching-boards.pdf"
+    path = output_path("my-buddy-routine-teaching-boards")
     story = landscape_title("Everyday Routine Teaching Boards", "Sixteen activity pages for modeling the exact My Buddy word paths during real life.")
     story += [Paragraph("Choose one routine that is already happening. Model one useful message, pause, and respond to whatever the communicator does next. Pointing, tapping, speech, signs, gestures, and looking toward a choice can all carry meaning.", STYLES["BodyMB"]), Spacer(1,8), color_key(), Spacer(1,12), Paragraph("Included routines", STYLES["H1MB"])]
     rows = []
@@ -489,18 +557,20 @@ def kit_page(title, subtitle="", label="MY BUDDY AAC COMPLETE TRAINING KIT", lin
     packet = BytesIO()
     c = canvas.Canvas(packet, pagesize=pagesize)
     width, height = pagesize
-    c.setFillColor(INK)
+    if BW_MODE:
+        label += " - BLACK AND WHITE EDITION"
+    c.setFillColor(WHITE if BW_MODE else INK)
     c.rect(0, 0, width, height, fill=1, stroke=0)
-    c.setFillColor(TEAL)
+    c.setFillColor(colors.HexColor("#E2E2E2") if BW_MODE else TEAL)
     c.rect(0, height - 0.18 * inch, width, 0.18 * inch, fill=1, stroke=0)
-    c.setFillColor(GOLD)
+    c.setFillColor(INK if BW_MODE else GOLD)
     c.setFont("Helvetica-Bold", 9)
     c.drawString(0.72 * inch, height - 0.92 * inch, label)
-    c.setFillColor(WHITE)
+    c.setFillColor(INK if BW_MODE else WHITE)
     c.setFont("Helvetica-Bold", 27)
     c.drawString(0.72 * inch, height - 1.45 * inch, title)
     if subtitle:
-        c.setFillColor(colors.HexColor("#D5E0E2"))
+        c.setFillColor(MUTED if BW_MODE else colors.HexColor("#D5E0E2"))
         c.setFont("Helvetica", 11)
         text = c.beginText(0.72 * inch, height - 1.78 * inch)
         text.setLeading(15)
@@ -510,16 +580,16 @@ def kit_page(title, subtitle="", label="MY BUDDY AAC COMPLETE TRAINING KIT", lin
     if lines:
         y = height - 2.45 * inch
         for heading, detail in lines:
-            c.setFillColor(TEAL)
+            c.setFillColor(colors.HexColor("#D0D0D0") if BW_MODE else TEAL)
             c.roundRect(0.72 * inch, y - 0.07 * inch, 0.31 * inch, 0.31 * inch, 4, fill=1, stroke=0)
-            c.setFillColor(WHITE)
+            c.setFillColor(INK if BW_MODE else WHITE)
             c.setFont("Helvetica-Bold", 12)
             c.drawString(1.18 * inch, y + 0.05 * inch, heading)
-            c.setFillColor(colors.HexColor("#CAD5D7"))
+            c.setFillColor(MUTED if BW_MODE else colors.HexColor("#CAD5D7"))
             c.setFont("Helvetica", 9.2)
             c.drawString(1.18 * inch, y - 0.13 * inch, detail)
             y -= 0.7 * inch
-    c.setFillColor(colors.HexColor("#AFC1C5"))
+    c.setFillColor(MUTED if BW_MODE else colors.HexColor("#AFC1C5"))
     c.setFont("Helvetica", 8)
     c.drawString(0.72 * inch, 0.42 * inch, "Free to print and share for My Buddy AAC training")
     c.save()
@@ -533,7 +603,8 @@ def kit_contents_page(section_rows, index_page):
     width, height = LETTER
     c.setFillColor(PALE); c.rect(0, 0, width, height, fill=1, stroke=0)
     c.setFillColor(TEAL); c.rect(0, height - 0.18*inch, width, 0.18*inch, fill=1, stroke=0)
-    c.setFillColor(GOLD); c.setFont("Helvetica-Bold", 9); c.drawString(.72*inch, height-.78*inch, "MY BUDDY AAC COMPLETE TRAINING KIT")
+    edition = " - BLACK AND WHITE EDITION" if BW_MODE else ""
+    c.setFillColor(GOLD); c.setFont("Helvetica-Bold", 9); c.drawString(.72*inch, height-.78*inch, "MY BUDDY AAC COMPLETE TRAINING KIT" + edition)
     c.setFillColor(INK); c.setFont("Helvetica-Bold", 27); c.drawString(.72*inch, height-1.25*inch, "Table of Contents")
     y = height - 1.86*inch
     for number, title, detail, start, end in section_rows:
@@ -558,7 +629,8 @@ def kit_index_page(entries):
     width, height = LETTER
     c.setFillColor(PALE); c.rect(0, 0, width, height, fill=1, stroke=0)
     c.setFillColor(TEAL); c.rect(0, height-.18*inch, width, .18*inch, fill=1, stroke=0)
-    c.setFillColor(GOLD); c.setFont("Helvetica-Bold", 9); c.drawString(.72*inch, height-.78*inch, "MY BUDDY AAC COMPLETE TRAINING KIT")
+    edition = " - BLACK AND WHITE EDITION" if BW_MODE else ""
+    c.setFillColor(GOLD); c.setFont("Helvetica-Bold", 9); c.drawString(.72*inch, height-.78*inch, "MY BUDDY AAC COMPLETE TRAINING KIT" + edition)
     c.setFillColor(INK); c.setFont("Helvetica-Bold", 27); c.drawString(.72*inch, height-1.25*inch, "Index")
     half = (len(entries) + 1) // 2
     for col, group in enumerate((entries[:half], entries[half:])):
@@ -567,7 +639,7 @@ def kit_index_page(entries):
         for term, page in group:
             c.setFillColor(INK); c.setFont("Helvetica", 9.2); c.drawString(x, y, term)
             c.setFillColor(MUTED); c.setFont("Helvetica-Bold", 9.2); c.drawRightString(x+3.08*inch, y, str(page))
-            c.setStrokeColor(colors.HexColor("#D5DCDD")); c.line(x, y-.07*inch, x+3.08*inch, y-.07*inch)
+            c.setStrokeColor(colors.HexColor("#D5D5D5") if BW_MODE else colors.HexColor("#D5DCDD")); c.line(x, y-.07*inch, x+3.08*inch, y-.07*inch)
             y -= .28*inch
     c.setFillColor(MUTED); c.setFont("Helvetica", 8); c.drawString(.72*inch, .42*inch, "Use Find inside the app when a word is not shown in this printed index.")
     c.save(); packet.seek(0)
@@ -587,7 +659,7 @@ def add_kit_number(page, number):
 
 def build_complete_kit(section_paths):
     """Combine every printable into a tabbed, indexed binder-ready PDF."""
-    path = OUT / "my-buddy-complete-training-kit.pdf"
+    path = output_path("my-buddy-complete-training-kit")
     sections = [
         ("Caregiver Getting Started", "Device setup, offline checks, personalization, and first-session support."),
         ("Core Board Teaching Guide", "Exact board map, color key, motor planning, Find, and modeling routes."),
@@ -651,14 +723,16 @@ def build_complete_kit(section_paths):
 
 
 if __name__ == "__main__":
+    if "--black-and-white" in sys.argv:
+        enable_bw_theme()
     if "--kit-only" in sys.argv:
         paths = [
-            OUT / "my-buddy-caregiver-guide.pdf",
-            OUT / "my-buddy-core-board-teaching-guide.pdf",
-            OUT / "my-buddy-communication-partner-guide.pdf",
-            OUT / "my-buddy-daily-practice-pack.pdf",
-            OUT / "my-buddy-low-tech-backup-board.pdf",
-            OUT / "my-buddy-routine-teaching-boards.pdf",
+            output_path("my-buddy-caregiver-guide"),
+            output_path("my-buddy-core-board-teaching-guide"),
+            output_path("my-buddy-communication-partner-guide"),
+            output_path("my-buddy-daily-practice-pack"),
+            output_path("my-buddy-low-tech-backup-board"),
+            output_path("my-buddy-routine-teaching-boards"),
         ]
     else:
         paths = [build_caregiver(), build_core(), build_partner(), build_practice(), build_backup_board(), build_routines()]
