@@ -9,3 +9,7 @@ Empty chair image: yaodong che, https://www.pexels.com/photo/chair-in-an-empty-r
 License checked October 8, 2026: https://www.pexels.com/license/
 
 Video and photographs are illustrative stock media, not testimonials or representations of QNS participants. Video and photographs are served by the Pexels CDN; a derived JPEG poster is hosted with the site for fallback. No purchases or subscriptions.
+
+Connection video and derived poster: Angela Roma, https://www.pexels.com/video/people-hugging-each-other-7477169/
+
+Connection footage illustrates being present with people in your life. It does not imply that forgiveness requires reconciliation or contact with anyone who caused harm.
