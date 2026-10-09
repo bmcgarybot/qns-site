@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Quantum Neuroshift//Forgive Yourself//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:forgive-yourself-20261114@quantumneuroshift.com
+DTSTAMP:20261009T211831Z
+DTSTART:20261114T180000Z
+DTEND:20261114T193000Z
+SUMMARY:Forgive Yourself - Free guided workshop with Brett Coon
+DESCRIPTION:90-minute live guided workshop. Work privately with your own 
+ memory. No personal storytelling. See your registration email for the li
+ ve viewing link. Early replay access will be in our free Quantum Neurosh
+ ift community on Skool. No Skool account needed to attend live.
+LOCATION:Online - viewing link in your registration email
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Forgive Yourself begins in 30 minutes
+END:VALARM
+END:VEVENT
+END:VCALENDAR
