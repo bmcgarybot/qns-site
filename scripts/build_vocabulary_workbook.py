@@ -75,7 +75,7 @@ def bullets(items, st):
     return [P("• " + item, st) for item in items]
 
 
-def page_header(canvas, doc, bw=False):
+def page_header(canvas, doc, bw=False, header_text="MY BUDDY AAC  |  VOCABULARY LEARNING WORKBOOK", footer_text="Free to print and share for My Buddy training", cover_words=None):
     page = canvas.getPageNumber()
     canvas.saveState()
     if page == 1:
@@ -91,7 +91,7 @@ def page_header(canvas, doc, bw=False):
                 canvas.roundRect(x, y, .56 * inch, .46 * inch, 5, fill=1, stroke=0)
                 canvas.setFillColor(colors.HexColor("#17313A") if not bw else colors.HexColor("#222222"))
                 canvas.setFont("Helvetica-Bold", 6.5)
-                words = ["I", "want", "go", "help", "more", "stop", "feel", "where", "to", "school"]
+                words = cover_words or ["I", "want", "go", "help", "more", "stop", "feel", "where", "to", "school"]
                 canvas.drawCentredString(x + .28 * inch, y + .20 * inch, words[(row * 5 + col) % len(words)])
         canvas.setFillColor(GOLD if not bw else colors.HexColor("#A0A0A0"))
         canvas.rect(7.88 * inch, 0, .62 * inch, 11 * inch, fill=1, stroke=0)
@@ -113,11 +113,11 @@ def page_header(canvas, doc, bw=False):
     if page > 1:
         canvas.setFont("Helvetica-Bold", 8)
         canvas.setFillColor(WHITE)
-        canvas.drawString(0.58 * inch, 10.73 * inch, "MY BUDDY AAC  |  VOCABULARY LEARNING WORKBOOK")
+        canvas.drawString(0.58 * inch, 10.73 * inch, header_text)
         canvas.setFont("Helvetica", 8)
         canvas.setFillColor(MUTED)
         canvas.drawRightString(7.92 * inch, 0.36 * inch, f"{page}")
-        canvas.drawString(0.58 * inch, 0.36 * inch, "Free to print and share for My Buddy training")
+        canvas.drawString(0.58 * inch, 0.36 * inch, footer_text)
     canvas.restoreState()
 
 
@@ -148,12 +148,13 @@ def blank_lines(count=4):
     return t
 
 
-def word_tiles(words, kinds, st, bw=False, caption=None):
+def word_tiles(words, kinds, st, bw=False, caption=None, kind_labels=None):
     fills = {"verb": GREEN, "adjective": BLUE, "noun": ORANGE, "pronoun": YELLOW, "social": PINK, "grammar": WHITE, "folder": GRAY}
     shade = {"verb": .88, "adjective": .80, "noun": .72, "pronoun": .94, "social": .84, "grammar": 1.0, "folder": .68}
     cells = []
     for word, kind in zip(words, kinds):
-        label = f"<b>{word}</b><br/><font size='6'>{kind.upper()}</font>"
+        shown_kind = (kind_labels or {}).get(kind, kind).upper()
+        label = f"<b>{word}</b><br/><font size='6'>{shown_kind}</font>"
         cells.append(P(label, ParagraphStyle("tile", parent=st["cell"], fontSize=9, leading=10, textColor=st["_ink"])))
     width = min(1.1 * inch, 6.6 * inch / max(len(cells), 1))
     table = Table([cells], colWidths=[width] * len(cells), rowHeights=[.68 * inch], hAlign="LEFT")
