@@ -170,10 +170,17 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#222;color:#fff;h
     background:#2a3040; color:#fff; border:1px solid #3a4255;
     border-radius:8px; padding:8px 14px; font:inherit; cursor:pointer;
   }
+
+  .focus-dim{opacity:.2;filter:grayscale(.72);transition:opacity .15s,filter .15s}
+  .focus-dim:focus,.focus-dim:hover{opacity:.6}
+  .focus-target{outline:4px solid #ffd166!important;outline-offset:-4px;box-shadow:0 0 18px rgba(255,209,102,.72);z-index:4}
+  #focusBanner{display:none;align-items:center;gap:10px;background:#4a3a10;color:#fff;border-bottom:2px solid #ffd166;padding:6px 10px;font-size:11px;font-weight:750;flex-shrink:0}
+  #focusBanner strong{color:#ffd166}#focusBanner span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #focusBanner button{background:#fff;color:#3c310d;border:0;border-radius:6px;padding:5px 9px;font-weight:800;cursor:pointer}
 </style></head><body>
 
 <div id="splash"><div style="font-size:60px">🗣️</div><div class="sn">My Buddy</div><div class="ss">Comunicación para todos</div></div>
-<div id="modelBanner">👨‍🏫 MODO DE MODELADO</div>
+<div id="modelBanner">👨‍🏫 MODO DE MODELADO</div>\n<div id="focusBanner"><strong>PRÁCTICA ENFOCADA</strong><span id="focusLabel"></span><button onclick="endFocusPractice()">Terminar</button></div>
 <div id="offlineReady" style="display:none;position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:900;background:#2a9d8f;color:#fff;font:600 13px system-ui;padding:7px 16px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.4)">Guardado para usar sin conexión</div>
 <div id="oldBrowser" style="display:none;background:#7a2e2e;color:#fff;font:600 13px system-ui;padding:10px 14px;line-height:1.5">
 El navegador de este dispositivo tiene varios años, por lo que el tablero puede verse más apretado y algunos símbolos pueden tener un tamaño incorrecto. El tablero todavía funciona y habla. En un iPad de esta edad, todos los navegadores usan el mismo sistema interno, así que cambiar de Safari a Chrome no lo corregirá.
@@ -237,6 +244,10 @@ El navegador de este dispositivo tiene varios años, por lo que el tablero puede
 <div style="margin-bottom:14px">
 <button class="ok" style="width:100%" onclick="closeOv('setOv');startEdit()">Editar tablero</button>
 <div style="font-size:.62em;opacity:.7;margin-top:4px">Abre una carpeta y toca una palabra para editarla o quitarla. Usa + para agregar una palabra a esa página.</div>
+</div>
+<div style="margin-bottom:14px">
+<button class="ok" style="width:100%" onclick="openFocusPractice()">Práctica enfocada</button>
+<div style="font-size:.62em;opacity:.7;margin-top:4px">Resalta palabras y sus rutas sin ocultar ni mover el resto del tablero.</div>
 </div>
 <div style="margin-bottom:14px">
 <button class="ok" style="width:100%" onclick="backupData()">Guardar copia de seguridad</button>
@@ -342,6 +353,17 @@ El navegador de este dispositivo tiene varios años, por lo que el tablero puede
 <div style="display:flex;gap:6px"><button class="ok" onclick="saveQPEdit()" style="flex:1">Guardar</button><button class="dn" onclick="deleteQPEdit()" style="flex:1">Eliminar</button><button class="ca" onclick="closeOv('qpEditOv')" style="flex:1">Cancelar</button></div>
 </div></div>
 
+
+<!-- PRÁCTICA ENFOCADA -->
+<div class="ov" id="focusOv"><div class="md">
+<h3>🎯 Práctica enfocada</h3>
+<p style="font-size:.78em;line-height:1.45;opacity:.8;margin:0 0 10px">Elige algunas palabras para practicar. My Buddy resaltará cada palabra y todas las puertas necesarias para llegar a ella. Los demás botones se atenúan, pero siguen disponibles en sus lugares habituales.</p>
+<label>Palabras objetivo</label><input type="text" id="focusInput" placeholder="ir, más, parar, ayudar">
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0"><button class="ca" onclick="focusPreset('early')">Palabras básicas</button><button class="ca" onclick="focusPreset('feelings')">Sentimientos</button><button class="ca" onclick="focusPreset('school')">Día escolar</button></div>
+<div id="focusStatus" style="font-size:.72em;color:#ffd166;min-height:18px"></div>
+<div style="display:flex;gap:6px;margin-top:8px"><button class="ok" onclick="startFocusPractice()" style="flex:1">Empezar</button><button class="ca" onclick="closeOv('focusOv')" style="flex:1">Cancelar</button></div>
+</div></div>
+
 <!-- BUILD -->
 <script>const BUILD="2026-09-13 Spanish review 1";</script>
 <!-- /BUILD -->
@@ -435,7 +457,7 @@ const HOME_POS={};
 V.forEach(function(c){ HOME_POS[c.w]=c.p; });
 const SK='mb4_es';
 const isPhone=window.innerWidth<=600;
-let SP=.9,PITCH=1,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=isPhone,tutDone=false;
+let SP=.9,PITCH=1,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=isPhone,tutDone=false,focusWords=[],focusPathCache={};
 const SIMPLE_CORE=[
   {w:'yo',t:'pronoun',i:6632,cat:'pn_I'},{w:'tú',t:'pronoun',i:6625,cat:'pn_you'},
   {w:'querer',t:'verb',i:5441},{w:'necesitar',t:'verb',svgName:'need'},{w:'ayudar',t:'verb',i:32648},{w:'parar',t:'social',svgName:'stop'},
@@ -792,7 +814,7 @@ if(_wc>1) d.classList.add('phrase');
 const _longest=_parts.reduce((a,b)=>b.length>a.length?b:a,'').length;
 const _shrink=_longest>8?Math.max(0.68,8/_longest):1;
 if(_shrink<1) d.style.setProperty('--lb','calc('+_shrink+' * var(--lbBase, 13px))');
-if(editMode)d.classList.add('edit-mode');
+if(focusWords.length&&s.w!=='CLEAR'&&s.w!=='BORRAR')d.classList.add(focusCellIsRelevant(curView,s.w)?'focus-target':'focus-dim');\nif(editMode)d.classList.add('edit-mode');
 const _sv=s.svgName?(ES_ICON[s.svgName]||s.svgName):null;
 const imgSrc=displayPhoto?displayPhoto:(_sv?(FRM[_sv]||'symbols/mybuddy/'+_sv+'.svg'):(s.i?IM(s.i):null));
 const isColorCat=(curView==='colors');
@@ -1410,6 +1432,43 @@ function teachPath(hit){
   }
   step(0);
 }
+
+
+/* Práctica enfocada es una ayuda reversible. No oculta, mueve ni desactiva
+   vocabulario. Solo resalta palabras exactas y las puertas de su ruta. */
+function focusPreset(name){
+  const sets={early:'yo, quiero, más, ir, parar, ayudar, no, sí',feelings:'feliz, triste, enojado, asustado, enfermo, dolor, tranquilo, ayudar',school:'yo, ir, a, la, escuela, maestra, baño, ayudar'};
+  const input=document.getElementById('focusInput');if(input)input.value=sets[name]||'';
+}
+function focusEntries(){
+  if(!focusWords.length)return [];
+  const idx=buildWordIndex();
+  return focusWords.map(function(target){
+    return idx.filter(function(e){return e.w.toLowerCase()===target.toLowerCase()})
+      .sort(function(a,b){return a.hits-b.hits})[0];
+  }).filter(Boolean);
+}
+function focusCellIsRelevant(view,word){
+  if(!focusWords.length)return true;
+  return !!focusPathCache[view+'\n'+String(word||'').toLowerCase()];
+}
+function renderFocusBanner(){
+  const b=document.getElementById('focusBanner'),label=document.getElementById('focusLabel');if(!b)return;
+  b.style.display=focusWords.length?'flex':'none';if(label)label.textContent=focusWords.join(' • ');
+}
+function openFocusPractice(){
+  closeOv('setOv');const input=document.getElementById('focusInput');if(input)input.value=focusWords.join(', ');
+  const status=document.getElementById('focusStatus');if(status)status.textContent='';document.getElementById('focusOv').classList.add('open');
+}
+function startFocusPractice(){
+  const raw=document.getElementById('focusInput').value.split(',').map(function(w){return w.trim();}).filter(Boolean);
+  const idx=buildWordIndex(),found=[],missing=[];
+  raw.forEach(function(w){const hit=idx.filter(function(e){return e.w.toLowerCase()===w.toLowerCase()}).sort(function(a,b){return a.hits-b.hits})[0];if(hit){if(found.indexOf(hit.w)===-1)found.push(hit.w)}else missing.push(w)});
+  if(!found.length){document.getElementById('focusStatus').textContent='No se encontraron palabras exactas. Usa Buscar para revisar la ortografía.';return}
+  focusWords=found;focusPathCache={};focusEntries().forEach(function(entry){entry.path.forEach(function(step){focusPathCache[step.view+'\n'+String(step.w).toLowerCase()]=true})});closeOv('focusOv');curView='home';render();renderFocusBanner();
+  if(missing.length)setTimeout(function(){alert('La práctica empezó. No se encontraron: '+missing.join(', ')+'. Usa Buscar para revisar esas palabras.')},30);
+}
+function endFocusPractice(){focusWords=[];focusPathCache={};renderFocusBanner();render()}
 
 function openFinder(){
   document.getElementById('finderModal').style.display='flex';
