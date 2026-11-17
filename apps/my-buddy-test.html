@@ -247,6 +247,7 @@ Safari to Chrome will not change it.
 <div class="ov" id="setOv"><div class="md" id="setMd">
 <h3>⚙️ Settings</h3>
 <label>Voice</label><select id="vSel"></select>
+<button class="ca" style="width:100%;margin-top:6px" onclick="refreshVoiceList()">Refresh downloaded voices</button>
 <div id="vHint" style="display:none;font-size:.62em;line-height:1.5;opacity:.75;background:#3a2f1a;border-left:3px solid #e9c46a;padding:8px 10px;border-radius:6px;margin-top:6px"></div>
 <label>Speed <span id="spV">0.9</span></label><input type="range" id="spR" min=".3" max="1.5" step=".1" value=".9" oninput="SP=+this.value;document.getElementById('spV').textContent=SP.toFixed(1);save()">
 <label>Pitch <span id="ptV">1.0</span></label><input type="range" id="ptR" min="0.5" max="1.5" step=".05" value="1" oninput="PITCH=+this.value;document.getElementById('ptV').textContent=PITCH.toFixed(2);save();speak('this is my voice')">
@@ -482,7 +483,7 @@ const HOME_POS={};
 V.forEach(function(c){ HOME_POS[c.w]=c.p; });
 const SK='mb4';
 const isPhone=window.innerWidth<=600;
-let SP=.9,PITCH=1,VU='',MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=isPhone,tutDone=false,focusWords=[],focusPathCache={};
+let SP=.9,PITCH=1,VU='',VN='',VL='',VC=false,MM=false,PIN='1234',sentence=[],recents=[],usage={},customWords=[],curView='home',showRec=false,spellBuf='',phoneMode=isPhone,tutDone=false,focusWords=[],focusPathCache={};
 // Simple View is a complete 6 x 8 communication board, not merely the first
 // few rows of the large board. It keeps urgent words and grammar available
 // directly while retaining doorways to the full vocabulary.
@@ -642,8 +643,8 @@ speak(text);
 }
 }
 
-function save(){try{localStorage.setItem(SK,JSON.stringify({PITCH,SP,VU,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,phoneMode,tutDone:tutDone}))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=clamp(d.SP,.5,1.6,.9);PITCH=clamp(d.PITCH,.5,1.5,1);VU=d.VU||'';MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=(d.customWords||[]).map(function(c){if(!c.view)c.view='custom';return c});myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;tutDone=!!d.tutDone;return tutDone}catch(e){tutDone=false;return false}}
+function save(){try{localStorage.setItem(SK,JSON.stringify({PITCH,SP,VU,VN,VL,VC,MM,PIN,recents,usage,customWords,myInfo,cellOverrides,phoneMode,tutDone:tutDone}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SK)||'{}');SP=clamp(d.SP,.5,1.6,.9);PITCH=clamp(d.PITCH,.5,1.5,1);VU=d.VU||'';VN=d.VN||'';VL=d.VL||'';VC=d.VC!==undefined?!!d.VC:!!d.VU;MM=d.MM||false;PIN=d.PIN||'1234';recents=d.recents||[];usage=d.usage||{};customWords=(d.customWords||[]).map(function(c){if(!c.view)c.view='custom';return c});myInfo=d.myInfo||{name:'',address:'',state:'',city:'',school:'',phone:'',emergency:''};cellOverrides=d.cellOverrides||{};phoneMode=d.phoneMode!==undefined?d.phoneMode:isPhone;tutDone=!!d.tutDone;return tutDone}catch(e){tutDone=false;return false}}
 
 // Pitch and rate are clamped on the way out. A value above about 1.5 wedges
 // the speech engine on macOS: the utterance fails silently and every later one
@@ -661,7 +662,8 @@ function speak(text){
   u.rate  = clamp(SP,   RATE_MIN,  RATE_MAX,  0.9);
   u.pitch = clamp(PITCH,PITCH_MIN, PITCH_MAX, 1);
   u.lang=APP_LANG;
-  if(VU){ const v=speechSynthesis.getVoices().find(v=>v.voiceURI===VU); if(v) u.voice=v; }
+  const chosen=selectedVoice(speechSynthesis.getVoices())||rankedVoices()[0];
+  if(chosen) u.voice=chosen;
   try{
     speechSynthesis.speak(u);
   }catch(e){
@@ -1774,7 +1776,7 @@ async function hardReset(){
 
 
 function resetVoiceSettings(){
-  SP=0.9; PITCH=1; VU='';
+  SP=0.9; PITCH=1; VU=''; VN=''; VL=''; VC=false;
   save();
   const ptR=document.getElementById('ptR'), spR=document.getElementById('spR');
   if(ptR) ptR.value=PITCH;
@@ -1782,12 +1784,12 @@ function resetVoiceSettings(){
   const ptV=document.getElementById('ptV'), spV=document.getElementById('spV');
   if(ptV) ptV.textContent=(+PITCH).toFixed(2);
   if(spV) spV.textContent=(+SP).toFixed(1);
-  populateVoices();
+  refreshVoiceList();
   try{ speechSynthesis.cancel(); }catch(e){}
   speak('the voice is working');
 }
 
-function openSet(){document.getElementById('setOv').classList.add('open');showBuild();populateVoices();document.getElementById('spR').value=SP;document.getElementById('ptR').value=PITCH;document.getElementById('ptV').textContent=(+PITCH).toFixed(2);document.getElementById('mmSel').value=MM?'1':'0';document.getElementById('modelBanner').style.display=MM?'block':'none';loadInfo();renderStats();renderCWList()}
+function openSet(){document.getElementById('setOv').classList.add('open');showBuild();refreshVoiceList();document.getElementById('spR').value=SP;document.getElementById('ptR').value=PITCH;document.getElementById('ptV').textContent=(+PITCH).toFixed(2);document.getElementById('mmSel').value=MM?'1':'0';document.getElementById('modelBanner').style.display=MM?'block':'none';loadInfo();renderStats();renderCWList()}
 function closeOv(id){document.getElementById(id).classList.remove('open')}
 const APP_LANG='en-US';
 
@@ -1803,15 +1805,19 @@ function isUsableVoice(v){
 }
 
 function voiceQuality(v){
-  // Reliability matters for an offline AAC device. Within local voices,
-  // favor Premium, Enhanced, neural, and natural variants and the app locale.
+  // Browsers do not report downloaded status consistently. Language and
+  // clarity matter more than the unreliable localService flag.
   const n=(v.name||'').toLowerCase();
+  const lang=(v.lang||'').toLowerCase();
+  const want=(APP_LANG||'en').slice(0,2).toLowerCase();
   let q=0;
-  if(v.localService) q+=500;
+  if(lang.slice(0,2)===want) q+=2000;
+  else if(!lang) q+=500;
+  if(lang===APP_LANG.toLowerCase()) q+=80;
+  if(v.localService===true) q+=60;
   if(/premium/.test(n)) q+=360;
   else if(/enhanced/.test(n)) q+=320;
   else if(/neural|natural/.test(n)) q+=280;
-  if((v.lang||'').toLowerCase()===APP_LANG.toLowerCase()) q+=60;
   if(v.default) q+=12;
   if(LEGACY.test(n)) q-=70;
   if(ROBOTIC.test(n)) q-=300;
@@ -1819,54 +1825,104 @@ function voiceQuality(v){
 }
 
 function voiceLabel(v){
-  // "good" was applied to every on-device voice that was not premium, which
-  // told a parent nothing and was simply wrong for the compressed defaults.
   const n=(v.name||'').toLowerCase();
-  if(/premium/.test(n))                        return v.localService?'premium, offline':'premium, internet';
-  if(/enhanced|neural|natural/.test(n))         return v.localService?'enhanced, offline':'enhanced, internet';
-  if(ROBOTIC.test(n))                           return 'basic, robotic';
-  if(LEGACY.test(n))                            return v.localService?'older, offline':'older voice';
-  return v.localService ? 'standard, offline' : 'needs internet';
+  const tags=[];
+  if(/premium/.test(n)) tags.push('premium');
+  else if(/enhanced|neural|natural/.test(n)) tags.push('enhanced');
+  else if(ROBOTIC.test(n)) tags.push('basic, robotic');
+  else if(LEGACY.test(n)) tags.push('older');
+  else tags.push('standard');
+  if(v.localService===true) tags.push('on-device');
+  else tags.push('device managed');
+  return tags.join(', ');
 }
 
 function rankedVoices(){
-  const all=speechSynthesis.getVoices();
+  const all=speechSynthesis.getVoices().filter(isUsableVoice);
   if(!all.length)return [];
+  return all.sort((a,b)=>voiceQuality(b)-voiceQuality(a)||a.name.localeCompare(b.name));
+}
+
+function selectedVoice(list){
+  let found=null;
+  if(VN) found=list.find(function(v){return v.name===VN&&(!VL||v.lang===VL)});
+  if(!found&&VU) found=list.find(function(v){return v.voiceURI===VU});
+  if(!found&&VN) found=list.find(function(v){return v.name===VN});
+  return found||null;
+}
+
+function rememberVoice(v,byUser){
+  if(!v)return;
+  VU=v.voiceURI||''; VN=v.name||''; VL=v.lang||'';
+  if(byUser)VC=true;
+  save();
+}
+
+function voiceGroup(v){
+  const lang=(v.lang||'').toLowerCase();
   const want=(APP_LANG||'en').slice(0,2).toLowerCase();
-  let list=all.filter(v=>(v.lang||'').slice(0,2).toLowerCase()===want&&isUsableVoice(v));
-  if(!list.length)list=all.filter(isUsableVoice);
-  if(!list.length)list=all;
-  return list.sort((a,b)=>voiceQuality(b)-voiceQuality(a)||a.name.localeCompare(b.name));
+  if(lang.slice(0,2)===want)return 'matching';
+  if(!lang)return 'unknown';
+  return 'other';
+}
+
+function renderVoiceSelect(sel,list){
+  while(sel.firstChild)sel.removeChild(sel.firstChild);
+  const chosen=selectedVoice(list)||list[0];
+  const groups=[
+    {id:'matching',label:'Recommended language'},
+    {id:'unknown',label:'Language not reported by device'},
+    {id:'other',label:'Other system voices'}
+  ];
+  groups.forEach(function(group){
+    const voices=list.filter(function(v){return voiceGroup(v)===group.id});
+    if(!voices.length)return;
+    const optgroup=document.createElement('optgroup');optgroup.label=group.label;
+    voices.forEach(function(v){
+      const option=document.createElement('option');
+      option.value=v.voiceURI||v.name; option._voice=v;
+      option.textContent=(v===list[0]?'Recommended: ':'')+(v.name||'Unnamed voice')+' — '+(v.lang||'language not reported')+' — '+voiceLabel(v);
+      if(v===chosen)option.selected=true;
+      optgroup.appendChild(option);
+    });
+    sel.appendChild(optgroup);
+  });
+  if(!VC&&chosen)rememberVoice(chosen,false);
+  else if(chosen&&VN&&chosen.voiceURI!==VU)rememberVoice(chosen,false);
+  return chosen;
+}
+
+let voiceRefreshToken=0;
+function refreshVoiceList(){
+  const token=++voiceRefreshToken;
+  [0,120,400,1000,2500].forEach(function(delay){
+    setTimeout(function(){if(token===voiceRefreshToken)populateVoices()},delay);
+  });
 }
 
 function populateVoices(){
   const sel=document.getElementById('vSel');
   const list=rankedVoices();
-  if(!list.length) return;
+  if(!sel)return;
+  if(!list.length){sel.innerHTML='<option>Loading voices from this device...</option>';return}
+  renderVoiceSelect(sel,list);
 
-  sel.innerHTML=list.map(v=>
-    '<option value="'+v.voiceURI+'"'+(v.voiceURI===VU?' selected':'')+'>'
-    +(list.indexOf(v)===0?'Recommended: ':'')+v.name+'  ('+voiceLabel(v)+')</option>').join('');
-
-  // If nothing has been chosen yet, take the best available rather than
-  // whatever the system happens to default to.
-  if(!VU && list.length){ VU=list[0].voiceURI; sel.value=VU; save(); }
-
-  // If no enhanced voice is installed the app quietly picked the best of a bad
-  // set and the parent never learned a free download would fix it.
   const hint=document.getElementById('vHint');
   if(hint){
     const hasGood=list.some(v=>/premium|enhanced|neural|natural/i.test(v.name||''));
-    hint.style.display=hasGood?'none':'block';
-    hint.textContent='This device only has the compressed voices. Free higher quality voices can be downloaded: on iPhone or iPad, Settings, Accessibility, Spoken Content, Voices, English, then tap a Premium or Enhanced voice. On Android, Settings, Accessibility, Text-to-speech output.';
+    hint.style.display='block';
+    hint.textContent='Every non-novelty voice reported by this browser is shown. Some devices do not reliably identify which voices are downloaded, so “device managed” does not mean the voice needs internet. '+(hasGood?'If a newly downloaded voice is missing, return to this screen and tap Refresh downloaded voices.':'For clearer voices on iPhone or iPad, open Settings, Accessibility, Spoken Content, Voices, English, and download a Premium or Enhanced voice. Then return here and tap Refresh downloaded voices.');
   }
 
-  sel.onchange=()=>{
-    VU=sel.value; save();
-    // Say something so the choice can be judged immediately.
+  const tourSel=document.getElementById('tVoice');
+  if(tourSel){renderVoiceSelect(tourSel,list);tourSel.onchange=tourVoiceChange}
+
+  sel.onchange=function(){
+    const option=sel.options[sel.selectedIndex];
+    const chosen=option&&option._voice;
+    rememberVoice(chosen,true);
     const u=new SpeechSynthesisUtterance('Hello, this is my voice');
-    const v=speechSynthesis.getVoices().find(x=>x.voiceURI===VU);
-    if(v) u.voice=v;
+    if(chosen)u.voice=chosen;
     u.rate=SP;
     speechSynthesis.cancel(); speechSynthesis.speak(u);
   };
@@ -1998,13 +2054,12 @@ function populateTourVoices(){
   const sel=document.getElementById('tVoice'); if(!sel)return;
   const list=rankedVoices();
   if(!list.length){sel.innerHTML='<option>Loading voices...</option>';setTimeout(populateTourVoices,300);return}
-  sel.innerHTML=list.map(function(v,i){return '<option value="'+tourEsc(v.voiceURI)+'"'+(v.voiceURI===VU?' selected':'')+'>'+(i===0?'Recommended: ':'')+tourEsc(v.name)+' ('+voiceLabel(v)+')</option>'}).join('');
-  if(!VU){VU=list[0].voiceURI;sel.value=VU;save()}
+  renderVoiceSelect(sel,list);
   sel.onchange=tourVoiceChange;
 }
 function tourVoiceChange(){
   const v=document.getElementById('tVoice'),s=document.getElementById('tSpeed'),p=document.getElementById('tPitch');
-  if(v&&v.value)VU=v.value;if(s)SP=+s.value;if(p)PITCH=+p.value;
+  if(v&&v.value){const option=v.options[v.selectedIndex];rememberVoice(option&&option._voice,true)}if(s)SP=+s.value;if(p)PITCH=+p.value;
   const sv=document.getElementById('tSpeedValue'),pv=document.getElementById('tPitchValue');
   if(sv)sv.textContent=SP.toFixed(1);if(pv)pv.textContent=PITCH.toFixed(2);save();
 }
@@ -2093,7 +2148,10 @@ const ptBtn=document.getElementById('phoneToggle');if(ptBtn){ptBtn.innerHTML=pho
 document.getElementById('pinPad').innerHTML=['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>k===''?'<button class="nk empty"></button>':k==='⌫'?`<button class="nk" onclick="pinKey('⌫')">⌫</button>`:`<button class="nk" onclick="pinKey('${k}')">${k}</button>`).join('');
 render();renderRec();
 window.addEventListener('resize',render);
-speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=populateVoices;
+speechSynthesis.getVoices();
+if(speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',populateVoices);
+else speechSynthesis.onvoiceschanged=populateVoices;
+document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshVoiceList()});
 setTimeout(()=>{const sp=document.getElementById('splash');sp.classList.add('gone');setTimeout(()=>{sp.remove();if(!tutDone||location.search.indexOf('tour=1')!==-1)showTut()},500)},800);
 }
 
